@@ -1,6 +1,7 @@
 package main
 
-import "smartender/internal/app"
+import "app/internal/server"
+
 
 func main() {
 	a := app.App{}

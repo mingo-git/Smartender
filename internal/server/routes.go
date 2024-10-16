@@ -1,7 +1,7 @@
 package app
 
 import (
-	"smartender/internal/handlers" 
+	"app/internal/handlers" 
 )
 
 func (a *App) initializeRoutes() {
