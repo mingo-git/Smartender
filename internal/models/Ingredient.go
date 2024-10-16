@@ -1,6 +1,6 @@
 package models
 
 type Ingredient struct {
-	drinks       []Drink `json:"drinks"`
-	amount_in_ml int     `json:"amount"`
+	Drinks       []Drink `json:"drinks"`
+	Amount_in_ml int     `json:"amount"`
 }

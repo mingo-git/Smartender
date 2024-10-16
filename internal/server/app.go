@@ -23,10 +23,12 @@ func (a *App) Initialize() {
 
     var err error
     a.DB, err = sql.Open("postgres", connectionString)
+
     if err != nil {
         log.Fatal(err)
+    } else {
+        log.Default().Printf("Connected to the database")
     }
-    log.Default().Printf("Connected to the database")
 
     // TODO: Prepopulate the database with the tables here (IF NOT EXIST CREATE...)
 
@@ -39,6 +41,6 @@ func (a *App) Run() {
     if port == "" {
         port = "8080" // default port if not specified
     }
-    log.Printf("Server starting on port %s", port)
+    log.Printf("Server starting on Port %s", port)
     log.Fatal(http.ListenAndServe(":"+port, a.Router))
 }

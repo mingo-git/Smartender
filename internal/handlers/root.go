@@ -42,5 +42,12 @@ func RegisterDevice(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
+	// create a new user in the database
+	// return the user_id
+	
 	json.NewEncoder(w).Encode("Register User")
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode("Login")
 }
