@@ -1,7 +1,6 @@
 package main
 
-import "app/internal/server"
-
+import app "app/internal/server"
 
 func main() {
 	a := app.App{}
