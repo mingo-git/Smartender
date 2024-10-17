@@ -19,14 +19,16 @@ func (a *App) initializeRoutes() {
 	smartenderRouter.HandleFunc("/register", handlers.RegisterDevice).Methods("GET")
 
 	// Client (Mobile App)
-	clientRouter := a.Router.PathPrefix("/cli").Subrouter()
-	clientRouter.HandleFunc("/register", handlers.RegisterUser).Methods("GET")
-	clientRouter.HandleFunc("/login", handlers.Login).Methods("GET")
+	clientRouter := a.Router.PathPrefix("/client").Subrouter()
+	clientRouter.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RegisterUser(a.DB, w, r)
+	}).Methods("POST")
+
+	clientRouter.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		handlers.LoginUser(a.DB, w, r)
+	}).Methods("POST")
 
 	// CRUD operations [User]
-	a.Router.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateUser(a.DB, w, r)
-	}).Methods("POST")
 
 	a.Router.HandleFunc("/user/{user_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.ReadUser(a.DB, w, r)
