@@ -24,7 +24,6 @@ func (a *App) initializeRoutes() {
 	clientRouter.HandleFunc("/login", handlers.Login).Methods("GET")
 
 	// CRUD operations [User]
-	// clientRouter.HandleFunc("/user", handlers.CreateUser).Methods("POST")
 	a.Router.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CreateUser(a.DB, w, r)
 	}).Methods("POST")
