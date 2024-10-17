@@ -3,3 +3,6 @@
 
 # Ignore .DS_Store files in all directories (specific to macOS)
 .DS_Store
+
+# Ignore Workspace specific auto-generated files
+.vscode
