@@ -70,7 +70,7 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	log.Default().Printf("Login request: %v", loginRequest)
+
 	// 2. Validate the user input (optional)
 	if loginRequest.Username == "" || loginRequest.Password == "" {
 		http.Error(w, "Username and password are required", http.StatusBadRequest)
@@ -114,6 +114,48 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func LogoutUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	// TODO: Implement Logout
+	// Therefore the JWT token should be stored in the DB and get invalidated on logout
+}
+
+func DeleteUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	log.Default().Printf("📬 [DELETE] /user at %s", time.Now())
+	
+	// TODO: User authentication should be required to delete a user
+	
+	// Extract user ID from the URL
+	vars := mux.Vars(r) // Using Gorilla Mux to get URL variables
+	userID := vars["user_id"]
+
+	res, err := db.Exec(query.DeleteUser(), userID)
+
+	// Handle errors
+	if err != nil {
+		log.Printf("Error deleting user: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Check the number of rows affected
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		log.Printf("Error checking affected rows: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	if rowsAffected == 0 {
+		// If no rows were affected, the user was not found
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Respond with a success message
+	w.WriteHeader(http.StatusNoContent) // 204 No Content
+}
+
+
 // ReadUser retrieves user details
 // DEPRECATED: This function is not used in the current implementation
 func ReadUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -148,7 +190,7 @@ func ReadUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdateUser updates user details
-// DEPRECATED: This function is not used in the current implementation
+// DEPRECATED: This function is not (currently) used in the current implementation
 func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [PUT] /user at %s", time.Now())
 
@@ -183,40 +225,4 @@ func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Optionally, return the updated user details or a success message
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
-}
-
-// DeleteUser deletes a user
-// DEPRECATED: This function is not used in the current implementation
-func DeleteUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	log.Default().Printf("📬 [DELETE] /user at %s", time.Now())
-
-	// Extract user ID from the URL
-	vars := mux.Vars(r) // Using Gorilla Mux to get URL variables
-	userID := vars["user_id"]
-
-	res, err := db.Exec(query.DeleteUser(), userID)
-
-	// Handle errors
-	if err != nil {
-		log.Printf("Error deleting user: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	// Check the number of rows affected
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		log.Printf("Error checking affected rows: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	if rowsAffected == 0 {
-		// If no rows were affected, the user was not found
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
-	}
-
-	// Respond with a success message
-	w.WriteHeader(http.StatusNoContent) // 204 No Content
 }
