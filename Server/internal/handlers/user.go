@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	auth "app/internal/auth"
 	. "app/internal/models"
 	"app/internal/query"
 	"database/sql"
@@ -12,7 +13,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+type Response struct {
+	Message string `json:"message"`
+}
+
+func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /user at %s", time.Now())
 	// 1. Decode the incoming JSON request
 	var newUser User
@@ -21,16 +26,27 @@ func CreateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
+
 	// 2. Validate the user input (optional)
 	if newUser.Username == "" || newUser.Password == "" || newUser.Email == "" {
 		http.Error(w, "Username, password, and email are required", http.StatusBadRequest)
 		return
 	}
+
+	hashedPassword, err := auth.HashPassword(newUser.Password)
+
+	if err != nil {
+		log.Printf("Error hashing password: %v", err)
+		http.Error(w, "Could not create user: ", http.StatusInternalServerError)
+	}
+
+	newUser.Password = hashedPassword
+
 	// 3. Insert the new user into the database
 	err = db.QueryRow(query.CreateUser(), newUser.Username, newUser.Password, newUser.Email).Scan(&newUser.UserID)
 	if err != nil {
 		log.Printf("Error inserting user: %v", err)
-		http.Error(w, "Could not create user: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Could not create user: ", http.StatusInternalServerError)
 		return
 	}
 
@@ -39,10 +55,67 @@ func CreateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated) // 201 Created
 
 	// 5. Encode the created user as a JSON response
-	json.NewEncoder(w).Encode(newUser)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Successfully registered User",
+	})
+}
+
+func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	log.Default().Printf("📬 [POST] /login at %s", time.Now())
+
+	// 1. Decode the incoming JSON request
+	var loginRequest User
+	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	log.Default().Printf("Login request: %v", loginRequest)
+	// 2. Validate the user input (optional)
+	if loginRequest.Username == "" || loginRequest.Password == "" {
+		http.Error(w, "Username and password are required", http.StatusBadRequest)
+		return
+	}
+
+	// 3. Get the user from the database
+	var storedUser User
+	err = db.QueryRow(query.GetUserByUsername(), loginRequest.Username).Scan(&storedUser.UserID, &storedUser.Username, &storedUser.Password, &storedUser.Email)
+	if err != nil {
+		log.Printf("Error fetching user: %v", err)
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
+	// 4. Check if the provided password matches the stored hashed password
+	err = auth.CheckPassword(storedUser.Password, loginRequest.Password)
+	if err != nil {
+		log.Printf("Password mismatch: %v", err)
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
+	// 5. Generate JWT token upon successful login
+	// token := "token"
+	token, err := auth.GenerateJWT(storedUser.UserID)
+	if err != nil {
+			log.Printf("Error generating JWT: %v", err)
+			http.Error(w, "Could not generate token", http.StatusInternalServerError)
+			return
+	}
+
+	// 6. Set the response header and return the token
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK) // 200 OK
+
+	// 7. Encode the JWT as a JSON response
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Successfully logged in",
+		"token":   token,
+	})
 }
 
 // ReadUser retrieves user details
+// DEPRECATED: This function is not used in the current implementation
 func ReadUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [GET] /user at %s", time.Now())
 
@@ -65,7 +138,7 @@ func ReadUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		}
 		// For any other errors, log and respond with a 500
 		log.Printf("Error retrieving user: %v", err)
-		http.Error(w, "Internal Server Error"+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -75,6 +148,7 @@ func ReadUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdateUser updates user details
+// DEPRECATED: This function is not used in the current implementation
 func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [PUT] /user at %s", time.Now())
 
@@ -102,7 +176,7 @@ func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		}
 		// For any other errors, log and respond with a 500
 		log.Printf("Error updating user: %v", err)
-		http.Error(w, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Internal Server Error: ", http.StatusInternalServerError)
 		return
 	}
 
@@ -111,6 +185,8 @@ func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+// DeleteUser deletes a user
+// DEPRECATED: This function is not used in the current implementation
 func DeleteUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [DELETE] /user at %s", time.Now())
 
