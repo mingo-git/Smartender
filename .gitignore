@@ -6,3 +6,6 @@
 
 # Ignore Workspace specific auto-generated files
 .vscode
+
+# Ignore Workspace specific auto-generated files (JetBrains)
+.idea

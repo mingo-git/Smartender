@@ -2,15 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:smartender_flutter_app/components/my_textfield.dart';
 import 'package:smartender_flutter_app/components/signIn_button.dart';
 import 'package:smartender_flutter_app/components/square_tile.dart';
+import 'package:smartender_flutter_app/services/auth_service.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  //sign user in method
-  void signUserIn() {}
+  final AuthService _authService = AuthService();
+
+  void signUserIn(BuildContext context) async {
+    final email = usernameController.text.trim();
+    final password = passwordController.text;
+
+    bool success = await _authService.signIn(email, password);
+    print("SENDE LOGIN DATEN");
+    print(success);
+
+    if (success) {
+      // Navigation zur nächsten Seite
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      // Fehlerbehandlung
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login fehlgeschlagen. Bitte überprüfe deine Eingaben.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +74,7 @@ class LoginPage extends StatelessWidget {
             height: 25,
           ),
           SignInButton(
-            onTap: signUserIn,
+            onTap: () => signUserIn(context),
           ),
           const SizedBox(
             height: 50,
