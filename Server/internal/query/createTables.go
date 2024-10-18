@@ -54,7 +54,7 @@ func CreateAndPrepopulateTables() string {
 
 	-- Prepopulate the users table
 	INSERT INTO users (username, password, email) VALUES
-		('testuser', 'password123', 'testuser@example.com')
+		('testuser', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser@example.com')
 	ON CONFLICT (username) DO NOTHING; -- Avoid duplicates
 
 	-- Prepopulate the drinks table

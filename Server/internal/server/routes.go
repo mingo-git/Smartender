@@ -28,12 +28,9 @@ func (a *App) initializeRoutes() {
 		handlers.LoginUser(a.DB, w, r)
 	}).Methods("POST")
 
-	// CRUD operations [User]
 
-	a.Router.HandleFunc("/user/{user_id}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.ReadUser(a.DB, w, r)
-	}).Methods("GET")
 
+	// TODO: Change or delete User Data --------------------------------------------------------------
 	a.Router.HandleFunc("/user/{user_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateUser(a.DB, w, r)
 	}).Methods("PUT")
@@ -41,6 +38,33 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/user/{user_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DeleteUser(a.DB, w, r)
 	}).Methods("DELETE")
+	// -----------------------------------------------------------------------------------------------
+
+	
+
+	protectedUserRouter := clientRouter.PathPrefix("/protected").Subrouter()
+	protectedUserRouter.Use(handlers.JWTMiddleware)
+	protectedUserRouter.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+		// handlers.GetUserData(a.DB, w, r)
+	}).Methods("GET")
+
+	// DRINKS: ---------------------------------------------------------------------------------------
+	clientRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
+		handlers.CreateDrink(a.DB, w, r)
+	}).Methods("POST")
+
+	clientRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetAllDrinks(a.DB, w, r)
+	}).Methods("GET")
+
+	clientRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.UpdateDrink(a.DB, w, r)
+	}).Methods("PUT")
+
+	clientRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DeleteDrink(a.DB, w, r)
+	}).Methods("DELETE")
+	// -----------------------------------------------------------------------------------------------
 
 	// clientRouter.HandleFunc("/registerDevice", handlers.AddDevice).Methods("GET")
 	// clientRouter.HandleFunc("/User", handlers.GetUserData).Methods("GET")

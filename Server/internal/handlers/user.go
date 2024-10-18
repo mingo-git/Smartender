@@ -13,10 +13,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Response struct {
-	Message string `json:"message"`
-}
-
 func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /user at %s", time.Now())
 	// 1. Decode the incoming JSON request
@@ -41,6 +37,7 @@ func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	newUser.Password = hashedPassword
+	log.Default().Printf("TOTALY NOT A PASSWORD: %v", newUser.Password)
 
 	// 3. Insert the new user into the database
 	err = db.QueryRow(query.CreateUser(), newUser.Username, newUser.Password, newUser.Email).Scan(&newUser.UserID)
