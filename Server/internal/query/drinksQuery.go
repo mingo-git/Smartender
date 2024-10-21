@@ -5,21 +5,21 @@ func GetAllDrinks() string {
 }
 
 func GetAllDrinksForUser() string {
-	return "SELECT drink_id, user_id, drink_name, is_alcoholic FROM drinks WHERE user_id = $1"
+	return "SELECT drink_id, user_id, drink_name, is_alcoholic FROM drinks WHERE user_id = $1 ORDER BY drink_id"
 }
 
 func CreateDrink() string {
-	return "INSERT INTO drinks (drink_name, user_id) VALUES ($1, $2) RETURNING drink_id;"
+	return "INSERT INTO drinks (drink_name, is_alcoholic, user_id) VALUES ($1, $2, $3) RETURNING drink_id;"
 }
 
 // GetDrinkByID returns the SQL query to fetch a specific drink by its ID.
 func GetDrinkByID() string {
-	return "SELECT drink_id, drink_name FROM drinks WHERE drink_id = $1"
+	return "SELECT drink_id, drink_name, user_id, is_alcoholic FROM drinks WHERE (drink_id = $1) AND (user_id = $2)"
 }
 
 // UpdateDrink returns the SQL query to update a specific drink by its ID.
 func UpdateDrink() string {
-	return "UPDATE drinks SET drink_name = $1 WHERE drink_id = $2"
+	return "UPDATE drinks SET drink_name = $1 WHERE (drink_id = $2) AND (user_id = $3)"
 }
 
 // DeleteDrink returns the SQL query to delete a specific drink by its ID.

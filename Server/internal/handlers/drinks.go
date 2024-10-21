@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -23,25 +22,8 @@ func CreateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userIDStr, ok := r.Context().Value("user_id").(string)  // Get user ID from context as string
-	if !ok {
-			http.Error(w, "Invalid user ID", http.StatusBadRequest)
-			return
-	}
-	
-	// Convert userID from string to int
-	userID, err := strconv.Atoi(userIDStr)
-	if err != nil {
-			log.Printf("Error converting user ID to int: %v", err)
-			http.Error(w, "Invalid user ID format", http.StatusBadRequest)
-			return
-	}
-	
-	// Assign the integer userID to newDrink.UserID
-	newDrink.UserID = userID
-
 	// Insert new drink into the database
-	err = db.QueryRow(query.CreateDrink(), newDrink.Name, newDrink.UserID).Scan(&newDrink.DrinkID)
+	err = db.QueryRow(query.CreateDrink(), newDrink.Name, newDrink.Alcoholic, r.Context().Value("user_id")).Scan(&newDrink.DrinkID)
 	if err != nil {
 		log.Printf("Error inserting new drink: %v", err)
 		http.Error(w, "Could not create drink", http.StatusInternalServerError)
@@ -50,7 +32,6 @@ func CreateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
-	json.NewEncoder(w).Encode(newDrink)
 }
 
 func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -107,7 +88,7 @@ func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update drink in the database
-	result, err := db.Exec(query.UpdateDrink(), updatedDrink.Name, drinkID)
+	result, err := db.Exec(query.UpdateDrink(), updatedDrink.Name, drinkID, r.Context().Value("user_id"))
 	if err != nil {
 		log.Printf("Error updating drink: %v", err)
 		http.Error(w, "Could not update drink", http.StatusInternalServerError)
@@ -121,8 +102,7 @@ func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(updatedDrink.DrinkID)
+	w.WriteHeader(http.StatusNoContent) // 204 No Content
 }
 
 func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -150,4 +130,24 @@ func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Successfully deleted drink",
 	})
+}
+
+func GetSingleDrinkForUserByDrinkID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	log.Default().Printf("📬 [GET] /drinks/{id} at %s", time.Now())
+
+	vars := mux.Vars(r)
+	drinkID := vars["drink_id"]
+
+	var drink models.Drink
+
+	err := db.QueryRow(query.GetDrinkByID(), drinkID, r.Context().Value("user_id")).Scan(&drink.DrinkID, &drink.Name)
+	if err != nil {
+		log.Printf("Error getting drink: %v", err)
+		http.Error(w, "Could not get drink", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(drink)
 }
