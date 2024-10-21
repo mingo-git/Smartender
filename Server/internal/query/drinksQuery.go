@@ -5,7 +5,7 @@ func GetAllDrinks() string {
 }
 
 func GetAllDrinksForUser() string {
-	return "SELECT drink_id, drink_name, user_id FROM drinks WHERE user_id = $1"
+	return "SELECT drink_id, user_id, drink_name FROM drinks WHERE user_id = $1"
 }
 
 func CreateDrink() string {
