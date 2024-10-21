@@ -19,10 +19,10 @@ func GetDrinkByID() string {
 
 // UpdateDrink returns the SQL query to update a specific drink by its ID.
 func UpdateDrink() string {
-	return "UPDATE drinks SET drink_name = $1 WHERE (drink_id = $2) AND (user_id = $3)"
+	return "UPDATE drinks SET drink_name = $1, is_alcoholic = $2 WHERE (drink_id = $3) AND (user_id = $4)"
 }
 
 // DeleteDrink returns the SQL query to delete a specific drink by its ID.
 func DeleteDrink() string {
-	return "DELETE FROM drinks WHERE drink_id = $1"
+	return "DELETE FROM drinks WHERE (drink_id = $1) AND (user_id = $2)"
 }

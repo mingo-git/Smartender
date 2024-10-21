@@ -88,7 +88,7 @@ func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update drink in the database
-	result, err := db.Exec(query.UpdateDrink(), updatedDrink.Name, drinkID, r.Context().Value("user_id"))
+	result, err := db.Exec(query.UpdateDrink(), updatedDrink.Name, updatedDrink.Alcoholic, drinkID, r.Context().Value("user_id"))
 	if err != nil {
 		log.Printf("Error updating drink: %v", err)
 		http.Error(w, "Could not update drink", http.StatusInternalServerError)
@@ -112,7 +112,7 @@ func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	id := vars["drink_id"]
 
 	// Delete drink from the database
-	result, err := db.Exec(query.DeleteDrink(), id)
+	result, err := db.Exec(query.DeleteDrink(), id, r.Context().Value("user_id"))
 	if err != nil {
 		log.Printf("Error deleting drink: %v", err)
 		http.Error(w, "Could not delete drink", http.StatusInternalServerError)
