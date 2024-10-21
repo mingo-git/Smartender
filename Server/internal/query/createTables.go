@@ -28,7 +28,8 @@ func CreateTables() string {
 	CREATE TABLE IF NOT EXISTS drinks (
 		drink_id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(user_id) ON DELETE CASCADE,  -- Each drink belongs to a user
-		drink_name VARCHAR(100) NOT NULL
+		drink_name VARCHAR(100) NOT NULL,
+		is_alcoholic BOOLEAN DEFAULT TRUE
 	);
 
 	CREATE TABLE IF NOT EXISTS hardware (
@@ -69,30 +70,41 @@ func CreateTables() string {
 func PopulateDatabase() string {
 	return `
 	INSERT INTO users (username, password, email) VALUES
-		('testuser', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser@example.com')
+	    ('testuser', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser@example.com'),
+        ('jonas69', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser1@example.com'),
+        ('mingoTheFicker', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser2@example.com'),
+        ('bigDickPhil', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser3@example.com')
 	ON CONFLICT (username) DO NOTHING; -- Avoid duplicates
 	
-	INSERT INTO drinks (user_id, drink_name) VALUES
-		(1, 'Vodka'),
-		(1, 'Rum'),
-		(1, 'Gin'),
-		(1, 'Tequila'),
-		(1, 'Whiskey');
+	INSERT INTO drinks (user_id, drink_name, is_alcoholic) VALUES
+		(1, 'Vodka', TRUE),
+		(1, 'Rum', TRUE),
+		(1, 'Gin', TRUE),
+		(1, 'Tequila', TRUE),
+		(2, 'Whiskey', TRUE),
+		(2, 'Orange Juice', FALSE);
 
 	InSERT INTO hardware (hardware_name, device_id) VALUES
 		('Smartender von Jonas', '1'),
-		('Smartender von Fachschaft', '2');
+		('Smartender von Fachschaft', '2'),
+		('Smartender von Philipp', '3');
 
 	INSERT INTO user_hardware (user_id, hardware_id) VALUES
 		(1, 1),
-		(1, 2);
+		(1, 2),
+		(4, 3);
 
 	INSERT INTO slots (hardware_id, slot_number, drink_id) VALUES
 		(1, 1, 1),
 		(1, 2, 2),
 		(1, 3, 3),
 		(1, 4, 4),
-		(1, 5, 5);
+		(1, 5, 5),
+		(2, 1, 2),
+		(2, 2, 3),
+		(2, 3, 4),
+		(2, 4, 5),
+		(2, 5, 6);
 
 	INSERT INTO recipes (user_id, recipe_name) VALUES
 		(1, 'Vodka Martini'),
