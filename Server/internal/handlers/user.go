@@ -37,7 +37,6 @@ func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	newUser.Password = hashedPassword
-	log.Default().Printf("TOTALY NOT A PASSWORD: %v", newUser.Password)
 
 	// 3. Insert the new user into the database
 	err = db.QueryRow(query.CreateUser(), newUser.Username, newUser.Password, newUser.Email).Scan(&newUser.UserID)

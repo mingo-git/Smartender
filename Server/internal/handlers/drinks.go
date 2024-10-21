@@ -23,8 +23,25 @@ func CreateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userIDStr, ok := r.Context().Value("user_id").(string)  // Get user ID from context as string
+	if !ok {
+			http.Error(w, "Invalid user ID", http.StatusBadRequest)
+			return
+	}
+	
+	// Convert userID from string to int
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+			log.Printf("Error converting user ID to int: %v", err)
+			http.Error(w, "Invalid user ID format", http.StatusBadRequest)
+			return
+	}
+	
+	// Assign the integer userID to newDrink.UserID
+	newDrink.UserID = userID
+
 	// Insert new drink into the database
-	err = db.QueryRow(query.CreateDrink(), newDrink.Name).Scan(&newDrink.ID)
+	err = db.QueryRow(query.CreateDrink(), newDrink.Name, newDrink.UserID).Scan(&newDrink.DrinkID)
 	if err != nil {
 		log.Printf("Error inserting new drink: %v", err)
 		http.Error(w, "Could not create drink", http.StatusInternalServerError)
@@ -41,7 +58,7 @@ func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	var drinks []models.Drink
 
-	rows, err := db.Query(query.GetAllDrinks())
+	rows, err := db.Query(query.GetAllDrinksForUser(), r.Context().Value("user_id"))
 	if err != nil {
 		log.Printf("Error getting drinks: %v", err)
 		http.Error(w, "Could not get drinks", http.StatusInternalServerError)
@@ -53,7 +70,7 @@ func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Iteriere über alle Zeilen
 	for rows.Next() {
 		var drink models.Drink
-		err := rows.Scan(&drink.ID, &drink.Name)
+		err := rows.Scan(&drink.DrinkID, &drink.UserID, &drink.Name)
 		if err != nil {
 			log.Printf("Error scanning drink: %v", err)
 			http.Error(w, "Error processing drinks", http.StatusInternalServerError)
@@ -105,10 +122,7 @@ func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
-		"drink_id":   strconv.Itoa(updatedDrink.ID),
-		"drink_name": updatedDrink.Name,
-	})
+	json.NewEncoder(w).Encode(updatedDrink.DrinkID)
 }
 
 func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {

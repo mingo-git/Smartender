@@ -1,6 +1,7 @@
 package models
 
 type Drink struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	DrinkID int    `json:"drink_id"`
+	Name    string `json:"drink_name"`
+	UserID  int    `json:"user_id"`
 }

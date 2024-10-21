@@ -35,16 +35,23 @@ func (a *App) Initialize() {
 		log.Default().Printf("Connected to the database")
 	}
 
-	// Pre-populate the database with the tables here
+	// Pre-populate the database with the tables here ------------------------------------------------
 	_, err = a.DB.Exec(populate.WipeDatabase())
 	if err != nil {
 		log.Fatalf("Error wiping tables: %v", err)
 	}	
-	_, err = a.DB.Exec(populate.CreateTables())
 
+	_, err = a.DB.Exec(populate.CreateTables())
 	if err != nil {
 		log.Fatalf("Error creating tables: %v", err)
 	}
+
+	_, err = a.DB.Exec(populate.PopulateDatabase())
+	if err != nil {
+		log.Fatalf("Error populating tables: %v", err)
+	}
+	// -----------------------------------------------------------------------------------------------
+
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 }
