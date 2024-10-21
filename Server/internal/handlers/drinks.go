@@ -70,7 +70,7 @@ func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Iteriere über alle Zeilen
 	for rows.Next() {
 		var drink models.Drink
-		err := rows.Scan(&drink.DrinkID, &drink.UserID, &drink.Name)
+		err := rows.Scan(&drink.DrinkID, &drink.Name, &drink.UserID)
 		if err != nil {
 			log.Printf("Error scanning drink: %v", err)
 			http.Error(w, "Error processing drinks", http.StatusInternalServerError)
