@@ -55,7 +55,6 @@ func CreateTables() string {
 		recipe_id SERIAL PRIMARY KEY,
 		user_id INT REFERENCES users(user_id) ON DELETE CASCADE,  -- Each recipe belongs to a user
 		recipe_name VARCHAR(100) NOT NULL UNIQUE,  -- Unique recipe name per user
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 
 	CREATE TABLE IF NOT EXISTS recipe_ingredients (
