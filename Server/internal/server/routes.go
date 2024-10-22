@@ -27,8 +27,6 @@ func (a *App) initializeRoutes() {
 		handlers.LoginUser(a.DB, w, r)
 	}).Methods("POST")
 
-	
-
 	// TODO: Change or delete User Data --------------------------------------------------------------
 	a.Router.HandleFunc("/user/{user_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateUser(a.DB, w, r)
@@ -40,24 +38,33 @@ func (a *App) initializeRoutes() {
 	// -----------------------------------------------------------------------------------------------
 
 	// DRINKS: ---------------------------------------------------------------------------------------
-	drinksRouter := clientRouter.PathPrefix("/user").Subrouter()
-	drinksRouter.Use(handlers.JWTMiddleware)
-	drinksRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
+	usersRouter := clientRouter.PathPrefix("/user").Subrouter()
+	usersRouter.Use(handlers.JWTMiddleware)
+	usersRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CreateDrink(a.DB, w, r)
 	}).Methods("POST")
 
-	drinksRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
+	usersRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAllDrinks(a.DB, w, r)
 	}).Methods("GET")
 
-	drinksRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+	usersRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateDrink(a.DB, w, r)
 	}).Methods("PUT")
 
-	drinksRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+	usersRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DeleteDrink(a.DB, w, r)
 	}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
+
+	// RECIPES: --------------------------------------------------------------------------------------
+	usersRouter.HandleFunc("/recipes", func(w http.ResponseWriter, r *http.Request) {
+		handlers.CreateRecipe(a.DB, w, r)
+	}).Methods("POST")
+
+	usersRouter.HandleFunc("/recipes", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetAllRecipes(a.DB, w, r)
+	}).Methods("GET")
 
 	// clientRouter.HandleFunc("/registerDevice", handlers.AddDevice).Methods("GET")
 	// clientRouter.HandleFunc("/User", handlers.GetUserData).Methods("GET")

@@ -1,11 +1,26 @@
 package query
 
 func CreateRecipeForUser() string {
-	return "INSERT INTO recipes (recipe_name, user_id) VALUES ($1, $2) RETURNING recipe_id;"
+	return "INSERT INTO recipes (user_id, recipe_name) VALUES ($1, $2) RETURNING recipe_id;"
 }
 
-func GetRecipesForUser() string {
-	return "SELECT recipe_id, recipe_name, user_id FROM recipes WHERE user_id = $1 ORDER BY recipe_name"
+func GetAllRecipesForUser() string {
+	return `SELECT 
+				r.recipe_id, 
+				r.recipe_name, 
+				COALESCE(ARRAY_AGG(DISTINCT d.drink_name), '{}') AS drink_names  -- Drinks in einem Array zusammenfassen
+
+			FROM 
+				recipes r
+			LEFT JOIN 
+				recipe_ingredients ri ON r.recipe_id = ri.recipe_id
+			LEFT JOIN 
+				drinks d ON ri.drink_id = d.drink_id
+			WHERE 
+				r.user_id = $1
+			GROUP BY 
+    			r.recipe_id, r.recipe_name;
+`
 }
 
 func UpdateRecipeForUser() string {
