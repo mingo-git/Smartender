@@ -12,6 +12,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
   AuthService _authService = AuthService();
   void onTap() {
     _authService.signOut();
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override

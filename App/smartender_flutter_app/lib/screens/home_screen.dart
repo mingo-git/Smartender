@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:smartender_flutter_app/components/bottom_nav_bar.dart';
+import 'package:smartender_flutter_app/config/constants.dart';
+import 'package:smartender_flutter_app/screens/homesceens/searchdrinks_screen.dart';
+import 'package:smartender_flutter_app/screens/homesceens/settings_screen.dart';
 import '../services/auth_service.dart';
-
-
+import 'homesceens/favorites_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -49,22 +52,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
+  int _selectedIndex = 0;
+  void navigateBottomBar(int index){
+    setState(() {
+      _selectedIndex = index;
+    });
+
+  }
+
+  final List<Widget> _pages = [
+    SearchdrinksScreen(),
+    FavoritesScreen(),
+    SettingsScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     // Dein UI-Code hier
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Screen'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _signOut,
-          ),
-        ],
+      backgroundColor: backgroundcolor,
+      bottomNavigationBar: MyBottomNavBar(
+        onTabChange: (index) => navigateBottomBar(index),
       ),
-      body: const Center(
-        child: Text('Willkommen!'),
-      ),
+      body: _pages[_selectedIndex],
     );
   }
 }

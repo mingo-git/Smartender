@@ -12,7 +12,34 @@ class AuthService {
   AuthService._internal();
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  final String _baseUrl = ApiConstants.baseUrl; // Verwende deine BaseURL aus constants.dart
+  final String _baseUrl = baseUrl; // Verwende deine BaseURL aus constants.dart
+
+  Future<bool> register(String username, String email, String password) async {
+    final url = Uri.parse('$_baseUrl/login');
+    print(url);
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email, 'password': password}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+
+        return true;
+      } else {
+        // Fehlerbehandlung bei ungültigen Anmeldedaten
+        return false;
+      }
+    } catch (e) {
+      // Fehlerbehandlung bei Netzwerkfehlern oder Ausnahmen
+      return false;
+    }
+  }
+
 
   /// Meldet den Benutzer mit [email] und [password] an.
   /// Gibt `true` zurück, wenn der Login erfolgreich war, sonst `false`.
@@ -31,14 +58,10 @@ class AuthService {
 
         // Extrahiere das Access Token (und Refresh Token, falls vorhanden)
         final token = data['token'];
-        final refreshToken = data['refresh_token']; // Falls dein Backend einen Refresh Token zurückgibt
+
 
         // Speichere die Tokens sicher
         await saveToken(token);
-
-        if (refreshToken != null) {
-          await saveRefreshToken(refreshToken);
-        }
 
         return true;
       } else {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smartender_flutter_app/models/cocktail_card.dart';
 import 'package:smartender_flutter_app/screens/home_screen.dart';
 import 'package:smartender_flutter_app/screens/login_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
@@ -19,14 +21,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // Definiere deine Routen
-      routes: {
-        '/home': (context) => HomeScreen(),
-        '/login': (context) => LoginScreen(),
-      },
-      // Starte mit der entsprechenden Seite
-      initialRoute: isLoggedIn ? '/home' : '/login',
+    return ChangeNotifierProvider(
+      create: (context) => CocktailCard(),
+      builder: (context, child) =>
+      MaterialApp(
+        // Definiere deine Routen
+        routes: {
+          '/home': (context) => HomeScreen(),
+          '/login': (context) => LoginScreen(),
+        },
+        // Starte mit der entsprechenden Seite
+        initialRoute: isLoggedIn ? '/home' : '/login',
+      ),
     );
   }
 }

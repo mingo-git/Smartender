@@ -1,3 +1,5 @@
-class ApiConstants {
-  static const String baseUrl = 'https://e9706d65-0132-40d4-b1a2-7f8fb2692858.mock.pstmn.io';
-}
+import 'package:flutter/material.dart';
+
+var baseUrl = 'http://localhost:8080';
+var backgroundcolor = Colors.grey[300];
+
