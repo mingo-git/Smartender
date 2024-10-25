@@ -9,7 +9,7 @@ import (
 
 func GetRoot(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
-	log.Default().Printf("GET / at %s", time.Now())
+	log.Default().Printf("📬 [GET] / at %s", time.Now())
 }
 
 func GetDatetime(w http.ResponseWriter, r *http.Request) {
@@ -18,11 +18,11 @@ func GetDatetime(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetStatus(w http.ResponseWriter, r *http.Request) {
-	/* 
- TODO: Implement health check	for
-	- status of db 
-	- status of Hardware Device 
-	- status of backend app
+	/*
+		 TODO: Implement health check	for
+			- status of db
+			- status of Hardware Device
+			- status of backend app
 	*/
 
 	type Health struct {
@@ -31,21 +31,13 @@ func GetStatus(w http.ResponseWriter, r *http.Request) {
 		Self   string `json:"self"`
 	}
 
-	status := Health { "Connected", "Offline", "Running" }
+	status := Health{"Connected", "Offline", "Running"}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(status)
 }
 
-
 func RegisterDevice(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Register Device")
-}
-
-func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	// create a new user in the database
-	// return the user_id
-	
-	json.NewEncoder(w).Encode("Register User")
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {

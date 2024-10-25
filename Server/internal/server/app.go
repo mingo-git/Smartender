@@ -2,12 +2,13 @@ package app
 
 import (
 	"app/internal/config"
+	populate "app/internal/query"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	populate "app/internal/query"
+
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
@@ -34,12 +35,23 @@ func (a *App) Initialize() {
 		log.Default().Printf("Connected to the database")
 	}
 
-	// Pre-populate the database with the tables here 
-	_, err = a.DB.Exec(populate.CreateAndPrepopulateTables())
-
+	// Pre-populate the database with the tables here ------------------------------------------------
+	_, err = a.DB.Exec(populate.WipeDatabase())
 	if err != nil {
-		log.Fatalf("Error creating users table: %v", err)
+		log.Fatalf("Error wiping tables: %v", err)
+	}	
+
+	_, err = a.DB.Exec(populate.CreateTables())
+	if err != nil {
+		log.Fatalf("Error creating tables: %v", err)
 	}
+
+	_, err = a.DB.Exec(populate.PopulateDatabase())
+	if err != nil {
+		log.Fatalf("Error populating tables: %v", err)
+	}
+	// -----------------------------------------------------------------------------------------------
+
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 }
