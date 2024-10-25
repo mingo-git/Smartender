@@ -13,10 +13,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Response struct {
-	Message string `json:"message"`
-}
-
 func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /user at %s", time.Now())
 	// 1. Decode the incoming JSON request
