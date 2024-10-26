@@ -1,204 +1,95 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 import '../config/constants.dart';
 
-
 class AuthService {
-  // Singleton Pattern (optional, aber empfohlen)
+  // Singleton pattern (optional but recommended)
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
   AuthService._internal();
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  final String _baseUrl = baseUrl; // Verwende deine BaseURL aus constants.dart
+  final String _baseUrl = baseUrl; // Use your base URL from constants.dart
+  final String _serviceUrl = '/auth';
 
-  Future<bool> register(String username, String email, String password) async {
-    final url = Uri.parse('$_baseUrl/login');
-    print(url);
+  Future<Map<String, dynamic>> register(String username, String email, String password) async {
+    final url = Uri.parse('$_baseUrl$_serviceUrl/register');
 
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email, 'password': password}),
+        headers: {'Content-Type': 'application/json', 'X-API-Key': apiKey},
+        body: json.encode({'username': username, 'password': password, 'email': email}),
       );
+      print(response.statusCode);
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-
-        return true;
+      if (response.statusCode == 201) {
+        // Registration successful
+        return {'success': true};
+      } else if (response.statusCode == 400) {
+        // Handle specific error if registration data is invalid
+        return {'success': false, 'error': 'Invalid registration data. Please check the entered information.'};
+      } else if (response.statusCode == 409) {
+        // Conflict error, e.g., username or email already taken
+        return {'success': false, 'error': 'Username or email already exists. Please use a different one.'};
       } else {
-        // Fehlerbehandlung bei ungültigen Anmeldedaten
-        return false;
+        // Handle other server-related errors
+        return {'success': false, 'error': 'Server error during registration. Please try again later.'};
       }
     } catch (e) {
-      // Fehlerbehandlung bei Netzwerkfehlern oder Ausnahmen
-      return false;
+      // Handle network or exception errors
+      print(e);
+      return {'success': false, 'error': 'Network error occurred. Please check your connection.'};
     }
   }
 
-
-  /// Meldet den Benutzer mit [email] und [password] an.
-  /// Gibt `true` zurück, wenn der Login erfolgreich war, sonst `false`.
-  Future<bool> signIn(String email, String password) async {
-    final url = Uri.parse('$_baseUrl/login');
+  /// Signs in the user with [emailOrUsername] and [password].
+  /// Returns a map with `success` and an optional `error` message.
+  Future<Map<String, dynamic>> signIn(String emailOrUsername, String password) async {
+    final url = Uri.parse('$_baseUrl$_serviceUrl/login');
 
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email, 'password': password}),
+        headers: {'Content-Type': 'application/json', 'X-API-Key': apiKey},
+        body: json.encode({'username': emailOrUsername, 'password': password}),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
-        // Extrahiere das Access Token (und Refresh Token, falls vorhanden)
+        // Extract and store the access token
         final token = data['token'];
-
-
-        // Speichere die Tokens sicher
         await saveToken(token);
-
-        return true;
+        return {'success': true};
+      } else if (response.statusCode == 401) {
+        // Invalid login credentials
+        return {'success': false, 'error': 'Invalid username or password.'};
+      } else if (response.statusCode == 500) {
+        // Server error during login
+        return {'success': false, 'error': 'Server error. Please try again later.'};
       } else {
-        // Fehlerbehandlung bei ungültigen Anmeldedaten
-        return false;
+        // Handle other unexpected errors
+        return {'success': false, 'error': 'Unexpected error occurred.'};
       }
     } catch (e) {
-      // Fehlerbehandlung bei Netzwerkfehlern oder Ausnahmen
-      return false;
+      // Network or exception error
+      return {'success': false, 'error': 'Network error. Please check your connection.'};
     }
   }
 
-  /// Speichert das Access Token sicher.
+  /// Securely saves the access token.
   Future<void> saveToken(String token) async {
     await _storage.write(key: 'jwt_token', value: token);
   }
 
-  /// Speichert das Refresh Token sicher.
-  Future<void> saveRefreshToken(String refreshToken) async {
-    await _storage.write(key: 'refresh_token', value: refreshToken);
-  }
-
-  /// Ruft das gespeicherte Access Token ab.
+  /// Retrieves the stored access token.
   Future<String?> getToken() async {
     return await _storage.read(key: 'jwt_token');
   }
 
-  /// Überprüft, ob das Access Token gültig ist.
-  /// Gibt `true` zurück, wenn das Token gültig ist, sonst `false`.
-  Future<bool> isTokenValid() async {
-    final token = await getToken();
-    if (token == null) {
-      return false;
-    }
-    return !JwtDecoder.isExpired(token);
-  }
-
-  /// Meldet den Benutzer ab und löscht gespeicherte Tokens.
+  /// Signs out the user and clears stored tokens.
   Future<void> signOut() async {
     await _storage.delete(key: 'jwt_token');
-    await _storage.delete(key: 'refresh_token');
-  }
-
-  /// Aktualisiert das Access Token mithilfe des Refresh Tokens.
-  /// Gibt `true` zurück, wenn die Aktualisierung erfolgreich war, sonst `false`.
-  Future<bool> refreshToken() async {
-    final refreshToken = await _storage.read(key: 'refresh_token');
-    if (refreshToken == null) {
-      return false;
-    }
-
-    final url = Uri.parse('$_baseUrl/refresh');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'refresh_token': refreshToken}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        // Extrahiere die neuen Tokens
-        final newAccessToken = data['access_token'];
-        final newRefreshToken = data['refresh_token'];
-
-        // Speichere die neuen Tokens
-        await saveToken(newAccessToken);
-        if (newRefreshToken != null) {
-          await saveRefreshToken(newRefreshToken);
-        }
-
-        return true;
-      } else {
-        // Fehlerbehandlung bei fehlgeschlagener Token-Aktualisierung
-        return false;
-      }
-    } catch (e) {
-      // Fehlerbehandlung bei Netzwerkfehlern oder Ausnahmen
-      return false;
-    }
-  }
-
-  /// Führt eine authentifizierte GET-Anfrage an den angegebenen [endpoint] aus.
-  /// Gibt die Antwort als `http.Response` zurück.
-  Future<http.Response> getRequest(String endpoint) async {
-    final token = await getToken();
-    final url = Uri.parse('$_baseUrl$endpoint');
-
-    // Überprüfe die Gültigkeit des Tokens und aktualisiere es bei Bedarf
-    if (!await isTokenValid()) {
-      final refreshed = await refreshToken();
-      if (!refreshed) {
-        // Token konnte nicht aktualisiert werden, Benutzer muss sich erneut anmelden
-        throw Exception('Token abgelaufen');
-      }
-    }
-
-    final updatedToken = await getToken();
-
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $updatedToken',
-      },
-    );
-
-    return response;
-  }
-
-  /// Führt eine authentifizierte POST-Anfrage an den angegebenen [endpoint] mit [body] aus.
-  /// Gibt die Antwort als `http.Response` zurück.
-  Future<http.Response> postRequest(String endpoint, Map<String, dynamic> body) async {
-    final token = await getToken();
-    final url = Uri.parse('$_baseUrl$endpoint');
-
-    // Überprüfe die Gültigkeit des Tokens und aktualisiere es bei Bedarf
-    if (!await isTokenValid()) {
-      final refreshed = await refreshToken();
-      if (!refreshed) {
-        throw Exception('Token abgelaufen');
-      }
-    }
-
-    final updatedToken = await getToken();
-
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $updatedToken',
-      },
-      body: json.encode(body),
-    );
-
-    return response;
   }
 }

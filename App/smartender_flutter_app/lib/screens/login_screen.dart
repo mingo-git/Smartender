@@ -7,30 +7,52 @@ import 'package:smartender_flutter_app/services/auth_service.dart';
 
 import '../config/constants.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final usernameOrEmailController = TextEditingController();
   final passwordController = TextEditingController();
-
   final AuthService _authService = AuthService();
 
-  void signUserIn(BuildContext context) async {
+  // Error messages
+  String errorMessage = '';
+
+  void signUserIn() async {
+    setState(() {
+      // Reset error message
+      errorMessage = '';
+    });
+
     final usernameOrEmail = usernameOrEmailController.text.trim();
     final password = passwordController.text;
 
-    bool success = await _authService.signIn(usernameOrEmail, password);
-    print("SENDE LOGIN DATEN");
-    print(success);
+    if (usernameOrEmail.isEmpty) {
+      setState(() {
+        errorMessage = 'Please enter your email or username.';
+      });
+      return;
+    }
 
-    if (success) {
-      // Navigation zur nächsten Seite
+    if (password.isEmpty) {
+      setState(() {
+        errorMessage = 'Please enter your password.';
+      });
+      return;
+    }
+
+    final result = await _authService.signIn(usernameOrEmail, password);
+
+    if (result['success']) {
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      // Fehlerbehandlung
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login fehlgeschlagen. Bitte überprüfe deine Eingaben.')),
-      );
+      setState(() {
+        errorMessage = result['error'] ?? 'Login failed. Please try again.';
+      });
     }
   }
 
@@ -41,49 +63,42 @@ class LoginScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
-            height: 150,
-          ),
-          const Icon(
-            Icons.lock,
-            size: 100,
-          ),
-          const SizedBox(
-            height: 50,
-          ),
+          const SizedBox(height: 100),
+          const Icon(Icons.lock, size: 100),
+          const SizedBox(height: 50),
           Text(
-            'Welcome back you\'ve been missing',
+            'Welcome back, you\'ve been missed!',
             style: TextStyle(color: Colors.grey[700], fontSize: 16),
           ),
-          const SizedBox(
-            height: 25,
-          ),
+          const SizedBox(height: 25),
           MyTextField(
             controller: usernameOrEmailController,
-            hintText: 'email or username',
+            hintText: 'Email or username',
             obscureText: false,
           ),
           const SizedBox(height: 10),
           MyTextField(
             controller: passwordController,
-            hintText: 'password',
+            hintText: 'Password',
             obscureText: true,
           ),
-          const SizedBox(
-            height: 10,
+          const SizedBox(height: 10),
+          // Error message or placeholder
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: errorMessage.isNotEmpty
+                ? Text(
+              errorMessage,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            )
+                : const SizedBox(height: 16), // Placeholder with fixed height
           ),
-          //TODO: Implement forgot password function
-          Text('Forgot Password?'),
-          const SizedBox(
-            height: 25,
-          ),
+          const SizedBox(height: 25),
           MyLoginButton(
             text: 'Sign In',
-            onTap: () => signUserIn(context),
+            onTap: signUserIn,
           ),
-          const SizedBox(
-            height: 50,
-          ),
+          const SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.all(25.0),
             child: Row(
@@ -110,20 +125,15 @@ class LoginScreen extends StatelessWidget {
               ],
             ),
           ),
-
-          //Google + Apple sign in
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SquareTile(imagePath: 'lib/images/google.png'),
-
-              const SizedBox(width: 25,),
-
+              SizedBox(width: 25),
               SquareTile(imagePath: 'lib/images/apple.png'),
             ],
           ),
-          const SizedBox(height: 50,),
-
+          const SizedBox(height: 50),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -139,23 +149,16 @@ class LoginScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => RegisterScreen()),
                   );
                 },
-                child: Container(
-                  padding: EdgeInsets.all(0),
-                  margin: EdgeInsets.symmetric(horizontal: 0),
-                  child: Center(
-                    child: Text(
-                      'Register now',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                child: const Text(
+                  'Register now',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ],
-          )
-
+          ),
         ],
       ),
     );
