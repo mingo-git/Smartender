@@ -42,7 +42,7 @@ func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	err = db.QueryRow(query.CreateUser(), newUser.Username, newUser.Password, newUser.Email).Scan(&newUser.UserID)
 	if err != nil {
 		log.Printf("Error inserting user: %v", err)
-		http.Error(w, "Could not create user: ", http.StatusInternalServerError)
+		http.Error(w, "Could not create user: ", http.StatusConflict)
 		return
 	}
 
@@ -94,9 +94,9 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// token := "token"
 	token, err := auth.GenerateJWT(storedUser.UserID)
 	if err != nil {
-			log.Printf("Error generating JWT: %v", err)
-			http.Error(w, "Could not generate token", http.StatusInternalServerError)
-			return
+		log.Printf("Error generating JWT: %v", err)
+		http.Error(w, "Could not generate token", http.StatusInternalServerError)
+		return
 	}
 
 	// 6. Set the response header and return the token
@@ -117,9 +117,9 @@ func LogoutUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 func DeleteUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [DELETE] /user at %s", time.Now())
-	
+
 	// TODO: User authentication should be required to delete a user
-	
+
 	// Extract user ID from the URL
 	vars := mux.Vars(r) // Using Gorilla Mux to get URL variables
 	userID := vars["user_id"]
@@ -150,7 +150,6 @@ func DeleteUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Respond with a success message
 	w.WriteHeader(http.StatusNoContent) // 204 No Content
 }
-
 
 // ReadUser retrieves user details
 // DEPRECATED: This function is not used in the current implementation
