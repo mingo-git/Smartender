@@ -2,20 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:smartender_flutter_app/components/my_textfield.dart';
 import 'package:smartender_flutter_app/components/signIn_button.dart';
 import 'package:smartender_flutter_app/components/square_tile.dart';
+import 'package:smartender_flutter_app/screens/register_screen.dart';
+import 'package:smartender_flutter_app/services/auth_service.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+import '../config/constants.dart';
 
-  final usernameController = TextEditingController();
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
+
+  final usernameOrEmailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  //sign user in method
-  void signUserIn() {}
+  final AuthService _authService = AuthService();
+
+  void signUserIn(BuildContext context) async {
+    final usernameOrEmail = usernameOrEmailController.text.trim();
+    final password = passwordController.text;
+
+    bool success = await _authService.signIn(usernameOrEmail, password);
+    print("SENDE LOGIN DATEN");
+    print(success);
+
+    if (success) {
+      // Navigation zur nächsten Seite
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      // Fehlerbehandlung
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login fehlgeschlagen. Bitte überprüfe deine Eingaben.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: backgroundcolor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -37,25 +59,27 @@ class LoginPage extends StatelessWidget {
             height: 25,
           ),
           MyTextField(
-            controller: usernameController,
-            hintText: 'Username',
+            controller: usernameOrEmailController,
+            hintText: 'email or username',
             obscureText: false,
           ),
           const SizedBox(height: 10),
           MyTextField(
             controller: passwordController,
-            hintText: 'Password',
+            hintText: 'password',
             obscureText: true,
           ),
           const SizedBox(
             height: 10,
           ),
+          //TODO: Implement forgot password function
           Text('Forgot Password?'),
           const SizedBox(
             height: 25,
           ),
-          SignInButton(
-            onTap: signUserIn,
+          MyLoginButton(
+            text: 'Sign In',
+            onTap: () => signUserIn(context),
           ),
           const SizedBox(
             height: 50,
@@ -103,16 +127,35 @@ class LoginPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Not a member?', style: TextStyle(color: Colors.grey[700]),),
-              const SizedBox(width: 4),
               Text(
-                  'Register now',
-                  style: TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.bold,
+                'Not a member?',
+                style: TextStyle(color: Colors.grey[700]),
               ),
+              const SizedBox(width: 4),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(0),
+                  margin: EdgeInsets.symmetric(horizontal: 0),
+                  child: Center(
+                    child: Text(
+                      'Register now',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           )
+
         ],
       ),
     );
