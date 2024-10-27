@@ -24,7 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void signUserIn() async {
     setState(() {
-      // Reset error message
       errorMessage = '';
     });
 
@@ -56,11 +55,33 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void signInWithGoogle() async {
+    final result = await _authService.signInWithGoogle();
+    if (result['success']) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      setState(() {
+        errorMessage = result['error'] ?? 'Google sign-in failed.';
+      });
+    }
+  }
+
+  void signInWithApple() async {
+    final result = await _authService.signInWithApple();
+    if (result['success']) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      setState(() {
+        errorMessage = result['error'] ?? 'Apple sign-in failed.';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundcolor,
-      resizeToAvoidBottomInset: true, // Anpassung bei eingeblendeter Tastatur
+      resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -91,7 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                 ),
                 const SizedBox(height: 10),
-                // Error message or placeholder
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: errorMessage.isNotEmpty
@@ -99,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     errorMessage,
                     style: const TextStyle(color: Colors.red, fontSize: 12),
                   )
-                      : const SizedBox(height: 16), // Placeholder with fixed height
+                      : const SizedBox(height: 16),
                 ),
                 const SizedBox(height: 25),
                 MyLoginButton(
@@ -133,12 +153,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SquareTile(imagePath: 'lib/images/google.png'),
-                    SizedBox(width: 25),
-                    SquareTile(imagePath: 'lib/images/apple.png'),
+                    GestureDetector(
+                      onTap: signInWithGoogle,
+                      child: const SquareTile(imagePath: 'lib/images/google.png'),
+                    ),
+                    const SizedBox(width: 25),
+                    GestureDetector(
+                      onTap: signInWithApple,
+                      child: const SquareTile(imagePath: 'lib/images/apple.png'),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 50),

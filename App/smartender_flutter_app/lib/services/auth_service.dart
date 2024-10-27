@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../config/constants.dart';
 
 class AuthService {
@@ -92,4 +94,72 @@ class AuthService {
   Future<void> signOut() async {
     await _storage.delete(key: 'jwt_token');
   }
+
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  // Google Sign-In method
+  Future<Map<String, dynamic>> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        return {'success': false, 'error': 'Google sign-in aborted by user.'};
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Send the Google token to your backend to verify and get a JWT
+      final url = Uri.parse('$_baseUrl$_serviceUrl/google-login');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json', 'X-API-Key': apiKey},
+        body: json.encode({'token': googleAuth.idToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final token = data['token'];
+        await saveToken(token);
+        return {'success': true};
+      } else {
+        return {'success': false, 'error': 'Server error. Please try again.'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Google sign-in failed. Please try again.'};
+    }
+  }
+
+
+  // Apple Sign-In method
+  Future<Map<String, dynamic>> signInWithApple() async {
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
+      );
+
+      // Send the Apple token to your backend to verify and get a JWT
+      final url = Uri.parse('$_baseUrl$_serviceUrl/apple-login');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json', 'X-API-Key': apiKey},
+        body: json.encode({'token': appleCredential.identityToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final token = data['token'];
+        await saveToken(token);
+        return {'success': true};
+      } else {
+        return {'success': false, 'error': 'Server error. Please try again.'};
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Apple sign-in failed. Please try again.'};
+    }
+  }
+
+
+
+
 }
