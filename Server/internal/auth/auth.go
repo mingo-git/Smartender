@@ -33,8 +33,6 @@ func GenerateJWT(userID string) (string, error) {
 
 // ValidateJWT checks the JWT token and returns the parsed user_id or an error
 func ValidateJWT(tokenString string) (int, error) {
-	// Log the token being validated for debugging
-	log.Printf("Received token for validation: %s", tokenString)
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Ensure that the signing method is HMAC (HS256)

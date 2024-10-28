@@ -6,20 +6,19 @@ func CreateRecipeForUser() string {
 
 func GetAllRecipesForUser() string {
 	return `SELECT 
-				r.recipe_id, 
-				r.recipe_name, 
-				COALESCE(ARRAY_AGG(DISTINCT d.drink_name), '{}') AS drink_names  -- Drinks in einem Array zusammenfassen
-
-			FROM 
-				recipes r
-			LEFT JOIN 
-				recipe_ingredients ri ON r.recipe_id = ri.recipe_id
-			LEFT JOIN 
-				drinks d ON ri.drink_id = d.drink_id
-			WHERE 
-				r.user_id = $1
-			GROUP BY 
-    			r.recipe_id, r.recipe_name;
+						r.recipe_id, 
+						r.recipe_name, 
+						COALESCE(ARRAY_AGG(DISTINCT d.drink_name) FILTER (WHERE d.drink_name IS NOT NULL), '{}') AS drink_names
+				FROM 
+						recipes r
+				LEFT JOIN 
+						recipe_ingredients ri ON r.recipe_id = ri.recipe_id
+				LEFT JOIN 
+						drinks d ON ri.drink_id = d.drink_id
+				WHERE 
+						r.user_id = $1
+				GROUP BY 
+						r.recipe_id, r.recipe_name;
 `
 }
 
