@@ -49,6 +49,10 @@ func (a *App) initializeRoutes() {
 	}).Methods("GET")
 
 	usersRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetSingleDrinkForUserByDrinkID(a.DB, w, r)
+	}).Methods("GET")
+
+	usersRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateDrink(a.DB, w, r)
 	}).Methods("PUT")
 
@@ -67,11 +71,29 @@ func (a *App) initializeRoutes() {
 	}).Methods("GET")
 
 	usersRouter.HandleFunc("/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetRecipeByID(a.DB, w, r)
+	}).Methods("GET")
+
+	usersRouter.HandleFunc("/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateRecipeName(a.DB, w, r)
 	}).Methods("PUT")
 
 	usersRouter.HandleFunc("/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DeleteRecipe(a.DB, w, r)
+	}).Methods("DELETE")
+	// -----------------------------------------------------------------------------------------------
+
+	// INGREDIENTS: ----------------------------------------------------------------------------------
+	usersRouter.HandleFunc("/recipes/{recipe_id}/ingredients", func(w http.ResponseWriter, r *http.Request) {
+		handlers.CreateIngredient(a.DB, w, r)
+	}).Methods("POST")
+
+	usersRouter.HandleFunc("/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.UpdateIngredient(a.DB, w, r)
+	}).Methods("PUT")
+
+	usersRouter.HandleFunc("/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DeleteIngredient(a.DB, w, r)
 	}).Methods("DELETE")
 
 	// clientRouter.HandleFunc("/registerDevice", handlers.AddDevice).Methods("GET")

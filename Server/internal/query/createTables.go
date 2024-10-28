@@ -108,7 +108,8 @@ func PopulateDatabase() string {
 	INSERT INTO recipes (user_id, recipe_name) VALUES
 		(1, 'Vodka Martini'),
 		(1, 'Mojito'),
-		(1, 'Gin and Tonic');
+		(1, 'Gin and Tonic'),
+		(2, 'Whiskey O');
 
 	INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml) VALUES
 		(1, 1, 60),

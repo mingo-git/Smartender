@@ -28,7 +28,7 @@ func GetRecipeByID() string {
 						r.recipe_id, 
 						r.user_id,
 						r.recipe_name, 
-						COALESCE(ARRAY_AGG(DISTINCT d.drink_name) FILTER (WHERE d.drink_name IS NOT NULL), '{}') AS drink_names
+						    COALESCE(json_agg(DISTINCT ri.drink_id) FILTER (WHERE ri.drink_id IS NOT NULL), '[]') AS drink_ids
 				FROM 
 						recipes r
 				LEFT JOIN 

@@ -74,6 +74,26 @@ func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(drinks)
 }
 
+func GetSingleDrinkForUserByDrinkID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	log.Default().Printf("📬 [GET] /drinks/{id} at %s", time.Now())
+
+	vars := mux.Vars(r)
+	drinkID := vars["drink_id"]
+
+	var drink models.Drink
+
+	err := db.QueryRow(query.GetDrinkByID(), drinkID, r.Context().Value("user_id")).Scan(&drink.DrinkID, &drink.UserID, &drink.Name, &drink.Alcoholic)
+	if err != nil {
+		log.Printf("Error getting drink: %v", err)
+		http.Error(w, "Could not get drink", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(drink)
+}
+
 func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [PUT] /drinks/{id} at %s", time.Now())
 
@@ -130,24 +150,4 @@ func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Successfully deleted drink",
 	})
-}
-
-func GetSingleDrinkForUserByDrinkID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	log.Default().Printf("📬 [GET] /drinks/{id} at %s", time.Now())
-
-	vars := mux.Vars(r)
-	drinkID := vars["drink_id"]
-
-	var drink models.Drink
-
-	err := db.QueryRow(query.GetDrinkByID(), drinkID, r.Context().Value("user_id")).Scan(&drink.DrinkID, &drink.Name)
-	if err != nil {
-		log.Printf("Error getting drink: %v", err)
-		http.Error(w, "Could not get drink", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(drink)
 }

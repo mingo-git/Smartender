@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/lib/pq"
 )
 
 func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -59,7 +58,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Erstelle das DrinkDetails-Array für das aktuelle Rezept
-		var drinkDetails []models.Drink
+		var drinkDetails []models.Drink = make([]models.Drink, 0)
 		for _, drinkID := range drinkIDs {
 			var drink models.Drink
 			// Abfrage ausführen, um jedes Getränk-Objekt anhand der drink_id und user_id abzurufen
@@ -87,6 +86,59 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	// Encode die Liste der Recipes als JSON und sende sie als Antwort
 	json.NewEncoder(w).Encode(recipes)
+}
+
+func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	log.Default().Printf("📬 [GET] /recipes/{id} at %s", time.Now())
+
+	vars := mux.Vars(r)
+	id := vars["recipe_id"]
+
+	var recipe models.Recipe
+	var drinkIDsJSON []byte // JSON-Daten für die Drink-IDs
+
+	// Datenbankabfrage ausführen und drinkIDs als []byte holen
+	err := db.QueryRow(query.GetRecipeByID(), id, r.Context().Value("user_id")).Scan(&recipe.ID, &recipe.UserID, &recipe.Name, &drinkIDsJSON)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "Recipe not found", http.StatusNotFound)
+			return
+		}
+		log.Printf("Error getting recipe: %v", err)
+		http.Error(w, "Could not get recipe", http.StatusInternalServerError)
+		return
+	}
+
+	// Unmarshale JSON-Array von Drink-IDs in []int
+	var drinkIDs []int
+	if err := json.Unmarshal(drinkIDsJSON, &drinkIDs); err != nil {
+		log.Printf("Error unmarshaling drink IDs: %v", err)
+		log.Printf("Drink IDs JSON: %s", drinkIDsJSON) // Debugging-Ausgabe
+		http.Error(w, "Error processing recipe drink IDs", http.StatusInternalServerError)
+		return
+	}
+
+	// Erstelle das DrinkDetails-Array für das aktuelle Rezept
+	var drinkDetails []models.Drink
+	for _, drinkID := range drinkIDs {
+		log.Default().Printf("____Drink ID: %d", drinkID)
+		var drink models.Drink
+		// Abfrage ausführen, um jedes Getränk-Objekt anhand der drink_id und user_id abzurufen
+		drinkRow := db.QueryRow(query.GetDrinkByID(), drinkID, recipe.UserID)
+		if err := drinkRow.Scan(&drink.DrinkID, &drink.Name, &drink.UserID, &drink.Alcoholic); err != nil {
+			log.Printf("Error getting drink details for drink_id %d: %v", drinkID, err)
+			continue // Falls ein Fehler auftritt, überspringe diesen Drink
+		}
+		// Füge das Getränk-Objekt zur Liste hinzu
+		drinkDetails = append(drinkDetails, drink)
+	}
+	recipe.DrinkDetails = drinkDetails // Setze die Drink-Details für das Rezept
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	// Encode das Recipe-Objekt als JSON und sende es als Antwort
+	json.NewEncoder(w).Encode(recipe)
 }
 
 func UpdateRecipeName(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -145,24 +197,4 @@ func DeleteRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Successfully deleted recipe",
 	})
-}
-
-func GetSingleRecipeForUserByRecipeID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	log.Default().Printf("📬 [GET] /recipes/{id} at %s", time.Now())
-
-	vars := mux.Vars(r)
-	recipeID := vars["recipe_id"]
-
-	var recipe models.Recipe
-
-	err := db.QueryRow(query.GetRecipeByID(), recipeID, r.Context().Value("user_id")).Scan(&recipe.ID, &recipe.UserID, &recipe.Name, pq.Array(&recipe.DrinkDetails))
-	if err != nil {
-		log.Printf("Error getting recipe: %v", err)
-		http.Error(w, "Could not get recipe", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(recipe)
 }
