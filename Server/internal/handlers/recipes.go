@@ -39,27 +39,39 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [GET] /recipes at %s", time.Now())
 
 	var recipes []models.Recipe
-
 	rows, err := db.Query(query.GetAllRecipesForUser(), r.Context().Value("user_id"))
 	if err != nil {
 		log.Printf("Error getting recipes: %v", err)
 		http.Error(w, "Could not get recipes", http.StatusInternalServerError)
 		return
 	}
-
 	defer rows.Close()
 
 	// Iteriere über alle Zeilen
 	for rows.Next() {
 		var recipe models.Recipe
-		var drinkNames pq.StringArray
-		err := rows.Scan(&recipe.ID, &recipe.Name, &drinkNames)
+		var drinkIDs []uint8 // IDs der Drinks für das Rezept
+		err := rows.Scan(&recipe.ID, &recipe.UserID, &recipe.Name, &drinkIDs)
 		if err != nil {
 			log.Printf("Error scanning recipe: %v", err)
 			http.Error(w, "Error processing recipes", http.StatusInternalServerError)
 			return
 		}
-		recipe.DrinkNames = drinkNames
+
+		// Erstelle das DrinkDetails-Array für das aktuelle Rezept
+		var drinkDetails []models.Drink
+		for _, drinkID := range drinkIDs {
+			var drink models.Drink
+			// Abfrage ausführen, um jedes Getränk-Objekt anhand der drink_id und user_id abzurufen
+			drinkRow := db.QueryRow(query.GetDrinkByID(), drinkID, recipe.UserID)
+			if err := drinkRow.Scan(&drink.DrinkID, &drink.Name, &drink.UserID, &drink.Alcoholic); err != nil {
+				log.Printf("Error getting drink details for drink_id %d: %v", drinkID, err)
+				continue // Falls ein Fehler auftritt, überspringe diesen Drink
+			}
+			// Füge das Getränk-Objekt zur Liste hinzu
+			drinkDetails = append(drinkDetails, drink)
+		}
+		recipe.DrinkDetails = drinkDetails // Setze die Drink-Details für das Rezept
 		recipes = append(recipes, recipe)
 	}
 
@@ -71,7 +83,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK) // 200 OK
+	w.WriteHeader(http.StatusOK)
 
 	// Encode die Liste der Recipes als JSON und sende sie als Antwort
 	json.NewEncoder(w).Encode(recipes)
@@ -135,22 +147,22 @@ func DeleteRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// func GetSingleRecipeForUserByRecipeID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-// 	log.Default().Printf("📬 [GET] /recipes/{id} at %s", time.Now())
+func GetSingleRecipeForUserByRecipeID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	log.Default().Printf("📬 [GET] /recipes/{id} at %s", time.Now())
 
-// 	vars := mux.Vars(r)
-// 	recipeID := vars["recipe_id"]
+	vars := mux.Vars(r)
+	recipeID := vars["recipe_id"]
 
-// 	var recipe models.Recipe
+	var recipe models.Recipe
 
-// 	err := db.QueryRow(query.GetRecipeByID(), recipeID, r.Context().Value("user_id")).Scan(&recipe.RecipeID, &recipe.Name)
-// 	if err != nil {
-// 		log.Printf("Error getting recipe: %v", err)
-// 		http.Error(w, "Could not get recipe", http.StatusInternalServerError)
-// 		return
-// 	}
+	err := db.QueryRow(query.GetRecipeByID(), recipeID, r.Context().Value("user_id")).Scan(&recipe.ID, &recipe.UserID, &recipe.Name, pq.Array(&recipe.DrinkDetails))
+	if err != nil {
+		log.Printf("Error getting recipe: %v", err)
+		http.Error(w, "Could not get recipe", http.StatusInternalServerError)
+		return
+	}
 
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(w).Encode(recipe)
-// }
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(recipe)
+}
