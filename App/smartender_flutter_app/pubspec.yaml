@@ -11,6 +11,11 @@ environment:
 
 
 dependencies:
+  http: ^0.13.4
+  flutter_secure_storage: ^8.0.0
+  jwt_decoder: ^2.0.1
+  google_nav_bar: ^5.0.6
+  provider:
   flutter:
     sdk: flutter
 
@@ -28,8 +33,7 @@ dev_dependencies:
 
 flutter:
   assets:
-    - lib/images/google.png
-    - lib/images/apple.png
+    - lib/images/
 
   uses-material-design: true
 
