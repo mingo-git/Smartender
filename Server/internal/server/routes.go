@@ -66,6 +66,14 @@ func (a *App) initializeRoutes() {
 		handlers.GetAllRecipes(a.DB, w, r)
 	}).Methods("GET")
 
+	usersRouter.HandleFunc("/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.UpdateRecipeName(a.DB, w, r)
+	}).Methods("PUT")
+
+	usersRouter.HandleFunc("/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DeleteRecipe(a.DB, w, r)
+	}).Methods("DELETE")
+
 	// clientRouter.HandleFunc("/registerDevice", handlers.AddDevice).Methods("GET")
 	// clientRouter.HandleFunc("/User", handlers.GetUserData).Methods("GET")
 	// clientRouter.HandleFunc("/device", handlers.).Methods("GET")

@@ -89,7 +89,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(recipes)
 }
 
-func UpdateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+func UpdateRecipeName(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [PUT] /recipes/{id} at %s", time.Now())
 
 	vars := mux.Vars(r)
