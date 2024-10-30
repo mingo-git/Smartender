@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/lib/pq"
 )
 
 func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -49,28 +50,25 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Iteriere über alle Zeilen
 	for rows.Next() {
 		var recipe models.Recipe
-		var drinkIDs []uint8 // IDs der Drinks für das Rezept
-		err := rows.Scan(&recipe.ID, &recipe.UserID, &recipe.Name, &drinkIDs)
+		var drinkIDs []int64
+		err := rows.Scan(&recipe.ID, &recipe.UserID, &recipe.Name, pq.Array(&drinkIDs))
 		if err != nil {
 			log.Printf("Error scanning recipe: %v", err)
 			http.Error(w, "Error processing recipes", http.StatusInternalServerError)
 			return
 		}
 
-		// Erstelle das DrinkDetails-Array für das aktuelle Rezept
 		var drinkDetails []models.Drink = make([]models.Drink, 0)
 		for _, drinkID := range drinkIDs {
 			var drink models.Drink
-			// Abfrage ausführen, um jedes Getränk-Objekt anhand der drink_id und user_id abzurufen
 			drinkRow := db.QueryRow(query.GetDrinkByID(), drinkID, recipe.UserID)
-			if err := drinkRow.Scan(&drink.DrinkID, &drink.Name, &drink.UserID, &drink.Alcoholic); err != nil {
+			if err := drinkRow.Scan(&drink.DrinkID, &drink.UserID, &drink.Name, &drink.Alcoholic); err != nil {
 				log.Printf("Error getting drink details for drink_id %d: %v", drinkID, err)
-				continue // Falls ein Fehler auftritt, überspringe diesen Drink
+				continue
 			}
-			// Füge das Getränk-Objekt zur Liste hinzu
 			drinkDetails = append(drinkDetails, drink)
 		}
-		recipe.DrinkDetails = drinkDetails // Setze die Drink-Details für das Rezept
+		recipe.DrinkDetails = drinkDetails
 		recipes = append(recipes, recipe)
 	}
 
