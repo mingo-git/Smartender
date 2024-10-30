@@ -5,3 +5,9 @@ type Ingredient struct {
 	DrinkID     int `json:"drink_id"`
 	Quantity_ml int `json:"quantity_ml"`
 }
+
+
+type IngredientResponse struct {
+	Quantity_ml int   `json:"quantity_ml"`
+	Drink       Drink `json:"drink"`
+}

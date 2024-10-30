@@ -87,17 +87,17 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	log.Default().Printf("📬 [GET] /recipes/{id} at %s", time.Now())
+	log.Printf("📬 [GET] /recipes/{id} at %s", time.Now())
 
+	// Routen-Variablen extrahieren
 	vars := mux.Vars(r)
-	id := vars["recipe_id"]
+	recipeID := vars["recipe_id"]
+	userID := r.Context().Value("user_id")
 
+	// Haupt-Rezeptdaten abrufen
 	var recipe models.Recipe
-	var drinkIDsJSON []byte // JSON-Daten für die Drink-IDs
-
-	// Datenbankabfrage ausführen und drinkIDs als []byte holen
-	err := db.QueryRow(query.GetRecipeByID(), id, r.Context().Value("user_id")).Scan(&recipe.ID, &recipe.UserID, &recipe.Name, &drinkIDsJSON)
-	if err != nil {
+	var drinkIDsJSON []byte
+	if err := db.QueryRow(query.GetRecipeByID(), recipeID, userID).Scan(&recipe.ID, &recipe.UserID, &recipe.Name, &drinkIDsJSON); err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Recipe not found", http.StatusNotFound)
 			return
@@ -107,36 +107,57 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Unmarshale JSON-Array von Drink-IDs in []int
-	var drinkIDs []int
-	if err := json.Unmarshal(drinkIDsJSON, &drinkIDs); err != nil {
-		log.Printf("Error unmarshaling drink IDs: %v", err)
-		log.Printf("Drink IDs JSON: %s", drinkIDsJSON) // Debugging-Ausgabe
-		http.Error(w, "Error processing recipe drink IDs", http.StatusInternalServerError)
+	// Zutateninformationen abrufen
+	rows, err := db.Query(query.GetIngredientsForRecipe(), recipe.ID)
+	if err != nil {
+		log.Printf("Error getting ingredients for recipe: %v", err)
+		http.Error(w, "Could not get ingredients for recipe", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	// Zutaten und zugehörige Getränke-Details sammeln
+	var ingredientsAll []models.IngredientResponse
+	for rows.Next() {
+		var ingredient models.Ingredient
+		if err := rows.Scan(&ingredient.RecipeID, &ingredient.DrinkID, &ingredient.Quantity_ml); err != nil {
+			log.Printf("Error scanning ingredient: %v", err)
+			http.Error(w, "Error processing ingredients", http.StatusInternalServerError)
+			return
+		}
+
+		// Getränkedetails abrufen
+		var drink models.Drink
+		if err := db.QueryRow(query.GetDrinkByID(), ingredient.DrinkID, recipe.UserID).Scan(&drink.DrinkID, &drink.UserID, &drink.Name, &drink.Alcoholic); err != nil {
+			log.Printf("Error getting drink details for drink_id %d: %v", ingredient.DrinkID, err)
+			continue
+		}
+
+		// Zutat und Getränk kombinieren
+		ingredientsAll = append(ingredientsAll, models.IngredientResponse{
+			Quantity_ml: ingredient.Quantity_ml,
+			Drink:       drink,
+		})
+	}
+
+	// Fehler nach der Iteration prüfen
+	if err = rows.Err(); err != nil {
+		log.Printf("Error after iterating rows: %v", err)
+		http.Error(w, "Error processing ingredients", http.StatusInternalServerError)
 		return
 	}
 
-	// Erstelle das DrinkDetails-Array für das aktuelle Rezept
-	var drinkDetails []models.Drink
-	for _, drinkID := range drinkIDs {
-		log.Default().Printf("____Drink ID: %d", drinkID)
-		var drink models.Drink
-		// Abfrage ausführen, um jedes Getränk-Objekt anhand der drink_id und user_id abzurufen
-		drinkRow := db.QueryRow(query.GetDrinkByID(), drinkID, recipe.UserID)
-		if err := drinkRow.Scan(&drink.DrinkID, &drink.Name, &drink.UserID, &drink.Alcoholic); err != nil {
-			log.Printf("Error getting drink details for drink_id %d: %v", drinkID, err)
-			continue // Falls ein Fehler auftritt, überspringe diesen Drink
-		}
-		// Füge das Getränk-Objekt zur Liste hinzu
-		drinkDetails = append(drinkDetails, drink)
+	// Strukturierte Antwort erstellen
+	recipeResponse := models.Recipe_Response{
+		ID:          recipe.ID,
+		UserID:      recipe.UserID,
+		Name:        recipe.Name,
+		Ingredients: ingredientsAll,
 	}
-	recipe.DrinkDetails = drinkDetails // Setze die Drink-Details für das Rezept
 
+	// JSON-Antwort senden
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	// Encode das Recipe-Objekt als JSON und sende es als Antwort
-	json.NewEncoder(w).Encode(recipe)
+	json.NewEncoder(w).Encode(recipeResponse)
 }
 
 func UpdateRecipeName(db *sql.DB, w http.ResponseWriter, r *http.Request) {
