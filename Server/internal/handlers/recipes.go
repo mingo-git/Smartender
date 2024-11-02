@@ -117,6 +117,10 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if len(ingredientsAll) == 0 {
+			ingredientsAll = []models.IngredientResponse{}
+		}
+
 		// Create structured response
 		recipeResponse := models.Recipe_Response{
 			ID:          recipe.ID,
@@ -192,6 +196,10 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error after iterating rows: %v", err)
 		http.Error(w, "Error processing ingredients", http.StatusInternalServerError)
 		return
+	}
+
+	if len(ingredientsAll) == 0 {
+		ingredientsAll = []models.IngredientResponse{}
 	}
 
 	// Strukturierte Antwort erstellen

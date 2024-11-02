@@ -44,12 +44,13 @@ func CreateTables() string {
 		PRIMARY KEY (user_id, hardware_id)
 	);
 
-	CREATE TABLE IF NOT EXISTS slots (
-		slot_id SERIAL PRIMARY KEY,
-		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,
-		slot_number INT NOT NULL,
-		drink_id INT REFERENCES drinks(drink_id) ON DELETE SET NULL  -- Each slot can hold one drink
-	);
+CREATE TABLE IF NOT EXISTS slots (
+    hardware_id INT NOT NULL,
+    slot_number INT NOT NULL,
+    drink_id INT REFERENCES drinks(drink_id) ON DELETE SET NULL,  -- Each slot can hold one drink
+    PRIMARY KEY (slot_number, hardware_id),
+    FOREIGN KEY (hardware_id) REFERENCES hardware(hardware_id) ON DELETE CASCADE
+);
 
 	CREATE TABLE IF NOT EXISTS recipes (
 		recipe_id SERIAL PRIMARY KEY,

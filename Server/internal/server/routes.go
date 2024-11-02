@@ -8,16 +8,23 @@ import (
 
 func (a *App) initializeRoutes() {
 
+	// =============================================================================================== API KEY
 	// Ensure that all routes are protected by the API key
 	root := a.Router
 	root.Use(handlers.APIKeyMiddleware)
 	root.HandleFunc("/", handlers.GetRoot).Methods("GET")
+	// ===============================================================================================
 
-	// Smartender (Raspberry Pi)
+
+	// Smartender (Raspberry Pi) --------------------------------------------------------------------- HARDWARE
 	smartenderRouter := a.Router.PathPrefix("/smartender").Subrouter()
 	smartenderRouter.HandleFunc("/register", handlers.RegisterDevice).Methods("GET")
+	// -----------------------------------------------------------------------------------------------
+	
 
-	// Client (Mobile App)
+	// Client (Mobile App) --------------------------------------------------------------------------- CLIENT
+
+	// REGISTRATION and LOGIN ------------------------------------------------------------------------ REGISTRATION + LOGIN
 	clientRouter := a.Router.PathPrefix("/api").Subrouter()
 	clientRouter.HandleFunc("/auth/register", func(w http.ResponseWriter, r *http.Request) {
 		handlers.RegisterUser(a.DB, w, r)
@@ -27,19 +34,21 @@ func (a *App) initializeRoutes() {
 		handlers.LoginUser(a.DB, w, r)
 	}).Methods("POST")
 
-	// TODO: Change or delete User Data --------------------------------------------------------------
-	a.Router.HandleFunc("/user/{user_id}", func(w http.ResponseWriter, r *http.Request) {
+	// TODO: Change or delete User Data
+	usersRouter := clientRouter.PathPrefix("/user").Subrouter()
+	usersRouter.Use(handlers.JWTMiddleware)
+
+	usersRouter.HandleFunc("/{user_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateUser(a.DB, w, r)
 	}).Methods("PUT")
 
-	a.Router.HandleFunc("/user/{user_id}", func(w http.ResponseWriter, r *http.Request) {
+	usersRouter.HandleFunc("/{user_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DeleteUser(a.DB, w, r)
 	}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
 
-	// DRINKS: ---------------------------------------------------------------------------------------
-	usersRouter := clientRouter.PathPrefix("/user").Subrouter()
-	usersRouter.Use(handlers.JWTMiddleware)
+
+	// DRINKS: ---------------------------------------------------------------------------------------  DRINKS
 	usersRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CreateDrink(a.DB, w, r)
 	}).Methods("POST")
@@ -61,7 +70,7 @@ func (a *App) initializeRoutes() {
 	}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
 
-	// RECIPES: --------------------------------------------------------------------------------------
+	// RECIPES: --------------------------------------------------------------------------------------  RECIPES
 	usersRouter.HandleFunc("/recipes", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CreateRecipe(a.DB, w, r)
 	}).Methods("POST")
@@ -83,22 +92,40 @@ func (a *App) initializeRoutes() {
 	}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
 
-	// INGREDIENTS: ----------------------------------------------------------------------------------
-	usersRouter.HandleFunc("/recipes/{recipe_id}/ingredients", func(w http.ResponseWriter, r *http.Request) {
+	// INGREDIENTS: ----------------------------------------------------------------------------------  INGREDIENTS
+	usersRouter.HandleFunc(
+		"/recipes/{recipe_id}/ingredients", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CreateIngredient(a.DB, w, r)
 	}).Methods("POST")
 
-	usersRouter.HandleFunc("/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+	usersRouter.HandleFunc(
+		"/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateIngredient(a.DB, w, r)
 	}).Methods("PUT")
 
-	usersRouter.HandleFunc("/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+	usersRouter.HandleFunc(
+		"/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DeleteIngredient(a.DB, w, r)
 	}).Methods("DELETE")
+	// -----------------------------------------------------------------------------------------------
 
-	// clientRouter.HandleFunc("/registerDevice", handlers.AddDevice).Methods("GET")
-	// clientRouter.HandleFunc("/User", handlers.GetUserData).Methods("GET")
-	// clientRouter.HandleFunc("/device", handlers.).Methods("GET")
-	// clientRouter.HandleFunc("", handlers.).Methods("GET")
-	// clientRouter.HandleFunc("", handlers.).Methods("GET")
+	// SLOTS: ----------------------------------------------------------------------------------------  SLOTS
+	// TODO: Move this Route to the WebSocket Communication Process
+	smartenderRouter.HandleFunc("/slots/temp", func(w http.ResponseWriter, r *http.Request) {
+		handlers.InitSlotsForHardware(a.DB, w, r)
+	}).Methods("GET")
+
+	smartenderRouter.HandleFunc("/slots", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetAllSlotsForSelectedHardware(a.DB, w, r)
+	}).Methods("GET")
+
+	smartenderRouter.HandleFunc("/slots", func(w http.ResponseWriter, r *http.Request) {
+
+		handlers.SetSlotForHardwareAndID(a.DB, w, r)
+	}).Methods("PUT")
+	// -----------------------------------------------------------------------------------------------
+
+	// REGISTER DEVICE: ------------------------------------------------------------------------------  REGISTER DEVICE
+	// TODO: WebSocket
+	// -----------------------------------------------------------------------------------------------
 }
