@@ -39,10 +39,28 @@ func CreateTables() string {
 	);
 
 	CREATE TABLE IF NOT EXISTS user_hardware (
-		user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+		user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
 		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,
+		role VARCHAR(50) DEFAULT 'user',  -- User role for the hardware
 		PRIMARY KEY (user_id, hardware_id)
 	);
+
+	-- Create a trigger function to handle conditional delete
+	CREATE OR REPLACE FUNCTION delete_admin_user_hardware()
+	RETURNS TRIGGER AS $$
+	BEGIN
+		DELETE FROM user_hardware
+		WHERE user_id = OLD.user_id AND role = 'admin';
+		RETURN OLD;
+	END;
+	$$ LANGUAGE plpgsql;
+
+	-- Attach the trigger function to the users table
+	CREATE TRIGGER delete_admin_user_hardware_trigger
+	AFTER DELETE ON users
+	FOR EACH ROW
+	EXECUTE FUNCTION delete_admin_user_hardware();
+
 
 	CREATE TABLE IF NOT EXISTS slots (
 			hardware_id INT NOT NULL,
@@ -89,10 +107,10 @@ func PopulateDatabase() string {
 		('Smartender von Fachschaft', '2'),
 		('Smartender von Philipp', '3');
 
-	INSERT INTO user_hardware (user_id, hardware_id) VALUES
-		(1, 1),
-		(1, 2),
-		(4, 3);
+	INSERT INTO user_hardware (user_id, hardware_id, role) VALUES
+		(1, 1, 'admin'),
+		(1, 2, 'admin'),
+		(4, 3, 'admin');
 
 	INSERT INTO slots (hardware_id, slot_number, drink_id) VALUES
 		(1, 1, 1),
