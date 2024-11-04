@@ -15,12 +15,10 @@ func (a *App) initializeRoutes() {
 	root.HandleFunc("/", handlers.GetRoot).Methods("GET")
 	// ===============================================================================================
 
-
 	// Smartender (Raspberry Pi) --------------------------------------------------------------------- HARDWARE
 	smartenderRouter := a.Router.PathPrefix("/smartender").Subrouter()
 	smartenderRouter.HandleFunc("/register", handlers.RegisterDevice).Methods("GET")
 	// -----------------------------------------------------------------------------------------------
-	
 
 	// Client (Mobile App) --------------------------------------------------------------------------- CLIENT
 
@@ -46,7 +44,6 @@ func (a *App) initializeRoutes() {
 		handlers.DeleteUser(a.DB, w, r)
 	}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
-
 
 	// DRINKS: ---------------------------------------------------------------------------------------  DRINKS
 	usersRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
@@ -95,32 +92,38 @@ func (a *App) initializeRoutes() {
 	// INGREDIENTS: ----------------------------------------------------------------------------------  INGREDIENTS
 	usersRouter.HandleFunc(
 		"/recipes/{recipe_id}/ingredients", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateIngredient(a.DB, w, r)
-	}).Methods("POST")
+			handlers.CreateIngredient(a.DB, w, r)
+		}).Methods("POST")
 
 	usersRouter.HandleFunc(
 		"/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateIngredient(a.DB, w, r)
-	}).Methods("PUT")
+			handlers.UpdateIngredient(a.DB, w, r)
+		}).Methods("PUT")
 
 	usersRouter.HandleFunc(
 		"/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteIngredient(a.DB, w, r)
-	}).Methods("DELETE")
+			handlers.DeleteIngredient(a.DB, w, r)
+		}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
+
+	// HARDWARE: -------------------------------------------------------------------------------------  HARDWARE
+
+	hardwareRouter := usersRouter.PathPrefix("/hardware").Subrouter()
+	// hardwareRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	handlers.RegisterHardware(a.DB, w, r)
+	// }).Methods("POST")
 
 	// SLOTS: ----------------------------------------------------------------------------------------  SLOTS
 	// TODO: Move this Route to the WebSocket Communication Process
-	smartenderRouter.HandleFunc("/slots/temp", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/slots/temp", func(w http.ResponseWriter, r *http.Request) {
 		handlers.InitSlotsForHardware(a.DB, w, r)
 	}).Methods("GET")
 
-	smartenderRouter.HandleFunc("/slots", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/slots", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAllSlotsForSelectedHardware(a.DB, w, r)
 	}).Methods("GET")
 
-	smartenderRouter.HandleFunc("/slots", func(w http.ResponseWriter, r *http.Request) {
-
+	hardwareRouter.HandleFunc("/{hardware_id}/slots/{slot_number}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.SetSlotForHardwareAndID(a.DB, w, r)
 	}).Methods("PUT")
 	// -----------------------------------------------------------------------------------------------

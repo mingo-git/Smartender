@@ -5,9 +5,12 @@ import (
 	query "app/internal/query"
 	"database/sql"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 // InitSlotsForHardware initializes the slots table with the hardware_id and slot_number.
@@ -16,9 +19,9 @@ import (
 func InitSlotsForHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /slots at %s", time.Now())
 
-	var slotAmount uint8 = 6
+	var slotAmount uint8 = 5
 
-	for i := 0; i < int(slotAmount); i++ {
+	for i := 1; i <= int(slotAmount); i++ {
 		_, err := db.Exec(query.InitSlotsForHardware(), 1, i)
 		if err != nil {
 			log.Printf("Error inserting new slot: %v", err)
@@ -36,7 +39,8 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 	log.Default().Printf("📬 [GET] /slots at %s", time.Now())
 
 	// TODO: Hardware ID should be dnamically set
-	hardware_id := 1
+	vars := mux.Vars(r)
+	hardware_id := vars["hardware_id"]
 
 	var slotSchemaList []models.SlotSchema
 	rows, err := db.Query(query.GetAllSlotsForSelectedHardware(), hardware_id)
@@ -59,23 +63,26 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 
 	log.Default().Printf("Slots: %v", slotSchemaList)
 
+	var slotResponseList []models.Slot
+
 	for _, schema := range slotSchemaList {
 		drink_id := schema.DrinkID
 		var drink models.Drink
 
 		// Prüfen, ob drink_id vorhanden ist
-		if drink_id == 0 {
+		if !drink_id.Valid {
+			slotResponseList = append(slotResponseList, models.Slot{HardwareID: schema.HardwareID, SlotNumber: schema.SlotNumber, Drink: nil})
 			log.Printf("No drink assigned to slot: %v", schema.SlotNumber)
 			continue
 		}
 
-		log.Default().Printf("Drink ID: %v", drink_id)
+		log.Default().Printf("Drink ID: %v", drink_id.Int64)
 		log.Default().Printf("User ID: %v", r.Context().Value("user_id"))
 
-		row := db.QueryRow(query.GetDrinkByID(), drink_id, r.Context().Value("user_id"))
+		row := db.QueryRow(query.GetDrinkByID(), drink_id.Int64, r.Context().Value("user_id"))
 		if err := row.Scan(&drink.DrinkID, &drink.UserID, &drink.Name, &drink.Alcoholic); err != nil {
 			if err == sql.ErrNoRows {
-				log.Printf("No drink found for drink_id: %v", drink_id)
+				log.Printf("No drink found for drink_id: %v", drink_id.Int64)
 				log.Default().Printf("Error: %v", err)
 				continue
 			}
@@ -84,28 +91,51 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 			return
 		}
 		log.Default().Printf("Drink: %v", drink)
+		slotResponseList = append(slotResponseList, models.Slot{HardwareID: schema.HardwareID, SlotNumber: schema.SlotNumber, Drink: &drink})
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(slotSchemaList)
+	json.NewEncoder(w).Encode(slotResponseList)
 }
 
 func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [PUT] /slots at %s", time.Now())
 
-	var slot models.SlotSchema
-	err := json.NewDecoder(r.Body).Decode(&slot)
+	vars := mux.Vars(r)
+	slotNumber := vars["slot_number"]
+	hardware_id := vars["hardware_id"]
+
+	// Peek into the body to check if it's empty
+	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Printf("Error decoding slot: %v", err)
-		http.Error(w, "Could not decode slot", http.StatusBadRequest)
+		log.Printf("Error reading body: %v", err)
+		http.Error(w, "Could not read request body", http.StatusInternalServerError)
 		return
 	}
 
-	_, err = db.Exec(query.SetSlotForHardwareAndID(), slot.DrinkID, slot.HardwareID, slot.SlotNumber)
-	if err != nil {
-		log.Printf("Error setting slot: %v", err)
-		http.Error(w, "Could not set slot", http.StatusInternalServerError)
-		return
+	if len(bodyBytes) == 0 {
+		// If body is empty, clear the slot
+		_, err := db.Exec(query.ClearSlotForHardwareAndID(), hardware_id, slotNumber)
+		if err != nil {
+			log.Printf("Error clearing slot: %v", err)
+			http.Error(w, "Could not clear slot", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		// If body is not empty, decode it and update the slot
+		var slot models.SlotUpdate
+		err := json.Unmarshal(bodyBytes, &slot)
+		if err != nil {
+			log.Printf("Error decoding slot: %v", err)
+			http.Error(w, "Could not decode slot", http.StatusBadRequest)
+			return
+		}
+		_, err = db.Exec(query.SetSlotForHardwareAndID(), slot.DrinkID, hardware_id, slotNumber)
+		if err != nil {
+			log.Printf("Error setting slot: %v", err)
+			http.Error(w, "Could not set slot", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
