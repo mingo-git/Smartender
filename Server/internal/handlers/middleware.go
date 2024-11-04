@@ -29,7 +29,9 @@ func JWTMiddleware(next http.Handler) http.Handler {
 
 		log.Default().Printf("🪪 [USER ID EXTRACTED FROM TOKEN]:\t%d\n", user_id)
 
-		ctx := context.WithValue(r.Context(), "user_id", user_id)
+		type contextKey string
+		const userIDKey contextKey = "user_id"
+		ctx := context.WithValue(r.Context(), userIDKey, user_id)
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
