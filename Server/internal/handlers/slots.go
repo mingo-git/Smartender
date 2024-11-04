@@ -57,13 +57,26 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 		slotSchemaList = append(slotSchemaList, slot)
 	}
 
+	log.Default().Printf("Slots: %v", slotSchemaList)
+
 	for _, schema := range slotSchemaList {
 		drink_id := schema.DrinkID
 		var drink models.Drink
+
+		// Prüfen, ob drink_id vorhanden ist
+		if drink_id == 0 {
+			log.Printf("No drink assigned to slot: %v", schema.SlotNumber)
+			continue
+		}
+
+		log.Default().Printf("Drink ID: %v", drink_id)
+		log.Default().Printf("User ID: %v", r.Context().Value("user_id"))
+
 		row := db.QueryRow(query.GetDrinkByID(), drink_id, r.Context().Value("user_id"))
-		if err := row.Scan(&drink.DrinkID, &drink.Name, &drink.UserID, &drink.Alcoholic); err != nil {
+		if err := row.Scan(&drink.DrinkID, &drink.UserID, &drink.Name, &drink.Alcoholic); err != nil {
 			if err == sql.ErrNoRows {
 				log.Printf("No drink found for drink_id: %v", drink_id)
+				log.Default().Printf("Error: %v", err)
 				continue
 			}
 			log.Printf("Error scanning drink: %v", err)
