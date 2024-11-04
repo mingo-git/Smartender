@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     // Dein UI-Code hier
     return Scaffold(
-      backgroundColor: backgroundcolor,
+      backgroundColor: backgroundColor,
       bottomNavigationBar: MyBottomNavBar(
         onTabChange: (index) => navigateBottomBar(index),
       ),

@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundcolor,
+      backgroundColor: backgroundColor,
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: ConstrainedBox(

@@ -119,6 +119,7 @@ class AuthService {
     }
   }
 
+  //TODO: Don´t work - Actually not nessasary!!!
   Future<Map<String, dynamic>> signInWithApple() async {
     try {
       final appleCredential = await SignInWithApple.getAppleIDCredential(
