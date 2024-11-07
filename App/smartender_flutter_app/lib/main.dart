@@ -15,7 +15,8 @@ void main() async {
 
   runApp(MyApp(isLoggedIn: token != null));
 }
-
+//TODO: Einheitliche Abstaende (Margins)
+//TODO: Einheitliche Border.Radius
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
 

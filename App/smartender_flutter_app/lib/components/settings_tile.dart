@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
 
 class SettingsTile extends StatelessWidget {
@@ -24,13 +25,13 @@ class SettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 8.0),
       child: ElevatedButton(
         onPressed: () {
           if (isLogout) {
-            _handleLogout(context); // Sign out action
+            _handleLogout(context);
           } else {
-            onTap?.call(); // Show popup for other options
+            onTap?.call();
           }
         },
         style: ElevatedButton.styleFrom(
@@ -39,7 +40,7 @@ class SettingsTile extends StatelessWidget {
           minimumSize: const Size(double.infinity, 80),
           alignment: Alignment.centerLeft,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
+            borderRadius: defaultBorderRadius,
           ),
           side: isLogout
               ? BorderSide.none

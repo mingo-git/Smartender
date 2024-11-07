@@ -6,6 +6,7 @@ import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/langua
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/manage_roles_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/theme_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
+import 'package:smartender_flutter_app/config/constants.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -21,7 +22,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(25.0),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartender_flutter_app/config/constants.dart';
 
 class DrinkTile extends StatelessWidget {
   final String name;
@@ -15,7 +16,7 @@ class DrinkTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(horizontalPadding),
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
@@ -24,13 +25,13 @@ class DrinkTile extends StatelessWidget {
           minimumSize: const Size(double.infinity, 80),
           alignment: Alignment.center,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
+            borderRadius: defaultBorderRadius,
           ),
           side: const BorderSide(color: Colors.black),
         ),
         child: Column(
           children: [
-            SizedBox(height: 30,),
+            const SizedBox(height: 30),
             Expanded(
               flex: 6,
               child: Center(
@@ -40,7 +41,6 @@ class DrinkTile extends StatelessWidget {
                 ),
               ),
             ),
-            // Name des Getränks nimmt 30 % der Höhe ein
             Expanded(
               flex: 4,
               child: Center(

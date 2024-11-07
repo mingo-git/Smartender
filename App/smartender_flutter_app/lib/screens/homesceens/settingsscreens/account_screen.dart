@@ -139,7 +139,7 @@ class _AccountScreenState extends State<AccountScreen> {
           ),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -172,13 +172,13 @@ class _AccountScreenState extends State<AccountScreen> {
 
               // Platzhalter für Fehlermeldungen
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: errorMessage.isNotEmpty
                     ? Text(
                   errorMessage,
                   style: const TextStyle(color: Colors.red, fontSize: 12),
                 )
-                    : const SizedBox(height: 16), // Platzhalterhöhe für leere Fehlermeldung
+                    : const SizedBox(height: 16),
               ),
 
               const SizedBox(height: 20),
@@ -189,7 +189,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     backgroundColor: Colors.black,
                     minimumSize: const Size(double.infinity, 60),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: defaultBorderRadius,
                     ),
                   ),
                   child: const Text(
@@ -219,7 +219,7 @@ class _AccountScreenState extends State<AccountScreen> {
         ),
         const SizedBox(height: 5),
         SizedBox(
-          height: 60, // Erhöhte Höhe des Containers
+          height: 60,
           child: Row(
             children: [
               Expanded(
@@ -227,10 +227,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
                   decoration: BoxDecoration(
-                    border: isEditing
-                        ? Border.all(color: Colors.grey)
-                        : null, // Rahmen nur im Bearbeitungsmodus
-                    borderRadius: BorderRadius.circular(8.0),
+                    border: isEditing ? Border.all(color: Colors.grey) : null,
+                    borderRadius: defaultBorderRadius,
                   ),
                   child: isEditing
                       ? TextField(
@@ -240,7 +238,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
-                      contentPadding: EdgeInsets.symmetric(vertical: 18), // Konsistente Padding für stabilen Text
+                      contentPadding: EdgeInsets.symmetric(vertical: 18),
                     ),
                     style: const TextStyle(fontSize: 20),
                   )
@@ -284,7 +282,7 @@ class _AccountScreenState extends State<AccountScreen> {
         ),
         const SizedBox(height: 5),
         SizedBox(
-          height: 60, // Erhöhte Höhe des Containers
+          height: 60,
           child: Row(
             children: [
               Expanded(
@@ -293,7 +291,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: defaultBorderRadius,
                   ),
                   child: TextField(
                     controller: controller,
@@ -302,7 +300,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
-                      contentPadding: EdgeInsets.symmetric(vertical: 18), // Konsistente Padding für stabilen Text
+                      contentPadding: EdgeInsets.symmetric(vertical: 18),
                     ),
                     style: const TextStyle(fontSize: 20),
                   ),
