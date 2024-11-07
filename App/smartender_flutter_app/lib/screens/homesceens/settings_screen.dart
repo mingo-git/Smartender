@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartender_flutter_app/models/settings_option.dart';
+import 'package:smartender_flutter_app/components/settings_tile.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/account_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/bottle_slot_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/language_screen.dart';
@@ -25,32 +25,32 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SettingsOption(
+            SettingsTile(
               title: "Account",
               icon: Icons.person,
               onTap: () => _navigateToScreen(context, const AccountScreen()),
             ),
-            SettingsOption(
+            SettingsTile(
               title: "Bottle Slots",
               icon: Icons.local_drink,
               onTap: () => _navigateToScreen(context, const BottleSlotsScreen()),
             ),
-            SettingsOption(
+            SettingsTile(
               title: "Manage Roles",
               icon: Icons.admin_panel_settings,
               onTap: () => _navigateToScreen(context, const ManageRolesScreen()),
             ),
-            SettingsOption(
+            SettingsTile(
               title: "Theme",
               icon: Icons.color_lens,
               onTap: () => _navigateToScreen(context, const ThemeScreen()),
             ),
-            SettingsOption(
+            SettingsTile(
               title: "Language",
               icon: Icons.language,
               onTap: () => _navigateToScreen(context, const LanguageScreen()),
             ),
-            SettingsOption(
+            SettingsTile(
               title: "Sign out",
               icon: Icons.logout,
               isLogout: true,

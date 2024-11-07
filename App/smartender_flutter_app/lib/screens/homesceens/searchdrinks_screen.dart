@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartender_flutter_app/services/auth_service.dart';
+import '../../components/drink_tile.dart';
+import '../../config/constants.dart';
 
 class SearchdrinksScreen extends StatefulWidget {
   const SearchdrinksScreen({super.key});
@@ -9,48 +10,130 @@ class SearchdrinksScreen extends StatefulWidget {
 }
 
 class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
-  AuthService _authService = AuthService();
-  void onTap() {
-    _authService.signOut();
-    Navigator.pushReplacementNamed(context, '/login');
+  String selectedDevice = "Exampledevice";
+  TextEditingController searchController = TextEditingController();
+  List<String> devices = ["Exampledevice", "Device 1", "Device 2", "Add a device"];
+  List<Map<String, String>> drinks = [
+    {"name": "Touchdown", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Margarita", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Tequila Sunrise", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Pina Colada", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Bloody Mary", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Martini", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Mojito", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Whiskey Sour", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Gin Tonic mag doch eh keiner", "image": "lib/images/cocktails/tequila_sunrise.png"},
+  ];
+
+  List<Map<String, String>> filteredDrinks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredDrinks = drinks;
+  }
+
+  void filterDrinks(String query) {
+    setState(() {
+      filteredDrinks = drinks.where((drink) {
+        final name = drink["name"]!.toLowerCase();
+        return name.contains(query.toLowerCase());
+      }).toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(25.0),
-        child: Column(
-          children: [
-            Text(
-              "Which cocktail would it be?",
-              style: TextStyle(fontSize: 20),
+      child: Stack(
+        children: [
+          // GridView für die Getränkekacheln im Hintergrund
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 120.0),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.8,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: filteredDrinks.length,
+                itemBuilder: (context, index) {
+                  final drink = filteredDrinks[index];
+                  return DrinkTile(
+                    name: drink["name"]!,
+                    imagePath: drink["image"]!,
+                    onTap: () {
+                      // Logik für den Drink-Klick hinzufügen, falls erforderlich
+                    },
+                  );
+                },
+              ),
             ),
-            const SizedBox(
-              height: 25,
-            ),
-            GestureDetector(
-              onTap: onTap,
-              child: Container(
-                padding: EdgeInsets.all(25),
-                margin: EdgeInsets.symmetric(horizontal: 25),
-                decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(8)),
-                child: Center(
-                  child: Text(
-                    'Sign out',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                  ),
+          ),
+
+          // Roter Container mit Dropdown und Suchfeld
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    backgroundColor,
+                    backgroundColor,
+                    backgroundColor,
+                    Color(0xE5F2F2F2),
+                    Color(0xF2F2F2),
+                  ],
                 ),
               ),
-            )
-            //Expand
-          ],
-        ),
+              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 50),
+              child: Column(
+                children: [
+                  // Geräteauswahl Dropdown
+                  DropdownButton<String>(
+                    value: selectedDevice,
+                    isExpanded: true,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          selectedDevice = newValue;
+                        });
+                      }
+                    },
+                    items: devices.map<DropdownMenuItem<String>>((String device) {
+                      return DropdownMenuItem<String>(
+                        value: device,
+                        child: Text(device, style: const TextStyle(color: Colors.black)),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Suchfeld
+                  TextField(
+                    controller: searchController,
+                    onChanged: (value) => filterDrinks(value),
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      hintText: 'Search drinks...',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

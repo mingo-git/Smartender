@@ -35,10 +35,13 @@ dev_dependencies:
 
 
 flutter:
-  assets:
-    - lib/images/
-    - .env
-
   uses-material-design: true
+  assets:
+    - .env
+    - lib/images/
+    - lib/images/cocktails/
+
+
+
 
 

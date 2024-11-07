@@ -93,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 100),
+                //TODO: Change to Logo
                 const Icon(Icons.lock, size: 100),
                 const SizedBox(height: 50),
                 Text(

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
 
-class SettingsOption extends StatelessWidget {
+class SettingsTile extends StatelessWidget {
   final String title;
   final bool isLogout;
   final IconData icon;
   final VoidCallback? onTap;
 
-  const SettingsOption({
+  const SettingsTile({
     Key? key,
     required this.title,
     required this.icon,
