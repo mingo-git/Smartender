@@ -22,7 +22,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

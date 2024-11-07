@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../components/drink_tile.dart';
 import '../../components/device_dropdown.dart';
+import '../../components/my_button.dart';
 import '../../config/constants.dart';
 
 class SearchdrinksScreen extends StatefulWidget {
@@ -22,19 +23,64 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     {"name": "Add new Device", "status": "new"}
   ];
 
-  List<Map<String, String>> drinks = [
-    {"name": "Touchdown", "image": "lib/images/cocktails/aperol.png"},
-    {"name": "Margarita", "image": "lib/images/cocktails/gin_tino.png"},
-    {"name": "Tequila Sunrise", "image": "lib/images/cocktails/guaro.png"},
-    {"name": "Pina Colada", "image": "lib/images/cocktails/strawberry_ice.png"},
-    {"name": "Bloody Mary", "image": "lib/images/cocktails/touch_down.png"},
-    {"name": "Martini", "image": "lib/images/cocktails/tequila_sunrise.png"},
-    {"name": "Mojito", "image": "lib/images/cocktails/tequila_sunrise.png"},
-    {"name": "Whiskey Sour", "image": "lib/images/cocktails/tequila_sunrise.png"},
-    {"name": "Gin Tonic", "image": "lib/images/cocktails/tequila_sunrise.png"},
+  List<Map<String, dynamic>> drinks = [
+    {
+      "name": "Touchdown",
+      "image": "lib/images/cocktails/aperol.png",
+      "ingredients": ["Vodka", "Orange Juice", "Lime", "Orange Slice"],
+      "isLiked": false
+    },
+    {
+      "name": "Margarita",
+      "image": "lib/images/cocktails/gin_tino.png",
+      "ingredients": ["Tequila", "Lime Juice", "Triple Sec"],
+      "isLiked": false
+    },
+    {
+      "name": "Tequila Sunrise",
+      "image": "lib/images/cocktails/guaro.png",
+      "ingredients": ["Tequila", "Orange Juice", "Grenadine"],
+      "isLiked": false
+    },
+    {
+      "name": "Pina Colada",
+      "image": "lib/images/cocktails/strawberry_ice.png",
+      "ingredients": ["Rum", "Coconut Cream", "Pineapple Juice"],
+      "isLiked": false
+    },
+    {
+      "name": "Bloody Mary",
+      "image": "lib/images/cocktails/touch_down.png",
+      "ingredients": ["Vodka", "Tomato Juice", "Tabasco", "Celery Salt", "Lemon"],
+      "isLiked": false
+    },
+    {
+      "name": "Martini",
+      "image": "lib/images/cocktails/tequila_sunrise.png",
+      "ingredients": ["Gin", "Dry Vermouth", "Olive"],
+      "isLiked": false
+    },
+    {
+      "name": "Mojito",
+      "image": "lib/images/cocktails/aperol.png",
+      "ingredients": ["Rum", "Mint", "Lime", "Sugar", "Soda Water"],
+      "isLiked": false
+    },
+    {
+      "name": "Whiskey Sour",
+      "image": "lib/images/cocktails/gin_tino.png",
+      "ingredients": ["Whiskey", "Lemon Juice", "Sugar", "Egg White"],
+      "isLiked": false
+    },
+    {
+      "name": "Gin Tonic",
+      "image": "lib/images/cocktails/strawberry_ice.png",
+      "ingredients": ["Gin", "Tonic Water", "Lime"],
+      "isLiked": false
+    },
   ];
 
-  List<Map<String, String>> filteredDrinks = [];
+  List<Map<String, dynamic>> filteredDrinks = [];
 
   @override
   void initState() {
@@ -51,6 +97,108 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     });
   }
 
+  void _showDrinkPopup(BuildContext context, Map<String, dynamic> drink) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
+          contentPadding: const EdgeInsets.symmetric(horizontal: horizontalPadding * 2, vertical: 20),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                width: MediaQuery.of(context).size.width * 0.9, // Feste Breite
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Flexible Höhe
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Schließen-Button
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                    // Bild des Drinks
+                    Center(
+                      child: Image.asset(
+                        drink["image"],
+                        height: 150, // Größeres Bild
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          drink["name"],
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            drink["isLiked"] ? Icons.favorite : Icons.favorite_border,
+                            color: drink["isLiked"] ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              drink["isLiked"] = !drink["isLiked"];
+                            });
+                            _changeFavorite(drink["name"], drink["isLiked"]);
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Ingredients:",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 4.0,
+                      children: drink["ingredients"].map<Widget>((ingredient) {
+                        return Chip(
+                          label: Text(ingredient),
+                          backgroundColor: Colors.grey.shade200,
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    MyButton(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        // Logik für die Bestellung hier hinzufügen
+                      },
+                      text: "Order",
+                      hasMargin: false,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+
+
+
+  void _changeFavorite(String drinkName, bool isLiked) {
+    print("Favorited $drinkName: $isLiked");
+    // TODO: Logik für das Hinzufügen/Entfernen zu den Favoriten implementieren
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -58,7 +206,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
         padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Stack(
           children: [
-            // GridView für die Getränkekacheln im Hintergrund
             Positioned.fill(
               child: Padding(
                 padding: const EdgeInsets.only(top: 130.0),
@@ -73,43 +220,49 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                   itemBuilder: (context, index) {
                     final drink = filteredDrinks[index];
                     return DrinkTile(
-                      name: drink["name"]!,
-                      imagePath: drink["image"]!,
-                      onTap: () {
-                        // Logik für den Drink-Klick hinzufügen, falls erforderlich
-                      },
+                      name: drink["name"],
+                      imagePath: drink["image"],
+                      onTap: () => _showDrinkPopup(context, drink),
                     );
                   },
                 ),
               ),
             ),
-
-            // Dropdown und Suchfeld überlagern den GridView
+            // Overlay für den Gradient-Effekt, der das GridView überlagert
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                // Nur die visuelle Überlagerung ohne Interaktivität
+                child: Container(
+                  height: 170.0, // Höhe des Überlagerungsbereichs
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        backgroundColor,
+                        backgroundColor,
+                        backgroundColor,
+                        const Color(0xdff2f2f2),
+                        const Color(0x00f2f2f2),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Positioned(
               top: 0,
               left: 0,
               right: 0,
               child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      backgroundColor,
-                      backgroundColor,
-                      backgroundColor,
-                      const Color(0xdff2f2f2),
-                      const Color(0x00f2f2f2),
-                    ],
-                  ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
                 child: Column(
                   children: [
-                    // Row für Geräteauswahl Dropdown und ToggleButton
                     Row(
                       children: [
-                        // Dropdown mit 70% Breite
                         Expanded(
                           flex: 7,
                           child: DeviceDropdown(
@@ -125,7 +278,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        // ToggleButton mit 30% Breite
                         Expanded(
                           flex: 3,
                           child: ElevatedButton(
@@ -152,8 +304,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       ],
                     ),
                     const SizedBox(height: 13),
-
-                    // Suchfeld
                     TextField(
                       controller: searchController,
                       onChanged: (value) => filterDrinks(value),
@@ -164,12 +314,12 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                         border: OutlineInputBorder(
                           borderRadius: defaultBorderRadius,
                         ),
-                        fillColor: Colors.white, // Hintergrundfarbe auf Weiß setzen
-                        filled: true, // fillColor aktivieren
+                        fillColor: Colors.white,
+                        filled: true,
                       ),
                       style: const TextStyle(color: Colors.black),
                     ),
-                    SizedBox(height: 50,)
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
@@ -179,4 +329,5 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
       ),
     );
   }
+
 }

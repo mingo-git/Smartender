@@ -4,8 +4,14 @@ import 'package:smartender_flutter_app/config/constants.dart';
 class MyButton extends StatelessWidget {
   final Function()? onTap;
   final String text;
+  final bool hasMargin; // Neuer Parameter
 
-  const MyButton({super.key, required this.onTap, required this.text});
+  const MyButton({
+    super.key,
+    required this.onTap,
+    required this.text,
+    this.hasMargin = true, // Standardwert ist true
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +19,7 @@ class MyButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(25),
-        margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        margin: hasMargin ? EdgeInsets.symmetric(horizontal: horizontalPadding) : null,
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: defaultBorderRadius,

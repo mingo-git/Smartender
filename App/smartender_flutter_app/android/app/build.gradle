@@ -32,6 +32,7 @@ android {
 
     signingConfigs {
         debug {
+            //TODO: Pfad ändern
             storeFile file("C:\\Users\\jonas\\Desktop\\Smartender\\App\\smartender_flutter_app\\android\\app\\smartender-keystore.jks")
             storePassword "smartender-2024"
             keyAlias "androiddebugkey"

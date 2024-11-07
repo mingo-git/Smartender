@@ -38,7 +38,7 @@ class _MyTextFieldState extends State<MyTextField> {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: Colors.white,
           borderRadius: defaultBorderRadius,
           border: Border.all(
             color: Colors.grey, // Rahmenfarbe

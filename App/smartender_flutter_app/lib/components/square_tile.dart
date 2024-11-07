@@ -14,7 +14,7 @@ class SquareTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: Colors.white,
         borderRadius: defaultBorderRadius,
         border: Border.all(
           color: Colors.grey, // Rahmenfarbe, wie bei den Textinput-Feldern

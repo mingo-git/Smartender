@@ -37,7 +37,7 @@ class SettingsTile extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           foregroundColor: isLogout ? Colors.white : Colors.black,
           backgroundColor: isLogout ? Colors.black : Colors.white,
-          minimumSize: const Size(double.infinity, 80),
+          minimumSize: const Size(double.infinity, 70),
           alignment: Alignment.centerLeft,
           shape: RoundedRectangleBorder(
             borderRadius: defaultBorderRadius,
