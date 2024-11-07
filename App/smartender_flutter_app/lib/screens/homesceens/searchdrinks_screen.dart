@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../components/drink_tile.dart';
+import '../../components/device_dropdown.dart';
 import '../../config/constants.dart';
 
 class SearchdrinksScreen extends StatefulWidget {
@@ -12,7 +13,15 @@ class SearchdrinksScreen extends StatefulWidget {
 class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
   String selectedDevice = "Exampledevice";
   TextEditingController searchController = TextEditingController();
-  List<String> devices = ["Exampledevice", "Exampledevice2", "Add a device"];
+  bool isAvailable = false;
+
+  // List of devices with additional status
+  final List<Map<String, dynamic>> devices = [
+    {"name": "Exampledevice", "status": "active"},
+    {"name": "Exampledevice1", "status": "inactive"},
+    {"name": "Add new Device", "status": "new"}
+  ];
+
   List<Map<String, String>> drinks = [
     {"name": "Touchdown", "image": "lib/images/cocktails/aperol.png"},
     {"name": "Margarita", "image": "lib/images/cocktails/gin_tino.png"},
@@ -22,7 +31,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     {"name": "Martini", "image": "lib/images/cocktails/tequila_sunrise.png"},
     {"name": "Mojito", "image": "lib/images/cocktails/tequila_sunrise.png"},
     {"name": "Whiskey Sour", "image": "lib/images/cocktails/tequila_sunrise.png"},
-    {"name": "Gin Tonic mag doch eh keiner", "image": "lib/images/cocktails/tequila_sunrise.png"},
+    {"name": "Gin Tonic", "image": "lib/images/cocktails/tequila_sunrise.png"},
   ];
 
   List<Map<String, String>> filteredDrinks = [];
@@ -46,7 +55,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: horizontalPadding), // Einheitlicher Abstand für alle Seiteninhalte
+        padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Stack(
           children: [
             // GridView für die Getränkekacheln im Hintergrund
@@ -75,7 +84,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
               ),
             ),
 
-            // Roter Container mit Dropdown und Suchfeld
+            // Dropdown und Suchfeld überlagern den GridView
             Positioned(
               top: 0,
               left: 0,
@@ -89,33 +98,60 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       backgroundColor,
                       backgroundColor,
                       backgroundColor,
-                      const Color(0xE5F2F2F2),
+                      const Color(0xdff2f2f2),
                       const Color(0x00f2f2f2),
                     ],
                   ),
                 ),
-                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 50),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
                 child: Column(
                   children: [
-                    // Geräteauswahl Dropdown
-                    DropdownButton<String>(
-                      value: selectedDevice,
-                      isExpanded: true,
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            selectedDevice = newValue;
-                          });
-                        }
-                      },
-                      items: devices.map<DropdownMenuItem<String>>((String device) {
-                        return DropdownMenuItem<String>(
-                          value: device,
-                          child: Text(device, style: const TextStyle(color: Colors.black)),
-                        );
-                      }).toList(),
+                    // Row für Geräteauswahl Dropdown und ToggleButton
+                    Row(
+                      children: [
+                        // Dropdown mit 70% Breite
+                        Expanded(
+                          flex: 7,
+                          child: DeviceDropdown(
+                            devices: devices,
+                            selectedDevice: selectedDevice,
+                            onChanged: (String? newValue) {
+                              if (newValue != null) {
+                                setState(() {
+                                  selectedDevice = newValue;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // ToggleButton mit 30% Breite
+                        Expanded(
+                          flex: 3,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isAvailable = !isAvailable;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isAvailable ? Colors.green : Colors.grey,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: defaultBorderRadius,
+                              ),
+                            ),
+                            child: Text(
+                              "Available",
+                              style: TextStyle(
+                                color: isAvailable ? Colors.white : Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 13),
 
                     // Suchfeld
                     TextField(
@@ -126,11 +162,14 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                         hintText: 'Search drinks...',
                         hintStyle: const TextStyle(color: Colors.grey),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24.0),
+                          borderRadius: defaultBorderRadius,
                         ),
+                        fillColor: Colors.white, // Hintergrundfarbe auf Weiß setzen
+                        filled: true, // fillColor aktivieren
                       ),
                       style: const TextStyle(color: Colors.black),
                     ),
+                    SizedBox(height: 50,)
                   ],
                 ),
               ),
