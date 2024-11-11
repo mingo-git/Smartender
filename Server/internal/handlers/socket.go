@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	models "app/internal/models"
+	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -11,14 +14,17 @@ import (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	CheckOrigin:     func(r *http.Request) bool { return true }, // Akzeptiert alle Ursprünge, für Tests ok
+	// TODO: Add origin check for 'Hardware-Auth-Key' header
+	CheckOrigin: func(r *http.Request) bool {
+		return r.Header.Get("Hardware-Auth-Key") == "TODO: Add Hardware-Auth-Key"
+	}, // Akzeptiert alle Ursprünge, für Tests ok
 }
 
 var hardwareConnections = make(map[string]*websocket.Conn) // Speichert Verbindungen nach Hardware-ID
 
 func Socket(w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [GET] /socket at %s", time.Now())
-	
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("WebSocket upgrade failed:", err)
@@ -48,25 +54,42 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 }
 
 func SendCommandToHardware(w http.ResponseWriter, r *http.Request) {
-	hardwareID := r.URL.Query().Get("hardware_id")
-	if hardwareID == "" {
+	log.Default().Printf("📬 [POST] /action at %s", time.Now())
+
+	// Deserialise the request body
+	var instruction models.Instruction
+	err := json.NewDecoder(r.Body).Decode(&instruction)
+	if err != nil {
+		log.Default().Printf("Failed to decode request body: %s", err)
+		http.Error(w, "Failed to decode request body", http.StatusBadRequest)
+		return
+	}
+
+
+	hardwareID := instruction.Hardware_id
+	if hardwareID == nil {
+		log.Default().Printf("Missing hardware_id: %s", err)
 		http.Error(w, "Missing hardware_id", http.StatusBadRequest)
 		return
 	}
 
-	conn, exists := hardwareConnections[hardwareID]
+	conn, exists := hardwareConnections[strconv.Itoa(*hardwareID)]
 	if !exists {
+		log.Default().Printf("Hardware %s not connected", hardwareID)
 		http.Error(w, "Hardware not connected", http.StatusNotFound)
 		return
 	}
 
-	command := r.URL.Query().Get("command")
-	if command == "" {
+	command := instruction.Recipe_id
+	if command == nil {
+		log.Default().Printf("Missing RecipeID: %s", err)
 		http.Error(w, "Missing command", http.StatusBadRequest)
 		return
 	}
 
-	err := conn.WriteMessage(websocket.TextMessage, []byte(command))
+	commandStr := strconv.Itoa(*command)
+
+	err = conn.WriteMessage(websocket.TextMessage, []byte(commandStr))
 	if err != nil {
 		log.Println("Failed to send command:", err)
 		http.Error(w, "Failed to send command", http.StatusInternalServerError)
