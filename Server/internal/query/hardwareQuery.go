@@ -9,5 +9,5 @@ func GetHardwareForUser() string {
 }
 
 func GetHardwareForUserByID() string {
-	return "SELECT hardware_id, user_id, hardware_name, hardware_type FROM hardware WHERE (hardware_id = $1) AND (user_id = $2)"
+	return "SELECT hardware_id, user_id FROM user_hardware WHERE hardware_id = $1 AND user_id = $2"
 }

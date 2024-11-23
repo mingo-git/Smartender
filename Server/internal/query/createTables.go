@@ -34,7 +34,7 @@ func CreateTables() string {
 
 	CREATE TABLE IF NOT EXISTS hardware (
 		hardware_id SERIAL PRIMARY KEY,
-		hardware_name VARCHAR(100) NOT NULL,
+		hardware_name VARCHAR(100) NOT NULL
 	);
 
 	CREATE TABLE IF NOT EXISTS user_hardware (
@@ -106,7 +106,7 @@ func PopulateDatabase() string {
 		('Smartender von Philipp');
 
 	INSERT INTO user_hardware (user_id, hardware_id, role) VALUES
-		(1, 1, 'admin'),
+		(2, 1, 'admin'),
 		(1, 2, 'admin'),
 		(4, 3, 'admin');
 

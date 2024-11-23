@@ -1,20 +1,18 @@
 package utils
 
 import (
-	"app/internal/models"
 	"app/internal/query"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
 )
 
 var getMappedIngredientsForRecipe string = `
 SELECT
     s.slot_number,
-    d.drink_id,
-    d.drink_name,
     ri.quantity_ml
 FROM
     recipe_ingredients ri
@@ -23,22 +21,26 @@ JOIN
 LEFT JOIN
     slots s ON s.drink_id = d.drink_id
 WHERE
-    ri.recipe_id = $1;
+    s.hardware_id = $1 AND ri.recipe_id = $2
 `
 
 // CocktailProtokollMapper maps the Recipe to the Cocktail Protocol
-func CocktailProtokollMapper(db *sql.DB, recipe_id int) (string, error) {
-	// Fetch the recipe name and details
-	recipe := models.Recipe{}
-	err := db.QueryRow(query.GetRecipeByID(), recipe_id).Scan(&recipe.ID, &recipe.UserID, &recipe.Name)
+func CocktailProtokollMapper(db *sql.DB, hardware_id int, recipe_id string, r *http.Request) (string, error) {
+
+	var checkHardwareID int
+	var checkUserID int
+
+	// Check if the hadware is owned by the user
+	err := db.QueryRow(query.GetHardwareForUserByID(), hardware_id, r.Context().Value("user_id")).Scan(&checkHardwareID, &checkUserID)
+
 	if err != nil {
-		log.Default().Printf("Failed to get recipe: %s", err)
-		return "", errors.New("failed to get recipe from Database")
+		log.Default().Printf("Failed to get hardware for user: %s", err)
+		return "", errors.New("failed to get hardware from Database")
 	}
 
 	// Prepare the map for ingredients
 	ingredients := make(map[string]map[string]interface{})
-	rows, err := db.Query(getMappedIngredientsForRecipe, recipe_id)
+	rows, err := db.Query(getMappedIngredientsForRecipe, hardware_id, recipe_id)
 	if err != nil {
 		log.Default().Printf("Failed to get ingredients: %s", err)
 		return "", errors.New("failed to get ingredients from Database")
@@ -49,12 +51,10 @@ func CocktailProtokollMapper(db *sql.DB, recipe_id int) (string, error) {
 	count := 1
 	for rows.Next() {
 		var slotNumber sql.NullInt32
-		var drinkID int
-		var drinkName string
 		var quantityML int
 
 		// Scan each ingredient
-		err := rows.Scan(&slotNumber, &drinkID, &drinkName, &quantityML)
+		err := rows.Scan(&slotNumber, &quantityML)
 		if err != nil {
 			log.Default().Printf("Failed to scan ingredient: %s", err)
 			return "", errors.New("failed to read ingredient data")
@@ -67,8 +67,6 @@ func CocktailProtokollMapper(db *sql.DB, recipe_id int) (string, error) {
 		// Build ingredient details
 		ingredients[ingredientKey] = map[string]interface{}{
 			"slot_number": slotNumber.Int32, // will be 0 if NULL
-			"drink_id":    drinkID,
-			"drink_name":  drinkName,
 			"quantity_ml": quantityML,
 		}
 	}

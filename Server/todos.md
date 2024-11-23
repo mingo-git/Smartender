@@ -28,3 +28,4 @@ Todos for Arduino
 - [] Pins ansteuern
 
 - Testing! (Mit LEDs, einzelne Ports ansprechen)
+
