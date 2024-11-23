@@ -34,8 +34,7 @@ func CreateTables() string {
 
 	CREATE TABLE IF NOT EXISTS hardware (
 		hardware_id SERIAL PRIMARY KEY,
-		hardware_name VARCHAR(100) NOT NULL,
-		device_id VARCHAR(255) UNIQUE NOT NULL  -- Unique hardware ID sent by the device
+		hardware_name VARCHAR(100) NOT NULL
 	);
 
 	CREATE TABLE IF NOT EXISTS user_hardware (
@@ -63,11 +62,10 @@ func CreateTables() string {
 
 
 	CREATE TABLE IF NOT EXISTS slots (
-			hardware_id INT NOT NULL,
+			hardware_id INT NOT NULL REFERENCES hardware(hardware_id) ON DELETE CASCADE,
 			slot_number INT NOT NULL,
 			drink_id INT REFERENCES drinks(drink_id) ON DELETE SET NULL,  -- Each slot can hold one drink
-			PRIMARY KEY (slot_number, hardware_id),
-			FOREIGN KEY (hardware_id) REFERENCES hardware(hardware_id) ON DELETE CASCADE
+			PRIMARY KEY (slot_number, hardware_id)
 	);
 
 	CREATE TABLE IF NOT EXISTS recipes (
@@ -102,13 +100,13 @@ func PopulateDatabase() string {
 		(2, 'Whiskey', TRUE),
 		(2, 'Orange Juice', FALSE);
 
-	InSERT INTO hardware (hardware_name, device_id) VALUES
-		('Smartender von Jonas', '1'),
-		('Smartender von Fachschaft', '2'),
-		('Smartender von Philipp', '3');
+	InSERT INTO hardware (hardware_name) VALUES
+		('Smartender von Jonas'),
+		('Smartender von Fachschaft'),
+		('Smartender von Philipp');
 
 	INSERT INTO user_hardware (user_id, hardware_id, role) VALUES
-		(1, 1, 'admin'),
+		(2, 1, 'admin'),
 		(1, 2, 'admin'),
 		(4, 3, 'admin');
 

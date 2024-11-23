@@ -2,11 +2,14 @@ package handlers
 
 import (
 	models "app/internal/models"
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	utils "app/internal/utils"
 
 	"github.com/gorilla/websocket"
 )
@@ -32,7 +35,7 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	hardwareID := "1" //r.URL.Query().Get("id") // Hardware-ID zur Identifikation
+	hardwareID := "2" //r.URL.Query().Get("id") // Hardware-ID zur Identifikation
 	if hardwareID == "" {
 		log.Println("Hardware ID missing")
 		return
@@ -53,7 +56,7 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SendCommandToHardware(w http.ResponseWriter, r *http.Request) {
+func SendCommandToHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /action at %s", time.Now())
 
 	// Deserialise the request body
@@ -65,7 +68,6 @@ func SendCommandToHardware(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	hardwareID := instruction.Hardware_id
 	if hardwareID == nil {
 		log.Default().Printf("Missing hardware_id: %s", err)
@@ -75,7 +77,7 @@ func SendCommandToHardware(w http.ResponseWriter, r *http.Request) {
 
 	conn, exists := hardwareConnections[strconv.Itoa(*hardwareID)]
 	if !exists {
-		log.Default().Printf("Hardware %s not connected", hardwareID)
+		log.Default().Printf("Hardware %d not connected", hardwareID)
 		http.Error(w, "Hardware not connected", http.StatusNotFound)
 		return
 	}
@@ -87,9 +89,26 @@ func SendCommandToHardware(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	commandStr := strconv.Itoa(*command)
+	log.Default().Printf("BEFORE THE CONVERSION IT WORKS")
+	recipeIdInt := strconv.Itoa(*command)
 
-	err = conn.WriteMessage(websocket.TextMessage, []byte(commandStr))
+	log.Default().Printf("BEFORE THE MAPPER IT WORKS")
+
+	result, protokollMapperError := utils.CocktailProtokollMapper(db, *hardwareID, recipeIdInt, r)
+
+	log.Default().Printf("AFTER MAPPER IT WORKS (GUESS NOt, but maybeee)")
+	if protokollMapperError != nil {
+		if protokollMapperError.Error() == "failed to get hardware from Database" {
+			http.Error(w, "Not authorized for this hardware", http.StatusUnauthorized)
+			return
+		}
+		log.Println("Failed to map recipe to protocol:", protokollMapperError)
+		http.Error(w, "Failed to map recipe to protocol", http.StatusInternalServerError)
+		return
+	}
+
+	err = conn.WriteMessage(websocket.TextMessage, []byte(result))
+
 	if err != nil {
 		log.Println("Failed to send command:", err)
 		http.Error(w, "Failed to send command", http.StatusInternalServerError)
