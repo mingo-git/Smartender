@@ -25,11 +25,11 @@ func CreateTables() string {
 		email VARCHAR(100) NOT NULL UNIQUE     -- Add unique constraint
 	);
 	
-		CREATE TABLE IF NOT EXISTS hardware (
-			hardware_id SERIAL PRIMARY KEY,
-			hardware_name VARCHAR(100) NOT NULL,
-			mac_address VARCHAR(17) UNIQUE NOT NULL
-		);
+	CREATE TABLE IF NOT EXISTS hardware (
+		hardware_id SERIAL PRIMARY KEY,
+		hardware_name VARCHAR(100) NOT NULL,
+		mac_address VARCHAR(17) UNIQUE NOT NULL
+	);
 
 	CREATE TABLE IF NOT EXISTS drinks (
 		drink_id SERIAL PRIMARY KEY,
@@ -72,7 +72,8 @@ func CreateTables() string {
 	CREATE TABLE IF NOT EXISTS recipes (
 		recipe_id SERIAL PRIMARY KEY,
 		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each recipe belongs to a hardware
-		recipe_name VARCHAR(100) NOT NULL UNIQUE  -- Unique recipe name per hardware
+		recipe_name VARCHAR(100) NOT NULL UNIQUE,  -- Unique recipe name per hardware
+		is_favorite BOOLEAN DEFAULT FALSE
 	);
 
 	CREATE TABLE IF NOT EXISTS recipe_ingredients (
@@ -123,11 +124,11 @@ func PopulateDatabase() string {
 		(2, 4, 5),
 		(2, 5, 6);
 
-	INSERT INTO recipes (hardware_id, recipe_name) VALUES
-		(2, 'Vodka Martini'),
-		(2, 'Mojito'),
-		(2, 'Gin and Tonic'),
-		(1, 'Whiskey O');
+	INSERT INTO recipes (hardware_id, recipe_name, is_favorite) VALUES
+		(2, 'Vodka Martini', TRUE),
+		(2, 'Mojito', FALSE),
+		(2, 'Gin and Tonic', FALSE),
+		(1, 'Whiskey O', FALSE);
 
 	INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml) VALUES
 		(1, 1, 60),

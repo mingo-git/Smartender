@@ -1,7 +1,7 @@
 package query
 
 func CreateRecipeForHardware() string {
-	return "INSERT INTO recipes (hardware_id, recipe_name) VALUES ($1, $2) RETURNING recipe_id;"
+	return "INSERT INTO recipes (hardware_id, recipe_name, is_favorite) VALUES ($1, $2, $3) RETURNING recipe_id;"
 }
 
 func GetAllRecipesForHardware() string {
@@ -25,6 +25,7 @@ func GetRecipeByID() string {
 						r.recipe_id, 
 						r.hardware_id,
 						r.recipe_name, 
+						r.is_favorite,
 						    COALESCE(json_agg(DISTINCT ri.drink_id) FILTER (WHERE ri.drink_id IS NOT NULL), '[]') AS drink_ids
 				FROM 
 						recipes r
@@ -40,7 +41,7 @@ func GetRecipeByID() string {
 }
 
 func UpdateRecipeForHardware() string {
-	return "UPDATE recipes SET recipe_name = $1 WHERE (recipe_id = $2) AND (hardware_id = $3)"
+	return "UPDATE recipes SET recipe_name = $1, is_favorite = $2 WHERE (recipe_id = $3) AND (hardware_id = $4)"
 }
 
 func DeleteRecipeForHardware() string {

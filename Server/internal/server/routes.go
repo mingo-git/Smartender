@@ -85,7 +85,7 @@ func (a *App) initializeRoutes() {
 	}).Methods("GET")
 
 	hardwareRouter.HandleFunc("/{hardware_id}/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateRecipeName(a.DB, w, r)
+		handlers.UpdateRecipe(a.DB, w, r)
 	}).Methods("PUT")
 
 	hardwareRouter.HandleFunc("/{hardware_id}/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
