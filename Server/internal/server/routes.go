@@ -17,7 +17,9 @@ func (a *App) initializeRoutes() {
 
 	// Smartender (Raspberry Pi) --------------------------------------------------------------------- HARDWARE
 	smartenderRouter := a.Router.PathPrefix("/smartender").Subrouter()
-	smartenderRouter.HandleFunc("/register", handlers.RegisterDevice).Methods("GET")
+	smartenderRouter.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RegisterHardware(a.DB, w, r)
+	}).Methods("POST")
 	// -----------------------------------------------------------------------------------------------
 
 	// Client (Mobile App) --------------------------------------------------------------------------- CLIENT
@@ -113,11 +115,11 @@ func (a *App) initializeRoutes() {
 	// 	handlers.RegisterHardware(a.DB, w, r)
 	// }).Methods("POST")
 
-	// SLOTS: ----------------------------------------------------------------------------------------  SLOTS
-	// TODO: Move this Route to the WebSocket Communication Process
-	hardwareRouter.HandleFunc("/slots/temp", func(w http.ResponseWriter, r *http.Request) {
-		handlers.InitSlotsForHardware(a.DB, w, r)
+	hardwareRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetAllHardwareForUser(a.DB, w, r)
 	}).Methods("GET")
+
+	// SLOTS: ----------------------------------------------------------------------------------------  SLOTS
 
 	hardwareRouter.HandleFunc("/{hardware_id}/slots", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAllSlotsForSelectedHardware(a.DB, w, r)
