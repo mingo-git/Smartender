@@ -42,8 +42,23 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 	vars := mux.Vars(r)
 	hardware_id := vars["hardware_id"]
 
+	// Check, if the user is authorized to access the hardware
+	rows, err := db.Query(query.CheckHardwareForUser(), hardware_id, r.Context().Value("user_id"))
+	if err != nil {
+		log.Printf("Error querying hardware for user: %v", err)
+		http.Error(w, "Could not check hardware for user", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		log.Printf("Hardware does not belong to user")
+		http.Error(w, "Hardware does not belong to user", http.StatusUnauthorized)
+		return
+	}
+
 	var slotSchemaList []models.SlotSchema
-	rows, err := db.Query(query.GetAllSlotsForSelectedHardware(), hardware_id)
+	rows, err = db.Query(query.GetAllSlotsForSelectedHardware(), hardware_id)
 	if err != nil {
 		log.Printf("Error selecting all slots: %v", err)
 		http.Error(w, "Could not get slots", http.StatusInternalServerError)
@@ -104,6 +119,21 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	slotNumber := vars["slot_number"]
 	hardware_id := vars["hardware_id"]
+
+	// Check, if the user is authorized to access the hardware
+	rows, err := db.Query(query.CheckHardwareForUser(), hardware_id, r.Context().Value("user_id"))
+	if err != nil {
+		log.Printf("Error querying hardware for user: %v", err)
+		http.Error(w, "Could not check hardware for user", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		log.Printf("Hardware does not belong to user")
+		http.Error(w, "Hardware does not belong to user", http.StatusUnauthorized)
+		return
+	}
 
 	// Peek into the body to check if it's empty
 	bodyBytes, err := io.ReadAll(r.Body)
