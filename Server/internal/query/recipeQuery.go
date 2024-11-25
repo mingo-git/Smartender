@@ -1,16 +1,16 @@
 package query
 
-func CreateRecipeForUser() string {
-	return "INSERT INTO recipes (user_id, recipe_name) VALUES ($1, $2) RETURNING recipe_id;"
+func CreateRecipeForHardware() string {
+	return "INSERT INTO recipes (hardware_id, recipe_name) VALUES ($1, $2) RETURNING recipe_id;"
 }
 
-func GetAllRecipesForUser() string {
+func GetAllRecipesForHardware() string {
 	return `SELECT 
 						r.recipe_id
 				FROM 
 						recipes r
 				WHERE 
-						r.user_id = $1
+						r.hardware_id = $1
 				GROUP BY 
 						r.recipe_id, r.recipe_name;
 `
@@ -23,7 +23,7 @@ func GetAllRecipesForUser() string {
 func GetRecipeByID() string {
 	return `SELECT 
 						r.recipe_id, 
-						r.user_id,
+						r.hardware_id,
 						r.recipe_name, 
 						    COALESCE(json_agg(DISTINCT ri.drink_id) FILTER (WHERE ri.drink_id IS NOT NULL), '[]') AS drink_ids
 				FROM 
@@ -33,18 +33,18 @@ func GetRecipeByID() string {
 				LEFT JOIN 
 						drinks d ON ri.drink_id = d.drink_id
 				WHERE 
-						r.recipe_id = $1 AND r.user_id = $2
+						r.recipe_id = $1 AND r.hardware_id = $2
 				GROUP BY 
 						r.recipe_id, r.recipe_name;
 `
 }
 
-func UpdateRecipeForUser() string {
-	return "UPDATE recipes SET recipe_name = $1 WHERE (recipe_id = $2) AND (user_id = $3)"
+func UpdateRecipeForHardware() string {
+	return "UPDATE recipes SET recipe_name = $1 WHERE (recipe_id = $2) AND (hardware_id = $3)"
 }
 
-func DeleteRecipeForUser() string {
-	return "DELETE FROM recipes WHERE (recipe_id = $1) AND (user_id = $2)"
+func DeleteRecipeForHardware() string {
+	return "DELETE FROM recipes WHERE (recipe_id = $1) AND (hardware_id = $2)"
 }
 
 // -------------------------------------------------------------------------------------------------

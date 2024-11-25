@@ -95,7 +95,7 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 		log.Default().Printf("User ID: %v", r.Context().Value("user_id"))
 
 		row := db.QueryRow(query.GetDrinkByID(), drink_id.Int64, r.Context().Value("user_id"))
-		if err := row.Scan(&drink.DrinkID, &drink.UserID, &drink.Name, &drink.Alcoholic); err != nil {
+		if err := row.Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic); err != nil {
 			if err == sql.ErrNoRows {
 				log.Printf("No drink found for drink_id: %v", drink_id.Int64)
 				log.Default().Printf("Error: %v", err)

@@ -15,6 +15,9 @@ import (
 func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /recipes at %s", time.Now())
 
+	vars := mux.Vars(r)
+	hardwareID := vars["hardware_id"]
+
 	var newRecipe models.Recipe
 	err := json.NewDecoder(r.Body).Decode(&newRecipe)
 	if err != nil {
@@ -23,7 +26,7 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert new recipe into the database
-	err = db.QueryRow(query.CreateRecipeForUser(), r.Context().Value("user_id"), newRecipe.Name).Scan(&newRecipe.ID)
+	err = db.QueryRow(query.CreateRecipeForHardware(), hardwareID, newRecipe.Name).Scan(&newRecipe.ID)
 	if err != nil {
 		log.Printf("Error inserting new recipe: %v", err)
 		http.Error(w, "Could not create recipe", http.StatusInternalServerError)
@@ -37,10 +40,11 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [GET] /recipes at %s", time.Now())
 
-	userID := r.Context().Value("user_id")
+	vars := mux.Vars(r)
+	hardwareID := vars["hardware_id"]
 
 	// Get all recipe ids for the user
-	rows, err := db.Query(query.GetAllRecipesForUser(), userID)
+	rows, err := db.Query(query.GetAllRecipesForHardware(), hardwareID)
 	if err != nil {
 		log.Printf("Error getting recipes: %v", err)
 		http.Error(w, "Could not get recipes", http.StatusInternalServerError)
@@ -73,7 +77,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		// Get recipe details
 		var recipe models.Recipe
 		var drinkIDsJSON []byte
-		if err := db.QueryRow(query.GetRecipeByID(), recipeID, userID).Scan(&recipe.ID, &recipe.UserID, &recipe.Name, &drinkIDsJSON); err != nil {
+		if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &drinkIDsJSON); err != nil {
 			log.Printf("Error getting recipe: %v", err)
 			continue
 		}
@@ -98,7 +102,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 			// Get drink details
 			var drink models.Drink
-			if err := db.QueryRow(query.GetDrinkByID(), ingredient.DrinkID, recipe.UserID).Scan(&drink.DrinkID, &drink.UserID, &drink.Name, &drink.Alcoholic); err != nil {
+			if err := db.QueryRow(query.GetDrinkByID(), ingredient.DrinkID, recipe.HardwareID).Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic); err != nil {
 				log.Printf("Error getting drink details for drink_id %d: %v", ingredient.DrinkID, err)
 				continue
 			}
@@ -124,7 +128,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		// Create structured response
 		recipeResponse := models.Recipe_Response{
 			ID:          recipe.ID,
-			UserID:      recipe.UserID,
+			HardwareID:  recipe.HardwareID,
 			Name:        recipe.Name,
 			Ingredients: ingredientsAll,
 		}
@@ -143,12 +147,12 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Routen-Variablen extrahieren
 	vars := mux.Vars(r)
 	recipeID := vars["recipe_id"]
-	userID := r.Context().Value("user_id")
+	hardwareID := vars["hardware_id"]
 
 	// Haupt-Rezeptdaten abrufen
 	var recipe models.Recipe
 	var drinkIDsJSON []byte
-	if err := db.QueryRow(query.GetRecipeByID(), recipeID, userID).Scan(&recipe.ID, &recipe.UserID, &recipe.Name, &drinkIDsJSON); err != nil {
+	if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &drinkIDsJSON); err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Recipe not found", http.StatusNotFound)
 			return
@@ -179,7 +183,7 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 		// Getränkedetails abrufen
 		var drink models.Drink
-		if err := db.QueryRow(query.GetDrinkByID(), ingredient.DrinkID, recipe.UserID).Scan(&drink.DrinkID, &drink.UserID, &drink.Name, &drink.Alcoholic); err != nil {
+		if err := db.QueryRow(query.GetDrinkByID(), ingredient.DrinkID, recipe.HardwareID).Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic); err != nil {
 			log.Printf("Error getting drink details for drink_id %d: %v", ingredient.DrinkID, err)
 			continue
 		}
@@ -205,7 +209,7 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Strukturierte Antwort erstellen
 	recipeResponse := models.Recipe_Response{
 		ID:          recipe.ID,
-		UserID:      recipe.UserID,
+		HardwareID:  recipe.HardwareID,
 		Name:        recipe.Name,
 		Ingredients: ingredientsAll,
 	}
@@ -220,6 +224,7 @@ func UpdateRecipeName(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	recipeID := vars["recipe_id"]
+	hardwareID := vars["hardware_id"]
 
 	var updatedRecipe models.Recipe
 	err := json.NewDecoder(r.Body).Decode(&updatedRecipe)
@@ -229,7 +234,7 @@ func UpdateRecipeName(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update recipe in the database
-	result, err := db.Exec(query.UpdateRecipeForUser(), updatedRecipe.Name, recipeID, r.Context().Value("user_id"))
+	result, err := db.Exec(query.UpdateRecipeForHardware(), updatedRecipe.Name, recipeID, hardwareID)
 	if err != nil {
 		log.Printf("Error updating recipe: %v", err)
 		http.Error(w, "Could not update recipe", http.StatusInternalServerError)
@@ -251,9 +256,10 @@ func DeleteRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id := vars["recipe_id"]
+	hardwareID := vars["hardware_id"]
 
 	// Delete recipe from the database
-	result, err := db.Exec(query.DeleteRecipeForUser(), id, r.Context().Value("user_id"))
+	result, err := db.Exec(query.DeleteRecipeForHardware(), id, hardwareID)
 	if err != nil {
 		log.Printf("Error deleting recipe: %v", err)
 		http.Error(w, "Could not delete recipe", http.StatusInternalServerError)

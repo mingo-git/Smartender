@@ -47,70 +47,71 @@ func (a *App) initializeRoutes() {
 	}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
 
+	hardwareRouter := usersRouter.PathPrefix("/hardware").Subrouter()
+
 	// DRINKS: ---------------------------------------------------------------------------------------  DRINKS
-	usersRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/drinks", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CreateDrink(a.DB, w, r)
 	}).Methods("POST")
 
-	usersRouter.HandleFunc("/drinks", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/drinks", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAllDrinks(a.DB, w, r)
 	}).Methods("GET")
 
-	usersRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetSingleDrinkForUserByDrinkID(a.DB, w, r)
+	hardwareRouter.HandleFunc("/{hardware_id}/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetSingleDrinkForHardwareByDrinkID(a.DB, w, r)
 	}).Methods("GET")
 
-	usersRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateDrink(a.DB, w, r)
 	}).Methods("PUT")
 
-	usersRouter.HandleFunc("/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/drinks/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DeleteDrink(a.DB, w, r)
 	}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
 
 	// RECIPES: --------------------------------------------------------------------------------------  RECIPES
-	usersRouter.HandleFunc("/recipes", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/recipes", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CreateRecipe(a.DB, w, r)
 	}).Methods("POST")
 
-	usersRouter.HandleFunc("/recipes", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/recipes", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAllRecipes(a.DB, w, r)
 	}).Methods("GET")
 
-	usersRouter.HandleFunc("/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetRecipeByID(a.DB, w, r)
 	}).Methods("GET")
 
-	usersRouter.HandleFunc("/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateRecipeName(a.DB, w, r)
 	}).Methods("PUT")
 
-	usersRouter.HandleFunc("/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc("/{hardware_id}/recipes/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DeleteRecipe(a.DB, w, r)
 	}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
 
 	// INGREDIENTS: ----------------------------------------------------------------------------------  INGREDIENTS
-	usersRouter.HandleFunc(
-		"/recipes/{recipe_id}/ingredients", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc(
+		"/{hardware_id}/recipes/{recipe_id}/ingredients", func(w http.ResponseWriter, r *http.Request) {
 			handlers.CreateIngredient(a.DB, w, r)
 		}).Methods("POST")
 
-	usersRouter.HandleFunc(
-		"/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc(
+		"/{hardware_id}/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 			handlers.UpdateIngredient(a.DB, w, r)
 		}).Methods("PUT")
 
-	usersRouter.HandleFunc(
-		"/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
+	hardwareRouter.HandleFunc(
+		"/{hardware_id}/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 			handlers.DeleteIngredient(a.DB, w, r)
 		}).Methods("DELETE")
 	// -----------------------------------------------------------------------------------------------
 
 	// HARDWARE: -------------------------------------------------------------------------------------  HARDWARE
 
-	hardwareRouter := usersRouter.PathPrefix("/hardware").Subrouter()
 	// hardwareRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	handlers.RegisterHardware(a.DB, w, r)
 	// }).Methods("POST")
