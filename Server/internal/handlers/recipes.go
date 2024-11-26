@@ -43,7 +43,13 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	hardwareID := vars["hardware_id"]
 
-	// Get all recipe ids for the user
+	mappedRecipes := map[string][]models.Recipe_Response{}
+	mappedRecipes["available"] = []models.Recipe_Response{}
+	mappedRecipes["unavailable"] = []models.Recipe_Response{}
+
+	drinkIDsInSlot := getSlots(db, w, hardwareID)
+
+	// Get all recipe ids for the hardware
 	rows, err := db.Query(query.GetAllRecipesForHardware(), hardwareID)
 	if err != nil {
 		log.Printf("Error getting recipes: %v", err)
@@ -72,7 +78,6 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get all ingredients for each recipe
-	var recipesAll []models.Recipe_Response
 	for _, recipeID := range recipeIDs {
 		// Get recipe details
 		var recipe models.Recipe
@@ -134,12 +139,17 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 			Ingredients: ingredientsAll,
 		}
 
-		recipesAll = append(recipesAll, recipeResponse)
+		if isRecipeAvailable(recipeResponse, drinkIDsInSlot) {
+			mappedRecipes["available"] = append(mappedRecipes["available"], recipeResponse)
+		} else {
+			mappedRecipes["unavailable"] = append(mappedRecipes["unavailable"], recipeResponse)
+		}
+
 	}
 
 	// Send JSON response
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(recipesAll)
+	json.NewEncoder(w).Encode(mappedRecipes)
 }
 
 func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -149,6 +159,12 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	recipeID := vars["recipe_id"]
 	hardwareID := vars["hardware_id"]
+
+	drinkIDsInSlot := getSlots(db, w, hardwareID)
+
+	mappedRecipes := map[string][]models.Recipe_Response{}
+	mappedRecipes["available"] = []models.Recipe_Response{}
+	mappedRecipes["unavailable"] = []models.Recipe_Response{}
 
 	// Haupt-Rezeptdaten abrufen
 	var recipe models.Recipe
@@ -216,9 +232,15 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		Ingredients: ingredientsAll,
 	}
 
+	if isRecipeAvailable(recipeResponse, drinkIDsInSlot) {
+		mappedRecipes["available"] = append(mappedRecipes["available"], recipeResponse)
+	} else {
+		mappedRecipes["unavailable"] = append(mappedRecipes["unavailable"], recipeResponse)
+	}
+
 	// JSON-Antwort senden
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(recipeResponse)
+	json.NewEncoder(w).Encode(mappedRecipes)
 }
 
 func UpdateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -279,4 +301,47 @@ func DeleteRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Successfully deleted recipe",
 	})
+}
+
+// Function to check if all drink_ids from the first array are in the second array
+func isRecipeAvailable(recipe models.Recipe_Response, slot_drink_ids []int) bool {
+	// Create a map of drink_ids from slots for quick lookup
+	slotDrinkIDs := make(map[int]bool)
+	for _, drnik_id := range slot_drink_ids {
+		slotDrinkIDs[drnik_id] = true
+	}
+
+	// Check if all drink_ids from the recipes' ingredients are in the slot map
+	for _, ingredient := range recipe.Ingredients {
+		if !slotDrinkIDs[ingredient.Drink.DrinkID] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func getSlots(db *sql.DB, w http.ResponseWriter, hardwareID string) []int {
+	result := []int{}
+
+	slotRows, slotErr := db.Query(query.GetAllSlotsForSelectedHardware(), hardwareID)
+	if slotErr != nil {
+		log.Printf("Error selecting all slots: %v", slotErr)
+		http.Error(w, "Could not get slots", http.StatusInternalServerError)
+		return nil
+	}
+	defer slotRows.Close()
+
+	for slotRows.Next() {
+		var slot models.SlotSchema
+		if err := slotRows.Scan(&slot.HardwareID, &slot.SlotNumber, &slot.DrinkID); err != nil {
+			log.Printf("Error scanning slot: %v", err)
+			http.Error(w, "Could not get slots", http.StatusInternalServerError)
+			return nil
+		}
+		if slot.DrinkID.Valid {
+			result = append(result, int(slot.DrinkID.Int64))
+		}
+	}
+	return result
 }
