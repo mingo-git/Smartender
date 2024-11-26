@@ -15,7 +15,8 @@ void main() async {
 
   runApp(MyApp(isLoggedIn: token != null));
 }
-
+//TODO: Einheitliche Abstaende (Margins)
+//TODO: Einheitliche Border.Radius
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
 
@@ -26,15 +27,16 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => CocktailCard(),
       builder: (context, child) =>
-      MaterialApp(
-        // Definiere deine Routen
-        routes: {
-          '/home': (context) => HomeScreen(),
-          '/login': (context) => LoginScreen(),
-        },
-        // Starte mit der entsprechenden Seite
-        initialRoute: isLoggedIn ? '/home' : '/login',
-      ),
+          MaterialApp(
+            // Definiere deine Routen
+            routes: {
+              '/home': (context) => HomeScreen(),
+              '/login': (context) => LoginScreen(),
+            },
+            // Starte direkt mit HomeScreen
+            initialRoute: '/home',
+          ),
     );
   }
 }
+

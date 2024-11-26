@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
 
-class SettingsOption extends StatelessWidget {
+class SettingsTile extends StatelessWidget {
   final String title;
   final bool isLogout;
   final IconData icon;
   final VoidCallback? onTap;
 
-  const SettingsOption({
+  const SettingsTile({
     Key? key,
     required this.title,
     required this.icon,
@@ -24,22 +25,22 @@ class SettingsOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 8.0),
       child: ElevatedButton(
         onPressed: () {
           if (isLogout) {
-            _handleLogout(context); // Sign out action
+            _handleLogout(context);
           } else {
-            onTap?.call(); // Show popup for other options
+            onTap?.call();
           }
         },
         style: ElevatedButton.styleFrom(
           foregroundColor: isLogout ? Colors.white : Colors.black,
           backgroundColor: isLogout ? Colors.black : Colors.white,
-          minimumSize: const Size(double.infinity, 80),
+          minimumSize: const Size(double.infinity, 70),
           alignment: Alignment.centerLeft,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
+            borderRadius: defaultBorderRadius,
           ),
           side: isLogout
               ? BorderSide.none

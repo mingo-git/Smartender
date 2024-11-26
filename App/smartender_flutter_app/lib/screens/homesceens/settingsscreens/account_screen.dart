@@ -14,19 +14,22 @@ class _AccountScreenState extends State<AccountScreen> {
   bool isEditingPassword = false;
   bool hasUnsavedChanges = false;
 
+  bool showNewPassword = false;
+  bool showConfirmPassword = false;
+
   TextEditingController usernameController = TextEditingController(text: "Beispielname");
   TextEditingController emailController = TextEditingController(text: "beispiel@gmail.com");
   TextEditingController passwordController = TextEditingController(text: "******");
 
-  // Controllers for password fields
   TextEditingController oldPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
-  // Original values for change detection
   String originalUsername = "Beispielname";
   String originalEmail = "beispiel@gmail.com";
   String originalPassword = "******";
+
+  String errorMessage = '';
 
   void _handleEditToggle(VoidCallback onEdit) {
     setState(() {
@@ -39,7 +42,18 @@ class _AccountScreenState extends State<AccountScreen> {
     setState(() {
       hasUnsavedChanges = (usernameController.text != originalUsername ||
           emailController.text != originalEmail ||
-          passwordController.text != originalPassword);
+          passwordController.text != originalPassword ||
+          newPasswordController.text.isNotEmpty);
+    });
+  }
+
+  void _cancelPasswordEditing() {
+    setState(() {
+      isEditingPassword = false;
+      oldPasswordController.clear();
+      newPasswordController.clear();
+      confirmPasswordController.clear();
+      errorMessage = '';
     });
   }
 
@@ -75,12 +89,28 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   void updateAccount() {
-    // TODO: Implement account update logic here
     setState(() {
-      hasUnsavedChanges = false;
-      originalUsername = usernameController.text;
-      originalEmail = emailController.text;
-      originalPassword = passwordController.text;
+      errorMessage = '';
+
+      final newPassword = newPasswordController.text;
+      final confirmPassword = confirmPasswordController.text;
+
+      if (newPassword.isNotEmpty || confirmPassword.isNotEmpty) {
+        if (newPassword.length < 8) {
+          errorMessage = 'Password must be at least 8 characters long.';
+        } else if (newPassword.length > 72) {
+          errorMessage = 'Password must not exceed 72 characters.';
+        } else if (newPassword != confirmPassword) {
+          errorMessage = 'Passwords do not match.';
+        }
+      }
+
+      if (errorMessage.isEmpty) {
+        hasUnsavedChanges = false;
+        originalUsername = usernameController.text;
+        originalEmail = emailController.text;
+        originalPassword = passwordController.text;
+      }
     });
   }
 
@@ -106,8 +136,8 @@ class _AccountScreenState extends State<AccountScreen> {
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -136,7 +166,20 @@ class _AccountScreenState extends State<AccountScreen> {
                       () => _handleEditToggle(() => isEditingPassword = !isEditingPassword),
                   isPassword: true,
                 ),
-              const Spacer(),
+              const SizedBox(height: 10),
+
+              // Platzhalter für Fehlermeldungen
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: errorMessage.isNotEmpty
+                    ? Text(
+                  errorMessage,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                )
+                    : const SizedBox(height: 16),
+              ),
+
+              const SizedBox(height: 20),
               if (hasUnsavedChanges)
                 ElevatedButton(
                   onPressed: updateAccount,
@@ -144,7 +187,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     backgroundColor: Colors.black,
                     minimumSize: const Size(double.infinity, 60),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: defaultBorderRadius,
                     ),
                   ),
                   child: const Text(
@@ -165,46 +208,55 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _buildEditableField(String label, bool isEditing, TextEditingController controller, VoidCallback onEdit, {bool isPassword = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 5),
-        SizedBox(
-          height: 45, // Fixed height to prevent shifting
-          child: Row(
-            children: [
-              Expanded(
-                child: isEditing
-                    ? TextField(
-                  controller: controller,
-                  obscureText: isPassword,
-                  onChanged: (_) => _checkForChanges(),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                  ),
-                  style: const TextStyle(fontSize: 20),
-                )
-                    : Text(
-                  controller.text,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-              ),
-              IconButton(
-                icon: Icon(isEditing ? Icons.check : Icons.edit),
-                onPressed: onEdit,
-              ),
-            ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
-        ),
-      ],
+          const SizedBox(height: 5),
+          SizedBox(
+            height: 60,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
+                    decoration: BoxDecoration(
+                      border: isEditing ? Border.all(color: Colors.grey) : null,
+                      borderRadius: defaultBorderRadius,
+                    ),
+                    child: isEditing
+                        ? TextField(
+                      controller: controller,
+                      obscureText: isPassword,
+                      onChanged: (_) => _checkForChanges(),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 18),
+                      ),
+                      style: const TextStyle(fontSize: 20),
+                    )
+                        : Text(
+                      controller.text,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(isEditing ? Icons.check : Icons.edit),
+                  onPressed: onEdit,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -212,38 +264,74 @@ class _AccountScreenState extends State<AccountScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPasswordField("Old Password", oldPasswordController),
+        _buildPasswordField("Old Password", oldPasswordController, isCancelButton: true),
         const SizedBox(height: 10),
-        _buildPasswordField("New Password", newPasswordController),
+        _buildPasswordField("New Password", newPasswordController, isToggleable: true, showPassword: showNewPassword),
         const SizedBox(height: 10),
-        _buildPasswordField("Confirm New Password", confirmPasswordController),
+        _buildPasswordField("Confirm New Password", confirmPasswordController, isToggleable: true, showPassword: showConfirmPassword),
       ],
     );
   }
 
-  Widget _buildPasswordField(String label, TextEditingController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: controller,
-          obscureText: true,
-          onChanged: (_) => _checkForChanges(),
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+  Widget _buildPasswordField(String label, TextEditingController controller, {bool isCancelButton = false, bool isToggleable = false, bool showPassword = false}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
-          style: const TextStyle(fontSize: 20),
-        ),
-      ],
+          const SizedBox(height: 5),
+          SizedBox(
+            height: 60,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: defaultBorderRadius,
+                    ),
+                    child: TextField(
+                      controller: controller,
+                      obscureText: !showPassword,
+                      onChanged: (_) => _checkForChanges(),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 18),
+                      ),
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+                if (isCancelButton)
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: _cancelPasswordEditing,
+                  ),
+                if (isToggleable)
+                  IconButton(
+                    icon: Icon(showPassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        if (label == "New Password") {
+                          showNewPassword = !showNewPassword;
+                        } else if (label == "Confirm New Password") {
+                          showConfirmPassword = !showConfirmPassword;
+                        }
+                      });
+                    },
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

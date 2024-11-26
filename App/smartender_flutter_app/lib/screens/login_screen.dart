@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:smartender_flutter_app/components/my_textfield.dart';
-import 'package:smartender_flutter_app/components/signIn_button.dart';
+import 'package:smartender_flutter_app/components/my_button.dart';
 import 'package:smartender_flutter_app/components/square_tile.dart';
 import 'package:smartender_flutter_app/screens/register_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
-
 import '../config/constants.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -88,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
             minHeight: MediaQuery.of(context).size.height,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -113,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: errorMessage.isNotEmpty
                       ? Text(
                     errorMessage,
@@ -122,19 +121,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       : const SizedBox(height: 16),
                 ),
                 const SizedBox(height: 25),
-                MyLoginButton(
+                MyButton(
                   text: 'Sign In',
                   onTap: signUserIn,
                 ),
                 const SizedBox(height: 30),
                 Padding(
-                  padding: const EdgeInsets.all(25.0),
+                  padding: EdgeInsets.all(horizontalPadding),
                   child: Row(
                     children: [
                       Expanded(
                         child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
+                          thickness: 0.75,
+                          color: Colors.grey[600],
                         ),
                       ),
                       Padding(
@@ -146,13 +145,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Expanded(
                         child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
+                          thickness: 0.75,
+                          color: Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
                 ),
+                SizedBox(height:15,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
