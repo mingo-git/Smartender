@@ -34,6 +34,10 @@ func GetAllSlotsForSelectedHardware() string {
 		slot_number`
 }
 
+func CheckHardwareForUser() string {
+	return `SELECT * FROM user_hardware WHERE hardware_id = $1 AND user_id = $2 AND role = 'admin'`
+}
+
 // GetSlotForHardwareAndID returns a query that selects a slot from the slots table
 //
 // Query-Parameters:
