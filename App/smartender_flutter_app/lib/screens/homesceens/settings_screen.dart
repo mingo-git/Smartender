@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartender_flutter_app/components/settings_tile.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/account_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/bottle_slot_screen.dart';
-import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/language_screen.dart';
+import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/create_drink_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/manage_roles_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/theme_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
@@ -37,6 +37,11 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => _navigateToScreen(context, const BottleSlotsScreen()),
             ),
             SettingsTile(
+              title: "Create Drink",
+              icon: Icons.local_bar,
+              onTap: () => _navigateToScreen(context, const CreateDrinkScreen()),
+            ),
+            SettingsTile(
               title: "Manage Roles",
               icon: Icons.admin_panel_settings,
               onTap: () => _navigateToScreen(context, const ManageRolesScreen()),
@@ -45,11 +50,6 @@ class SettingsScreen extends StatelessWidget {
               title: "Theme",
               icon: Icons.color_lens,
               onTap: () => _navigateToScreen(context, const ThemeScreen()),
-            ),
-            SettingsTile(
-              title: "Language",
-              icon: Icons.language,
-              onTap: () => _navigateToScreen(context, const LanguageScreen()),
             ),
             SettingsTile(
               title: "Sign out",
