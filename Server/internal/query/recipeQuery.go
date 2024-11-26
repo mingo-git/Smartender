@@ -1,34 +1,51 @@
 package query
 
-func CreateRecipeForUser() string {
-	return "INSERT INTO recipes (user_id, recipe_name) VALUES ($1, $2) RETURNING recipe_id;"
+func CreateRecipeForHardware() string {
+	return "INSERT INTO recipes (hardware_id, recipe_name, is_favorite) VALUES ($1, $2, $3) RETURNING recipe_id;"
 }
 
-func GetAllRecipesForUser() string {
+func GetAllRecipesForHardware() string {
 	return `SELECT 
-				r.recipe_id, 
-				r.recipe_name, 
-				COALESCE(ARRAY_AGG(DISTINCT d.drink_name), '{}') AS drink_names  -- Drinks in einem Array zusammenfassen
-
-			FROM 
-				recipes r
-			LEFT JOIN 
-				recipe_ingredients ri ON r.recipe_id = ri.recipe_id
-			LEFT JOIN 
-				drinks d ON ri.drink_id = d.drink_id
-			WHERE 
-				r.user_id = $1
-			GROUP BY 
-    			r.recipe_id, r.recipe_name;
+						r.recipe_id
+				FROM 
+						recipes r
+				WHERE 
+						r.hardware_id = $1
+				GROUP BY 
+						r.recipe_id, r.recipe_name;
 `
 }
 
-func UpdateRecipeForUser() string {
-	return "UPDATE recipes SET recipe_name = $1 WHERE (recipe_id = $2) AND (user_id = $3)"
+// GetIngredientsForRecipe returns all ingredients for a recipe
+// The query returns the recipe_id, user_id, recipe_name and an array with each ingredient
+// $1 = recipe_id
+// $2 = user_id
+func GetRecipeByID() string {
+	return `SELECT 
+						r.recipe_id, 
+						r.hardware_id,
+						r.recipe_name, 
+						r.is_favorite,
+						    COALESCE(json_agg(DISTINCT ri.drink_id) FILTER (WHERE ri.drink_id IS NOT NULL), '[]') AS drink_ids
+				FROM 
+						recipes r
+				LEFT JOIN 
+						recipe_ingredients ri ON r.recipe_id = ri.recipe_id
+				LEFT JOIN 
+						drinks d ON ri.drink_id = d.drink_id
+				WHERE 
+						r.recipe_id = $1 AND r.hardware_id = $2
+				GROUP BY 
+						r.recipe_id, r.recipe_name;
+`
 }
 
-func DeleteRecipeForUser() string {
-	return "DELETE FROM recipes WHERE (recipe_id = $1) AND (user_id = $2)"
+func UpdateRecipeForHardware() string {
+	return "UPDATE recipes SET recipe_name = $1, is_favorite = $2 WHERE (recipe_id = $3) AND (hardware_id = $4)"
+}
+
+func DeleteRecipeForHardware() string {
+	return "DELETE FROM recipes WHERE (recipe_id = $1) AND (hardware_id = $2)"
 }
 
 // -------------------------------------------------------------------------------------------------

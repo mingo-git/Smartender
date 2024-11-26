@@ -2,7 +2,7 @@ package handlers
 
 import (
 	auth "app/internal/auth"
-	. "app/internal/models"
+	"app/internal/models"
 	"app/internal/query"
 	"database/sql"
 	"encoding/json"
@@ -16,7 +16,7 @@ import (
 func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /user at %s", time.Now())
 	// 1. Decode the incoming JSON request
-	var newUser User
+	var newUser models.User
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
@@ -60,7 +60,7 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /login at %s", time.Now())
 
 	// 1. Decode the incoming JSON request
-	var loginRequest User
+	var loginRequest models.User
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
@@ -74,7 +74,7 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 3. Get the user from the database
-	var storedUser User
+	var storedUser models.User
 	err = db.QueryRow(query.GetUserByUsername(), loginRequest.Username).Scan(&storedUser.UserID, &storedUser.Username, &storedUser.Password, &storedUser.Email)
 	if err != nil {
 		log.Printf("Error fetching user: %v", err)
@@ -161,7 +161,7 @@ func ReadUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	userID := vars["user_id"]
 
 	// Prepare a User struct to hold the retrieved user
-	var user User
+	var user models.User
 
 	// Query the database for the user
 	err := db.QueryRow(query.GetUserByID(), userID).Scan(&user.UserID, &user.Username, &user.Password, &user.Email)
@@ -194,7 +194,7 @@ func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	userID := vars["user_id"]
 
 	// Parse the request body
-	var user User
+	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		log.Printf("Error decoding request body: %v", err)
