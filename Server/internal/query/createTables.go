@@ -24,18 +24,18 @@ func CreateTables() string {
 		password VARCHAR(255) NOT NULL,
 		email VARCHAR(100) NOT NULL UNIQUE     -- Add unique constraint
 	);
-
-	CREATE TABLE IF NOT EXISTS drinks (
-		drink_id SERIAL PRIMARY KEY,
-		user_id INT REFERENCES users(user_id) ON DELETE CASCADE,  -- Each drink belongs to a user
-		drink_name VARCHAR(100) NOT NULL,
-		is_alcoholic BOOLEAN DEFAULT TRUE
-	);
-
+	
 	CREATE TABLE IF NOT EXISTS hardware (
 		hardware_id SERIAL PRIMARY KEY,
 		hardware_name VARCHAR(100) NOT NULL,
-		device_id VARCHAR(255) UNIQUE NOT NULL  -- Unique hardware ID sent by the device
+		mac_address VARCHAR(17) UNIQUE NOT NULL
+	);
+
+	CREATE TABLE IF NOT EXISTS drinks (
+		drink_id SERIAL PRIMARY KEY,
+		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each drink belongs to a hardware
+		drink_name VARCHAR(100) NOT NULL,
+		is_alcoholic BOOLEAN DEFAULT TRUE
 	);
 
 	CREATE TABLE IF NOT EXISTS user_hardware (
@@ -63,17 +63,17 @@ func CreateTables() string {
 
 
 	CREATE TABLE IF NOT EXISTS slots (
-			hardware_id INT NOT NULL,
+			hardware_id INT NOT NULL REFERENCES hardware(hardware_id) ON DELETE CASCADE,
 			slot_number INT NOT NULL,
 			drink_id INT REFERENCES drinks(drink_id) ON DELETE SET NULL,  -- Each slot can hold one drink
-			PRIMARY KEY (slot_number, hardware_id),
-			FOREIGN KEY (hardware_id) REFERENCES hardware(hardware_id) ON DELETE CASCADE
+			PRIMARY KEY (slot_number, hardware_id)
 	);
 
 	CREATE TABLE IF NOT EXISTS recipes (
 		recipe_id SERIAL PRIMARY KEY,
-		user_id INT REFERENCES users(user_id) ON DELETE CASCADE,  -- Each recipe belongs to a user
-		recipe_name VARCHAR(100) NOT NULL UNIQUE  -- Unique recipe name per user
+		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each recipe belongs to a hardware
+		recipe_name VARCHAR(100) NOT NULL UNIQUE,  -- Unique recipe name per hardware
+		is_favorite BOOLEAN DEFAULT FALSE
 	);
 
 	CREATE TABLE IF NOT EXISTS recipe_ingredients (
@@ -94,21 +94,21 @@ func PopulateDatabase() string {
         ('bigDickPhil', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser3@example.com')
 	ON CONFLICT (username) DO NOTHING; -- Avoid duplicates
 	
-	INSERT INTO drinks (user_id, drink_name, is_alcoholic) VALUES
-		(1, 'Vodka', TRUE),
-		(1, 'Rum', TRUE),
-		(1, 'Gin', TRUE),
-		(1, 'Tequila', TRUE),
-		(2, 'Whiskey', TRUE),
-		(2, 'Orange Juice', FALSE);
-
-	InSERT INTO hardware (hardware_name, device_id) VALUES
-		('Smartender von Jonas', '1'),
-		('Smartender von Fachschaft', '2'),
-		('Smartender von Philipp', '3');
+	InSERT INTO hardware (hardware_name, mac_address) VALUES
+		('Smartender von Jonas', '00:00:00:00:00:01'),
+		('Smartender von Fachschaft', '00:00:00:00:00:02'),
+		('Smartender von Philipp', '00:00:00:00:00:03');
+	
+	INSERT INTO drinks (hardware_id, drink_name, is_alcoholic) VALUES
+		(2, 'Vodka', TRUE),
+		(2, 'Rum', TRUE),
+		(2, 'Gin', TRUE),
+		(2, 'Tequila', TRUE),
+		(1, 'Whiskey', TRUE),
+		(1, 'Orange Juice', FALSE);
 
 	INSERT INTO user_hardware (user_id, hardware_id, role) VALUES
-		(1, 1, 'admin'),
+		(2, 1, 'admin'),
 		(1, 2, 'admin'),
 		(4, 3, 'admin');
 
@@ -124,11 +124,11 @@ func PopulateDatabase() string {
 		(2, 4, 5),
 		(2, 5, 6);
 
-	INSERT INTO recipes (user_id, recipe_name) VALUES
-		(1, 'Vodka Martini'),
-		(1, 'Mojito'),
-		(1, 'Gin and Tonic'),
-		(2, 'Whiskey O');
+	INSERT INTO recipes (hardware_id, recipe_name, is_favorite) VALUES
+		(2, 'Vodka Martini', TRUE),
+		(2, 'Mojito', FALSE),
+		(2, 'Gin and Tonic', FALSE),
+		(1, 'Whiskey O', FALSE);
 
 	INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml) VALUES
 		(1, 1, 60),
