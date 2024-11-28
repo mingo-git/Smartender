@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../components/my_togglebutton.dart';
+import '../../../components/liter_display.dart';
+import '../../../components/search_dropdown.dart';
+import '../../../config/constants.dart';
+import '../../../services/drink_service.dart';
 
 class CreateDrinkScreen extends StatefulWidget {
   const CreateDrinkScreen({Key? key}) : super(key: key);
@@ -8,189 +14,216 @@ class CreateDrinkScreen extends StatefulWidget {
 }
 
 class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
-  bool isLiterMode = true; // Toggle between Liter and Percent
-  double filledAmount = 0.2; // Example filled amount (in Liters)
-  final double maxCapacity = 0.4; // Maximum capacity of the cup in Liters
+  bool isLiterMode = true;
+  double filledAmount = 0.2;
+  final TextEditingController drinkNameController = TextEditingController();
+  final List<Map<String, dynamic>> ingredients = [];
 
-  void _toggleMode() {
+  void _addIngredientField() {
     setState(() {
-      isLiterMode = !isLiterMode;
+      ingredients.add({"ingredient": null, "quantity": 0.0});
     });
   }
 
-  String _getDisplayValue() {
-    if (isLiterMode) {
-      return "${filledAmount.toStringAsFixed(2)} L / ${maxCapacity.toStringAsFixed(2)} L";
-    } else {
-      double percent = (filledAmount / maxCapacity) * 100;
-      return "${percent.toStringAsFixed(1)}%";
-    }
+  bool _canSaveDrink() {
+    return drinkNameController.text.trim().isNotEmpty &&
+        ingredients.any((ingredient) =>
+        ingredient["ingredient"] != null && ingredient["quantity"] > 0);
+  }
+
+  void _saveDrink() {
+    final drinkName = drinkNameController.text.trim();
+    final selectedIngredients = ingredients
+        .where((ingredient) =>
+    ingredient["ingredient"] != null && ingredient["quantity"] > 0)
+        .toList();
+
+    print("Drink Name: $drinkName");
+    print("Ingredients: $selectedIngredients");
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Drink saved successfully!")),
+    );
+
+    setState(() {
+      drinkNameController.clear();
+      ingredients.clear();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final drinkService = Provider.of<DrinkService>(context);
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        backgroundColor: backgroundColor,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          icon: const Icon(Icons.arrow_back, size: 35),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           "Create Drink",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
         actions: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: GestureDetector(
-                  onTap: _toggleMode,
-                  child: Container(
-                    width: 60,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: isLiterMode ? Colors.green : Colors.grey[400],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          left: isLiterMode ? 10 : 35,
-                          top: 7,
-                          child: Text(
-                            isLiterMode ? 'L' : '%',
-                            style: TextStyle(
-                              color: isLiterMode? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        AnimatedPositioned(
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeInOut,
-                          left: isLiterMode ? 5 : 30,
-                          child: Container(
-                            width: 25,
-                            height: 25,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-            ],
+          MyToggleButton(
+            onText: "L",
+            offText: "%",
+            initialValue: isLiterMode,
+            onToggle: (value) => setState(() => isLiterMode = value),
+            width: 80,
+            height: 40,
+            fontSize: 20,
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 20),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Row(
               children: [
-                // Füllmengenanzeige
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: Text(
-                    _getDisplayValue(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                Expanded(
+                  flex: 4,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: LiterDisplay(
+                      currentAmount: filledAmount,
+                      maxCapacity: 0.4,
                     ),
                   ),
                 ),
-                const SizedBox(width: 20), // Abstand zwischen Anzeige und Becher
-                // Becheranzeige
-                Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    // Becherrahmen
-                    ClipPath(
-                      clipper: CupClipper(),
-                      child: Container(
+                Expanded(
+                  flex: 6,
+                  child: Stack(
+                    alignment: Alignment.bottomLeft,
+                    children: [
+                      Container(
+                        color: Colors.black,
                         width: 170,
                         height: 200,
-                        color: Colors.grey[300],
                       ),
-                    ),
-                    // Füllstandsanzeige
-                    ClipPath(
-                      clipper: CupClipper(),
-                      child: Container(
-                        width: 170,
-                        height: (filledAmount / maxCapacity) * 200, // Dynamische Höhe basierend auf der Füllmenge
-                        color: Colors.blue,
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          width: 170,
+                          height: (filledAmount / 0.4) * 200,
+                          color: Colors.blue,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 20),
-          // Buttons for testing (Optional)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    if (filledAmount + 0.05 <= maxCapacity) {
-                      filledAmount += 0.05;
-                    }
-                  });
-                },
-                child: const Text("Add 0.05L"),
+            const SizedBox(height: 20),
+            TextField(
+              controller: drinkNameController,
+              decoration: InputDecoration(
+                hintText: "Enter drink name",
+                border: OutlineInputBorder(
+                  borderRadius: defaultBorderRadius,
+                ),
+                filled: true,
+                fillColor: Colors.white,
               ),
-              const SizedBox(width: 10),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Ingredients",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add, size: 30),
+                  onPressed: _addIngredientField,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            StreamBuilder<List<String>>(
+              stream: drinkService.drinksStream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text("No ingredients available.");
+                } else {
+                  final drinks = snapshot.data!;
+                  return Column(
+                    children: List.generate(
+                      ingredients.length,
+                          (index) => Row(
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: SearchDropdown(
+                              items: drinks,
+                              hintText: "Search Ingredient",
+                              onItemSelected: (value) {
+                                setState(() {
+                                  ingredients[index]["ingredient"] = value;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 1,
+                            child: TextField(
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                hintText: "L",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  ingredients[index]["quantity"] =
+                                      double.tryParse(value) ?? 0.0;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            if (_canSaveDrink())
               ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    if (filledAmount - 0.05 >= 0) {
-                      filledAmount -= 0.05;
-                    }
-                  });
-                },
-                child: const Text("Remove 0.05L"),
+                onPressed: _saveDrink,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  minimumSize: const Size(double.infinity, 60),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: defaultBorderRadius,
+                  ),
+                ),
+                child: const Text(
+                  "Save Drink",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ],
-          ),
-          const SizedBox(height: 20),
-        ],
+            const SizedBox(height: 40),
+          ],
+        ),
       ),
     );
   }
-}
-
-class CupClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final Path path = Path();
-    path.moveTo(size.width * 0.2, 0); // Start oben leicht schmal
-    path.lineTo(size.width * 0.8, 0); // Obere Kante
-    path.lineTo(size.width, size.height); // Rechte Kante leicht breiter
-    path.lineTo(0, size.height); // Linke Kante
-    path.close(); // Schließen des Pfads
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

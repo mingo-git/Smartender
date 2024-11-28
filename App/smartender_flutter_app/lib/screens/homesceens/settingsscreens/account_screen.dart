@@ -227,6 +227,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
                     decoration: BoxDecoration(
+                      color: isEditing ? Colors.white : Colors.transparent, // Hintergrund nur bei Bearbeitung weiß
                       border: isEditing ? Border.all(color: Colors.grey) : null,
                       borderRadius: defaultBorderRadius,
                     ),
@@ -259,6 +260,8 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
     );
   }
+
+
 
   Widget _buildPasswordFields() {
     return Column(

@@ -51,7 +51,6 @@ class AuthService {
 
   Future<Map<String, dynamic>> signIn(String emailOrUsername, String password) async {
     final url = Uri.parse('$_baseUrl$_serviceUrl/login');
-    print(url);
     try {
       final response = await http.post(
         url,
@@ -73,7 +72,6 @@ class AuthService {
         return {'success': false, 'error': 'Unexpected error occurred.'};
       }
     } catch (e) {
-      print(e);
       return {'success': false, 'error': 'Network error. Please check your connection.'};
     }
   }

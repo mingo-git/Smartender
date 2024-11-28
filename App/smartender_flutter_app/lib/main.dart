@@ -5,7 +5,8 @@ import 'package:smartender_flutter_app/models/cocktail_card.dart';
 import 'package:smartender_flutter_app/screens/home_screen.dart';
 import 'package:smartender_flutter_app/screens/login_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
-
+import 'package:smartender_flutter_app/services/drink_service.dart';
+import 'package:smartender_flutter_app/config/constants.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -15,8 +16,7 @@ void main() async {
 
   runApp(MyApp(isLoggedIn: token != null));
 }
-//TODO: Einheitliche Abstaende (Margins)
-//TODO: Einheitliche Border.Radius
+
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
 
@@ -24,19 +24,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => CocktailCard(),
-      builder: (context, child) =>
-          MaterialApp(
-            // Definiere deine Routen
-            routes: {
-              '/home': (context) => HomeScreen(),
-              '/login': (context) => LoginScreen(),
-            },
-            // Starte direkt mit HomeScreen
-            initialRoute: '/home',
-          ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => CocktailCard(),
+        ),
+        Provider<DrinkService>(
+          create: (_) => DrinkService(baseUrl: baseUrl),
+        ),
+      ],
+      child: MaterialApp(
+        routes: {
+          '/home': (context) => HomeScreen(),
+          '/login': (context) => LoginScreen(),
+        },
+        initialRoute: isLoggedIn ? '/home' : '/login',
+      ),
     );
   }
 }
-
