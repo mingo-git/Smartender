@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/drink_service.dart';
 import 'my_button.dart';
 import 'ingredient_popup.dart';
 
@@ -24,6 +26,31 @@ class _AddDrinkPopupState extends State<AddDrinkPopup> {
       ),
     );
   }
+
+  Future<void> _saveDrink(BuildContext context) async {
+    final drinkName = _drinkNameController.text.trim();
+    if (drinkName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter a drink name.")),
+      );
+      return;
+    }
+
+    final drinkService = Provider.of<DrinkService>(context, listen: false);
+    final success = await drinkService.addDrink(drinkName, _isAlcoholic);
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Drink added successfully!")),
+      );
+      _closeAndReopenIngredientPopup(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to add drink. Please try again.")),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +95,7 @@ class _AddDrinkPopupState extends State<AddDrinkPopup> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: MyButton(
-            onTap: () {
-              // Handle save logic for new drink here
-              print("Drink Name: ${_drinkNameController.text}");
-              print("Contains Alcohol: $_isAlcoholic");
-              Navigator.of(context).pop();
-            },
+            onTap: () => _saveDrink(context),
             text: "Save",
             hasMargin: false, // Kein zusätzliches Margin, um den Button ins Popup zu integrieren
           ),

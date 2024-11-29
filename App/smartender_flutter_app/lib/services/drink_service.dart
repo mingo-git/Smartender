@@ -39,6 +39,7 @@ class DrinkService implements FetchableService {
         final drinkNames = drinks.map((drink) => drink['drink_name'] as String).toList();
 
         await _saveDrinksLocally(drinkNames); // Speichere nur die drink_names in SharedPreferences
+        print("Drinks fetched and saved locally.");
       } else {
         print("Failed to fetch drinks: ${response.statusCode}");
       }
@@ -65,4 +66,44 @@ class DrinkService implements FetchableService {
     print("No drinks found in SharedPreferences.");
     return [];
   }
+
+  /// Hinzufügen eines neuen Drinks (POST)
+  Future<bool> addDrink(String drinkName, bool isAlcoholic) async {
+    final AuthService authService = AuthService();
+    final String? token = await authService.getToken();
+
+    if (token == null) {
+      print("No token available. Cannot add drink.");
+      return false;
+    }
+
+    final url = Uri.parse(_baseUrl + _allDrinksUrl);
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          "drink_name": drinkName,
+          "is_alcoholic": isAlcoholic,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print("Drink added successfully: $drinkName");
+        await fetchAndSaveData(); // Daten nach Hinzufügen aktualisieren
+        return true;
+      } else {
+        print("Failed to add drink: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Error adding drink: $e");
+      return false;
+    }
+  }
+
 }
