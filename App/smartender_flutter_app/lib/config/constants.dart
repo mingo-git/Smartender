@@ -11,3 +11,5 @@ Color backgroundColor = const Color(0xFFF2F2F2);  // Hex-Farbe für F2F2F2 mit v
 
 const double horizontalPadding = 10.0; // Neue Konstante für das horizontale Padding
 final BorderRadius defaultBorderRadius = BorderRadius.circular(24.0); // Einheitlicher Radius für abgerundete Ecken
+
+

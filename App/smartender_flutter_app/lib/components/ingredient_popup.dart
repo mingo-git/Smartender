@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/drink_service.dart';
+import 'add_drink_popup.dart';
 
 class IngredientPopup extends StatefulWidget {
   final Function(String) onIngredientSelected;
@@ -40,6 +41,14 @@ class _IngredientPopupState extends State<IngredientPopup> {
     });
   }
 
+  void _openAddDrinkPopup() {
+    Navigator.of(context).pop(); // Schließt das aktuelle Popup
+    showDialog(
+      context: context,
+      builder: (context) => const AddDrinkPopup(),
+    );
+  }
+
   @override
   void dispose() {
     _searchController.removeListener(_filterIngredients);
@@ -50,25 +59,46 @@ class _IngredientPopupState extends State<IngredientPopup> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Zutat auswählen"),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text("Select Ingredient"),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
       content: Container(
         width: double.maxFinite,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Suche Zutaten',
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Search ingredients',
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: _openAddDrinkPopup,
+                ),
+              ],
             ),
             const SizedBox(height: 10),
-            // Hier verwenden wir Flexible
             Flexible(
               child: _filteredIngredients.isEmpty
-                  ? const Center(child: Text("Keine Zutaten gefunden."))
+                  ? const Center(child: Text("No ingredients found."))
                   : ListView.builder(
-                // Entferne shrinkWrap
+                shrinkWrap: true,
                 itemCount: _filteredIngredients.length,
                 itemBuilder: (context, index) {
                   return ListTile(
@@ -85,12 +115,6 @@ class _IngredientPopupState extends State<IngredientPopup> {
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text("Abbrechen"),
-        ),
-      ],
     );
   }
 }
