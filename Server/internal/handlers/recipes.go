@@ -32,6 +32,7 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not create recipe", http.StatusInternalServerError)
 		return
 	}
+	newRecipe.HardwareID = hardwareID
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created

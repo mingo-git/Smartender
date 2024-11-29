@@ -1,7 +1,7 @@
 package query
 
 func CreateDrink() string {
-	return "INSERT INTO drinks (drink_name, is_alcoholic, hardware_id) VALUES ($1, $2, $3)"
+	return "INSERT INTO drinks (drink_name, is_alcoholic, hardware_id) VALUES ($1, $2, $3) RETURNING drink_id"
 }
 
 func GetAllDrinksForHardware() string {

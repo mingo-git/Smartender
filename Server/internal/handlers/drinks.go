@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -26,12 +27,19 @@ func CreateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert new drink into the database
-	_, err = db.Exec(query.CreateDrink(), newDrink.Name, newDrink.Alcoholic, hardwareID)
+	err = db.QueryRow(query.CreateDrink(), newDrink.Name, newDrink.Alcoholic, hardwareID).Scan(&newDrink.DrinkID)
 	if err != nil {
 		log.Printf("Error inserting new drink: %v", err)
 		http.Error(w, "Could not create drink", http.StatusInternalServerError)
 		return
 	}
+
+	hardwareIDInt, err := strconv.Atoi(hardwareID)
+	if err != nil {
+		http.Error(w, "Invalid hardware ID", http.StatusBadRequest)
+		return
+	}
+	newDrink.HardwareID = hardwareIDInt
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
