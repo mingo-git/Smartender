@@ -67,12 +67,6 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     })
         .toList();
 
-    print("Recipe Name: $recipeName");
-    print("Ingredients:");
-    for (var ingredient in recipeIngredients) {
-      print(" - ${ingredient['ingredient']}: ${ingredient['quantity']} ml");
-    }
-
     bool success = await recipeService.addRecipe(recipeName, recipeIngredients);
     if (success) {
       print("Recipe saved successfully!");
