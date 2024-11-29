@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -32,7 +33,12 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not create recipe", http.StatusInternalServerError)
 		return
 	}
-	newRecipe.HardwareID = hardwareID
+	hardwareIDInt, err := strconv.Atoi(hardwareID)
+	if err != nil {
+		http.Error(w, "Invalid hardware ID", http.StatusBadRequest)
+		return
+	}
+	newRecipe.HardwareID = hardwareIDInt
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
