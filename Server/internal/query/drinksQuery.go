@@ -5,7 +5,7 @@ func CreateDrink() string {
 }
 
 func GetAllDrinksForHardware() string {
-	return "SELECT drink_id, hardware_id, drink_name, is_alcoholic FROM drinks WHERE hardware_id = $1 ORDER BY drink_id"
+	return "SELECT drink_id, hardware_id, drink_name, is_alcoholic FROM drinks WHERE hardware_id = $1 ORDER BY drink_name"
 }
 
 // GetDrinkByID returns the SQL query to fetch a specific drink by its ID.

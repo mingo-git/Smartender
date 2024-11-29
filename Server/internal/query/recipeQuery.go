@@ -12,7 +12,9 @@ func GetAllRecipesForHardware() string {
 				WHERE 
 						r.hardware_id = $1
 				GROUP BY 
-						r.recipe_id, r.recipe_name;
+						r.recipe_id, r.recipe_name
+				ORDER BY
+						r.recipe_name;
 `
 }
 
