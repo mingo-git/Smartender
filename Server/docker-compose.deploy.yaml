@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=cloudsql-proxy
+      - DB_PORT=5432
+      - POSTGRES_USER=${APP_DB_USERNAME}
+      - POSTGRES_PASSWORD=${APP_DB_PASSWORD}
+      - POSTGRES_DB=${APP_DB_NAME}
+    depends_on:
+      - cloudsql-proxy
+
+  cloudsql-proxy:
+    image: gcr.io/cloudsql-docker/gce-proxy:1.33.3
+    command: "/cloud_sql_proxy -instances=${gothic-sequence-443115-v5:europe-west3:smartender-db}=tcp:5432"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/service-account-key.json
+    volumes:
+      - ./secrets:/secrets:ro
