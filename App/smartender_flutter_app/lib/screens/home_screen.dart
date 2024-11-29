@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/components/bottom_nav_bar.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/screens/homesceens/searchdrinks_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settings_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/favorites_screen.dart';
-import '../services/auth_service.dart';
 import '../services/drink_service.dart';
 import '../services/fetch_data_service.dart';
+import '../services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final AuthService _authService = AuthService();
-  final FetchData _fetchData = FetchData();
+  final FetchdData _fetchDataService = FetchdData();
 
   int _selectedIndex = 0;
 
@@ -32,30 +33,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // Initialisiere DrinkService und füge es zu FetchData hinzu
-    final drinkService = DrinkService(baseUrl: baseUrl);
-    _fetchData.addService(drinkService);
-
-    // Starte das regelmäßige Abrufen
-    _fetchData.startPolling();
+    // DrinkService wird hinzugefügt und regelmäßiges Fetch gestartet
+    final drinkService = Provider.of<DrinkService>(context, listen: false);
+    _fetchDataService.addService(drinkService);
+    _fetchDataService.startPolling(interval: const Duration(seconds: 10));
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
 
-    // Stoppe das Polling, wenn der Screen zerstört wird
-    _fetchData.stopPolling();
+    // Polling stoppen, wenn der HomeScreen verlassen wird
+    _fetchDataService.stopPolling();
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _fetchData.startPolling();
-    } else if (state == AppLifecycleState.paused) {
-      _fetchData.stopPolling();
-    }
   }
 
   void _signOut() async {

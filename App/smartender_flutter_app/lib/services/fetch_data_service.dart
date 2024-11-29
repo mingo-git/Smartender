@@ -1,29 +1,34 @@
 import 'dart:async';
 
-class FetchData {
+class FetchdData {
   final List<FetchableService> _services = [];
   Timer? _pollingTimer;
 
+  /// Füge einen neuen Service hinzu, der regelmäßig abgefragt werden soll
   void addService(FetchableService service) {
     _services.add(service);
   }
 
+  /// Starte das regelmäßige Abrufen der Daten
   void startPolling({Duration interval = const Duration(seconds: 10)}) {
-    stopPolling(); // Bestehende Timer stoppen
+    stopPolling(); // Vorherige Timer stoppen, falls vorhanden
     _pollingTimer = Timer.periodic(interval, (timer) {
       _fetchAllServices();
     });
   }
 
+  /// Stoppe das regelmäßige Abrufen
   void stopPolling() {
     _pollingTimer?.cancel();
+    _pollingTimer = null;
   }
 
-  void _fetchAllServices() async {
+  /// Hole die Daten von allen registrierten Services
+  Future<void> _fetchAllServices() async {
     for (var service in _services) {
       try {
         await service.fetchAndSaveData();
-        print("Service ${service.runtimeType} updated data successfully.");
+        print("Service ${service.runtimeType} fetched and saved data successfully.");
       } catch (e) {
         print("Error fetching data for service ${service.runtimeType}: $e");
       }
@@ -31,6 +36,7 @@ class FetchData {
   }
 }
 
+/// Schnittstelle, die alle abrufbaren Services implementieren müssen
 abstract class FetchableService {
   Future<void> fetchAndSaveData();
 }

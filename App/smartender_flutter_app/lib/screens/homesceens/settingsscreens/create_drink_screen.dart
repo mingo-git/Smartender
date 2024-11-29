@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../components/my_togglebutton.dart';
 import '../../../components/liter_display.dart';
-import '../../../components/search_dropdown.dart';
 import '../../../config/constants.dart';
 import '../../../services/drink_service.dart';
+import '../../../components/ingredient_popup.dart';
 
 class CreateDrinkScreen extends StatefulWidget {
   const CreateDrinkScreen({Key? key}) : super(key: key);
@@ -18,11 +18,25 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   double filledAmount = 0.2;
   final TextEditingController drinkNameController = TextEditingController();
   final List<Map<String, dynamic>> ingredients = [];
+  String? selectedIngredient;
 
   void _addIngredientField() {
     setState(() {
       ingredients.add({"ingredient": null, "quantity": 0.0});
     });
+  }
+
+  void _openIngredientPopup() async {
+    showDialog(
+      context: context,
+      builder: (context) => IngredientPopup(
+        onIngredientSelected: (ingredient) {
+          setState(() {
+            selectedIngredient = ingredient;
+          });
+        },
+      ),
+    );
   }
 
   bool _canSaveDrink() {
@@ -31,30 +45,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
         ingredient["ingredient"] != null && ingredient["quantity"] > 0);
   }
 
-  void _saveDrink() {
-    final drinkName = drinkNameController.text.trim();
-    final selectedIngredients = ingredients
-        .where((ingredient) =>
-    ingredient["ingredient"] != null && ingredient["quantity"] > 0)
-        .toList();
-
-    print("Drink Name: $drinkName");
-    print("Ingredients: $selectedIngredients");
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Drink saved successfully!")),
-    );
-
-    setState(() {
-      drinkNameController.clear();
-      ingredients.clear();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final drinkService = Provider.of<DrinkService>(context);
-
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -148,62 +140,38 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
               ],
             ),
             const SizedBox(height: 10),
-            StreamBuilder<List<String>>(
-              stream: drinkService.drinksStream,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text("No ingredients available.");
-                } else {
-                  final drinks = snapshot.data!;
-                  return Column(
-                    children: List.generate(
-                      ingredients.length,
-                          (index) => Row(
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: SearchDropdown(
-                              items: drinks,
-                              hintText: "Search Ingredient",
-                              onItemSelected: (value) {
-                                setState(() {
-                                  ingredients[index]["ingredient"] = value;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            flex: 1,
-                            child: TextField(
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                hintText: "L",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                filled: true,
-                                fillColor: Colors.white,
-                              ),
-                              onChanged: (value) {
-                                setState(() {
-                                  ingredients[index]["quantity"] =
-                                      double.tryParse(value) ?? 0.0;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+            ElevatedButton(
+              onPressed: _openIngredientPopup,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, // Hintergrundfarbe Weiß
+                side: const BorderSide(color: Colors.black, width: 1), // Schwarze Border
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: defaultBorderRadius,
+                ),
+                alignment: Alignment.centerLeft, // Text linksbündig ausrichten
+                padding: EdgeInsets.zero, // Entfernt Standard-Padding
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10), // Horizontal etwas Padding hinzufügen
+                child: Align(
+                  alignment: Alignment.centerLeft, // Text linksbündig setzen
+                  child: Text(
+                    selectedIngredient ?? "Search Ingredient",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black, // Textfarbe Schwarz
                     ),
-                  );
-                }
-              },
+                  ),
+                ),
+              ),
             ),
+
+
+
             const SizedBox(height: 20),
             if (_canSaveDrink())
               ElevatedButton(
-                onPressed: _saveDrink,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize: const Size(double.infinity, 60),
@@ -211,6 +179,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                     borderRadius: defaultBorderRadius,
                   ),
                 ),
+                onPressed: () {
+                  // TODO: Implement save drink functionality
+                },
                 child: const Text(
                   "Save Drink",
                   style: TextStyle(
