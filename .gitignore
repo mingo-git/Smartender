@@ -11,4 +11,4 @@
 .idea
 
 # Ignore Secrets
-secrets/*
+Server/secrets/service-account-secret.json
