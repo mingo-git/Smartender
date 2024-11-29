@@ -35,6 +35,7 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
+	json.NewEncoder(w).Encode(newRecipe)
 }
 
 func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
