@@ -18,12 +18,12 @@ class LiterDisplay extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Oberer Text (z. B. 0,20 L)
+          // Oberer Text (z. B. 200 ml)
           Positioned(
             top: 0,
             left: 0,
             child: Text(
-              "${currentAmount.toStringAsFixed(2)} L",
+              "${currentAmount.toInt()} ml", // Ganze Zahl ohne Nachkommastellen
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -42,12 +42,12 @@ class LiterDisplay extends StatelessWidget {
               ),
             ),
           ),
-          // Unterer Text (z. B. 0,40 L)
+          // Unterer Text (z. B. 400 ml)
           Positioned(
             top: 50,
             right: 0,
             child: Text(
-              "${maxCapacity.toStringAsFixed(2)} L",
+              "${maxCapacity.toInt()} ml", // Ganze Zahl ohne Nachkommastellen
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,

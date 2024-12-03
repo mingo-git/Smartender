@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           create: (context) => CocktailCard(),
         ),
         Provider<DrinkService>(
-          create: (_) => DrinkService(baseUrl: baseUrl),
+          create: (_) => DrinkService(),
         ),
       ],
       child: MaterialApp(

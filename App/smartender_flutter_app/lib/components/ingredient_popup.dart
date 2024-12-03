@@ -4,7 +4,7 @@ import '../services/drink_service.dart';
 import 'add_drink_popup.dart';
 
 class IngredientPopup extends StatefulWidget {
-  final Function(String) onIngredientSelected;
+  final Function(Map<String, dynamic>) onIngredientSelected;
 
   const IngredientPopup({Key? key, required this.onIngredientSelected})
       : super(key: key);
@@ -15,8 +15,8 @@ class IngredientPopup extends StatefulWidget {
 
 class _IngredientPopupState extends State<IngredientPopup> {
   TextEditingController _searchController = TextEditingController();
-  List<String> _allIngredients = [];
-  List<String> _filteredIngredients = [];
+  List<Map<String, dynamic>> _allIngredients = [];
+  List<Map<String, dynamic>> _filteredIngredients = [];
 
   @override
   void initState() {
@@ -34,9 +34,10 @@ class _IngredientPopupState extends State<IngredientPopup> {
   void _filterIngredients() {
     setState(() {
       _filteredIngredients = _allIngredients
-          .where((ingredient) => ingredient
-          .toLowerCase()
-          .contains(_searchController.text.toLowerCase()))
+          .where((ingredient) =>
+          ingredient["drink_name"]
+              .toLowerCase()
+              .contains(_searchController.text.toLowerCase()))
           .toList();
     });
   }
@@ -101,11 +102,11 @@ class _IngredientPopupState extends State<IngredientPopup> {
                 shrinkWrap: true,
                 itemCount: _filteredIngredients.length,
                 itemBuilder: (context, index) {
+                  final ingredient = _filteredIngredients[index];
                   return ListTile(
-                    title: Text(_filteredIngredients[index]),
+                    title: Text(ingredient["drink_name"]),
                     onTap: () {
-                      widget.onIngredientSelected(
-                          _filteredIngredients[index]);
+                      widget.onIngredientSelected(ingredient);
                       Navigator.of(context).pop();
                     },
                   );
