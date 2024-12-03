@@ -6,7 +6,7 @@ import 'package:smartender_flutter_app/screens/home_screen.dart';
 import 'package:smartender_flutter_app/screens/login_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
 import 'package:smartender_flutter_app/services/drink_service.dart';
-import 'package:smartender_flutter_app/config/constants.dart';
+import 'package:smartender_flutter_app/services/slot_service.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -31,6 +31,9 @@ class MyApp extends StatelessWidget {
         ),
         Provider<DrinkService>(
           create: (_) => DrinkService(),
+        ),
+        Provider<SlotService>( // SlotService hinzugefügt
+          create: (_) => SlotService(),
         ),
       ],
       child: MaterialApp(

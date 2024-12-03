@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../components/cup_display.dart';
-import '../../../components/my_togglebutton.dart';
 import '../../../components/liter_display.dart';
 import '../../../config/constants.dart';
 import '../../../services/recipe_service.dart';
@@ -14,8 +13,6 @@ class CreateDrinkScreen extends StatefulWidget {
 }
 
 class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
-  bool isLiterMode = true;
-  double filledAmount = 200; // In Millilitern
   final TextEditingController drinkNameController = TextEditingController();
   final List<Map<String, dynamic>> ingredients = [];
   final RecipeService recipeService = RecipeService();
@@ -24,7 +21,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   void initState() {
     super.initState();
     drinkNameController.addListener(() {
-      setState(() {}); // Aktualisiere den Zustand, wenn sich der Name ändert
+      setState(() {}); // Aktualisiere den Zustand bei Änderungen im Namen
     });
   }
 
@@ -42,8 +39,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
           "id": null,
           "name": null,
           "quantity": 0.0,
+          "color": null, // Farbe wird später zugewiesen
         });
-        _updateIngredientColors();
+        _updateIngredientColors(); // Aktualisiere die Farben nach Hinzufügen
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,15 +56,32 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   void _deleteIngredientField(int index) {
     setState(() {
       ingredients.removeAt(index);
-      _updateIngredientColors(); // Aktualisiere Farben
+      _updateIngredientColors();
     });
   }
 
   void _updateIngredientColors() {
+    // Gewünschte Farbreihenfolge basierend auf der Primärfarbpalette von Flutter
+    final List<Color> customColorOrder = [
+      Colors.lightGreen, // Light Green
+      Colors.green,      // Green
+      Colors.teal,       // Teal
+      Colors.cyan,       // Cyan
+      Colors.lightBlue,  // Light Blue
+      Colors.blue,       // Blue
+      Colors.indigo,     // Indigo
+      Colors.deepPurple, // Deep Purple
+      Colors.purple,     // Purple
+      Colors.pink,       // Pink
+      Colors.red         // Red
+    ];
+
+    // Farben zuweisen
     for (int i = 0; i < ingredients.length; i++) {
-      ingredients[i]["color"] = Colors.primaries[i % Colors.primaries.length];
+      ingredients[i]["color"] = customColorOrder[i % customColorOrder.length];
     }
   }
+
 
   void _openIngredientPopup(int index) async {
     showDialog(
@@ -155,7 +170,6 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -185,17 +199,6 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
             "Create Drink",
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
-          actions: [
-            MyToggleButton(
-              onText: "ml",
-              offText: "%",
-              initialValue: isLiterMode,
-              onToggle: (value) => setState(() => isLiterMode = value),
-              width: 80,
-              height: 40,
-              fontSize: 20,
-            ),
-          ],
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -218,14 +221,12 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                   Expanded(
                     flex: 6,
                     child: CupDisplay(
-                      currentAmount: _calculateFilledAmount(), // Dynamische Füllmenge
+                      ingredients: ingredients, // Zutaten mit Mengen und Farben
                       maxCapacity: 400, // Maximale Kapazität
                     ),
                   ),
                 ],
               ),
-
-
               const SizedBox(height: 20),
               TextField(
                 controller: drinkNameController,

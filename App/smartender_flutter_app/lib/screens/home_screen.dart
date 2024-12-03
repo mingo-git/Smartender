@@ -5,6 +5,7 @@ import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/screens/homesceens/searchdrinks_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settings_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/favorites_screen.dart';
+import '../services/slot_service.dart';
 import '../services/drink_service.dart';
 import '../services/fetch_data_service.dart';
 import '../services/auth_service.dart';
@@ -35,7 +36,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     // DrinkService wird hinzugefügt und regelmäßiges Fetch gestartet
     final drinkService = Provider.of<DrinkService>(context, listen: false);
+    final slotService = Provider.of<SlotService>(context, listen: false);
     _fetchDataService.addService(drinkService);
+    _fetchDataService.addService(slotService);
+
     _fetchDataService.startPolling(interval: const Duration(seconds: 10));
   }
 
