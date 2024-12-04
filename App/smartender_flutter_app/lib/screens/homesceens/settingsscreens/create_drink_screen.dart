@@ -61,27 +61,11 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   void _updateIngredientColors() {
-    // Gewünschte Farbreihenfolge basierend auf der Primärfarbpalette von Flutter
-    final List<Color> customColorOrder = [
-      Colors.lightGreen, // Light Green
-      Colors.green,      // Green
-      Colors.teal,       // Teal
-      Colors.cyan,       // Cyan
-      Colors.lightBlue,  // Light Blue
-      Colors.blue,       // Blue
-      Colors.indigo,     // Indigo
-      Colors.deepPurple, // Deep Purple
-      Colors.purple,     // Purple
-      Colors.pink,       // Pink
-      Colors.red         // Red
-    ];
-
-    // Farben zuweisen
+    // Verwenden der zentralen Farbdefinition aus constants.dart
     for (int i = 0; i < ingredients.length; i++) {
-      ingredients[i]["color"] = customColorOrder[i % customColorOrder.length];
+      ingredients[i]["color"] = slotColors[i % slotColors.length];
     }
   }
-
 
   void _openIngredientPopup(int index) async {
     showDialog(

@@ -1,13 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../services/drink_service.dart';
 import 'add_drink_popup.dart';
 
 class IngredientPopup extends StatefulWidget {
   final Function(Map<String, dynamic>) onIngredientSelected;
+  final bool showClearButton;
 
-  const IngredientPopup({Key? key, required this.onIngredientSelected})
-      : super(key: key);
+  const IngredientPopup({
+    Key? key,
+    required this.onIngredientSelected,
+    this.showClearButton = false,
+  }) : super(key: key);
 
   @override
   _IngredientPopupState createState() => _IngredientPopupState();
@@ -116,6 +122,25 @@ class _IngredientPopupState extends State<IngredientPopup> {
           ],
         ),
       ),
+      actions: widget.showClearButton
+          ? [
+        Center(
+          child: TextButton(
+            onPressed: () {
+              widget.onIngredientSelected({
+                "drink_id": null,
+                "drink_name": "Empty",
+              });
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              "Clear",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ),
+      ]
+          : null,
     );
   }
 }

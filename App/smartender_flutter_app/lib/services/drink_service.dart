@@ -36,12 +36,12 @@ class DrinkService implements FetchableService {
 
         // Drinks als vollständige Objekte speichern
         await _saveDrinksLocally(drinks);
-        print("Drinks fetched and saved locally.");
+        print("DRINKS fetched and saved locally.");
       } else {
-        print("Failed to fetch drinks: ${response.statusCode}");
+        print("Failed to fetch DRINKS: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error fetching drinks: $e");
+      print("Error fetching DRINKS: $e");
     }
   }
 
@@ -60,7 +60,7 @@ class DrinkService implements FetchableService {
       final drinks = List<Map<String, dynamic>>.from(json.decode(drinksJson));
       return drinks;
     }
-    print("No drinks found in SharedPreferences.");
+    print("No DRINKS found in SharedPreferences.");
     return [];
   }
 
@@ -90,15 +90,15 @@ class DrinkService implements FetchableService {
       );
 
       if (response.statusCode == 201) {
-        print("Drink added successfully: $drinkName");
+        print("DRINK added successfully: $drinkName");
         await fetchAndSaveData(); // Daten nach Hinzufügen aktualisieren
         return true;
       } else {
-        print("Failed to add drink: ${response.statusCode}");
+        print("Failed to add DRINK: ${response.statusCode}");
         return false;
       }
     } catch (e) {
-      print("Error adding drink: $e");
+      print("Error adding DRINK: $e");
       return false;
     }
   }

@@ -1,7 +1,6 @@
-import 'dart:async';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/constants.dart';
 import 'auth_service.dart';
 import 'fetch_data_service.dart';
@@ -33,29 +32,16 @@ class SlotService implements FetchableService {
 
       if (response.statusCode == 200) {
         final slots = json.decode(response.body) as List<dynamic>;
+        print(response.body);
 
-        // Extrahiere `slot_number`, `drink_id` und `drink_name`
-        final formattedSlots = slots.map((slot) {
-          final slotNumber = slot['slot_number'];
-          final drink = slot['drink'];
-          final drinkId = drink != null ? drink['drink_id'] : null;
-          final drinkName = drink != null ? drink['drink_name'] : "Empty";
-
-          return {
-            "slot_number": slotNumber,
-            "drink_id": drinkId,
-            "drink_name": drinkName,
-          };
-        }).toList();
-
-        // Speichere die formatierten Slots
-        await _saveSlotsLocally(formattedSlots);
-        print("Slots fetched and saved locally.");
+        // Slots lokal speichern
+        await _saveSlotsLocally(slots);
+        print("SLOTS fetched and saved locally.");
       } else {
-        print("Failed to fetch slots: ${response.statusCode}");
+        print("Failed to fetch SLOTS: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error fetching slots: $e");
+      print("Error fetching SLOTS: $e");
     }
   }
 
@@ -66,6 +52,61 @@ class SlotService implements FetchableService {
     await prefs.setString('slots', slotsJson);
   }
 
+  /// Aktualisiere einen spezifischen Slot im Backend
+  Future<void> updateSlot(int slotNumber, int? drinkId) async {
+    final AuthService authService = AuthService();
+    final String? token = await authService.getToken();
+
+    if (token == null) {
+      print("No token available. Skipping slot update.");
+      return;
+    }
+
+    final url = Uri.parse("$baseUrl$_allSlotsUrl/$slotNumber");
+
+    // Aufbau der Header
+    final headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzU3Nzg1OTksInVzZXJfaWQiOiIxIn0.bubfHSjhn5vPJOrk2hmCT20vb38expaLG4-TdAQ1WBA',
+    };
+
+    // Aufbau des Bodys
+    final body = drinkId != null ? json.encode({"drink_id": drinkId}) : null;
+
+    // Debugging: Header und Body ausgeben
+    print("=== DEBUG: Sending Update Slot Request ===");
+    print("URL: $url");
+    print("Headers: $headers");
+    print("Body: ${body ?? "No Body (Clear Slot)"}");
+    print("Slot Number: $slotNumber | Drink ID: $drinkId");
+
+    try {
+      // HTTP-PUT-Request ausführen
+      final response = await http.put(
+        url,
+        headers: headers,
+        body: body, // Kein Body für "Clear"
+      );
+
+
+      // Debugging: Response ausgeben
+      print("=== DEBUG: Received Response ===");
+      print("Response Status: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+
+      if (response.statusCode == 204) {
+        print("SLOT $slotNumber updated successfully.");
+        await fetchAndSaveData(); // Slots nach Update synchronisieren
+      } else {
+        print("Failed to update SLOT: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error updating SLOT: $e");
+    }
+  }
+
+
   /// Abrufen der Slots aus den SharedPreferences
   Future<List<Map<String, dynamic>>> fetchSlotsFromLocal() async {
     final prefs = await SharedPreferences.getInstance();
@@ -74,7 +115,7 @@ class SlotService implements FetchableService {
       final slots = List<Map<String, dynamic>>.from(json.decode(slotsJson));
       return slots;
     }
-    print("No slots found in SharedPreferences.");
+    print("No SLOTS found in SharedPreferences.");
     return [];
   }
 }

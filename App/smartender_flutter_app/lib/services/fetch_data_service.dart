@@ -28,7 +28,6 @@ class FetchdData {
     for (var service in _services) {
       try {
         await service.fetchAndSaveData();
-        print("Service ${service.runtimeType} fetched and saved data successfully.");
       } catch (e) {
         print("Error fetching data for service ${service.runtimeType}: $e");
       }
