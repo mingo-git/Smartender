@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -26,15 +27,22 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert new recipe into the database
-	err = db.QueryRow(query.CreateRecipeForHardware(), hardwareID, newRecipe.Name, newRecipe.IsFavorite).Scan(&newRecipe.ID)
+	err = db.QueryRow(query.CreateRecipeForHardware(), hardwareID, newRecipe.Name).Scan(&newRecipe.ID)
 	if err != nil {
 		log.Printf("Error inserting new recipe: %v", err)
 		http.Error(w, "Could not create recipe", http.StatusInternalServerError)
 		return
 	}
+	hardwareIDInt, err := strconv.Atoi(hardwareID)
+	if err != nil {
+		http.Error(w, "Invalid hardware ID", http.StatusBadRequest)
+		return
+	}
+	newRecipe.HardwareID = hardwareIDInt
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
+	json.NewEncoder(w).Encode(newRecipe)
 }
 
 func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -82,7 +90,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		// Get recipe details
 		var recipe models.Recipe
 		var drinkIDsJSON []byte
-		if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &recipe.IsFavorite, &drinkIDsJSON); err != nil {
+		if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &drinkIDsJSON); err != nil {
 			log.Printf("Error getting recipe: %v", err)
 			continue
 		}
@@ -135,7 +143,6 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 			ID:          recipe.ID,
 			HardwareID:  recipe.HardwareID,
 			Name:        recipe.Name,
-			IsFavorite:  recipe.IsFavorite,
 			Ingredients: ingredientsAll,
 		}
 
@@ -169,7 +176,7 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Haupt-Rezeptdaten abrufen
 	var recipe models.Recipe
 	var drinkIDsJSON []byte
-	if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &recipe.IsFavorite, &drinkIDsJSON); err != nil {
+	if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &drinkIDsJSON); err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Recipe not found", http.StatusNotFound)
 			return
@@ -228,7 +235,6 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		ID:          recipe.ID,
 		HardwareID:  recipe.HardwareID,
 		Name:        recipe.Name,
-		IsFavorite:  recipe.IsFavorite,
 		Ingredients: ingredientsAll,
 	}
 
@@ -258,7 +264,7 @@ func UpdateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update recipe in the database
-	result, err := db.Exec(query.UpdateRecipeForHardware(), updatedRecipe.Name, updatedRecipe.IsFavorite, recipeID, hardwareID)
+	result, err := db.Exec(query.UpdateRecipeForHardware(), updatedRecipe.Name, recipeID, hardwareID)
 	if err != nil {
 		log.Printf("Error updating recipe: %v", err)
 		http.Error(w, "Could not update recipe", http.StatusInternalServerError)

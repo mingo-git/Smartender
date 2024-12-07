@@ -19,8 +19,8 @@ class MyBottomNavBar extends StatelessWidget {
           tabActiveBorder: Border.all(color: Colors.white),
           tabs: [
             GButton(icon: Icons.search_outlined, text: 'Search'),
-            GButton(icon: Icons.favorite, text: 'Favorites'),
-            GButton(icon: Icons.person, text: 'Account'),
+            GButton(icon: Icons.favorite, text: ' Favorites'),
+            GButton(icon: Icons.settings, text: ' Settings'),
           ]),
     );
   }
