@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:smartender_flutter_app/provider/theme_provider.dart';
 import 'package:smartender_flutter_app/models/cocktail_card.dart';
 import 'package:smartender_flutter_app/screens/home_screen.dart';
 import 'package:smartender_flutter_app/screens/login_screen.dart';
@@ -26,22 +27,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => CocktailCard(),
-        ),
-        Provider<DrinkService>(
-          create: (_) => DrinkService(),
-        ),
-        Provider<SlotService>( // SlotService hinzugefügt
-          create: (_) => SlotService(),
-        ),
+        ChangeNotifierProvider(create: (context) => CocktailCard()),
+        Provider<DrinkService>(create: (_) => DrinkService()),
+        Provider<SlotService>(create: (_) => SlotService()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: MaterialApp(
-        routes: {
-          '/home': (context) => HomeScreen(),
-          '/login': (context) => LoginScreen(),
+      child: Builder(
+        builder: (context) {
+          final themeProvider = Provider.of<ThemeProvider>(context);
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              scaffoldBackgroundColor: themeProvider.currentTheme.backgroundColor,
+              primaryColor: themeProvider.currentTheme.primaryColor,
+            ),
+            routes: {
+              '/home': (context) => HomeScreen(),
+              '/login': (context) => LoginScreen(),
+            },
+            initialRoute: isLoggedIn ? '/home' : '/login',
+          );
         },
-        initialRoute: isLoggedIn ? '/home' : '/login',
       ),
     );
   }

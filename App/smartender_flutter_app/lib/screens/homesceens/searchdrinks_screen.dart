@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../components/drink_tile.dart';
 import '../../components/device_dropdown.dart';
 import '../../components/my_button.dart';
 import '../../config/constants.dart';
+import '../../provider/theme_provider.dart';
 
 class SearchdrinksScreen extends StatefulWidget {
   const SearchdrinksScreen({super.key});
@@ -98,6 +100,8 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
   }
 
   void _showDrinkPopup(BuildContext context, Map<String, dynamic> drink) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -142,6 +146,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                         IconButton(
                           icon: Icon(
                             drink["isLiked"] ? Icons.favorite : Icons.favorite_border,
+                            //TODO?: auch in custom_theme?
                             color: drink["isLiked"] ? Colors.red : Colors.grey,
                           ),
                           onPressed: () {
@@ -168,7 +173,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       children: drink["ingredients"].map<Widget>((ingredient) {
                         return Chip(
                           label: Text(ingredient),
-                          backgroundColor: Colors.grey.shade200,
+                          backgroundColor: theme.popupBackgroundColor
                         );
                       }).toList(),
                     ),
@@ -201,6 +206,8 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -242,11 +249,11 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        backgroundColor,
-                        backgroundColor,
-                        backgroundColor,
-                        const Color(0xdff2f2f2),
-                        const Color(0x00f2f2f2),
+                        theme.backgroundColor,
+                        theme.backgroundColor,
+                        theme.backgroundColor,
+                        theme.fadeOutBackground0,
+                        theme.fadeOutBackground1,
                       ],
                     ),
                   ),
@@ -278,29 +285,47 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                           ),
                         ),
                         const SizedBox(width: 10),
+                        //TODO: Button noch anpassen mit farbe
                         Expanded(
                           flex: 3,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isAvailable = !isAvailable;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isAvailable ? Colors.green : Colors.grey,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: defaultBorderRadius,
-                              ),
+                          child: Container(
+                            decoration: BoxDecoration(
+/*                              gradient: isAvailable
+                                  ? theme.trueColor
+                                  : LinearGradient(
+                                colors: [theme.uncertainColor, theme.uncertainColor],
+                              ),*/
+                            color: theme.trueColor,
+                              borderRadius: defaultBorderRadius,
+                              border: Border.all(
+                                //TODO: vllt aendert sich noch secondaryColor, dann muss geschaut werden ob es farblich noch passt
+                                color: isAvailable ? theme.secondaryColor : theme.primaryFontColor,
+                              ), // Border hinzugefügt
                             ),
-                            child: Text(
-                              "Available",
-                              style: TextStyle(
-                                color: isAvailable ? Colors.white : Colors.black,
-                                fontWeight: FontWeight.bold,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  isAvailable = !isAvailable;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent, // Transparenter Hintergrund
+                                shadowColor: Colors.transparent, // Entfernt Schatten
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: defaultBorderRadius,
+                                ),
+                              ),
+                              child: Text(
+                                "Available",
+                                style: TextStyle(
+                                  color: isAvailable ? theme.secondaryFontColor : theme.primaryFontColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
                         ),
+
                       ],
                     ),
                     const SizedBox(height: 13),
@@ -308,16 +333,16 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       controller: searchController,
                       onChanged: (value) => filterDrinks(value),
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                        prefixIcon: Icon(Icons.search, color: theme.hintTextColor),
                         hintText: 'Search drinks...',
-                        hintStyle: const TextStyle(color: Colors.grey),
+                        hintStyle: TextStyle(color: theme.hintTextColor),
                         border: OutlineInputBorder(
                           borderRadius: defaultBorderRadius,
                         ),
-                        fillColor: Colors.white,
+                        fillColor: theme.primaryColor,
                         filled: true,
                       ),
-                      style: const TextStyle(color: Colors.black),
+                      style: TextStyle(color: theme.primaryFontColor),
                     ),
                     const SizedBox(height: 30),
                   ],

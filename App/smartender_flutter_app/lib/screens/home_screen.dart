@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/components/bottom_nav_bar.dart';
-import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/screens/homesceens/searchdrinks_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settings_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/favorites_screen.dart';
+import '../provider/theme_provider.dart';
 import '../services/slot_service.dart';
 import '../services/drink_service.dart';
 import '../services/fetch_data_service.dart';
 import '../services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -65,8 +65,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: theme.backgroundColor,
       resizeToAvoidBottomInset: false, // Verhindert das Verschieben der NavBar bei Tastatureinblendung
       body: Stack(
         children: [

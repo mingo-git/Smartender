@@ -6,6 +6,8 @@ import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/services/slot_service.dart';
 import 'package:smartender_flutter_app/components/ingredient_popup.dart';
 
+import '../../../provider/theme_provider.dart';
+
 class BottleSlotsScreen extends StatefulWidget {
   const BottleSlotsScreen({Key? key}) : super(key: key);
 
@@ -71,13 +73,20 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     return Scaffold(
+      backgroundColor: theme.backgroundColor,
       appBar: AppBar(
+        backgroundColor: theme.backgroundColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, size: 35),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text("Bottle Slots"),
+        title: const Text(
+            "Bottle Slots",
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -145,8 +154,8 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                           child: ElevatedButton(
                             onPressed: () => _changeSlotPopup(index),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: const BorderSide(color: Colors.grey),
+                              backgroundColor: theme.primaryColor,
+                              side: BorderSide(color: theme.tertiaryColor),
                               minimumSize: const Size(double.infinity, 60),
                               shape: RoundedRectangleBorder(
                                 borderRadius: defaultBorderRadius,
@@ -159,10 +168,10 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                                   slots.length > index && slots[index]["name"] != null
                                       ? slots[index]["name"]
                                       : "Empty",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black,
+                                    color: theme.primaryFontColor,
                                   ),
                                 ),
                                 Container(
@@ -170,7 +179,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                                   height: 16,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: slotColors[index % slotColors.length],
+                                    color: theme.slotColors[index % theme.slotColors.length],
                                   ),
                                 ),
                               ],
@@ -191,8 +200,8 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                           child: ElevatedButton(
                             onPressed: () => _changeSlotPopup(index + 5),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: const BorderSide(color: Colors.grey),
+                              backgroundColor: theme.primaryColor,
+                              side: BorderSide(color: theme.tertiaryColor),
                               minimumSize: const Size(double.infinity, 60),
                               shape: RoundedRectangleBorder(
                                 borderRadius: defaultBorderRadius,
@@ -205,10 +214,10 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                                   slots.length > index + 5 && slots[index + 5]["name"] != null
                                       ? slots[index + 5]["name"]
                                       : "Empty",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black,
+                                    color: theme.primaryFontColor
                                   ),
                                 ),
                                 Container(
@@ -216,7 +225,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                                   height: 16,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: slotColors[(index + 5) % slotColors.length],
+                                    color: theme.slotColors[(index + 5) % theme.slotColors.length],
                                   ),
                                 ),
                               ],

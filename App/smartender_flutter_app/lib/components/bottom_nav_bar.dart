@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
+import '../provider/theme_provider.dart';
 
 class MyBottomNavBar extends StatelessWidget {
   final void Function(int)? onTabChange;
@@ -9,6 +11,8 @@ class MyBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     return Stack(
       children: [
         IgnorePointer(
@@ -18,14 +22,15 @@ class MyBottomNavBar extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  const Color(0x00f2f2f2),
-                  const Color(0xE5F2F2F2),
-                  backgroundColor,
-                  backgroundColor,
+                  theme.fadeOutBackground1,
+                  theme.fadeOutBackground0,
+                  theme.backgroundColor,
+                  theme.backgroundColor,
+                  theme.backgroundColor,
                 ],
               ),
             ),
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: horizontalPadding,
               right: horizontalPadding,
               top: 130,
@@ -40,16 +45,30 @@ class MyBottomNavBar extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 15.0), // Hebt die Navbar um 15 nach oben
               child: GNav(
                 onTabChange: (value) => onTabChange!(value),
-                color: Colors.grey[400],
+                color: theme.uncertainColor, // Gradientfarbe für nicht ausgewählte Icons
                 mainAxisAlignment: MainAxisAlignment.center,
-                activeColor: Colors.grey[700],
-                tabBackgroundColor: Colors.grey.shade300,
                 tabBorderRadius: defaultBorderRadius.topLeft.x,
-                tabActiveBorder: Border.all(color: Colors.white),
-                tabs: const [
-                  GButton(icon: Icons.search_outlined, text: 'Search'),
-                  GButton(icon: Icons.favorite, text: 'Favorites'),
-                  GButton(icon: Icons.settings, text: 'Settings'),
+                tabBackgroundColor: theme.uncertainColor, // Hintergrund des aktiven Tabs
+                activeColor: theme.primaryFontColor, // Farbe des aktiven Tab-Icons
+                tabs: [
+                  GButton(
+                    icon: Icons.search_outlined,
+                    text: 'Search',
+                    iconColor: theme.uncertainColor, // Nicht ausgewählte Icons
+                    iconActiveColor: theme.primaryFontColor, // Aktives Icon
+                  ),
+                  GButton(
+                    icon: Icons.favorite,
+                    text: ' Favorites',
+                    iconColor: theme.uncertainColor, // Nicht ausgewählte Icons
+                    iconActiveColor: theme.primaryFontColor, // Aktives Icon
+                  ),
+                  GButton(
+                    icon: Icons.settings,
+                    text: ' Settings',
+                    iconColor: theme.uncertainColor, // Nicht ausgewählte Icons
+                    iconActiveColor: theme.primaryFontColor, // Aktives Icon
+                  ),
                 ],
               ),
             ),

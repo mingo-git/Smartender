@@ -68,7 +68,7 @@ class SlotService implements FetchableService {
     final headers = {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzU3Nzg1OTksInVzZXJfaWQiOiIxIn0.bubfHSjhn5vPJOrk2hmCT20vb38expaLG4-TdAQ1WBA',
+      'Authorization': 'Bearer $token',
     };
 
     // Aufbau des Bodys

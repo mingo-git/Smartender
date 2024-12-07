@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../components/cup_display.dart';
 import '../../../components/liter_display.dart';
 import '../../../config/constants.dart';
+import '../../../provider/theme_provider.dart';
 import '../../../services/recipe_service.dart';
 import '../../../components/ingredient_popup.dart';
 
@@ -61,9 +63,10 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   void _updateIngredientColors() {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
     // Verwenden der zentralen Farbdefinition aus constants.dart
     for (int i = 0; i < ingredients.length; i++) {
-      ingredients[i]["color"] = slotColors[i % slotColors.length];
+      ingredients[i]["color"] = theme.slotColors[i % theme.slotColors.length];
     }
   }
 
@@ -82,6 +85,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   void _saveRecipe() async {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     String recipeName = drinkNameController.text.trim();
     List<Map<String, dynamic>> recipeIngredients = ingredients
         .where((ingredient) => ingredient["id"] != null && ingredient["quantity"] > 0)
@@ -98,7 +103,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text("Recipe saved successfully!"),
-            backgroundColor: Colors.green,
+            backgroundColor: theme.trueColor,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -111,7 +116,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text("Failed to save recipe. Please try again."),
-            backgroundColor: Colors.red,
+            backgroundColor: theme.falseColor,
             duration: const Duration(seconds: 3),
           ),
         );
@@ -154,8 +159,12 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     );
   }
 
+  //TODO: Umrandung Fehlt bei Drink_name und auch wenn quantity ausgewaehlt ist
+  //TODO: Maximal darf nicht ueberschritten werden, bzw fehlermeldung
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     return WillPopScope(
       onWillPop: () async {
         if (_canSaveDrink()) {
@@ -164,9 +173,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
         return true;
       },
       child: Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: theme.backgroundColor,
         appBar: AppBar(
-          backgroundColor: backgroundColor,
+          backgroundColor: theme.backgroundColor,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 35),
@@ -184,6 +193,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
         ),
+        //TODO: Inhalte werden erst nach createn angezeigt
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Column(
@@ -216,12 +226,22 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                 controller: drinkNameController,
                 decoration: InputDecoration(
                   hintText: "Enter drink name",
+                  hintStyle: TextStyle(color: theme.hintTextColor), // Hint-Textfarbe
                   border: OutlineInputBorder(
                     borderRadius: defaultBorderRadius,
                   ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: theme.primaryColor,
                 ),
+                style: TextStyle(
+                  color: drinkNameController.text.isEmpty
+                      ? theme.hintTextColor
+                      : theme.primaryFontColor, // Dynamische Schriftfarbe
+                ),
+                onChanged: (_) {
+                  // Trigger UI-Update bei Textänderung
+                  setState(() {});
+                },
               ),
               const SizedBox(height: 20),
               Row(
@@ -250,8 +270,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                         child: ElevatedButton(
                           onPressed: () => _openIngredientPopup(index),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.black, width: 1),
+                            backgroundColor: theme.primaryColor,
+                            side: BorderSide(color: theme.tertiaryColor),
                             minimumSize: const Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
                               borderRadius: defaultBorderRadius,
@@ -265,13 +285,15 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 ingredient["name"] ?? "Search Ingredient",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  color: ingredient["name"] != null ? theme.primaryFontColor : theme.hintTextColor,
                                 ),
                               ),
                             ),
                           ),
+
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -282,10 +304,10 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: "0",
-                            suffix: const Text(
+                            suffix: Text(
                               "ml",
                               style: TextStyle(
-                                color: Colors.black,
+                                color: theme.primaryFontColor,
                                 fontSize: 16,
                               ),
                             ),
@@ -294,7 +316,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                               borderRadius: defaultBorderRadius,
                             ),
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: theme.primaryColor,
                           ),
                           onChanged: (value) {
                             final quantity = double.tryParse(value) ?? 0.0;
@@ -315,7 +337,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       ),
                       const SizedBox(width: 10),
                       IconButton(
-                        icon: const Icon(Icons.delete_forever, color: Colors.black),
+                        icon: Icon(Icons.delete_forever, color: theme.primaryFontColor),
                         onPressed: () => _deleteIngredientField(index),
                       ),
                     ],
@@ -326,17 +348,17 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
               if (_canSaveDrink())
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: theme.tertiaryColor,
                     minimumSize: const Size(double.infinity, 60),
                     shape: RoundedRectangleBorder(
                       borderRadius: defaultBorderRadius,
                     ),
                   ),
                   onPressed: _saveRecipe,
-                  child: const Text(
+                  child: Text(
                     "Save Drink",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: theme.secondaryFontColor,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),

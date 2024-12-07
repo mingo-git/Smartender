@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
+
+import '../../../provider/theme_provider.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -116,12 +119,14 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: theme.backgroundColor,
         appBar: AppBar(
-          backgroundColor: backgroundColor,
+          backgroundColor: theme.backgroundColor,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 35),
@@ -174,7 +179,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 child: errorMessage.isNotEmpty
                     ? Text(
                   errorMessage,
-                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                  style: TextStyle(color: theme.falseColor, fontSize: 12),
                 )
                     : const SizedBox(height: 16),
               ),
@@ -184,16 +189,16 @@ class _AccountScreenState extends State<AccountScreen> {
                 ElevatedButton(
                   onPressed: updateAccount,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: theme.tertiaryColor,
                     minimumSize: const Size(double.infinity, 60),
                     shape: RoundedRectangleBorder(
                       borderRadius: defaultBorderRadius,
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     "Update",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: theme.primaryColor,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -208,6 +213,8 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _buildEditableField(String label, bool isEditing, TextEditingController controller, VoidCallback onEdit, {bool isPassword = false}) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Column(
@@ -227,8 +234,8 @@ class _AccountScreenState extends State<AccountScreen> {
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isEditing ? Colors.white : Colors.transparent, // Hintergrund nur bei Bearbeitung weiß
-                      border: isEditing ? Border.all(color: Colors.grey) : null,
+                      color: isEditing ? theme.primaryColor : Colors.transparent, // Hintergrund nur bei Bearbeitung weiß
+                      border: isEditing ? Border.all(color: theme.tertiaryColor) : null,
                       borderRadius: defaultBorderRadius,
                     ),
                     child: isEditing
@@ -276,7 +283,10 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Widget _buildPasswordField(String label, TextEditingController controller, {bool isCancelButton = false, bool isToggleable = false, bool showPassword = false}) {
+  Widget _buildPasswordField(String label, TextEditingController controller,
+      {bool isCancelButton = false, bool isToggleable = false, bool showPassword = false}) {
+    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Column(
@@ -296,7 +306,8 @@ class _AccountScreenState extends State<AccountScreen> {
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
+                      color: theme.primaryColor, // Weißer Hintergrund (Theme)
+                      border: Border.all(color: theme.tertiaryColor),
                       borderRadius: defaultBorderRadius,
                     ),
                     child: TextField(
@@ -308,7 +319,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 18),
                       ),
-                      style: const TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20, color: theme.primaryFontColor), // Schriftfarbe
                     ),
                   ),
                 ),
