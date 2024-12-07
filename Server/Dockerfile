@@ -1,24 +1,45 @@
+# Stage 1: Build
 # Verwende das offizielle Go-Image als Basis
-FROM golang:1.20-alpine
+FROM golang:1.21-alpine AS builder
 
-# Setze das Arbeitsverzeichnis im Container
+# Install git and other necessary packages for dependencies
+RUN apk add --no-cache git
+
+# Set the working directory
 WORKDIR /app
 
-# Kopiere die .env Datei (falls vorhanden)
-COPY .env .
-
-# Kopiere die Go-Modul-Dateien und installiere Abhängigkeiten
+# Copy Go modules manifests
 COPY go.mod go.sum ./
+
+# Download dependencies
 RUN go mod download
 
-# Kopiere den gesamten Quellcode in das Arbeitsverzeichnis
+# Copy the source code
 COPY . .
 
-# Baue das Go-Binary (sollte auf main.go zeigen)
+# Ensure the binary is built for the correct architecture
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+
+# Build the application binary
 RUN go build -o main .
 
-# Exponiere den Port, auf dem der Service laufen wird
+# Stage 2: Run
+FROM alpine:3.18
+
+# Install the Cloud SQL Proxy client and necessary libraries
+RUN apk add --no-cache libc6-compat bash
+
+# Copy the compiled binary from the builder stage
+COPY --from=builder /app/main /app/main
+
+# Copy .env file if necessary
+COPY .env /app/.env
+
+# Set the working directory
+WORKDIR /app
+
+# Expose the port on which the service runs
 EXPOSE 8080
 
-# Starte das Go-Programm
-CMD ["./main"]
+# Run the binary
+CMD ["/app/main"]

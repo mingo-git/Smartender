@@ -4,7 +4,6 @@ import (
 	"app/internal/config"
 	populate "app/internal/query"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,27 +18,22 @@ type App struct {
 }
 
 func (a *App) Initialize() {
-	// Load configuration
-	dbConfig := config.LoadDatabaseConfig()
-
-	// Use the service name 'db' defined in docker-compose.yml
-	connectionString := fmt.Sprintf("host=db user=%s password=%s dbname=%s sslmode=disable",
-		dbConfig.Username, dbConfig.Password, dbConfig.DBName)
 
 	var err error
-	a.DB, err = sql.Open("postgres", connectionString)
 
+	// Lade die Datenbankverbindung, entweder lokal oder Cloud SQL, je nach Umgebungsvariable
+	a.DB, err = config.GetDatabaseConnectionString()
 	if err != nil {
 		log.Fatal(err)
 	} else {
 		log.Default().Printf("Connected to the database")
 	}
 
-	// Pre-populate the database with the tables here ------------------------------------------------
+	// Datenbank initialisieren
 	_, err = a.DB.Exec(populate.WipeDatabase())
 	if err != nil {
 		log.Fatalf("Error wiping tables: %v", err)
-	}	
+	}
 
 	_, err = a.DB.Exec(populate.CreateTables())
 	if err != nil {
@@ -50,8 +44,8 @@ func (a *App) Initialize() {
 	if err != nil {
 		log.Fatalf("Error populating tables: %v", err)
 	}
-	// -----------------------------------------------------------------------------------------------
 
+	// Router initialisieren
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 }
