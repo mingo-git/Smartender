@@ -113,16 +113,16 @@ func PopulateDatabase() string {
 		(4, 3, 'admin');
 
 	INSERT INTO slots (hardware_id, slot_number, drink_id) VALUES
-		(1, 1, 1),
-		(1, 2, 2),
-		(1, 3, 3),
-		(1, 4, 4),
+		(1, 1, NULL),
+		(1, 2, NULL),
+		(1, 3, 5),
+		(1, 4, 6),
 		(1, 5, NULL),
 		(2, 1, 2),
-		(2, 2, 3),
-		(2, 3, 4),
-		(2, 4, 5),
-		(2, 5, 6);
+		(2, 2, 1),
+		(2, 3, 3),
+		(2, 4, 4),
+		(2, 5, NULL);
 
 	INSERT INTO recipes (hardware_id, recipe_name, is_favorite) VALUES
 		(2, 'Vodka Martini', TRUE),
