@@ -108,6 +108,22 @@ func (a *App) initializeRoutes() {
 		"/{hardware_id}/recipes/{recipe_id}/ingredients/{drink_id}", func(w http.ResponseWriter, r *http.Request) {
 			handlers.DeleteIngredient(a.DB, w, r)
 		}).Methods("DELETE")
+
+	// -----------------------------------------------------------------------------------------------
+
+	// FAVORITES: -------------------------------------------------------------------------------------  FAVORITES
+	hardwareRouter.HandleFunc("/{hardware_id}/favorite/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.CreateFavorite(a.DB, w, r)
+	}).Methods("POST")
+
+	hardwareRouter.HandleFunc("/{hardware_id}/favorites", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetAllFavoritesForUser(a.DB, w, r)
+	}).Methods("GET")
+
+	hardwareRouter.HandleFunc("/{hardware_id}/favorite/{recipe_id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DeleteFavorite(a.DB, w, r)
+	}).Methods("DELETE")
+
 	// -----------------------------------------------------------------------------------------------
 
 	// HARDWARE: -------------------------------------------------------------------------------------  HARDWARE
