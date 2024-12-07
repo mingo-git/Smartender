@@ -4,6 +4,7 @@ func WipeDatabase() string {
 	return `
 	-- Drop existing tables
 
+	DROP TABLE IF EXISTS favorite_recipes CASCADE;
 	DROP TABLE IF EXISTS recipe_ingredients CASCADE;
 	DROP TABLE IF EXISTS recipes CASCADE;
 	DROP TABLE IF EXISTS slots CASCADE;
@@ -72,8 +73,7 @@ func CreateTables() string {
 	CREATE TABLE IF NOT EXISTS recipes (
 		recipe_id SERIAL PRIMARY KEY,
 		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each recipe belongs to a hardware
-		recipe_name VARCHAR(100) NOT NULL UNIQUE,  -- Unique recipe name per hardware
-		is_favorite BOOLEAN DEFAULT FALSE
+		recipe_name VARCHAR(100) NOT NULL UNIQUE  -- Unique recipe name per hardware
 	);
 
 	CREATE TABLE IF NOT EXISTS recipe_ingredients (
@@ -82,7 +82,14 @@ func CreateTables() string {
 		quantity_ml INT NOT NULL,  -- Amount of the drink used in the recipe
 		PRIMARY KEY (recipe_id, drink_id)
 	);
+
+	CREATE TABLE IF NOT EXISTS favorite_recipes (
+		user_id INT REFERENCES users(user_id) ON DELETE CASCADE,  -- The user marking the favorite
+		recipe_id INT REFERENCES recipes(recipe_id) ON DELETE CASCADE,  -- The recipe being marked as favorite
+		PRIMARY KEY (user_id, recipe_id)  -- Ensure a user can only mark a recipe as favorite once
+	);
 	`
+
 }
 
 func PopulateDatabase() string {
@@ -113,22 +120,22 @@ func PopulateDatabase() string {
 		(4, 3, 'admin');
 
 	INSERT INTO slots (hardware_id, slot_number, drink_id) VALUES
-		(1, 1, 1),
-		(1, 2, 2),
-		(1, 3, 3),
-		(1, 4, 4),
+		(1, 1, NULL),
+		(1, 2, NULL),
+		(1, 3, 5),
+		(1, 4, 6),
 		(1, 5, NULL),
 		(2, 1, 2),
-		(2, 2, 3),
-		(2, 3, 4),
-		(2, 4, 5),
-		(2, 5, 6);
+		(2, 2, 1),
+		(2, 3, 3),
+		(2, 4, 4),
+		(2, 5, NULL);
 
-	INSERT INTO recipes (hardware_id, recipe_name, is_favorite) VALUES
-		(2, 'Vodka Martini', TRUE),
-		(2, 'Mojito', FALSE),
-		(2, 'Gin and Tonic', FALSE),
-		(1, 'Whiskey O', FALSE);
+	INSERT INTO recipes (hardware_id, recipe_name) VALUES
+		(2, 'Vodka Martini'),
+		(2, 'Mojito'),
+		(2, 'Gin and Tonic'),
+		(1, 'Whiskey O');
 
 	INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml) VALUES
 		(1, 1, 60),
@@ -137,5 +144,8 @@ func PopulateDatabase() string {
 		(2, 3, 30),
 		(3, 3, 60),
 		(3, 4, 30);
+
+	INSERT INTO favorite_recipes (user_id, recipe_id) VALUES
+		(1, 1);
 	`
 }
