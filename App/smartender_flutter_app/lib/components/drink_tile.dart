@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
+
+import '../provider/theme_provider.dart';
 
 class DrinkTile extends StatelessWidget {
   final String name;
@@ -15,19 +18,21 @@ class DrinkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return Padding(
       padding: EdgeInsets.all(horizontalPadding),
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor: Colors.white,
+          foregroundColor: theme.tertiaryColor,
+          backgroundColor: theme.primaryColor,
           minimumSize: const Size(double.infinity, 80),
           alignment: Alignment.center,
           shape: RoundedRectangleBorder(
             borderRadius: defaultBorderRadius,
           ),
-          side: const BorderSide(color: Colors.black),
+          side: BorderSide(color: theme.tertiaryColor),
         ),
         child: Column(
           children: [

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/components/my_textfield.dart';
 import 'package:smartender_flutter_app/components/my_button.dart';
 import 'package:smartender_flutter_app/components/square_tile.dart';
 import 'package:smartender_flutter_app/screens/register_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
 import '../config/constants.dart';
+import '../provider/theme_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
@@ -80,8 +82,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: theme.backgroundColor,
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: ConstrainedBox(
@@ -98,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 50),
                 Text(
                   'Welcome back, you\'ve been missed!',
-                  style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                  style: TextStyle(color: theme.primaryFontColor, fontSize: 16),
                 ),
                 const SizedBox(height: 25),
                 MyTextField(
@@ -118,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: errorMessage.isNotEmpty
                       ? Text(
                     errorMessage,
-                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                    style: TextStyle(color: theme.falseColor, fontSize: 12),
                   )
                       : const SizedBox(height: 16),
                 ),
@@ -135,20 +139,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       Expanded(
                         child: Divider(
                           thickness: 0.75,
-                          color: Colors.grey[600],
+                          color: theme.primaryFontColor,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Text(
                           'Or continue with',
-                          style: TextStyle(color: Colors.grey[700]),
+                          style: TextStyle(color: theme.primaryFontColor),
                         ),
                       ),
                       Expanded(
                         child: Divider(
                           thickness: 0.75,
-                          color: Colors.grey[600],
+                          color: theme.primaryFontColor,
                         ),
                       ),
                     ],
@@ -162,11 +166,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: signInWithGoogle,
                       child: const SquareTile(imagePath: 'lib/images/google.png'),
                     ),
-                    const SizedBox(width: 25),
+/*                    const SizedBox(width: 25),
                     GestureDetector(
                       onTap: signInWithApple,
                       child: const SquareTile(imagePath: 'lib/images/apple.png'),
-                    ),
+                    ),*/
                   ],
                 ),
                 const SizedBox(height: 50),
@@ -175,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       'Not a member?',
-                      style: TextStyle(color: Colors.grey[700]),
+                      style: TextStyle(color: theme.primaryFontColor),
                     ),
                     const SizedBox(width: 4),
                     GestureDetector(

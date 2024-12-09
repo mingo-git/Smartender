@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
+
+import '../provider/theme_provider.dart';
 
 class DeviceDropdown extends StatefulWidget {
   final List<Map<String, dynamic>> devices;
@@ -45,6 +48,9 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
   }
 
   OverlayEntry _createOverlayEntry() {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
+
     return OverlayEntry(
       builder: (context) => Positioned(
         width: MediaQuery.of(context).size.width - (horizontalPadding * 2),
@@ -57,8 +63,8 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
             borderRadius: defaultBorderRadius,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.black),
+                color: theme.primaryColor,
+                border: Border.all(color: theme.tertiaryColor),
                 borderRadius: defaultBorderRadius,
               ),
               child: Column(
@@ -69,12 +75,12 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
                       ListTile(
                         title: Text(device['name']),
                         trailing: device['status'] == "new"
-                            ? Icon(Icons.add, color: Colors.black)
+                            ? Icon(Icons.add, color: theme.tertiaryColor)
                             : Icon(
                           Icons.circle,
                           color: device['status'] == "active"
-                              ? Colors.green
-                              : Colors.red,
+                              ? theme.trueColor
+                              : theme.falseColor,
                           size: 18,
                         ),
                         onTap: () {
@@ -84,7 +90,7 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
                       ),
                       if (device != widget.devices.last)
                         Divider(
-                          color: Colors.grey.shade300,
+                          color: theme.tertiaryColor,
                           thickness: 1,
                           height: 1,
                         ),
@@ -101,6 +107,8 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     // Finde den Status des aktuell ausgewählten Geräts
     final selectedDeviceStatus = widget.devices.firstWhere(
           (device) => device['name'] == widget.selectedDevice,
@@ -109,10 +117,10 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
 
     // Definiere die Farbe des Punktes basierend auf dem Status
     final statusColor = selectedDeviceStatus == "active"
-        ? Colors.green
+        ? theme.trueColor
         : selectedDeviceStatus == "inactive"
-        ? Colors.red
-        : Colors.grey;
+        ? theme.falseColor
+        : theme.uncertainColor;
 
     return CompositedTransformTarget(
       link: _layerLink,
@@ -121,8 +129,8 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.black),
+            color: theme.primaryColor,
+            border: Border.all(color: theme.tertiaryColor),
             borderRadius: defaultBorderRadius,
           ),
           child: Row(

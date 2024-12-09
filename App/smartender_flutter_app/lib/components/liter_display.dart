@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/theme_provider.dart';
 
 class LiterDisplay extends StatelessWidget {
   final double currentAmount; // Aktuelle Füllmenge
@@ -12,6 +15,8 @@ class LiterDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return SizedBox(
       width: 100, // Breite des gesamten Widgets
       height: 80, // Höhe des Widgets
@@ -24,9 +29,10 @@ class LiterDisplay extends StatelessWidget {
             left: 0,
             child: Text(
               "${currentAmount.toInt()} ml", // Ganze Zahl ohne Nachkommastellen
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
+                color: theme.tertiaryColor
               ),
             ),
           ),
@@ -38,7 +44,7 @@ class LiterDisplay extends StatelessWidget {
               child: Container(
                 width: 150, // Länge des Strichs
                 height: 2, // Dicke des Strichs
-                color: Colors.black,
+                color: theme.tertiaryColor,
               ),
             ),
           ),
@@ -48,9 +54,10 @@ class LiterDisplay extends StatelessWidget {
             right: 0,
             child: Text(
               "${maxCapacity.toInt()} ml", // Ganze Zahl ohne Nachkommastellen
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
+                color: theme.tertiaryColor,
               ),
             ),
           ),

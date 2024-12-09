@@ -119,7 +119,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -129,16 +129,16 @@ class _AccountScreenState extends State<AccountScreen> {
           backgroundColor: theme.backgroundColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 35),
+            icon: Icon(Icons.arrow_back, size: 35, color: theme.tertiaryColor),
             onPressed: () async {
               if (await _onWillPop()) {
                 Navigator.of(context).pop();
               }
             },
           ),
-          title: const Text(
+          title: Text(
             "Account",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
           ),
         ),
         body: SingleChildScrollView(
@@ -198,7 +198,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   child: Text(
                     "Update",
                     style: TextStyle(
-                      color: theme.primaryColor,
+                      color: theme.tertiaryColor,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -213,7 +213,7 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _buildEditableField(String label, bool isEditing, TextEditingController controller, VoidCallback onEdit, {bool isPassword = false}) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -222,7 +222,7 @@ class _AccountScreenState extends State<AccountScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: theme.tertiaryColor),
           ),
           const SizedBox(height: 5),
           SizedBox(
@@ -234,7 +234,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isEditing ? theme.primaryColor : Colors.transparent, // Hintergrund nur bei Bearbeitung weiß
+                      color: isEditing ? theme.primaryColor : Colors.transparent,
                       border: isEditing ? Border.all(color: theme.tertiaryColor) : null,
                       borderRadius: defaultBorderRadius,
                     ),
@@ -248,16 +248,24 @@ class _AccountScreenState extends State<AccountScreen> {
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 18),
                       ),
-                      style: const TextStyle(fontSize: 20),
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: theme.tertiaryColor, // Schriftfarbe auf Rot setzen
+                      ),
                     )
                         : Text(
                       controller.text,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: theme.tertiaryColor
+                      ),
                     ),
                   ),
                 ),
+
                 IconButton(
-                  icon: Icon(isEditing ? Icons.check : Icons.edit),
+                  icon: Icon(isEditing ? Icons.check : Icons.edit, color: theme.tertiaryColor),
                   onPressed: onEdit,
                 ),
               ],
@@ -285,7 +293,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget _buildPasswordField(String label, TextEditingController controller,
       {bool isCancelButton = false, bool isToggleable = false, bool showPassword = false}) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -306,7 +314,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
-                      color: theme.primaryColor, // Weißer Hintergrund (Theme)
+                      color: theme.primaryColor,
                       border: Border.all(color: theme.tertiaryColor),
                       borderRadius: defaultBorderRadius,
                     ),
@@ -319,18 +327,18 @@ class _AccountScreenState extends State<AccountScreen> {
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 18),
                       ),
-                      style: TextStyle(fontSize: 20, color: theme.primaryFontColor), // Schriftfarbe
+                      style: TextStyle(fontSize: 20, color: theme.tertiaryColor), // Schriftfarbe
                     ),
                   ),
                 ),
                 if (isCancelButton)
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close, color: theme.tertiaryColor,),
                     onPressed: _cancelPasswordEditing,
                   ),
                 if (isToggleable)
                   IconButton(
-                    icon: Icon(showPassword ? Icons.visibility : Icons.visibility_off),
+                    icon: Icon(showPassword ? Icons.visibility : Icons.visibility_off, color: theme.tertiaryColor),
                     onPressed: () {
                       setState(() {
                         if (label == "New Password") {

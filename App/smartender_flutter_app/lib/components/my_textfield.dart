@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
+
+import '../provider/theme_provider.dart';
 
 class MyTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -34,14 +37,16 @@ class _MyTextFieldState extends State<MyTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.primaryColor,
           borderRadius: defaultBorderRadius,
           border: Border.all(
-            color: Colors.grey, // Rahmenfarbe
+            color: theme.tertiaryColor, // Rahmenfarbe
           ),
         ),
         child: TextField(
@@ -49,7 +54,7 @@ class _MyTextFieldState extends State<MyTextField> {
           obscureText: _obscureText,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: TextStyle(color: Colors.grey[500]),
+            hintStyle: TextStyle(color: theme.hintTextColor),
             border: InputBorder.none,
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 10.0),
@@ -58,7 +63,7 @@ class _MyTextFieldState extends State<MyTextField> {
               iconSize: 28, // Größe des Icons anpassen
               icon: Icon(
                 _obscureText ? Icons.visibility_off : Icons.visibility,
-                color: Colors.grey,
+                color: theme.hintTextColor,
               ),
               onPressed: _toggleObscureText,
             )

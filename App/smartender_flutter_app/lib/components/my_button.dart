@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
+
+import '../provider/theme_provider.dart';
 
 class MyButton extends StatelessWidget {
   final Function()? onTap;
@@ -15,20 +18,22 @@ class MyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(25),
         margin: hasMargin ? EdgeInsets.symmetric(horizontal: horizontalPadding) : null,
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: theme.tertiaryColor,
           borderRadius: defaultBorderRadius,
         ),
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: theme.primaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),

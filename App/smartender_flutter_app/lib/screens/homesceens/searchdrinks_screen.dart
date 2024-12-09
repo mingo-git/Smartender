@@ -100,12 +100,13 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
   }
 
   void _showDrinkPopup(BuildContext context, Map<String, dynamic> drink) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: theme.backgroundColor, // Hintergrund des Popups
           shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
           contentPadding: const EdgeInsets.symmetric(horizontal: horizontalPadding * 2, vertical: 20),
           content: StatefulBuilder(
@@ -120,7 +121,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
-                        icon: Icon(Icons.close),
+                        icon: Icon(Icons.close, color: theme.tertiaryColor),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
@@ -138,16 +139,16 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       children: [
                         Text(
                           drink["name"],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
+                            color: theme.tertiaryColor,
                           ),
                         ),
                         IconButton(
                           icon: Icon(
                             drink["isLiked"] ? Icons.favorite : Icons.favorite_border,
-                            //TODO?: auch in custom_theme?
-                            color: drink["isLiked"] ? Colors.red : Colors.grey,
+                            color: drink["isLiked"] ? Colors.red : theme.tertiaryColor,
                           ),
                           onPressed: () {
                             setState(() {
@@ -159,11 +160,12 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    const Text(
+                    Text(
                       "Ingredients:",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
+                        color: theme.tertiaryColor,
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -172,8 +174,11 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       runSpacing: 4.0,
                       children: drink["ingredients"].map<Widget>((ingredient) {
                         return Chip(
-                          label: Text(ingredient),
-                          backgroundColor: theme.popupBackgroundColor
+                          label: Text(
+                            ingredient,
+                            style: TextStyle(color: theme.tertiaryColor),
+                          ),
+                          backgroundColor: theme.primaryColor,
                         );
                       }).toList(),
                     ),
@@ -199,6 +204,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
 
 
 
+
   void _changeFavorite(String drinkName, bool isLiked) {
     print("Favorited $drinkName: $isLiked");
     // TODO: Logik für das Hinzufügen/Entfernen zu den Favoriten implementieren
@@ -206,7 +212,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return SafeArea(
       child: Padding(
@@ -290,16 +296,10 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                           flex: 3,
                           child: Container(
                             decoration: BoxDecoration(
-/*                              gradient: isAvailable
-                                  ? theme.trueColor
-                                  : LinearGradient(
-                                colors: [theme.uncertainColor, theme.uncertainColor],
-                              ),*/
-                            color: theme.trueColor,
+                            color: isAvailable ? theme.trueColor : theme.primaryColor,
                               borderRadius: defaultBorderRadius,
                               border: Border.all(
-                                //TODO: vllt aendert sich noch secondaryColor, dann muss geschaut werden ob es farblich noch passt
-                                color: isAvailable ? theme.secondaryColor : theme.primaryFontColor,
+                                color: theme.tertiaryColor
                               ), // Border hinzugefügt
                             ),
                             child: ElevatedButton(
@@ -318,7 +318,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                               child: Text(
                                 "Available",
                                 style: TextStyle(
-                                  color: isAvailable ? theme.secondaryFontColor : theme.primaryFontColor,
+                                  color: isAvailable ? theme.backgroundColor : theme.tertiaryColor,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -338,12 +338,38 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                         hintStyle: TextStyle(color: theme.hintTextColor),
                         border: OutlineInputBorder(
                           borderRadius: defaultBorderRadius,
+                          borderSide: BorderSide(
+                            color: theme.tertiaryColor, // Farbe für die Border
+                            width: 1.5,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: defaultBorderRadius,
+                          borderSide: BorderSide(
+                            color: theme.tertiaryColor, // Farbe für die Border, wenn das Feld aktiv ist
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: defaultBorderRadius,
+                          borderSide: BorderSide(
+                            color: theme.tertiaryColor, // Farbe für die Border, wenn es fokussiert ist
+                            width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: defaultBorderRadius,
+                          borderSide: BorderSide(
+                            color: theme.tertiaryColor, // Farbe für die Border, wenn es einen Fehler gibt
+                            width: 1.5,
+                          ),
                         ),
                         fillColor: theme.primaryColor,
                         filled: true,
                       ),
-                      style: TextStyle(color: theme.primaryFontColor),
+                      style: TextStyle(color: theme.tertiaryColor),
                     ),
+
                     const SizedBox(height: 30),
                   ],
                 ),

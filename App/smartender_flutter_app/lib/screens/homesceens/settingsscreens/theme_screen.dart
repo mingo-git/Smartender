@@ -33,9 +33,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
     await prefs.setBool('useSystemTheme', value);
   }
 
-  void _setTheme(String theme) async {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-
+  void _setTheme(ThemeProvider themeProvider, String theme) async {
     switch (theme) {
       case 'Light':
         themeProvider.isDarkMode = false;
@@ -65,30 +63,30 @@ class _ThemeScreenState extends State<ThemeScreen> {
         backgroundColor: theme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.primaryFontColor, size: 30),
+          icon: Icon(Icons.arrow_back, color: theme.tertiaryColor, size: 30),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           "Theme",
           style: TextStyle(
             fontSize: 24,
-            color: theme.primaryFontColor,
+            color: theme.tertiaryColor,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
       body: Column(
         children: [
-          const SizedBox(height: 20,),
+          const SizedBox(height: 20),
           // Toggle für Systemthema
           SwitchListTile(
             title: Padding(
-              padding: const EdgeInsets.only(left: 10.0), // Verschiebt den Text um 10 Pixel nach rechts
+              padding: const EdgeInsets.only(left: 10.0),
               child: Text(
                 "Use System Theme",
                 style: TextStyle(
                   fontSize: 18,
-                  color: theme.primaryFontColor,
+                  color: theme.tertiaryColor, // Textfarbe aus Theme
                 ),
               ),
             ),
@@ -99,13 +97,15 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 _saveSystemThemePreference(value);
                 themeProvider.useSystemTheme = value;
                 if (value) {
-                  final brightness =
-                      WidgetsBinding.instance.window.platformBrightness;
+                  final brightness = WidgetsBinding.instance.window.platformBrightness;
                   themeProvider.updateThemeFromSystem(brightness);
                 }
               });
             },
+            activeColor: theme.tertiaryColor, // Farbe des Toggle-Buttons, wenn aktiv
+            inactiveThumbColor: theme.primaryColor, // Farbe des Toggle-Buttons, wenn inaktiv
           ),
+
 
           Expanded(
             child: GridView.count(
@@ -117,10 +117,10 @@ class _ThemeScreenState extends State<ThemeScreen> {
                     CustomTheme.lightTheme),
                 _buildThemeTile("Dark", "lib/images/themes/screen.png", theme,
                     CustomTheme.darkTheme),
-                _buildThemeTile("Sommer", "lib/images/themes/screen.png", theme,
+/*                _buildThemeTile("Sommer", "lib/images/themes/screen.png", theme,
                     CustomTheme.lightTheme),
                 _buildThemeTile("Crazy", "lib/images/themes/screen.png", theme,
-                    CustomTheme.lightTheme),
+                    CustomTheme.lightTheme),*/
               ],
             ),
           ),
@@ -138,15 +138,19 @@ class _ThemeScreenState extends State<ThemeScreen> {
     return GestureDetector(
       onTap: useSystemTheme
           ? null
-          : () => _setTheme(themeName), // Nur anklickbar, wenn "Use System Theme" deaktiviert ist
+          : () {
+        final themeProvider =
+        Provider.of<ThemeProvider>(context, listen: false);
+        _setTheme(themeProvider, themeName);
+      },
       child: Opacity(
-        opacity: useSystemTheme ? 0.5 : 1.0, // Kacheln ausgrauen, wenn "Use System Theme" aktiv ist
+        opacity: useSystemTheme ? 0.5 : 1.0,
         child: Container(
           margin: const EdgeInsets.all(8.0),
           decoration: BoxDecoration(
-            borderRadius: defaultBorderRadius, // Verwende den defaultBorderRadius
+            borderRadius: defaultBorderRadius,
             border: Border.all(
-              color: Colors.black, // Schwarzer Rahmen
+              color: theme.tertiaryColor,
             ),
           ),
           child: Column(
@@ -162,11 +166,11 @@ class _ThemeScreenState extends State<ThemeScreen> {
                     imagePath,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey.shade300,
-                      child: const Icon(
+                      color: theme.tertiaryColor,
+                      child: Icon(
                         Icons.broken_image,
                         size: 50,
-                        color: Colors.grey,
+                        color: theme.backgroundColor,
                       ),
                     ),
                   ),
@@ -174,19 +178,20 @@ class _ThemeScreenState extends State<ThemeScreen> {
               ),
               // Hintergrund und Titel
               Container(
-                height: 50, // Feste Höhe für den Titelbereich
+                height: 50,
                 decoration: BoxDecoration(
-                  color: tileTheme.backgroundColor, // Hintergrundfarbe aus dem Theme
+                  color: tileTheme.backgroundColor,
                   borderRadius: const BorderRadius.vertical(
-                    bottom: Radius.circular(24.0), // Nur unten abrunden
+                    bottom: Radius.circular(24.0),
                   ),
                 ),
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: Text(
                   themeName,
                   style: TextStyle(
-                    color: tileTheme.primaryFontColor, // Schriftfarbe aus dem Theme
+                    color: tileTheme.primaryFontColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -198,6 +203,4 @@ class _ThemeScreenState extends State<ThemeScreen> {
       ),
     );
   }
-
-
 }

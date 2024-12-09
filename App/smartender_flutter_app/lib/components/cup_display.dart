@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
+
+import '../provider/theme_provider.dart';
 
 class CupDisplay extends StatelessWidget {
   final List<Map<String, dynamic>> ingredients; // Liste der Zutaten mit Farben und Mengen
@@ -14,6 +17,8 @@ class CupDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     double totalHeight = 200.0; // Maximale Höhe des Cups
 
     return Stack(
@@ -50,7 +55,7 @@ class CupDisplay extends StatelessWidget {
             child: Container(
               width: 170,
               height: totalHeight * 0.84,
-              color: backgroundColor, // Farbe des Rahmens
+              color: theme.backgroundColor, // Farbe des Rahmens
             ),
           ),
         ),

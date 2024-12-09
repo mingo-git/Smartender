@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/theme_provider.dart';
 import '../services/drink_service.dart';
 import 'add_drink_popup.dart';
 
@@ -65,13 +66,23 @@ class _IngredientPopupState extends State<IngredientPopup> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return AlertDialog(
+      backgroundColor: theme.primaryColor, // Hintergrundfarbe des Popups
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text("Select Ingredient"),
+          Text(
+            "Select Ingredient",
+            style: TextStyle(
+              color: theme.tertiaryColor, // Textfarbe
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, color: theme.tertiaryColor), // Icon-Farbe
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -89,13 +100,21 @@ class _IngredientPopupState extends State<IngredientPopup> {
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
+                    style: TextStyle(color: theme.tertiaryColor), // Textfarbe im Eingabefeld
+                    decoration: InputDecoration(
                       hintText: 'Search ingredients',
+                      hintStyle: TextStyle(color: theme.tertiaryColor), // HintText-Farbe
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: theme.tertiaryColor), // Rahmenfarbe
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: theme.tertiaryColor, width: 2.0),
+                      ),
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.add),
+                  icon: Icon(Icons.add, color: theme.tertiaryColor), // Icon-Farbe
                   onPressed: _openAddDrinkPopup,
                 ),
               ],
@@ -103,14 +122,22 @@ class _IngredientPopupState extends State<IngredientPopup> {
             const SizedBox(height: 10),
             Flexible(
               child: _filteredIngredients.isEmpty
-                  ? const Center(child: Text("No ingredients found."))
+                  ? Center(
+                child: Text(
+                  "No ingredients found.",
+                  style: TextStyle(color: theme.tertiaryColor), // Textfarbe für "No ingredients found"
+                ),
+              )
                   : ListView.builder(
                 shrinkWrap: true,
                 itemCount: _filteredIngredients.length,
                 itemBuilder: (context, index) {
                   final ingredient = _filteredIngredients[index];
                   return ListTile(
-                    title: Text(ingredient["drink_name"]),
+                    title: Text(
+                      ingredient["drink_name"],
+                      style: TextStyle(color: theme.tertiaryColor), // Textfarbe
+                    ),
                     onTap: () {
                       widget.onIngredientSelected(ingredient);
                       Navigator.of(context).pop();
@@ -133,9 +160,9 @@ class _IngredientPopupState extends State<IngredientPopup> {
               });
               Navigator.of(context).pop();
             },
-            child: const Text(
+            child: Text(
               "Clear",
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: theme.falseColor), // Textfarbe des Buttons
             ),
           ),
         ),

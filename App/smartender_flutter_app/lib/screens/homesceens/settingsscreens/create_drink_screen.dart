@@ -63,7 +63,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   void _updateIngredientColors() {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     // Verwenden der zentralen Farbdefinition aus constants.dart
     for (int i = 0; i < ingredients.length; i++) {
       ingredients[i]["color"] = theme.slotColors[i % theme.slotColors.length];
@@ -85,7 +85,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   void _saveRecipe() async {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     String recipeName = drinkNameController.text.trim();
     List<Map<String, dynamic>> recipeIngredients = ingredients
@@ -163,7 +163,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   //TODO: Maximal darf nicht ueberschritten werden, bzw fehlermeldung
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return WillPopScope(
       onWillPop: () async {
@@ -178,7 +178,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
           backgroundColor: theme.backgroundColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 35),
+            icon: Icon(Icons.arrow_back, size: 35, color: theme.tertiaryColor,),
             onPressed: () async {
               if (_canSaveDrink()) {
                 bool discard = await _confirmDiscardChanges();
@@ -188,9 +188,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
               }
             },
           ),
-          title: const Text(
+          title: Text(
             "Create Drink",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
           ),
         ),
         //TODO: Inhalte werden erst nach createn angezeigt
@@ -247,12 +247,12 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     "Ingredients",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.add, size: 30),
+                    icon: Icon(Icons.add, size: 30, color: theme.tertiaryColor),
                     onPressed: _addIngredientField,
                   ),
                 ],
@@ -288,12 +288,11 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.normal,
-                                  color: ingredient["name"] != null ? theme.primaryFontColor : theme.hintTextColor,
+                                  color: ingredient["name"] != null ? theme.tertiaryColor : theme.hintTextColor,
                                 ),
                               ),
                             ),
                           ),
-
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -303,20 +302,49 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            hintText: "0",
+                            hintText: "0 ml",
+                            hintStyle: TextStyle(color: theme.hintTextColor),
                             suffix: Text(
                               "ml",
                               style: TextStyle(
-                                color: theme.primaryFontColor,
+                                color: theme.tertiaryColor,
                                 fontSize: 16,
                               ),
                             ),
                             contentPadding: const EdgeInsets.only(right: 8.0),
                             border: OutlineInputBorder(
                               borderRadius: defaultBorderRadius,
+                              borderSide: BorderSide(
+                                color: theme.tertiaryColor, // Standard-Randfarbe
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: defaultBorderRadius,
+                              borderSide: BorderSide(
+                                color: theme.tertiaryColor, // Farbe, wenn das Feld nicht fokussiert ist
+                                width: 1.5,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: defaultBorderRadius,
+                              borderSide: BorderSide(
+                                color: theme.tertiaryColor, // Farbe, wenn das Feld fokussiert ist
+                                width: 2.0,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: defaultBorderRadius,
+                              borderSide: BorderSide(
+                                color: theme.tertiaryColor, // Farbe, wenn ein Fehler auftritt
+                                width: 1,
+                              ),
                             ),
                             filled: true,
                             fillColor: theme.primaryColor,
+                          ),
+                          style: TextStyle(
+                            color: theme.tertiaryColor, // Farbe des eingegebenen Textes
+                            fontSize: 16,
                           ),
                           onChanged: (value) {
                             final quantity = double.tryParse(value) ?? 0.0;
@@ -337,7 +365,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       ),
                       const SizedBox(width: 10),
                       IconButton(
-                        icon: Icon(Icons.delete_forever, color: theme.primaryFontColor),
+                        icon: Icon(Icons.delete_forever, color: theme.tertiaryColor),
                         onPressed: () => _deleteIngredientField(index),
                       ),
                     ],

@@ -11,7 +11,7 @@ class MyBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return Stack(
       children: [
@@ -45,29 +45,30 @@ class MyBottomNavBar extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 15.0), // Hebt die Navbar um 15 nach oben
               child: GNav(
                 onTabChange: (value) => onTabChange!(value),
-                color: theme.uncertainColor, // Gradientfarbe für nicht ausgewählte Icons
+                //TODO: Austauschen mit dem was an besten passt oder neue variable anlegen
+                color: theme.primaryColor, // Gradientfarbe für nicht ausgewählte Icons
                 mainAxisAlignment: MainAxisAlignment.center,
                 tabBorderRadius: defaultBorderRadius.topLeft.x,
-                tabBackgroundColor: theme.uncertainColor, // Hintergrund des aktiven Tabs
-                activeColor: theme.primaryFontColor, // Farbe des aktiven Tab-Icons
+                tabBackgroundColor: theme.primaryColor, // Hintergrund des aktiven Tabs
+                activeColor: theme.tertiaryColor, // Farbe des aktiven Tab-Icons
                 tabs: [
                   GButton(
                     icon: Icons.search_outlined,
                     text: 'Search',
                     iconColor: theme.uncertainColor, // Nicht ausgewählte Icons
-                    iconActiveColor: theme.primaryFontColor, // Aktives Icon
+                    iconActiveColor: theme.tertiaryColor, // Aktives Icon
                   ),
                   GButton(
                     icon: Icons.favorite,
                     text: ' Favorites',
                     iconColor: theme.uncertainColor, // Nicht ausgewählte Icons
-                    iconActiveColor: theme.primaryFontColor, // Aktives Icon
+                    iconActiveColor: theme.tertiaryColor, // Aktives Icon
                   ),
                   GButton(
                     icon: Icons.settings,
                     text: ' Settings',
                     iconColor: theme.uncertainColor, // Nicht ausgewählte Icons
-                    iconActiveColor: theme.primaryFontColor, // Aktives Icon
+                    iconActiveColor: theme.tertiaryColor, // Aktives Icon
                   ),
                 ],
               ),

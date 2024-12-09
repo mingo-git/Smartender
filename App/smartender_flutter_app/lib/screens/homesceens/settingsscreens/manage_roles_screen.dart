@@ -8,7 +8,7 @@ class ManageRolesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return Scaffold(
       appBar: AppBar(

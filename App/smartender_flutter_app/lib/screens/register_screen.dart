@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
 import '../components/my_textfield.dart';
 import '../components/my_button.dart';
 import '../config/constants.dart';
+import '../provider/theme_provider.dart';
 import 'login_screen.dart'; // Ensure this path is correct for your project
 
 class RegisterScreen extends StatefulWidget {
@@ -113,15 +115,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: theme.backgroundColor,
       appBar: AppBar(
-        backgroundColor: backgroundColor,
+        backgroundColor: theme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.close,
-            color: Colors.black,
+            color: theme.primaryFontColor,
             size: 40,
           ),
           onPressed: () {
@@ -142,8 +146,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const Icon(Icons.lock, size: 100),
               const SizedBox(height: 50),
               Text(
-                'Welcome back, you\'ve been missed!',
-                style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                'Create an account',
+                style: TextStyle(color: theme.primaryFontColor, fontSize: 16),
               ),
               const SizedBox(height: 25),
               MyTextField(
@@ -175,7 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: errorMessage.isNotEmpty
                     ? Text(
                   errorMessage,
-                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                  style: TextStyle(color: theme.falseColor, fontSize: 12),
                 )
                     : const SizedBox(height: 16),
               ),

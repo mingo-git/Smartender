@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
+
+import '../provider/theme_provider.dart';
 
 class SquareTile extends StatelessWidget {
   final String imagePath;
@@ -11,13 +14,15 @@ class SquareTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.primaryColor,
         borderRadius: defaultBorderRadius,
         border: Border.all(
-          color: Colors.grey, // Rahmenfarbe, wie bei den Textinput-Feldern
+          color: theme.tertiaryColor, // Rahmenfarbe, wie bei den Textinput-Feldern
         ),
       ),
       child: Image.asset(

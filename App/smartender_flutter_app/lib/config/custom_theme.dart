@@ -6,7 +6,6 @@ class CustomTheme {
   final Color fadeOutBackground0;
   final Color fadeOutBackground1;
   final Color primaryColor;
-  final Color secondaryColor;
   final Color tertiaryColor;
   final Color primaryFontColor;
   final Color secondaryFontColor;
@@ -22,7 +21,6 @@ class CustomTheme {
     required this.fadeOutBackground0,
     required this.fadeOutBackground1,
     required this.primaryColor,
-    required this.secondaryColor,
     required this.tertiaryColor,
     required this.primaryFontColor,
     required this.secondaryFontColor,
@@ -40,14 +38,14 @@ class CustomTheme {
     fadeOutBackground0: const Color(0x9effffff),
     fadeOutBackground1: const Color(0x00f2f2f2),
     primaryColor: Colors.white,
-    secondaryColor: const Color(0xFFC3C3C3),
+/*    secondaryColor: const Color(0xFFC3C3C3),*/
     tertiaryColor: Colors.black,
     primaryFontColor: Colors.black,
     secondaryFontColor: Colors.white,
     trueColor: const Color(0xEF5AEC05),
     falseColor: Colors.red,
     uncertainColor: const Color(0xFFCCCCCC),
-    hintTextColor: const Color(0xff3c3c3c),
+    hintTextColor: const Color(0xd03c3c3c),
     slotColors: [
       Colors.lightGreen,
       Colors.green,
@@ -65,31 +63,31 @@ class CustomTheme {
 
   // Dark Theme
   static final CustomTheme darkTheme = CustomTheme(
-    backgroundColor: Colors.black,
-    popupBackgroundColor: Colors.grey.shade800,
-    fadeOutBackground0: Colors.grey.shade900,
-    fadeOutBackground1: Colors.grey.shade700,
-    primaryColor: Colors.blueGrey,
-    secondaryColor: Colors.tealAccent,
-    tertiaryColor: Colors.greenAccent,
+    backgroundColor: Color(0xFF121212),
+    popupBackgroundColor: Color(0xFF9A2323),
+    fadeOutBackground0: const Color(0x9e000000),
+    fadeOutBackground1: const Color(0x0),
+    primaryColor: Color(0xff3f3f3f),
+/*    secondaryColor: Color(0xFFE30000),*/
+    tertiaryColor: Color(0xffbed8b3),
     primaryFontColor: Colors.white,
-    secondaryFontColor: Colors.white70,
+    secondaryFontColor: Colors.black,
     trueColor: Colors.green,
     falseColor: Colors.red,
     uncertainColor: Colors.grey,
-    hintTextColor: const Color(0xFFFFFFFF),
+    hintTextColor: const Color(0x8CB6EF93),
     slotColors: [
-      Colors.red,
-      Colors.pink,
-      Colors.purple,
-      Colors.deepPurple,
-      Colors.indigo,
-      Colors.blue,
-      Colors.lightBlue,
-      Colors.cyan,
-      Colors.teal,
-      Colors.green,
       Colors.lightGreen,
+      Colors.green,
+      Colors.teal,
+      Colors.cyan,
+      Colors.lightBlue,
+      Colors.blue,
+      Colors.indigo,
+      Colors.deepPurple,
+      Colors.purple,
+      Colors.pink,
+      Colors.red,
     ],
   );
 
@@ -100,7 +98,7 @@ class CustomTheme {
     fadeOutBackground0: Colors.orange.shade100,
     fadeOutBackground1: Colors.yellow.shade50,
     primaryColor: Colors.orange,
-    secondaryColor: Colors.yellow,
+/*    secondaryColor: Colors.yellow,*/
     tertiaryColor: Colors.green.shade600,
     primaryFontColor: Colors.brown.shade800,
     secondaryFontColor: Colors.white,
@@ -129,7 +127,7 @@ class CustomTheme {
     fadeOutBackground0: Colors.pink.shade100,
     fadeOutBackground1: Colors.purple.shade50,
     primaryColor: Colors.pink,
-    secondaryColor: Colors.purple,
+/*    secondaryColor: Colors.purple,*/
     tertiaryColor: Colors.deepPurple,
     primaryFontColor: Colors.white,
     secondaryFontColor: Colors.yellow,

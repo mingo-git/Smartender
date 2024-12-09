@@ -48,6 +48,8 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
 
 //TODO: Screen evtl. nochmal neu laden wenn aktualisiert -> Bei Fehlern steht sonst etwas falsches drin
   void _changeSlotPopup(int index) async {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     showDialog(
       context: context,
       builder: (context) => IngredientPopup(
@@ -71,21 +73,23 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
 
 
 
+
+
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context).currentTheme;
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return Scaffold(
       backgroundColor: theme.backgroundColor,
       appBar: AppBar(
         backgroundColor: theme.backgroundColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 35),
+          icon: Icon(Icons.arrow_back, size: 35, color: theme.tertiaryColor,),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: Text(
             "Bottle Slots",
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
         ),
       ),
       body: Padding(
@@ -171,7 +175,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
-                                    color: theme.primaryFontColor,
+                                    color: theme.tertiaryColor,
                                   ),
                                 ),
                                 Container(
@@ -217,7 +221,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
-                                    color: theme.primaryFontColor
+                                    color: theme.tertiaryColor
                                   ),
                                 ),
                                 Container(
