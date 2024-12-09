@@ -38,7 +38,6 @@ func InitSlotsForHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [GET] /slots at %s", time.Now())
 
-	// TODO: Hardware ID should be dnamically set
 	vars := mux.Vars(r)
 	hardware_id := vars["hardware_id"]
 
@@ -92,9 +91,9 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 		}
 
 		log.Default().Printf("Drink ID: %v", drink_id.Int64)
-		log.Default().Printf("User ID: %v", r.Context().Value("user_id"))
+		log.Default().Printf("Hardware ID: %v", hardware_id)
 
-		row := db.QueryRow(query.GetDrinkByID(), drink_id.Int64, r.Context().Value("user_id"))
+		row := db.QueryRow(query.GetDrinkByID(), drink_id.Int64, hardware_id)
 		if err := row.Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic); err != nil {
 			if err == sql.ErrNoRows {
 				log.Printf("No drink found for drink_id: %v", drink_id.Int64)

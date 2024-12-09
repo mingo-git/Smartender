@@ -18,12 +18,6 @@ func GetDatetime(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetStatus(w http.ResponseWriter, r *http.Request) {
-	/*
-		 TODO: Implement health check	for
-			- status of db
-			- status of Hardware Device
-			- status of backend app
-	*/
 
 	type Health struct {
 		DB     string `json:"db"`

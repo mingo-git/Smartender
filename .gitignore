@@ -9,3 +9,6 @@
 
 # Ignore Workspace specific auto-generated files (JetBrains)
 .idea
+
+# Ignore Secrets
+Server/secrets/service-account-secret.json
