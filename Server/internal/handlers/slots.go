@@ -38,7 +38,6 @@ func InitSlotsForHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [GET] /slots at %s", time.Now())
 
-	// TODO: Hardware ID should be dnamically set
 	vars := mux.Vars(r)
 	hardware_id := vars["hardware_id"]
 
