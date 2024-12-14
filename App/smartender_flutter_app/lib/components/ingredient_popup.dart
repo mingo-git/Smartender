@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../config/constants.dart';
 import '../provider/theme_provider.dart';
 import '../services/drink_service.dart';
 import 'add_drink_popup.dart';
@@ -106,9 +106,11 @@ class _IngredientPopupState extends State<IngredientPopup> {
                       hintStyle: TextStyle(color: theme.tertiaryColor), // HintText-Farbe
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: theme.tertiaryColor), // Rahmenfarbe
+                        borderRadius: defaultBorderRadius, // Abgerundete Ecken
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: theme.tertiaryColor, width: 2.0),
+                        borderRadius: defaultBorderRadius, // Abgerundete Ecken
                       ),
                     ),
                   ),

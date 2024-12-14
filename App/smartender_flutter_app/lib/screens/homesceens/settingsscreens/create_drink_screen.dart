@@ -159,8 +159,6 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     );
   }
 
-  //TODO: Umrandung Fehlt bei Drink_name und auch wenn quantity ausgewaehlt ist
-  //TODO: Maximal darf nicht ueberschritten werden, bzw fehlermeldung
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;

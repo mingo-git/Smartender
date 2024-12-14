@@ -32,7 +32,6 @@ class SlotService implements FetchableService {
 
       if (response.statusCode == 200) {
         final slots = json.decode(response.body) as List<dynamic>;
-        print(response.body);
 
         // Slots lokal speichern
         await _saveSlotsLocally(slots);
@@ -74,13 +73,6 @@ class SlotService implements FetchableService {
     // Aufbau des Bodys
     final body = drinkId != null ? json.encode({"drink_id": drinkId}) : null;
 
-    // Debugging: Header und Body ausgeben
-    print("=== DEBUG: Sending Update Slot Request ===");
-    print("URL: $url");
-    print("Headers: $headers");
-    print("Body: ${body ?? "No Body (Clear Slot)"}");
-    print("Slot Number: $slotNumber | Drink ID: $drinkId");
-
     try {
       // HTTP-PUT-Request ausführen
       final response = await http.put(
@@ -89,11 +81,6 @@ class SlotService implements FetchableService {
         body: body, // Kein Body für "Clear"
       );
 
-
-      // Debugging: Response ausgeben
-      print("=== DEBUG: Received Response ===");
-      print("Response Status: ${response.statusCode}");
-      print("Response Body: ${response.body}");
 
       if (response.statusCode == 204) {
         print("SLOT $slotNumber updated successfully.");
