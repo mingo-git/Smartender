@@ -1,0 +1,87 @@
+\documentclass[a4paper, 12pt]{article} % A4-Seitenformat und Schriftgröße 12pt
+
+% Pakete für Sprache, Schrift und andere wichtige Anpassungen
+\usepackage[utf8]{inputenc} % UTF-8 Unterstützung für Umlaute
+\usepackage[T1]{fontenc}    % Korrekte Silbentrennung bei Umlauten
+\usepackage[ngerman]{babel} % Deutsche Spracheinstellungen (z. B. Texttrennung, Typografie)
+\usepackage{csquotes}       % Korrekte deutsche Anführungszeichen („ “)
+\usepackage{geometry}       % Seitenränder anpassen
+\geometry{a4paper, left=3cm, right=3cm, top=2.5cm, bottom=2.5cm} % Beispiel für Seitenränder
+
+\title{Automatisierter Smarter Cocktail-Automat mit Cloud Anbindung}
+\author{ 
+  Jonas Eck \\
+	Technische Hochschule Würzburg-Schweinfurt\\
+	\and 
+	Phillip Schön \\
+	Technische Hochschule Würzburg-Schweinfurt\\
+	\and 
+  Constantin Thein\\
+	Technische Hochschule Würzburg-Schweinfurt\\
+	}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\begin{abstract}
+Im Rahmen dieses Projekts wurde ein smarter Cocktailautomat entwickelt, der wesentliche Elemente des
+Internet of Things (IoT) mit den Anforderungen moderner Smart-Home-Lösungen verbindet. Ziel war die
+Umsetzung eines skalierbaren Prototyps, der die automatisierte Zubereitung von Cocktails ermöglicht 
+und dabei durch eine intuitive Bedienung über eine Smartphone-App sowie die Anbindung an ein 
+cloudbasiertes Backend besticht.
+
+Die Lösung umfasst drei Kernkomponenten: eine modular aufgebaute Hardware für die 
+Cocktailzubereitung, ein containerisiertes Backend gehostet in Google Cloud Run mit einer 
+Cloud-SQL-Datenbank sowie eine mobile App, die eine benutzerfreundliche Verwaltung von Rezepten, 
+Zutaten und Maschinenkonfigurationen erlaubt. Besonderes Augenmerk wurde auf die Skalierbarkeit und 
+Erweiterbarkeit des Systems gelegt, wodurch sowohl mehrere Benutzer als auch mehrere Automaten 
+unterstützt werden können.
+
+Das Projekt zeigt die Potenziale von IoT-Technologien auf, alltägliche Aufgaben zu automatisieren 
+und dabei innovative Ansätze für Smart-Home-Umgebungen zu entwickeln. Gleichzeitig wurden 
+Herausforderungen wie die Einarbeitung in neue Technologien, der Umgang mit komplexen 
+Elektronikkomponenten sowie die effiziente Integration von Cloud-Diensten gemeistert.
+\end{abstract}
+
+
+% Hier werden die Unterdokumente eingebunden
+\input{sections/01_einleitung}    % Datei einleitung.tex
+\input{sections/02_technologischer_hintergrund}    % Technologischer Hintergrund und verwandte Arbeiten
+\input{sections/03_anforderungen_und_konzept}    % Anforderungen und Konzept
+\input{sections/04_umsetzung_hardware}    % Umsetzung der Hardware
+\input{sections/05_backend_architektur_und_implementierung}    % Backend-Architektur und Implementierung
+\input{sections/06_mobile_app_entwicklung}    % Mobile App-Entwicklung
+\input{sections/07_integration_und_tests}    % Integration und Tests
+\input{sections/08_ergebnisse_und_bewertung}    % Ergebnisse und Bewertung
+\input{sections/09_fazit_und_ausblick}    % Fazit und Ausblick
+\input{sections/10_anhang}    % Anhang
+\input{sections/11_literaturverzeichnis}    % Literaturverzeichnis
+
+\section{Technologischer Hintergrund und verwandte Arbeiten}(3–5 Seiten)
+\section{Anforderungen und Konzept}(4–5 Seiten)
+\section{Umsetzung der Hardware}(4–6 Seiten)
+\section{Backend-Architektur und Implementierung}(4–6 Seiten)
+\section{Mobile App-Entwicklung}(4–5 Seiten)
+\section{Integration und Tests}(4–5 Seiten)
+\section{Ergebnisse und Bewertung}(3–4 Seiten)
+\section{Fazit und Ausblick}(2 Seiten)
+\section{Anhang}(variabel)
+\section{Literaturverzeichnis}(1–2 Seiten)
+
+\section{Conclusions}\label{conclusions}
+There is no longer \LaTeX{} example which was written by \cite{doe}.
+
+\begin{thebibliography}{9}
+\bibitem[Doe]{doe} \emph{First and last \LaTeX{} example.},
+John Doe 50 B.C. 
+\end{thebibliography}
+
+
+\end{document}
+
