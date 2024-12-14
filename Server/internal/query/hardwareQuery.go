@@ -27,8 +27,6 @@ func GetAllHardwareForUser() string {
 func GetHardwareForUserByID() string {
 	return `SELECT
 					h.hardware_id,
-					h.hardware_name,
-					h.mac_address,
 					uh.user_id
 				FROM
 					hardware h
