@@ -5,10 +5,21 @@ import '../../../components/liter_display.dart';
 import '../../../config/constants.dart';
 import '../../../provider/theme_provider.dart';
 import '../../../services/recipe_service.dart';
-import '../../../components/ingredient_popup.dart';
+import '../../../components/select_ingredient_popup.dart';
+
+//TODO: Jedes Ingredient nur einma auswaehlbar sonst knallts
 
 class CreateDrinkScreen extends StatefulWidget {
-  const CreateDrinkScreen({Key? key}) : super(key: key);
+  final int? recipeId;
+  final String? initialName;
+  final List<Map<String, dynamic>>? initialIngredients;
+
+  const CreateDrinkScreen({
+    Key? key,
+    this.recipeId,
+    this.initialName,
+    this.initialIngredients,
+  }) : super(key: key);
 
   @override
   State<CreateDrinkScreen> createState() => _CreateDrinkScreenState();
@@ -17,13 +28,41 @@ class CreateDrinkScreen extends StatefulWidget {
 class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   final TextEditingController drinkNameController = TextEditingController();
   final List<Map<String, dynamic>> ingredients = [];
+  final List<TextEditingController> quantityControllers = [];
   final RecipeService recipeService = RecipeService();
+
+  // Zum Vergleichen des ursprünglichen Zustands
+  String? _originalName;
+  List<Map<String, dynamic>> _originalIngredients = [];
 
   @override
   void initState() {
     super.initState();
+
+    // Editiermodus: Vorbelegung der Felder + Originalwerte speichern
+    if (widget.recipeId != null && widget.initialName != null && widget.initialIngredients != null) {
+      drinkNameController.text = widget.initialName!;
+      _originalName = widget.initialName!;
+      // Erstelle eine tiefe Kopie der initialIngredients als Originalzustand
+      _originalIngredients = widget.initialIngredients!.map((ing) => Map<String, dynamic>.from(ing)).toList();
+      ingredients.addAll(widget.initialIngredients!);
+
+      for (var ing in ingredients) {
+        final intQty = (ing["quantity"] is double) ? (ing["quantity"] as double).toInt() : (ing["quantity"] ?? 0);
+        ing["quantity"] = intQty;
+        final controller = TextEditingController(text: intQty.toString());
+        quantityControllers.add(controller);
+      }
+
+      _updateIngredientColors();
+    } else {
+      // Neuer Drink (kein Editiermodus)
+      _originalName = "";
+      _originalIngredients = [];
+    }
+
     drinkNameController.addListener(() {
-      setState(() {}); // Aktualisiere den Zustand bei Änderungen im Namen
+      setState(() {});
     });
   }
 
@@ -31,40 +70,45 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   void dispose() {
     drinkNameController.removeListener(() {});
     drinkNameController.dispose();
+    for (var c in quantityControllers) {
+      c.dispose();
+    }
     super.dispose();
   }
 
   void _addIngredientField() {
-    if (ingredients.length < 11) {
-      setState(() {
+    setState(() {
+      if (ingredients.length < 11) {
         ingredients.add({
           "id": null,
           "name": null,
-          "quantity": 0.0,
-          "color": null, // Farbe wird später zugewiesen
+          "quantity": 0,
+          "color": null,
         });
-        _updateIngredientColors(); // Aktualisiere die Farben nach Hinzufügen
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("You can only add up to 11 ingredients."),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
+        final controller = TextEditingController(text: "0");
+        quantityControllers.add(controller);
+        _updateIngredientColors();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("You can only add up to 11 ingredients."),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    });
   }
 
   void _deleteIngredientField(int index) {
     setState(() {
       ingredients.removeAt(index);
+      quantityControllers.removeAt(index);
       _updateIngredientColors();
     });
   }
 
   void _updateIngredientColors() {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
-    // Verwenden der zentralen Farbdefinition aus constants.dart
     for (int i = 0; i < ingredients.length; i++) {
       ingredients[i]["color"] = theme.slotColors[i % theme.slotColors.length];
     }
@@ -73,7 +117,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   void _openIngredientPopup(int index) async {
     showDialog(
       context: context,
-      builder: (context) => IngredientPopup(
+      builder: (context) => SelectIngredientPopup(
         onIngredientSelected: (ingredient) {
           setState(() {
             ingredients[index]["id"] = ingredient["drink_id"];
@@ -96,26 +140,35 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     })
         .toList();
 
-    bool success = await recipeService.addRecipe(recipeName, recipeIngredients);
+    bool success;
+    if (widget.recipeId == null) {
+      // Neuer Drink
+      success = await recipeService.addRecipe(recipeName, recipeIngredients);
+    } else {
+      // Existierender Drink -> Update mit add/remove/update von Zutaten
+      // Hier greifen wir auf _originalIngredients zu, welches wir im initState gespeichert haben.
+      // `widget.initialIngredients` entspricht den ursprünglichen Zutaten des Rezepts beim Laden.
+      success = await recipeService.updateRecipeWithIngredients(widget.recipeId!, recipeName, recipeIngredients, _originalIngredients);
+    }
 
     if (success) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text("Recipe saved successfully!"),
+            content: Text(widget.recipeId == null ? "Recipe saved successfully!" : "Recipe updated successfully!"),
             backgroundColor: theme.trueColor,
             duration: const Duration(seconds: 2),
           ),
         );
         Future.delayed(const Duration(seconds: 2), () {
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(true);
         });
       }
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text("Failed to save recipe. Please try again."),
+            content: Text(widget.recipeId == null ? "Failed to save recipe. Please try again." : "Failed to update recipe. Please try again."),
             backgroundColor: theme.falseColor,
             duration: const Duration(seconds: 3),
           ),
@@ -124,10 +177,47 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     }
   }
 
+
+
   bool _canSaveDrink() {
     return drinkNameController.text.trim().isNotEmpty &&
         ingredients.any((ingredient) =>
         ingredient["id"] != null && ingredient["quantity"] > 0);
+  }
+
+  /// Prüft, ob es ungespeicherte Änderungen gibt.
+  bool _hasUnsavedChanges() {
+    // Falls weder Name noch Zutaten eingetragen wurden und kein Editiermodus aktiv ist
+    // ist nichts zu verwerfen.
+    if (widget.recipeId == null) {
+      // Neuer Drink: Änderungen nur, wenn etwas eingegeben wurde
+      if (drinkNameController.text.trim().isNotEmpty) return true;
+      if (ingredients.isNotEmpty && ingredients.any((ing) => ing["id"] != null && ing["quantity"] > 0)) {
+        return true;
+      }
+      return false;
+    } else {
+      // Editiermodus: Vergleiche mit ursprünglichem Zustand
+      final currentName = drinkNameController.text.trim();
+      if (currentName != _originalName) return true;
+
+      // Vergleiche Zutaten. Prüfe auf Anzahl und jede einzelne.
+      if (ingredients.length != _originalIngredients.length) return true;
+
+      for (int i = 0; i < ingredients.length; i++) {
+        final original = i < _originalIngredients.length ? _originalIngredients[i] : null;
+        final current = ingredients[i];
+
+        if (original == null) return true;
+
+        // Vergleiche id, name und quantity
+        if (original["id"] != current["id"]) return true;
+        if (original["name"] != current["name"]) return true;
+        if ((original["quantity"] ?? 0) != (current["quantity"] ?? 0)) return true;
+      }
+
+      return false;
+    }
   }
 
   Future<bool> _confirmDiscardChanges() async {
@@ -155,7 +245,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   double _calculateFilledAmount() {
     return ingredients.fold<double>(
       0.0,
-          (sum, ingredient) => sum + (ingredient["quantity"] ?? 0.0),
+          (sum, ingredient) => sum + (ingredient["quantity"]?.toDouble() ?? 0.0),
     );
   }
 
@@ -165,7 +255,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
 
     return WillPopScope(
       onWillPop: () async {
-        if (_canSaveDrink()) {
+        if (_hasUnsavedChanges()) {
           return await _confirmDiscardChanges();
         }
         return true;
@@ -176,9 +266,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
           backgroundColor: theme.backgroundColor,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, size: 35, color: theme.tertiaryColor,),
+            icon: Icon(Icons.arrow_back, size: 35, color: theme.tertiaryColor),
             onPressed: () async {
-              if (_canSaveDrink()) {
+              if (_hasUnsavedChanges()) {
                 bool discard = await _confirmDiscardChanges();
                 if (discard) Navigator.of(context).pop();
               } else {
@@ -187,11 +277,10 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
             },
           ),
           title: Text(
-            "Create Drink",
+            widget.recipeId == null ? "Create Drink" : "Edit Drink",
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
           ),
         ),
-        //TODO: Inhalte werden erst nach createn angezeigt
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Column(
@@ -213,8 +302,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                   Expanded(
                     flex: 6,
                     child: CupDisplay(
-                      ingredients: ingredients, // Zutaten mit Mengen und Farben
-                      maxCapacity: 400, // Maximale Kapazität
+                      ingredients: ingredients,
+                      maxCapacity: 400,
                     ),
                   ),
                 ],
@@ -224,7 +313,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                 controller: drinkNameController,
                 decoration: InputDecoration(
                   hintText: "Enter drink name",
-                  hintStyle: TextStyle(color: theme.hintTextColor), // Hint-Textfarbe
+                  hintStyle: TextStyle(color: theme.hintTextColor),
                   border: OutlineInputBorder(
                     borderRadius: defaultBorderRadius,
                   ),
@@ -234,10 +323,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                 style: TextStyle(
                   color: drinkNameController.text.isEmpty
                       ? theme.hintTextColor
-                      : theme.primaryFontColor, // Dynamische Schriftfarbe
+                      : theme.primaryFontColor,
                 ),
                 onChanged: (_) {
-                  // Trigger UI-Update bei Textänderung
                   setState(() {});
                 },
               ),
@@ -259,6 +347,18 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
               ...ingredients.asMap().entries.map((entry) {
                 final index = entry.key;
                 final ingredient = entry.value;
+
+                while (quantityControllers.length <= index) {
+                  quantityControllers.add(TextEditingController(text: "0"));
+                }
+                final quantityController = quantityControllers[index];
+                final currentQty = ingredient["quantity"] ?? 0;
+                final currentQtyString = currentQty.toString();
+
+                if (quantityController.text != currentQtyString) {
+                  quantityController.text = currentQtyString;
+                }
+
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10.0),
                   child: Row(
@@ -297,6 +397,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       Expanded(
                         flex: 2,
                         child: TextField(
+                          controller: quantityController,
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -312,28 +413,25 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                             contentPadding: const EdgeInsets.only(right: 8.0),
                             border: OutlineInputBorder(
                               borderRadius: defaultBorderRadius,
-                              borderSide: BorderSide(
-                                color: theme.tertiaryColor, // Standard-Randfarbe
-                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: defaultBorderRadius,
                               borderSide: BorderSide(
-                                color: theme.tertiaryColor, // Farbe, wenn das Feld nicht fokussiert ist
+                                color: theme.tertiaryColor,
                                 width: 1.5,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: defaultBorderRadius,
                               borderSide: BorderSide(
-                                color: theme.tertiaryColor, // Farbe, wenn das Feld fokussiert ist
+                                color: theme.tertiaryColor,
                                 width: 2.0,
                               ),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: defaultBorderRadius,
                               borderSide: BorderSide(
-                                color: theme.tertiaryColor, // Farbe, wenn ein Fehler auftritt
+                                color: theme.tertiaryColor,
                                 width: 1,
                               ),
                             ),
@@ -341,13 +439,13 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                             fillColor: theme.primaryColor,
                           ),
                           style: TextStyle(
-                            color: theme.tertiaryColor, // Farbe des eingegebenen Textes
+                            color: theme.tertiaryColor,
                             fontSize: 16,
                           ),
                           onChanged: (value) {
-                            final quantity = double.tryParse(value) ?? 0.0;
+                            final qty = int.tryParse(value) ?? 0;
                             setState(() {
-                              ingredient["quantity"] = quantity;
+                              ingredient["quantity"] = qty;
                             });
                           },
                         ),
@@ -382,7 +480,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                   ),
                   onPressed: _saveRecipe,
                   child: Text(
-                    "Save Drink",
+                    widget.recipeId == null ? "Save Drink" : "Update Drink",
                     style: TextStyle(
                       color: theme.secondaryFontColor,
                       fontSize: 18,

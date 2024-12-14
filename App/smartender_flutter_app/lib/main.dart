@@ -7,7 +7,10 @@ import 'package:smartender_flutter_app/screens/home_screen.dart';
 import 'package:smartender_flutter_app/screens/login_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
 import 'package:smartender_flutter_app/services/drink_service.dart';
+import 'package:smartender_flutter_app/services/fetch_data_service.dart';
+import 'package:smartender_flutter_app/services/recipe_service.dart';
 import 'package:smartender_flutter_app/services/slot_service.dart';
+
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -29,12 +32,27 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => CocktailCard()),
         Provider<DrinkService>(create: (_) => DrinkService()),
+        Provider<RecipeService>(create: (_) => RecipeService()),
         Provider<SlotService>(create: (_) => SlotService()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: Builder(
         builder: (context) {
-          final themeProvider = Provider.of<ThemeProvider>(context);
+          final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
+          // Hole die Services aus dem Provider
+          final drinkService = Provider.of<DrinkService>(context, listen: false);
+          final recipeService = Provider.of<RecipeService>(context, listen: false);
+
+          // Erstelle FetchdData-Objekt und füge Services hinzu
+          // Dies kann nach dem Aufbau der Provider geschehen, damit die Services verfügbar sind.
+          final fetchdData = FetchdData();
+          fetchdData.addService(drinkService);
+          fetchdData.addService(recipeService);
+
+          // Starte das Polling
+          fetchdData.startPolling(interval: const Duration(seconds: 10));
+
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(

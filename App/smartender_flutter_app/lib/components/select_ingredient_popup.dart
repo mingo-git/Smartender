@@ -4,23 +4,23 @@ import 'package:provider/provider.dart';
 import '../config/constants.dart';
 import '../provider/theme_provider.dart';
 import '../services/drink_service.dart';
-import 'add_drink_popup.dart';
+import 'create_edit_drink_popup.dart';
 
-class IngredientPopup extends StatefulWidget {
+class SelectIngredientPopup extends StatefulWidget {
   final Function(Map<String, dynamic>) onIngredientSelected;
   final bool showClearButton;
 
-  const IngredientPopup({
+  const SelectIngredientPopup({
     Key? key,
     required this.onIngredientSelected,
     this.showClearButton = false,
   }) : super(key: key);
 
   @override
-  _IngredientPopupState createState() => _IngredientPopupState();
+  _SelectIngredientPopupState createState() => _SelectIngredientPopupState();
 }
 
-class _IngredientPopupState extends State<IngredientPopup> {
+class _SelectIngredientPopupState extends State<SelectIngredientPopup> {
   TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _allIngredients = [];
   List<Map<String, dynamic>> _filteredIngredients = [];
@@ -53,7 +53,7 @@ class _IngredientPopupState extends State<IngredientPopup> {
     Navigator.of(context).pop(); // Schließt das aktuelle Popup
     showDialog(
       context: context,
-      builder: (context) => const AddDrinkPopup(),
+      builder: (context) => const CreateEditDrinkPopup(),
     );
   }
 

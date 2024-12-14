@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/services/slot_service.dart';
-import 'package:smartender_flutter_app/components/ingredient_popup.dart';
+import 'package:smartender_flutter_app/components/select_ingredient_popup.dart';
 
 import '../../../provider/theme_provider.dart';
 
@@ -52,7 +52,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => IngredientPopup(
+      builder: (context) => SelectIngredientPopup(
         onIngredientSelected: (selectedDrink) async {
           // Lokale Aktualisierung des Slots
           setState(() {

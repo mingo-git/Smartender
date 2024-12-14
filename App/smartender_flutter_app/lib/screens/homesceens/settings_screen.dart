@@ -45,11 +45,6 @@ class SettingsScreen extends StatelessWidget {
               icon: Icons.local_drink,
               onTap: () => _navigateToScreen(context, const BottleSlotsScreen()),
             ),
-            SettingsTile(
-              title: "Create Drink",
-              icon: Icons.local_bar,
-              onTap: () => _navigateToScreen(context, const CreateDrinkScreen()),
-            ),
 /*            SettingsTile(
               title: "Manage Roles",
               icon: Icons.admin_panel_settings,

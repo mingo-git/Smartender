@@ -5,6 +5,7 @@ import '../../components/device_dropdown.dart';
 import '../../components/my_button.dart';
 import '../../config/constants.dart';
 import '../../provider/theme_provider.dart';
+import '../../services/recipe_service.dart';
 
 class SearchdrinksScreen extends StatefulWidget {
   const SearchdrinksScreen({super.key});
@@ -16,78 +17,49 @@ class SearchdrinksScreen extends StatefulWidget {
 class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
   String selectedDevice = "Exampledevice";
   TextEditingController searchController = TextEditingController();
-  bool isAvailable = false;
 
-  // List of devices with additional status
+  List<Map<String, dynamic>> drinks = [];
+  List<Map<String, dynamic>> filteredDrinks = [];
+
+  // Beispiel-Geräte
   final List<Map<String, dynamic>> devices = [
     {"name": "Exampledevice", "status": "active"},
     {"name": "Exampledevice1", "status": "inactive"},
     {"name": "Add new Device", "status": "new"}
   ];
 
-  List<Map<String, dynamic>> drinks = [
-    {
-      "name": "Touchdown",
-      "image": "lib/images/cocktails/aperol.png",
-      "ingredients": ["Vodka", "Orange Juice", "Lime", "Orange Slice"],
-      "isLiked": false
-    },
-    {
-      "name": "Margarita",
-      "image": "lib/images/cocktails/gin_tino.png",
-      "ingredients": ["Tequila", "Lime Juice", "Triple Sec"],
-      "isLiked": false
-    },
-    {
-      "name": "Tequila Sunrise",
-      "image": "lib/images/cocktails/guaro.png",
-      "ingredients": ["Tequila", "Orange Juice", "Grenadine"],
-      "isLiked": false
-    },
-    {
-      "name": "Pina Colada",
-      "image": "lib/images/cocktails/strawberry_ice.png",
-      "ingredients": ["Rum", "Coconut Cream", "Pineapple Juice"],
-      "isLiked": false
-    },
-    {
-      "name": "Bloody Mary",
-      "image": "lib/images/cocktails/touch_down.png",
-      "ingredients": ["Vodka", "Tomato Juice", "Tabasco", "Celery Salt", "Lemon"],
-      "isLiked": false
-    },
-    {
-      "name": "Martini",
-      "image": "lib/images/cocktails/tequila_sunrise.png",
-      "ingredients": ["Gin", "Dry Vermouth", "Olive"],
-      "isLiked": false
-    },
-    {
-      "name": "Mojito",
-      "image": "lib/images/cocktails/aperol.png",
-      "ingredients": ["Rum", "Mint", "Lime", "Sugar", "Soda Water"],
-      "isLiked": false
-    },
-    {
-      "name": "Whiskey Sour",
-      "image": "lib/images/cocktails/gin_tino.png",
-      "ingredients": ["Whiskey", "Lemon Juice", "Sugar", "Egg White"],
-      "isLiked": false
-    },
-    {
-      "name": "Gin Tonic",
-      "image": "lib/images/cocktails/strawberry_ice.png",
-      "ingredients": ["Gin", "Tonic Water", "Lime"],
-      "isLiked": false
-    },
-  ];
-
-  List<Map<String, dynamic>> filteredDrinks = [];
-
   @override
   void initState() {
     super.initState();
-    filteredDrinks = drinks;
+    loadRecipes();
+  }
+
+  Future<void> loadRecipes() async {
+    final recipeService = Provider.of<RecipeService>(context, listen: false);
+    final recipesData = await recipeService.fetchRecipesFromLocal();
+
+    final available = recipesData["available"] ?? [];
+
+    final newDrinks = available.map<Map<String, dynamic>>((recipe) {
+      final recipeName = recipe["recipe_name"] ?? "Unnamed";
+      final ingredientsResponse = recipe["ingredientsResponse"] ?? [];
+      final ingredientNames = ingredientsResponse.map((ing) {
+        final drink = ing["drink"];
+        return drink != null ? (drink["drink_name"] ?? "Unknown") : "Unknown";
+      }).toList().cast<String>(); // Wichtig: cast<String>()
+
+      return {
+        "name": recipeName,
+        "image": "lib/images/cocktails/guaro.png", // Platzhalterbild
+        "ingredients": ingredientNames,
+        "isLiked": false,
+      };
+    }).toList();
+
+    setState(() {
+      drinks = newDrinks;
+      filteredDrinks = drinks;
+    });
   }
 
   void filterDrinks(String query) {
@@ -106,18 +78,17 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: theme.backgroundColor, // Hintergrund des Popups
+          backgroundColor: theme.backgroundColor,
           shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
           contentPadding: const EdgeInsets.symmetric(horizontal: horizontalPadding * 2, vertical: 20),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                width: MediaQuery.of(context).size.width * 0.9, // Feste Breite
+                width: MediaQuery.of(context).size.width * 0.9,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Flexible Höhe
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Schließen-Button
                     Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
@@ -125,11 +96,10 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
-                    // Bild des Drinks
                     Center(
                       child: Image.asset(
                         drink["image"],
-                        height: 150, // Größeres Bild
+                        height: 150,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -172,7 +142,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     Wrap(
                       spacing: 8.0,
                       runSpacing: 4.0,
-                      children: drink["ingredients"].map<Widget>((ingredient) {
+                      children: (drink["ingredients"] as List<String>).map((ingredient) {
                         return Chip(
                           label: Text(
                             ingredient,
@@ -186,7 +156,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     MyButton(
                       onTap: () {
                         Navigator.of(context).pop();
-                        // Logik für die Bestellung hier hinzufügen
+                        // TODO: Logik für Bestellung hinzufügen
                       },
                       text: "Order",
                       hasMargin: false,
@@ -200,10 +170,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
       },
     );
   }
-
-
-
-
 
   void _changeFavorite(String drinkName, bool isLiked) {
     print("Favorited $drinkName: $isLiked");
@@ -241,15 +207,13 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                 ),
               ),
             ),
-            // Overlay für den Gradient-Effekt, der das GridView überlagert
             Positioned(
               top: 0,
               left: 0,
               right: 0,
               child: IgnorePointer(
-                // Nur die visuelle Überlagerung ohne Interaktivität
                 child: Container(
-                  height: 170.0, // Höhe des Überlagerungsbereichs
+                  height: 170.0,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -277,7 +241,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     Row(
                       children: [
                         Expanded(
-                          flex: 7,
                           child: DeviceDropdown(
                             devices: devices,
                             selectedDevice: selectedDevice,
@@ -290,42 +253,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                             },
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        //TODO: Button noch anpassen mit farbe
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            decoration: BoxDecoration(
-                            color: isAvailable ? theme.trueColor : theme.primaryColor,
-                              borderRadius: defaultBorderRadius,
-                              border: Border.all(
-                                color: theme.tertiaryColor
-                              ), // Border hinzugefügt
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isAvailable = !isAvailable;
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent, // Transparenter Hintergrund
-                                shadowColor: Colors.transparent, // Entfernt Schatten
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: defaultBorderRadius,
-                                ),
-                              ),
-                              child: Text(
-                                "Available",
-                                style: TextStyle(
-                                  color: isAvailable ? theme.backgroundColor : theme.tertiaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
                       ],
                     ),
                     const SizedBox(height: 13),
@@ -339,28 +266,28 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                         border: OutlineInputBorder(
                           borderRadius: defaultBorderRadius,
                           borderSide: BorderSide(
-                            color: theme.tertiaryColor, // Farbe für die Border
-                            width: 1.5,
+                            color: theme.tertiaryColor,
+                            width: 1,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: defaultBorderRadius,
                           borderSide: BorderSide(
-                            color: theme.tertiaryColor, // Farbe für die Border, wenn das Feld aktiv ist
-                            width: 1.5,
+                            color: theme.tertiaryColor,
+                            width: 1,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: defaultBorderRadius,
                           borderSide: BorderSide(
-                            color: theme.tertiaryColor, // Farbe für die Border, wenn es fokussiert ist
-                            width: 2.0,
+                            color: theme.tertiaryColor,
+                            width: 1,
                           ),
                         ),
                         errorBorder: OutlineInputBorder(
                           borderRadius: defaultBorderRadius,
                           borderSide: BorderSide(
-                            color: theme.tertiaryColor, // Farbe für die Border, wenn es einen Fehler gibt
+                            color: theme.tertiaryColor,
                             width: 1.5,
                           ),
                         ),
@@ -369,7 +296,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       ),
                       style: TextStyle(color: theme.tertiaryColor),
                     ),
-
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -380,5 +306,4 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
       ),
     );
   }
-
 }

@@ -2,32 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/drink_service.dart';
 import 'my_button.dart';
-import 'ingredient_popup.dart';
 
-class AddDrinkPopup extends StatefulWidget {
-  const AddDrinkPopup({Key? key}) : super(key: key);
+class CreateEditDrinkPopup extends StatefulWidget {
+  /// Wenn `drinkId` null ist, wird ein neuer Drink angelegt.
+  /// Wenn `drinkId` gesetzt ist, wird der bestehende Drink editiert.
+  final int? drinkId;
+  final String? initialName;
+  final bool? initialIsAlcoholic;
+
+  const CreateEditDrinkPopup({
+    Key? key,
+    this.drinkId,
+    this.initialName,
+    this.initialIsAlcoholic,
+  }) : super(key: key);
 
   @override
-  State<AddDrinkPopup> createState() => _AddDrinkPopupState();
+  State<CreateEditDrinkPopup> createState() => _CreateEditDrinkPopupState();
 }
 
-class _AddDrinkPopupState extends State<AddDrinkPopup> {
+class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
   final TextEditingController _drinkNameController = TextEditingController();
   bool _isAlcoholic = false;
 
-  void _closeAndReopenIngredientPopup(BuildContext context) {
-    Navigator.of(context).pop(); // Schließe AddDrinkPopup
-    showDialog(
-      context: context,
-      builder: (context) => IngredientPopup(
-        onIngredientSelected: (ingredient) {
-          // Handle ingredient selection if necessary
-        },
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    // Vorbelegung wenn wir im Editier-Modus sind
+    if (widget.drinkId != null) {
+      _drinkNameController.text = widget.initialName ?? "";
+      _isAlcoholic = widget.initialIsAlcoholic ?? false;
+    }
   }
 
-  Future<void> _saveDrink(BuildContext context) async {
+  void _closePopup() {
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _saveDrink() async {
     final drinkName = _drinkNameController.text.trim();
     if (drinkName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -37,31 +49,43 @@ class _AddDrinkPopupState extends State<AddDrinkPopup> {
     }
 
     final drinkService = Provider.of<DrinkService>(context, listen: false);
-    final success = await drinkService.addDrink(drinkName, _isAlcoholic);
+
+    bool success;
+    if (widget.drinkId == null) {
+      // Neuen Drink erstellen
+      success = await drinkService.addDrink(drinkName, _isAlcoholic);
+    } else {
+      // Bestehenden Drink aktualisieren
+      // Diese Funktion muss noch im DrinkService implementiert werden!
+      success = await drinkService.updateDrink(widget.drinkId!, drinkName, _isAlcoholic);
+    }
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Drink added successfully!")),
+        SnackBar(content: Text(widget.drinkId == null
+            ? "Drink added successfully!"
+            : "Drink updated successfully!")),
       );
-      _closeAndReopenIngredientPopup(context);
+      _closePopup();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to add drink. Please try again.")),
+        const SnackBar(content: Text("Failed to save drink. Please try again.")),
       );
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final isEditMode = widget.drinkId != null;
+
     return AlertDialog(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text("Add New Drink"),
+          Text(isEditMode ? "Edit Drink" : "Add New Drink"),
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => _closeAndReopenIngredientPopup(context),
+            onPressed: _closePopup,
           ),
         ],
       ),
@@ -95,9 +119,9 @@ class _AddDrinkPopupState extends State<AddDrinkPopup> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: MyButton(
-            onTap: () => _saveDrink(context),
+            onTap: _saveDrink,
             text: "Save",
-            hasMargin: false, // Kein zusätzliches Margin, um den Button ins Popup zu integrieren
+            hasMargin: false,
           ),
         ),
       ],
