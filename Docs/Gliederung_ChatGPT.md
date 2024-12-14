@@ -113,3 +113,79 @@ Hinweise zur Umsetzung
  • Die Dokumentation sollte idealerweise 30–40 Seiten umfassen, wobei bei detaillierter Darstellung von Hardware oder Backend-Architektur auch eine längere Arbeit sinnvoll wäre.
 
 Falls du noch weitere Anpassungen brauchst oder Unterstützung bei einem bestimmten Abschnitt möchtest, sag Bescheid!
+
+---
+
+# Visuelle Elemente für die Projektarbeit
+
+- [ ] **Systemarchitektur (Diagramm)**  
+  Ein Diagramm, das die Gesamtstruktur des Systems darstellt, einschließlich der Hardwarekomponenten (z. B. Automatenhardware, Pi), des Backends (Cloud, Datenbank) und der App (Benutzerschnittstelle, Kommunikation mit Backend).
+
+- [ ] **Schaltpläne (Hardware-Architektur)**  
+  Schaltpläne, die die elektrischen Verbindungen und Komponenten des Cocktailautomaten darstellen, einschließlich Verkabelung von Sensoren, Pumpen und Mikrocontrollern.
+
+- [ ] **Benutzeroberfläche der App (Screenshots oder Mockups)**  
+  Screenshots oder Mockups der Benutzeroberfläche der Smartphone-App, die Funktionen wie Rezeptverwaltung, Cocktailzubereitung und Steuerung darstellen.
+
+- [ ] **Backend-Architektur (Datenflüsse)**  
+  Diagramm, das den Datenfluss innerhalb des Backends zeigt, einschließlich der Kommunikation zwischen App, Cloud, Datenbank und Hardware.
+
+- [ ] **Cloud-Datenbankstruktur (ER-Diagramm)**  
+  Entity-Relationship-Diagramm (ERD), das die Struktur der Cloud-Datenbank darstellt, einschließlich Tabellen und deren Beziehungen.
+
+- [ ] **Automatisierungsabläufe (Flowchart)**  
+  Ein Flussdiagramm, das die Automatisierungslogik des Systems beschreibt – von der Benutzeranfrage über die Verarbeitung bis hin zur Steuerung der Hardwarekomponenten.
+
+- [ ] **Testszenarien und Ergebnisse (Tabellen oder Diagramme)**  
+  Tabellen oder Diagramme (Balken-, Linien- oder Tortendiagramme), die Testergebnisse wie Geschwindigkeit der Zubereitung, Genauigkeit der Mischung oder Benutzerfeedback darstellen.
+
+- [ ] **Prototypenfotos (Fotos der Hardware)**  
+  Fotos des tatsächlichen Prototyps des Cocktailautomaten, sowohl von außen als auch von den wichtigsten Hardwarekomponenten (z. B. Raspberry Pi, Sensoren, Pumpen).
+
+- [ ] **Zeitraffer der Cocktailzubereitung (Video/GIF)**  
+  Ein Video oder GIF, das den Cocktailautomaten bei der Zubereitung eines Cocktails zeigt – vom Benutzerbefehl bis zum fertigen Getränk.
+
+- [ ] **Vergleichende Marktforschung (Balken- oder Tortendiagramme)**  
+  Diagramme, die den Cocktailautomaten mit bestehenden Lösungen auf dem Markt vergleichen (z. B. Preise, Funktionsumfang, Skalierbarkeit).
+
+- [ ] **Skalierbarkeit und Erweiterung (Modularitätsdiagramm)**  
+  Ein Diagramm, das die Skalierbarkeit des Systems darstellt, z. B. wie mehrere Automaten zusammenarbeiten oder wie das System durch das Hinzufügen neuer Funktionen oder Komponenten erweitert werden kann.
+
+- [ ] **Benutzerinteraktionen (Interaktionsdiagramme)**  
+  Diagramme, die den Benutzerfluss innerhalb der App oder des Systems darstellen, z. B. wie der Benutzer mit der App interagiert, um Rezepte auszuwählen oder den Zubereitungsprozess zu starten.
+
+- [ ] **Hardware-Tests (Messdaten oder Diagramme)**  
+  Diagramme oder Tabellen, die die Ergebnisse von Hardware-Tests darstellen, z. B. Messungen zu den Pumpen, Sensoren oder dem Energieverbrauch des Systems.
+
+- [ ] **Prototyp-Demonstration (Screenshots von Testphasen)**  
+  Screenshots oder Fotos von wichtigen Testphasen des Prototyps, die die Funktionalität der einzelnen Komponenten und deren Zusammenwirken zeigen.
+
+- [ ] **Fehlermeldungen und Debugging-Prozess (Screenshots oder Logs)**  
+  Screenshots von Fehlermeldungen oder Logdateien, die den Debugging-Prozess dokumentieren und den Umgang mit auftretenden Problemen zeigen.
+
+- [ ] **Benutzerdokumentation (Illustrationen oder Textscreenshots)**  
+  Screenshots und Illustrationen, die den Endbenutzern helfen, den Cocktailautomaten und die App zu bedienen, sowie eine einfache Schritt-für-Schritt-Anleitung.
+
+- [ ] **Funktionstests der App (Screenshots von Testszenarien)**  
+  Screenshots der App, die spezifische Testszenarien demonstrieren, z. B. das Erstellen eines neuen Rezepts oder das Bearbeiten der Bestückung des Automaten.
+
+- [ ] **Datenbankabfragen und -ergebnisse (Tabellen oder SQL-Auszüge)**  
+  Tabellen oder Auszüge von SQL-Abfragen, die zeigen, wie Daten in der Cloud-Datenbank gespeichert und abgerufen werden.
+
+- [ ] **Kostenschätzung und Wirtschaftlichkeitsanalyse (Diagramme oder Tabellen)**  
+  Diagramme, die eine Schätzung der Kosten des Systems im Vergleich zu traditionellen Lösungen oder anderen Alternativen zeigen, sowie eine Wirtschaftlichkeitsanalyse.
+
+- [ ] **Sicherheitsaspekte (Sicherheitsarchitektur oder Diagramme)**  
+  Diagramme oder Abbildungen, die die Sicherheitsarchitektur des Systems darstellen, z. B. die Sicherstellung von Datenintegrität oder die Verschlüsselung von Benutzerdaten.
+
+- [ ] **Zukunftsperspektiven und Erweiterungen (Prototyp-Entwicklungsplan)**  
+  Ein Diagramm oder eine Roadmap, die die geplante Weiterentwicklung und Skalierung des Projekts aufzeigt, sowie mögliche zukünftige Erweiterungen des Systems.
+
+- [ ] **Teamarbeit und Projektmanagement (Zeitleiste oder Gantt-Diagramm)**  
+  Ein Gantt-Diagramm oder eine Zeitleiste, die den Verlauf des Projekts und die Aufgabenverteilung innerhalb des Teams darstellt.
+
+- [ ] **Zusammenfassung der wichtigsten Ergebnisse (Bilder oder Diagramme)**  
+  Ein Diagramm oder eine Grafik, die die wichtigsten Ergebnisse des Projekts zusammenfasst, z. B. die Anzahl erfolgreich zubereiteter Cocktails oder Benutzerfeedback.
+
+- [ ] **Vergleich der ursprünglichen Anforderungen mit den tatsächlichen Ergebnissen (Tabellen)**  
+  Eine Tabelle, die die Anforderungen des Projekts mit den tatsächlich erreichten Ergebnissen vergleicht.

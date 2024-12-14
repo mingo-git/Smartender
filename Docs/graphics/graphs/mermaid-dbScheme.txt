@@ -1,0 +1,53 @@
+erDiagram
+    USERS {
+        int user_id PK
+        string username
+        string password
+        string email
+    }
+    HARDWARE {
+        int hardware_id PK
+        string hardware_name
+        string mac_address
+    }
+    DRINKS {
+        int drink_id PK
+        int hardware_id FK
+        string drink_name
+        boolean is_alcoholic
+    }
+    USER_HARDWARE {
+        int user_id FK
+        int hardware_id FK
+        string role
+    }
+    SLOTS {
+        int hardware_id FK
+        int slot_number
+        int drink_id FK
+    }
+    RECIPES {
+        int recipe_id PK
+        int hardware_id FK
+        string recipe_name
+    }
+    RECIPE_INGREDIENTS {
+        int recipe_id FK
+        int drink_id FK
+        int quantity_ml
+    }
+    FAVORITE_RECIPES {
+        int user_id FK
+        int recipe_id FK
+    }
+
+    USERS ||--o{ USER_HARDWARE : "has"
+    HARDWARE ||--o{ USER_HARDWARE : "is managed by"
+    HARDWARE ||--o{ DRINKS : "contains"
+    DRINKS ||--|{ SLOTS : "is stored in"
+    HARDWARE ||--o{ SLOTS : "has"
+    HARDWARE ||--o{ RECIPES : "owns"
+    RECIPES ||--o{ RECIPE_INGREDIENTS : "contains"
+    DRINKS ||--o{ RECIPE_INGREDIENTS : "is part of"
+    USERS ||--o{ FAVORITE_RECIPES : "favorites"
+    RECIPES ||--o{ FAVORITE_RECIPES : "is favorited by"
