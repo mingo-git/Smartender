@@ -1,3 +1,5 @@
+//TODO: wenn ein Ingredient gelöscht wird wird es auch direkt aus jedem Rezept gelöscht
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/drink_tile.dart';
@@ -21,7 +23,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
   List<Map<String, dynamic>> drinks = [];
   List<Map<String, dynamic>> filteredDrinks = [];
 
-  // Beispiel-Geräte
   final List<Map<String, dynamic>> devices = [
     {"name": "Exampledevice", "status": "active"},
     {"name": "Exampledevice1", "status": "inactive"},
@@ -39,20 +40,33 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     final recipesData = await recipeService.fetchRecipesFromLocal();
 
     final available = recipesData["available"] ?? [];
+    final unavailable = recipesData["unavailable"] ?? [];
+    final allRecipes = [...available, ...unavailable];
 
-    final newDrinks = available.map<Map<String, dynamic>>((recipe) {
+    final newDrinks = allRecipes.map<Map<String, dynamic>>((recipe) {
       final recipeName = recipe["recipe_name"] ?? "Unnamed";
       final ingredientsResponse = recipe["ingredientsResponse"] ?? [];
-      final ingredientNames = ingredientsResponse.map((ing) {
-        final drink = ing["drink"];
-        return drink != null ? (drink["drink_name"] ?? "Unknown") : "Unknown";
-      }).toList().cast<String>(); // Wichtig: cast<String>()
+      final isAvailable = available.contains(recipe);
+
+      // Prüfen wir pro Zutat, ob sie fehlt:
+      // Fehlend, wenn 'drink == null' oder 'drink["hardware_id"] != 2'
+      // Hier wird '2' als hardware_id des Geräts angenommen
+      final ingredientList = ingredientsResponse.map<Map<String, dynamic>>((ing) {
+        final drinkMap = ing["drink"] as Map<String, dynamic>?;
+        final missing = (drinkMap == null || drinkMap["hardware_id"] != 2);
+        final name = missing ? "Unknown" : (drinkMap["drink_name"] ?? "Unknown");
+        return {
+          "name": name,
+          "missing": missing,
+        };
+      }).toList();
 
       return {
         "name": recipeName,
-        "image": "lib/images/cocktails/guaro.png", // Platzhalterbild
-        "ingredients": ingredientNames,
+        "image": "lib/images/cocktails/guaro.png",
+        "ingredients": ingredientList,
         "isLiked": false,
+        "isAvailable": isAvailable
       };
     }).toList();
 
@@ -65,7 +79,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
   void filterDrinks(String query) {
     setState(() {
       filteredDrinks = drinks.where((drink) {
-        final name = drink["name"]!.toLowerCase();
+        final name = (drink["name"] as String).toLowerCase();
         return name.contains(query.toLowerCase());
       }).toList();
     });
@@ -73,6 +87,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
 
   void _showDrinkPopup(BuildContext context, Map<String, dynamic> drink) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    final isAvailable = drink["isAvailable"] == true;
 
     showDialog(
       context: context,
@@ -83,6 +98,8 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
           contentPadding: const EdgeInsets.symmetric(horizontal: horizontalPadding * 2, vertical: 20),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
+              final ingredients = drink["ingredients"] as List<Map<String, dynamic>>;
+
               return Container(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: Column(
@@ -142,11 +159,13 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     Wrap(
                       spacing: 8.0,
                       runSpacing: 4.0,
-                      children: (drink["ingredients"] as List<String>).map((ingredient) {
+                      children: ingredients.map((ingredient) {
+                        final missing = ingredient["missing"] == true;
+                        final ingredientName = ingredient["name"] as String;
                         return Chip(
                           label: Text(
-                            ingredient,
-                            style: TextStyle(color: theme.tertiaryColor),
+                            ingredientName,
+                            style: TextStyle(color: missing ? Colors.red : theme.tertiaryColor),
                           ),
                           backgroundColor: theme.primaryColor,
                         );
@@ -154,10 +173,12 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     ),
                     const SizedBox(height: 20),
                     MyButton(
-                      onTap: () {
+                      onTap: isAvailable
+                          ? () {
                         Navigator.of(context).pop();
                         // TODO: Logik für Bestellung hinzufügen
-                      },
+                      }
+                          : null,
                       text: "Order",
                       hasMargin: false,
                     ),
@@ -173,7 +194,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
 
   void _changeFavorite(String drinkName, bool isLiked) {
     print("Favorited $drinkName: $isLiked");
-    // TODO: Logik für das Hinzufügen/Entfernen zu den Favoriten implementieren
+    // TODO: Favoriten-Logik implementieren
   }
 
   @override
@@ -189,6 +210,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 130.0),
                 child: GridView.builder(
+                  padding: const EdgeInsets.only(bottom: 100),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.8,
@@ -198,10 +220,14 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                   itemCount: filteredDrinks.length,
                   itemBuilder: (context, index) {
                     final drink = filteredDrinks[index];
-                    return DrinkTile(
-                      name: drink["name"],
-                      imagePath: drink["image"],
-                      onTap: () => _showDrinkPopup(context, drink),
+                    final isAvailable = drink["isAvailable"] == true;
+                    return Opacity(
+                      opacity: isAvailable ? 1.0 : 0.5,
+                      child: DrinkTile(
+                        name: drink["name"],
+                        imagePath: drink["image"],
+                        onTap: () => _showDrinkPopup(context, drink),
+                      ),
                     );
                   },
                 ),
