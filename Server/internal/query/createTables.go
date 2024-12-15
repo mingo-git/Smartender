@@ -73,7 +73,8 @@ func CreateTables() string {
 	CREATE TABLE IF NOT EXISTS recipes (
 		recipe_id SERIAL PRIMARY KEY,
 		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each recipe belongs to a hardware
-		recipe_name VARCHAR(100) NOT NULL UNIQUE  -- Unique recipe name per hardware
+		recipe_name VARCHAR(100) NOT NULL UNIQUE,  -- Unique recipe name per hardware
+		picture_id INT NOT NULL DEFAULT 0  -- Default picture for the recipe
 	);
 
 	CREATE TABLE IF NOT EXISTS recipe_ingredients (
@@ -131,11 +132,11 @@ func PopulateDatabase() string {
 		(2, 4, 4),
 		(2, 5, NULL);
 
-	INSERT INTO recipes (hardware_id, recipe_name) VALUES
-		(2, 'Vodka Martini'),
-		(2, 'Mojito'),
-		(2, 'Gin and Tonic'),
-		(1, 'Whiskey O');
+	INSERT INTO recipes (hardware_id, recipe_name, picture_id) VALUES
+		(2, 'Vodka Martini', 1),
+		(2, 'Mojito', 2),
+		(2, 'Gin and Tonic', 3),
+		(1, 'Whiskey O', 4);
 
 	INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml) VALUES
 		(1, 1, 60),

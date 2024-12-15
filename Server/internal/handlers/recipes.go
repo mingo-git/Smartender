@@ -27,7 +27,7 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert new recipe into the database
-	err = db.QueryRow(query.CreateRecipeForHardware(), hardwareID, newRecipe.Name).Scan(&newRecipe.ID)
+	err = db.QueryRow(query.CreateRecipeForHardware(), hardwareID, newRecipe.Name, newRecipe.Picture).Scan(&newRecipe.ID)
 	if err != nil {
 		log.Printf("Error inserting new recipe: %v", err)
 		http.Error(w, "Could not create recipe", http.StatusInternalServerError)
@@ -90,7 +90,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		// Get recipe details
 		var recipe models.Recipe
 		var drinkIDsJSON []byte
-		if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &drinkIDsJSON); err != nil {
+		if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &recipe.Picture, &drinkIDsJSON); err != nil {
 			log.Printf("Error getting recipe: %v", err)
 			continue
 		}
@@ -143,6 +143,7 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 			ID:          recipe.ID,
 			HardwareID:  recipe.HardwareID,
 			Name:        recipe.Name,
+			Picture:     recipe.Picture,
 			Ingredients: ingredientsAll,
 		}
 
@@ -176,7 +177,7 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Haupt-Rezeptdaten abrufen
 	var recipe models.Recipe
 	var drinkIDsJSON []byte
-	if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &drinkIDsJSON); err != nil {
+	if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &recipe.Picture, &drinkIDsJSON); err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Recipe not found", http.StatusNotFound)
 			return
@@ -235,6 +236,7 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		ID:          recipe.ID,
 		HardwareID:  recipe.HardwareID,
 		Name:        recipe.Name,
+		Picture:     recipe.Picture,
 		Ingredients: ingredientsAll,
 	}
 
@@ -264,7 +266,7 @@ func UpdateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update recipe in the database
-	result, err := db.Exec(query.UpdateRecipeForHardware(), updatedRecipe.Name, recipeID, hardwareID)
+	result, err := db.Exec(query.UpdateRecipeForHardware(), updatedRecipe.Name, updatedRecipe.Picture, recipeID, hardwareID)
 	if err != nil {
 		log.Printf("Error updating recipe: %v", err)
 		http.Error(w, "Could not update recipe", http.StatusInternalServerError)
