@@ -1,5 +1,3 @@
-//TODO: wenn ein Ingredient gelöscht wird wird es auch direkt aus jedem Rezept gelöscht
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/drink_tile.dart';
@@ -48,6 +46,24 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
       final ingredientsResponse = recipe["ingredientsResponse"] ?? [];
       final isAvailable = available.contains(recipe);
 
+      // Extrahiere picture_id und setze imagePath entsprechend
+      final pictureId = recipe["picture_id"];
+      String imagePath;
+
+      if (pictureId != null && pictureId is int) {
+        if (pictureId >= 1 && pictureId <= 30) {
+          imagePath = "lib/images/cocktails/$pictureId.png";
+        } else if (pictureId == 0) {
+          imagePath = "lib/images/cocktails/cocktail_unavailable.png";
+        } else {
+          // Ungültige picture_id, verwende Standardbild
+          imagePath = "lib/images/cocktails/cocktail_unavailable.png";
+        }
+      } else {
+        // Keine picture_id vorhanden, verwende Standardbild
+        imagePath = "lib/images/cocktails/cocktail_unavailable.png";
+      }
+
       // Prüfen wir pro Zutat, ob sie fehlt:
       // Fehlend, wenn 'drink == null' oder 'drink["hardware_id"] != 2'
       // Hier wird '2' als hardware_id des Geräts angenommen
@@ -63,7 +79,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
 
       return {
         "name": recipeName,
-        "image": "lib/images/cocktails/guaro.png",
+        "image": imagePath,
         "ingredients": ingredientList,
         "isLiked": false,
         "isAvailable": isAvailable
@@ -118,6 +134,14 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                         drink["image"],
                         height: 150,
                         fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          // Fallback bei fehlendem Bild
+                          return Image.asset(
+                            "lib/images/cocktails/cocktail_unavailable.png",
+                            height: 150,
+                            fit: BoxFit.contain,
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(height: 10),

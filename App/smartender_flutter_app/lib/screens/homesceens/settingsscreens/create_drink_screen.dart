@@ -7,18 +7,18 @@ import '../../../provider/theme_provider.dart';
 import '../../../services/recipe_service.dart';
 import '../../../components/select_ingredient_popup.dart';
 
-//TODO: Jedes Ingredient nur einma auswaehlbar sonst knallts
-
 class CreateDrinkScreen extends StatefulWidget {
   final int? recipeId;
   final String? initialName;
   final List<Map<String, dynamic>>? initialIngredients;
+  final int? initialPictureId; // Hinzugefügt
 
   const CreateDrinkScreen({
     Key? key,
     this.recipeId,
     this.initialName,
     this.initialIngredients,
+    this.initialPictureId, // Hinzugefügt
   }) : super(key: key);
 
   @override
@@ -34,31 +34,40 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   // Zum Vergleichen des ursprünglichen Zustands
   String? _originalName;
   List<Map<String, dynamic>> _originalIngredients = [];
+  int? selectedPictureId; // Hinzugefügt
 
   @override
   void initState() {
     super.initState();
 
     // Editiermodus: Vorbelegung der Felder + Originalwerte speichern
-    if (widget.recipeId != null && widget.initialName != null && widget.initialIngredients != null) {
+    if (widget.recipeId != null &&
+        widget.initialName != null &&
+        widget.initialIngredients != null) {
       drinkNameController.text = widget.initialName!;
       _originalName = widget.initialName!;
       // Erstelle eine tiefe Kopie der initialIngredients als Originalzustand
-      _originalIngredients = widget.initialIngredients!.map((ing) => Map<String, dynamic>.from(ing)).toList();
+      _originalIngredients =
+          widget.initialIngredients!.map((ing) => Map<String, dynamic>.from(ing)).toList();
       ingredients.addAll(widget.initialIngredients!);
 
       for (var ing in ingredients) {
-        final intQty = (ing["quantity"] is double) ? (ing["quantity"] as double).toInt() : (ing["quantity"] ?? 0);
+        final intQty = (ing["quantity"] is double)
+            ? (ing["quantity"] as double).toInt()
+            : (ing["quantity"] ?? 0);
         ing["quantity"] = intQty;
         final controller = TextEditingController(text: intQty.toString());
         quantityControllers.add(controller);
       }
 
+      // Setze die initialPictureId, falls vorhanden
+      selectedPictureId = widget.initialPictureId;
       _updateIngredientColors();
     } else {
       // Neuer Drink (kein Editiermodus)
       _originalName = "";
       _originalIngredients = [];
+      selectedPictureId = null; // Kein Bild ausgewählt
     }
 
     drinkNameController.addListener(() {
@@ -115,9 +124,14 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   void _openIngredientPopup(int index) async {
+    // Um sicherzustellen, dass jede Zutat nur einmal ausgewählt werden kann
+    final selectedIngredientIds =
+    ingredients.map<int?>((ing) => ing["id"] as int?).where((id) => id != null).toSet();
+
     showDialog(
       context: context,
       builder: (context) => SelectIngredientPopup(
+        alreadySelectedIds: selectedIngredientIds, // Übergabe des Parameters
         onIngredientSelected: (ingredient) {
           setState(() {
             ingredients[index]["id"] = ingredient["drink_id"];
@@ -143,19 +157,25 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     bool success;
     if (widget.recipeId == null) {
       // Neuer Drink
-      success = await recipeService.addRecipe(recipeName, recipeIngredients);
+      success = await recipeService.addRecipe(recipeName, recipeIngredients,
+          pictureId: selectedPictureId); // Angepasst
     } else {
       // Existierender Drink -> Update mit add/remove/update von Zutaten
-      // Hier greifen wir auf _originalIngredients zu, welches wir im initState gespeichert haben.
-      // `widget.initialIngredients` entspricht den ursprünglichen Zutaten des Rezepts beim Laden.
-      success = await recipeService.updateRecipeWithIngredients(widget.recipeId!, recipeName, recipeIngredients, _originalIngredients);
+      success = await recipeService.updateRecipeWithIngredients(
+          widget.recipeId!,
+          recipeName,
+          recipeIngredients,
+          _originalIngredients,
+          pictureId: selectedPictureId); // Angepasst
     }
 
     if (success) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.recipeId == null ? "Recipe saved successfully!" : "Recipe updated successfully!"),
+            content: Text(widget.recipeId == null
+                ? "Recipe saved successfully!"
+                : "Recipe updated successfully!"),
             backgroundColor: theme.trueColor,
             duration: const Duration(seconds: 2),
           ),
@@ -168,7 +188,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.recipeId == null ? "Failed to save recipe. Please try again." : "Failed to update recipe. Please try again."),
+            content: Text(widget.recipeId == null
+                ? "Failed to save recipe. Please try again."
+                : "Failed to update recipe. Please try again."),
             backgroundColor: theme.falseColor,
             duration: const Duration(seconds: 3),
           ),
@@ -176,8 +198,6 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
       }
     }
   }
-
-
 
   bool _canSaveDrink() {
     return drinkNameController.text.trim().isNotEmpty &&
@@ -191,8 +211,11 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     // ist nichts zu verwerfen.
     if (widget.recipeId == null) {
       // Neuer Drink: Änderungen nur, wenn etwas eingegeben wurde
-      if (drinkNameController.text.trim().isNotEmpty) return true;
-      if (ingredients.isNotEmpty && ingredients.any((ing) => ing["id"] != null && ing["quantity"] > 0)) {
+      if (drinkNameController.text.trim().isNotEmpty)
+        return true;
+      if (ingredients.isNotEmpty &&
+          ingredients
+              .any((ing) => ing["id"] != null && ing["quantity"] > 0)) {
         return true;
       }
       return false;
@@ -205,7 +228,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
       if (ingredients.length != _originalIngredients.length) return true;
 
       for (int i = 0; i < ingredients.length; i++) {
-        final original = i < _originalIngredients.length ? _originalIngredients[i] : null;
+        final original =
+        i < _originalIngredients.length ? _originalIngredients[i] : null;
         final current = ingredients[i];
 
         if (original == null) return true;
@@ -215,6 +239,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
         if (original["name"] != current["name"]) return true;
         if ((original["quantity"] ?? 0) != (current["quantity"] ?? 0)) return true;
       }
+
+      // Vergleiche picture_id
+      if (widget.initialPictureId != selectedPictureId) return true;
 
       return false;
     }
@@ -245,7 +272,60 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   double _calculateFilledAmount() {
     return ingredients.fold<double>(
       0.0,
-          (sum, ingredient) => sum + (ingredient["quantity"]?.toDouble() ?? 0.0),
+          (sum, ingredient) =>
+      sum + (ingredient["quantity"]?.toDouble() ?? 0.0),
+    );
+  }
+
+  /// Öffnet das Bildauswahl-Popup
+  void _openImageSelectionPopup() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Select Cocktail Image"),
+          content: Container(
+            width: double.maxFinite,
+            child: GridView.builder(
+              shrinkWrap: true,
+              itemCount: 30,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5, // 5 Bilder pro Reihe
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemBuilder: (context, index) {
+                final imageNumber = index + 1;
+                final imagePath = "lib/images/cocktails/$imageNumber.png";
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedPictureId = imageNumber;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        "lib/images/cocktails/cocktail_unavailable.png",
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Cancel"),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -278,7 +358,10 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
           ),
           title: Text(
             widget.recipeId == null ? "Create Drink" : "Edit Drink",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
+            style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: theme.tertiaryColor),
           ),
         ),
         body: SingleChildScrollView(
@@ -309,25 +392,63 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              TextField(
-                controller: drinkNameController,
-                decoration: InputDecoration(
-                  hintText: "Enter drink name",
-                  hintStyle: TextStyle(color: theme.hintTextColor),
-                  border: OutlineInputBorder(
-                    borderRadius: defaultBorderRadius,
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: drinkNameController,
+                      decoration: InputDecoration(
+                        hintText: "Enter drink name",
+                        hintStyle: TextStyle(color: theme.hintTextColor),
+                        border: OutlineInputBorder(
+                          borderRadius: defaultBorderRadius,
+                        ),
+                        filled: true,
+                        fillColor: theme.primaryColor,
+                      ),
+                      style: TextStyle(
+                        color: drinkNameController.text.isEmpty
+                            ? theme.hintTextColor
+                            : theme.primaryFontColor,
+                      ),
+                      onChanged: (_) {
+                        setState(() {});
+                      },
+                    ),
                   ),
-                  filled: true,
-                  fillColor: theme.primaryColor,
-                ),
-                style: TextStyle(
-                  color: drinkNameController.text.isEmpty
-                      ? theme.hintTextColor
-                      : theme.primaryFontColor,
-                ),
-                onChanged: (_) {
-                  setState(() {});
-                },
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: _openImageSelectionPopup,
+                    child: Container(
+                      width: 50, // Quadratisch, gleiche Länge wie die Höhe
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(color: theme.tertiaryColor), // Rahmenfarbe
+                        color: theme.primaryColor, // Hintergrundfarbe
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: selectedPictureId != null
+                            ? Image.asset(
+                          "lib/images/cocktails/$selectedPictureId.png",
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "lib/images/cocktails/cocktail_unavailable.png",
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                            : Image.asset(
+                          "lib/images/cocktails/select_image.png",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                ],
               ),
               const SizedBox(height: 20),
               Row(
@@ -335,7 +456,10 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                 children: [
                   Text(
                     "Ingredients",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: theme.tertiaryColor),
                   ),
                   IconButton(
                     icon: Icon(Icons.add, size: 30, color: theme.tertiaryColor),
@@ -386,7 +510,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.normal,
-                                  color: ingredient["name"] != null ? theme.tertiaryColor : theme.hintTextColor,
+                                  color: ingredient["name"] != null
+                                      ? theme.tertiaryColor
+                                      : theme.hintTextColor,
                                 ),
                               ),
                             ),
@@ -461,7 +587,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       ),
                       const SizedBox(width: 10),
                       IconButton(
-                        icon: Icon(Icons.delete_forever, color: theme.tertiaryColor),
+                        icon:
+                        Icon(Icons.delete_forever, color: theme.tertiaryColor),
                         onPressed: () => _deleteIngredientField(index),
                       ),
                     ],

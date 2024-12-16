@@ -9,11 +9,13 @@ import 'create_edit_drink_popup.dart';
 class SelectIngredientPopup extends StatefulWidget {
   final Function(Map<String, dynamic>) onIngredientSelected;
   final bool showClearButton;
+  final Set<int?> alreadySelectedIds; // Neuer Parameter
 
   const SelectIngredientPopup({
     Key? key,
     required this.onIngredientSelected,
     this.showClearButton = false,
+    this.alreadySelectedIds = const {}, // Standardwert ist ein leeres Set
   }) : super(key: key);
 
   @override
@@ -31,8 +33,12 @@ class _SelectIngredientPopupState extends State<SelectIngredientPopup> {
     final drinkService = Provider.of<DrinkService>(context, listen: false);
     drinkService.fetchDrinksFromLocal().then((ingredients) {
       setState(() {
-        _allIngredients = ingredients;
-        _filteredIngredients = ingredients;
+        // Entferne bereits ausgewählte IDs aus der Liste der Zutaten
+        _allIngredients = ingredients
+            .where((ingredient) =>
+        !widget.alreadySelectedIds.contains(ingredient["drink_id"]))
+            .toList();
+        _filteredIngredients = _allIngredients;
       });
     });
     _searchController.addListener(_filterIngredients);

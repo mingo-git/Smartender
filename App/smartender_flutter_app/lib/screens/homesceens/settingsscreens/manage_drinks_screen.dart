@@ -115,6 +115,7 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     final recipeId = recipe["recipe_id"];
     final recipeName = recipe["recipe_name"] ?? "Unnamed";
     final ingredientsResponse = recipe["ingredientsResponse"] ?? [];
+    final pictureId = recipe["picture_id"]; // Hole die picture_id aus dem Rezept
 
     if (recipeId == null) {
       print("Cannot edit recipe without an ID");
@@ -122,11 +123,6 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     }
 
     // Bereite die ingredients für CreateDrinkScreen vor:
-    // ingredients sollen so aussehen: {"id", "name", "quantity", "color"}
-    // Da "color" später im Widget gesetzt wird, können wir es hier auf null lassen.
-    // "drink_name" aus ingredientsResponse -> name
-    // "drink_id" -> id
-    // "quantity_ml" -> quantity
     final initialIngredients = ingredientsResponse.map<Map<String, dynamic>>((ing) {
       final drink = ing["drink"];
       return {
@@ -144,6 +140,7 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
           recipeId: recipeId,
           initialName: recipeName,
           initialIngredients: initialIngredients,
+          initialPictureId: pictureId, // Übergibt die picture_id
         ),
       ),
     );
@@ -153,6 +150,7 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
       await _loadRecipes();
     }
   }
+
 
   bool _isRecipeAlcoholic(Map<String, dynamic> recipe) {
     final ingredients = recipe["ingredientsResponse"] ?? [];

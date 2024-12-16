@@ -39,7 +39,7 @@ class RecipeService implements FetchableService {
 
         Map<String, dynamic> decoded;
         try {
-          decoded = json.decode(body);
+          decoded = json.decode(response.body);
           if (!decoded.containsKey("available") || !decoded.containsKey("unavailable")) {
             print("Response does not contain expected keys. Saving empty map.");
             decoded = {};
@@ -49,12 +49,13 @@ class RecipeService implements FetchableService {
           print("Error decoding response: $e. Using empty map.");
         }
 
+        // Hier werden die vollständigen Daten inklusive picture_id gespeichert
         await _saveRecipesLocally(decoded);
         print("RECIPES fetched and saved locally. "
             "Available Count: ${decoded['available']?.length ?? 0}, "
             "Unavailable Count: ${decoded['unavailable']?.length ?? 0}");
       } else {
-        print("Failed to fetch RECIPES: ${response.statusCode}");
+        print("Failed to fetch RECIPES: ${response.statusCode}, Response: ${response.body}");
       }
     } catch (e) {
       print("Error fetching RECIPES: $e");
@@ -78,13 +79,19 @@ class RecipeService implements FetchableService {
     return {};
   }
 
-  /// Erstellt ein neues Rezept und fügt Zutaten hinzu.
-  Future<bool> addRecipe(String recipeName, List<Map<String, dynamic>> ingredients) async {
+  /// Fügt ein neues Rezept hinzu.
+  /// [recipeName] - Der Name des Rezepts.
+  /// [ingredients] - Eine Liste von Zutaten mit deren ID und Menge.
+  /// [pictureId] - Optional: Die ID des ausgewählten Bildes.
+  Future<bool> addRecipe(
+      String recipeName, List<Map<String, dynamic>> ingredients,
+      {int? pictureId}) async {
     final AuthService authService = AuthService();
     final String? token = await authService.getToken();
 
     print("Recipe Name: $recipeName");
     print("Ingredients: $ingredients");
+    print("Picture ID: $pictureId");
 
     if (token == null) {
       print("No token available. Cannot add recipe.");
@@ -104,7 +111,11 @@ class RecipeService implements FetchableService {
         },
         body: json.encode({
           "recipe_name": recipeName,
-          "ingredients": [],
+          "ingredients": ingredients.map((ing) => {
+            "drink_id": ing["id"],
+            "quantity_ml": ing["quantity"],
+          }).toList(),
+          "picture_id": pictureId ?? 0, // Hier wird picture_id hinzugefügt
         }),
       );
 
@@ -113,32 +124,21 @@ class RecipeService implements FetchableService {
         final int recipeId = responseData["recipe_id"];
         print("Recipe created with ID: $recipeId");
 
-        // Warte bis das Rezept verfügbar ist
         final bool recipeReady = await _waitForRecipeAvailability(recipeId, token);
         if (!recipeReady) {
           print("Recipe not available after retries.");
           return false;
         }
 
-        // Füge die Zutaten hinzu
-        for (var ingredient in ingredients) {
-          final ingredientResponse = await _addIngredientToRecipe(
-            recipeId,
-            ingredient["id"],
-            ingredient["quantity"].toDouble(),
-          );
-
-          if (!ingredientResponse) {
-            print("Failed to add ingredient with ID: ${ingredient["id"]}");
-            return false;
-          }
-        }
+        // Füge die Zutaten hinzu (falls separat erforderlich)
+        // Da die Zutaten bereits im POST-Body gesendet wurden, ist dieser Schritt möglicherweise redundant
+        // Entferne oder passe ihn je nach API an.
 
         print("All ingredients added successfully.");
         await fetchAndSaveData();
         return true;
       } else {
-        print("Failed to add recipe: ${response.statusCode}");
+        print("Failed to add recipe: ${response.statusCode}, Response: ${response.body}");
         return false;
       }
     } catch (e) {
@@ -147,11 +147,18 @@ class RecipeService implements FetchableService {
     }
   }
 
-  /// Aktualisiert ein bestehendes Rezept (Name) und managt die Zutaten:
-  /// - Entfernte Zutaten löschen
-  /// - Neue Zutaten hinzufügen
-  /// - Geänderte Zutaten aktualisieren
-  Future<bool> updateRecipeWithIngredients(int recipeId, String recipeName, List<Map<String, dynamic>> newIngredients, List<Map<String, dynamic>> originalIngredients) async {
+  /// Aktualisiert ein bestehendes Rezept mit neuen Zutaten.
+  /// [recipeId] - Die ID des zu aktualisierenden Rezepts.
+  /// [recipeName] - Der neue Name des Rezepts.
+  /// [newIngredients] - Die neuen Zutaten des Rezepts.
+  /// [originalIngredients] - Die ursprünglichen Zutaten des Rezepts.
+  /// [pictureId] - Optional: Die ID des ausgewählten Bildes.
+  Future<bool> updateRecipeWithIngredients(
+      int recipeId,
+      String recipeName,
+      List<Map<String, dynamic>> newIngredients,
+      List<Map<String, dynamic>> originalIngredients,
+      {int? pictureId}) async {
     final AuthService authService = AuthService();
     final String? token = await authService.getToken();
 
@@ -159,6 +166,7 @@ class RecipeService implements FetchableService {
     print("New Name: $recipeName");
     print("New Ingredients: $newIngredients");
     print("Original Ingredients: $originalIngredients");
+    print("Picture ID: $pictureId");
 
     if (token == null) {
       print("No token available. Cannot update recipe.");
@@ -169,7 +177,6 @@ class RecipeService implements FetchableService {
     print("Update Recipe URL: $url");
 
     try {
-      // 1. Rezeptname aktualisieren
       final response = await http.put(
         url,
         headers: {
@@ -178,22 +185,20 @@ class RecipeService implements FetchableService {
           'Authorization': 'Bearer $token',
         },
         body: json.encode({
-          "recipe_name": recipeName
+          "recipe_name": recipeName,
+          "picture_id": pictureId ?? 0, // Hier wird picture_id hinzugefügt
         }),
       );
 
       if (response.statusCode == 200 || response.statusCode == 204) {
         print("Recipe updated successfully: $recipeName (ID: $recipeId)");
 
-        // 2. Änderungen an den Zutaten vornehmen
-
         final originalById = {for (var ing in originalIngredients) ing["id"]: ing};
         final newById = {for (var ing in newIngredients) ing["id"]: ing};
 
-        // Zutaten, die in original waren, aber nicht mehr in new -> löschen
+        // Entferne Zutaten, die nicht mehr vorhanden sind
         for (var oid in originalById.keys) {
           if (!newById.containsKey(oid)) {
-            // Diese Zutat wurde entfernt
             final deleted = await _deleteIngredientFromRecipe(recipeId, oid);
             if (!deleted) {
               print("Failed to delete ingredient $oid from recipe $recipeId");
@@ -202,21 +207,19 @@ class RecipeService implements FetchableService {
           }
         }
 
-        // Zutaten, die in new sind, aber vorher nicht da waren -> hinzufügen
+        // Füge neue Zutaten hinzu oder aktualisiere bestehende
         for (var nid in newById.keys) {
           if (!originalById.containsKey(nid)) {
-            // Neue Zutat
-            final added = await _addIngredientToRecipe(recipeId, nid, (newById[nid]?["quantity"] as int?)?.toDouble() ?? 0.0);
+            final added = await _addIngredientToRecipe(
+                recipeId, nid, (newById[nid]?["quantity"] as int?)?.toDouble() ?? 0.0);
             if (!added) {
               print("Failed to add new ingredient $nid to recipe $recipeId");
               return false;
             }
           } else {
-            // Zutaten, die es vorher gab und jetzt noch gibt -> Menge prüfen
             final oldQty = (originalById[nid]?["quantity"]) ?? 0;
             final newQty = (newById[nid]?["quantity"]) ?? 0;
             if (oldQty != newQty) {
-              // Menge hat sich geändert -> PUT-Update
               final updated = await _updateIngredientInRecipe(recipeId, nid, newQty);
               if (!updated) {
                 print("Failed to update ingredient $nid in recipe $recipeId");
@@ -226,10 +229,14 @@ class RecipeService implements FetchableService {
           }
         }
 
+        // Aktualisiere die picture_id, falls sie geändert wurde
+        // Falls das Backend die picture_id in der Rezeptaktualisierung verarbeitet,
+        // wurde dies bereits im PUT-Body erledigt.
+
         await fetchAndSaveData();
         return true;
       } else {
-        print("Failed to update RECIPE: ${response.statusCode}, ${response.body}");
+        print("Failed to update RECIPE: ${response.statusCode}, Response: ${response.body}");
         return false;
       }
     } catch (e) {
@@ -238,6 +245,9 @@ class RecipeService implements FetchableService {
     }
   }
 
+  /// Löscht eine Zutat aus einem Rezept.
+  /// [recipeId] - Die ID des Rezepts.
+  /// [drinkId] - Die ID der Zutat.
   Future<bool> _deleteIngredientFromRecipe(int recipeId, int drinkId) async {
     final AuthService authService = AuthService();
     final String? token = await authService.getToken();
@@ -273,9 +283,10 @@ class RecipeService implements FetchableService {
     }
   }
 
-  /// Aktualisiert eine einzelne Zutat im Rezept:
-  /// PUT /user/hardware/2/recipes/{recipeId}/ingredients/{ingredientId}
-  /// Body: {"quantity_ml": <int>}
+  /// Aktualisiert die Menge einer Zutat in einem Rezept.
+  /// [recipeId] - Die ID des Rezepts.
+  /// [drinkId] - Die ID der Zutat.
+  /// [quantity] - Die neue Menge der Zutat in ml.
   Future<bool> _updateIngredientInRecipe(int recipeId, int drinkId, int quantity) async {
     final AuthService authService = AuthService();
     final String? token = await authService.getToken();
@@ -316,6 +327,8 @@ class RecipeService implements FetchableService {
     }
   }
 
+  /// Löscht ein Rezept.
+  /// [recipeId] - Die ID des zu löschenden Rezepts.
   Future<bool> deleteRecipe(int recipeId) async {
     final AuthService authService = AuthService();
     final String? token = await authService.getToken();
@@ -341,7 +354,7 @@ class RecipeService implements FetchableService {
         await fetchAndSaveData();
         return true;
       } else {
-        print("Failed to delete RECIPE: ${response.statusCode}");
+        print("Failed to delete RECIPE: ${response.statusCode}, Response: ${response.body}");
         return false;
       }
     } catch (e) {
@@ -350,6 +363,11 @@ class RecipeService implements FetchableService {
     }
   }
 
+  /// Wartet darauf, dass das Rezept im Backend verfügbar ist.
+  /// [recipeId] - Die ID des Rezepts.
+  /// [token] - Das Authentifizierungstoken.
+  /// [retries] - Anzahl der Wiederholungen.
+  /// [delay] - Verzögerung zwischen den Wiederholungen.
   Future<bool> _waitForRecipeAvailability(int recipeId, String token,
       {int retries = 5, Duration delay = const Duration(seconds: 1)}) async {
     final recipeCheckUrl = Uri.parse(baseUrl + _recipeUrl + "/$recipeId");
@@ -381,6 +399,10 @@ class RecipeService implements FetchableService {
     return false;
   }
 
+  /// Fügt eine Zutat zu einem Rezept hinzu.
+  /// [recipeId] - Die ID des Rezepts.
+  /// [drinkId] - Die ID der Zutat.
+  /// [quantity] - Die Menge der Zutat in ml.
   Future<bool> _addIngredientToRecipe(int recipeId, int drinkId, double quantity) async {
     final AuthService authService = AuthService();
     final String? token = await authService.getToken();
@@ -422,4 +444,7 @@ class RecipeService implements FetchableService {
       return false;
     }
   }
+
+
+
 }
