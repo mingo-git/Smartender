@@ -1,8 +1,11 @@
+// lib/screens/searchdrinks_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/drink_tile.dart';
 import '../../components/device_dropdown.dart';
 import '../../components/my_button.dart';
+import '../../components/show_drink_popup.dart'; // Import der neuen Datei
 import '../../config/constants.dart';
 import '../../provider/theme_provider.dart';
 import '../../services/recipe_service.dart';
@@ -93,11 +96,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     });
   }
 
-
-
-
-
-
   void filterDrinks(String query) {
     setState(() {
       filteredDrinks = drinks.where((drink) {
@@ -106,173 +104,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
       }).toList();
     });
   }
-
-  void _showDrinkPopup(BuildContext context, Map<String, dynamic> drink) {
-    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
-    bool isFavorite = drink['is_favorite'] ?? false;
-
-    print("Opening Popup for: ${drink['name']}, isFavorite: $isFavorite"); // Debugging-Ausgabe
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: theme.backgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
-          contentPadding: const EdgeInsets.symmetric(horizontal: horizontalPadding * 2, vertical: 20),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: Icon(Icons.close, color: theme.tertiaryColor),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                  Center(
-                    child: Image.asset(
-                      drink['image'],
-                      height: 150,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          "lib/images/cocktails/cocktail_unavailable.png",
-                          height: 150,
-                          fit: BoxFit.contain,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        drink['name'],
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: theme.tertiaryColor,
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : theme.tertiaryColor,
-                        ),
-                        onPressed: () async {
-                          final recipeService = RecipeService();
-                          bool success;
-
-                          if (isFavorite) {
-                            success = await recipeService.removeRecipeFromFavorites(drink['recipe_id']);
-                          } else {
-                            success = await recipeService.addRecipeToFavorites(drink['recipe_id']);
-                          }
-
-                          if (success) {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  isFavorite
-                                      ? "Added to favorites"
-                                      : "Removed from favorites",
-                                ),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Failed to update favorite status")),
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Ingredients:",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: theme.tertiaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children: (drink['ingredients'] as List<Map<String, dynamic>>).map((ingredient) {
-                      final missing = ingredient['missing'] == true;
-                      return Chip(
-                        label: Text(
-                          ingredient['name'],
-                          style: TextStyle(
-                            color: missing ? Colors.red : theme.tertiaryColor,
-                          ),
-                        ),
-                        backgroundColor: theme.primaryColor,
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                  MyButton(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      // TODO: Add ordering logic here
-                    },
-                    text: "Order",
-                    hasMargin: false,
-                  ),
-                ],
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-
-
-
-
-
-
-  void _changeFavorite(int recipeId, bool isFavorite) async {
-    final recipeService = RecipeService();
-    bool success;
-
-    if (isFavorite) {
-      success = await recipeService.addRecipeToFavorites(recipeId);
-    } else {
-      success = await recipeService.removeRecipeFromFavorites(recipeId);
-    }
-
-    if (success) {
-      setState(() {
-        // Aktualisiere den lokalen Zustand des Rezepts
-        drinks = drinks.map((drink) {
-          if (drink['recipe_id'] == recipeId) {
-            drink['is_favorite'] = isFavorite;
-          }
-          return drink;
-        }).toList();
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update favorite status')),
-      );
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +116,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
           children: [
             Positioned.fill(
               child: Padding(
-                padding: const EdgeInsets.only(top: 130.0),
+                padding: const EdgeInsets.only(top: 140.0, left: 10, right: 10),
                 child: GridView.builder(
                   padding: const EdgeInsets.only(bottom: 100),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -303,7 +134,12 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       child: DrinkTile(
                         name: drink["name"],
                         imagePath: drink["image"],
-                        onTap: () => _showDrinkPopup(context, drink),
+                        onTap: () async {
+                          bool changed = await showDrinkPopup(context, drink); // Verwendung der neuen Funktion
+                          if (changed) {
+                            await loadRecipes();
+                          }
+                        },
                       ),
                     );
                   },

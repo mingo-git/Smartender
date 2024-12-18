@@ -21,7 +21,7 @@ class DrinkTile extends StatelessWidget {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
     return Padding(
-      padding: EdgeInsets.all(horizontalPadding),
+      padding: EdgeInsets.all(1),
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(

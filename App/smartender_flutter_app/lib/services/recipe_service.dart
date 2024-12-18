@@ -558,7 +558,7 @@ class RecipeService implements FetchableService {
       return false;
     }
 
-    final url = Uri.parse("$baseUrl/$_favoriteUrl/$recipeId");
+    final url = Uri.parse("$baseUrl$_favoriteUrl/$recipeId");
     print("Remove from Favorites URL: $url");
 
     try {
