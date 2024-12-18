@@ -103,7 +103,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
 
   void _showDrinkPopup(BuildContext context, Map<String, dynamic> drink) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
-    final isAvailable = drink["isAvailable"] == true;
+    bool isFavorite = drink['is_favorite'] ?? false;
 
     showDialog(
       context: context,
@@ -114,100 +114,125 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
           contentPadding: const EdgeInsets.symmetric(horizontal: horizontalPadding * 2, vertical: 20),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final ingredients = drink["ingredients"] as List<Map<String, dynamic>>;
-
-              return Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        icon: Icon(Icons.close, color: theme.tertiaryColor),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: theme.tertiaryColor),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                    Center(
-                      child: Image.asset(
-                        drink["image"],
-                        height: 150,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Fallback bei fehlendem Bild
-                          return Image.asset(
-                            "lib/images/cocktails/cocktail_unavailable.png",
-                            height: 150,
-                            fit: BoxFit.contain,
-                          );
+                  ),
+
+                  // Drink Image
+                  Center(
+                    child: Image.asset(
+                      drink['image'],
+                      height: 150,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "lib/images/cocktails/cocktail_unavailable.png",
+                          height: 150,
+                          fit: BoxFit.contain,
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Drink Name and Favorite Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        drink['name'],
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: theme.tertiaryColor,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : theme.tertiaryColor,
+                        ),
+                        onPressed: () async {
+                          final recipeService = RecipeService();
+                          bool success;
+
+                          if (isFavorite) {
+                            success = await recipeService.removeRecipeFromFavorites(drink['recipe_id']);
+                          } else {
+                            success = await recipeService.addRecipeToFavorites(drink['recipe_id']);
+                          }
+
+                          if (success) {
+                            setState(() {
+                              isFavorite = !isFavorite;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  isFavorite
+                                      ? "Added to favorites"
+                                      : "Removed from favorites",
+                                ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Failed to update favorite status")),
+                            );
+                          }
                         },
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Ingredients
+                  Text(
+                    "Ingredients:",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: theme.tertiaryColor,
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          drink["name"],
+                  ),
+                  const SizedBox(height: 5),
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: (drink['ingredients'] as List<Map<String, dynamic>>).map((ingredient) {
+                      final missing = ingredient['missing'] == true;
+                      return Chip(
+                        label: Text(
+                          ingredient['name'],
                           style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: theme.tertiaryColor,
+                            color: missing ? Colors.red : theme.tertiaryColor,
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(
-                            drink["isLiked"] ? Icons.favorite : Icons.favorite_border,
-                            color: drink["isLiked"] ? Colors.red : theme.tertiaryColor,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              drink["isLiked"] = !drink["isLiked"];
-                            });
-                            _changeFavorite(drink["name"], drink["isLiked"]);
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Ingredients:",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: theme.tertiaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Wrap(
-                      spacing: 8.0,
-                      runSpacing: 4.0,
-                      children: ingredients.map((ingredient) {
-                        final missing = ingredient["missing"] == true;
-                        final ingredientName = ingredient["name"] as String;
-                        return Chip(
-                          label: Text(
-                            ingredientName,
-                            style: TextStyle(color: missing ? Colors.red : theme.tertiaryColor),
-                          ),
-                          backgroundColor: theme.primaryColor,
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 20),
-                    MyButton(
-                      onTap: isAvailable
-                          ? () {
-                        Navigator.of(context).pop();
-                        // TODO: Logik für Bestellung hinzufügen
-                      }
-                          : null,
-                      text: "Order",
-                      hasMargin: false,
-                    ),
-                  ],
-                ),
+                        backgroundColor: theme.primaryColor,
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Order Button (Beispiel-Logik)
+                  MyButton(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      // TODO: Bestelllogik hinzufügen
+                    },
+                    text: "Order",
+                    hasMargin: false,
+                  ),
+                ],
               );
             },
           ),
@@ -216,10 +241,34 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     );
   }
 
-  void _changeFavorite(String drinkName, bool isLiked) {
-    print("Favorited $drinkName: $isLiked");
-    // TODO: Favoriten-Logik implementieren
+
+  void _changeFavorite(int recipeId, bool isFavorite) async {
+    final recipeService = RecipeService();
+    bool success;
+
+    if (isFavorite) {
+      success = await recipeService.addRecipeToFavorites(recipeId);
+    } else {
+      success = await recipeService.removeRecipeFromFavorites(recipeId);
+    }
+
+    if (success) {
+      setState(() {
+        // Aktualisiere den lokalen Zustand des Rezepts
+        drinks = drinks.map((drink) {
+          if (drink['recipe_id'] == recipeId) {
+            drink['is_favorite'] = isFavorite;
+          }
+          return drink;
+        }).toList();
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update favorite status')),
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {

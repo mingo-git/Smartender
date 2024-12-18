@@ -7,6 +7,7 @@ import 'fetch_data_service.dart';
 
 class RecipeService implements FetchableService {
   final String _recipeUrl = "/user/hardware/2/recipes";
+  final String _favoriteUrl = "/user/hardware/2/favorite";
 
   @override
   Future<void> fetchAndSaveData() async {
@@ -18,10 +19,17 @@ class RecipeService implements FetchableService {
       return;
     }
 
-    final url = Uri.parse(baseUrl + _recipeUrl);
+    final recipeUrl = Uri.parse(baseUrl + _recipeUrl);
+    final favoriteUrl = Uri.parse(baseUrl + _favoriteUrl + "s");
+
+
+    Map<String, dynamic> decoded = {};
+    List<int> favoriteIds = [];
+
     try {
-      final response = await http.get(
-        url,
+      // Fetch Recipes
+      final recipeResponse = await http.get(
+        recipeUrl,
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': apiKey,
@@ -29,38 +37,80 @@ class RecipeService implements FetchableService {
         },
       );
 
-      if (response.statusCode == 200) {
-        final body = response.body;
+      if (recipeResponse.statusCode == 200) {
+        final body = recipeResponse.body;
+
         if (body.isEmpty) {
           await _saveRecipesLocally({});
           print("No recipes returned by the server. Saved empty map locally.");
           return;
         }
 
-        Map<String, dynamic> decoded;
         try {
-          decoded = json.decode(response.body);
+          decoded = json.decode(body);
           if (!decoded.containsKey("available") || !decoded.containsKey("unavailable")) {
             print("Response does not contain expected keys. Saving empty map.");
             decoded = {};
           }
         } catch (e) {
           decoded = {};
-          print("Error decoding response: $e. Using empty map.");
+          print("Error decoding recipe response: $e. Using empty map.");
         }
-
-        // Hier werden die vollständigen Daten inklusive picture_id gespeichert
-        await _saveRecipesLocally(decoded);
-        print("RECIPES fetched and saved locally. "
-            "Available Count: ${decoded['available']?.length ?? 0}, "
-            "Unavailable Count: ${decoded['unavailable']?.length ?? 0}");
       } else {
-        print("Failed to fetch RECIPES: ${response.statusCode}, Response: ${response.body}");
+        print("Failed to fetch RECIPES: ${recipeResponse.statusCode}, Response: ${recipeResponse.body}");
+        return;
       }
+
+      // Fetch Favorite Recipe IDs
+      final favoriteResponse = await http.get(
+        favoriteUrl,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (favoriteResponse.statusCode == 200) {
+        try {
+          final favoriteBody = json.decode(favoriteResponse.body);
+          favoriteIds = List<int>.from(favoriteBody);
+          print("Fetched favorite recipe IDs: $favoriteIds");
+        } catch (e) {
+          print("Error decoding favorite response: $e");
+        }
+      } else {
+        print("Failed to fetch FAVORITES: ${favoriteResponse.statusCode}, Response: ${favoriteResponse.body}");
+      }
+
+      // Add 'is_favorite' attribute to recipes
+      decoded['available'] = (decoded['available'] as List<dynamic>?)
+          ?.map((recipe) {
+        recipe['is_favorite'] = favoriteIds.contains(recipe['recipe_id']);
+        return recipe;
+      })
+          .toList();
+
+      decoded['unavailable'] = (decoded['unavailable'] as List<dynamic>?)
+          ?.map((recipe) {
+        recipe['is_favorite'] = favoriteIds.contains(recipe['recipe_id']);
+        return recipe;
+      })
+          .toList();
+
+
+      print("DATA: $decoded");
+
+      // Save combined data locally
+      await _saveRecipesLocally(decoded);
+      print("RECIPES and FAVORITES fetched and saved locally. "
+          "Available Count: ${decoded['available']?.length ?? 0}, "
+          "Unavailable Count: ${decoded['unavailable']?.length ?? 0}");
     } catch (e) {
-      print("Error fetching RECIPES: $e");
+      print("Error fetching RECIPES or FAVORITES: $e");
     }
   }
+
 
   Future<void> _saveRecipesLocally(Map<String, dynamic> recipes) async {
     final prefs = await SharedPreferences.getInstance();
@@ -444,6 +494,86 @@ class RecipeService implements FetchableService {
       return false;
     }
   }
+
+  /// Fügt ein Rezept zur Favoritenliste hinzu.
+  /// [recipeId] - Die ID des Rezepts, das als Favorit markiert werden soll.
+  Future<bool> addRecipeToFavorites(int recipeId) async {
+    final AuthService authService = AuthService();
+    final String? token = await authService.getToken();
+
+    if (token == null) {
+      print("No token available. Cannot add to favorites.");
+      return false;
+    }
+
+    final url = Uri.parse("$baseUrl/$_favoriteUrl/$recipeId");
+    print("Add to Favorites URL: $url");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print("RESPONE: $response");
+
+      if (response.statusCode == 201 || response.statusCode == 201) {
+        print("Recipe (ID: $recipeId) successfully added to favorites.");
+        await fetchAndSaveData(); // Aktualisiere die lokale Speicherung
+        return true;
+      } else {
+        print("Failed to add to favorites: ${response.statusCode}, Response: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("Error adding to favorites: $e");
+      return false;
+    }
+  }
+
+  /// Entfernt ein Rezept aus der Favoritenliste.
+  /// [recipeId] - Die ID des Rezepts, das aus der Favoritenliste entfernt werden soll.
+  Future<bool> removeRecipeFromFavorites(int recipeId) async {
+    final AuthService authService = AuthService();
+    final String? token = await authService.getToken();
+
+    if (token == null) {
+      print("No token available. Cannot remove from favorites.");
+      return false;
+    }
+
+    final url = Uri.parse("$baseUrl/$_favoriteUrl/$recipeId");
+    print("Remove from Favorites URL: $url");
+
+    try {
+      final response = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        print("Recipe (ID: $recipeId) successfully removed from favorites.");
+        await fetchAndSaveData(); // Aktualisiere die lokale Speicherung
+        return true;
+      } else {
+        print("Failed to remove from favorites: ${response.statusCode}, Response: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("Error removing from favorites: $e");
+      return false;
+    }
+  }
+
+
 
 
 
