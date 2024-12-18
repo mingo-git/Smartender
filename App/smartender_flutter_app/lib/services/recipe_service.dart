@@ -5,6 +5,9 @@ import '../config/constants.dart';
 import 'auth_service.dart';
 import 'fetch_data_service.dart';
 
+
+//Notiz: 3 = Gin and Tonic, 2 = Mojito, 1 = Vodka Martini
+
 class RecipeService implements FetchableService {
   final String _recipeUrl = "/user/hardware/2/recipes";
   final String _favoriteUrl = "/user/hardware/2/favorite";
@@ -98,8 +101,16 @@ class RecipeService implements FetchableService {
       })
           .toList();
 
+      // DEBUG: Nur Namen und Favoritenstatus ausgeben
+      print("");
 
-      print("DATA: $decoded");
+      (decoded['available'] as List<dynamic>?)?.forEach((recipe) {
+        final drinkName = recipe['recipe_name'] ?? "Unknown";
+        final isFavorite = recipe['is_favorite'] ?? false;
+        print("Drink: $drinkName, Is Favorite: $isFavorite");
+      });
+
+      print("");
 
       // Save combined data locally
       await _saveRecipesLocally(decoded);
@@ -185,7 +196,6 @@ class RecipeService implements FetchableService {
         // Entferne oder passe ihn je nach API an.
 
         print("All ingredients added successfully.");
-        await fetchAndSaveData();
         return true;
       } else {
         print("Failed to add recipe: ${response.statusCode}, Response: ${response.body}");
@@ -506,7 +516,8 @@ class RecipeService implements FetchableService {
       return false;
     }
 
-    final url = Uri.parse("$baseUrl/$_favoriteUrl/$recipeId");
+    // Entferne den doppelten Slash in der URL
+    final url = Uri.parse("$baseUrl$_favoriteUrl/$recipeId");
     print("Add to Favorites URL: $url");
 
     try {
@@ -521,7 +532,7 @@ class RecipeService implements FetchableService {
 
       print("RESPONE: $response");
 
-      if (response.statusCode == 201 || response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print("Recipe (ID: $recipeId) successfully added to favorites.");
         await fetchAndSaveData(); // Aktualisiere die lokale Speicherung
         return true;
@@ -534,6 +545,7 @@ class RecipeService implements FetchableService {
       return false;
     }
   }
+
 
   /// Entfernt ein Rezept aus der Favoritenliste.
   /// [recipeId] - Die ID des Rezepts, das aus der Favoritenliste entfernt werden soll.

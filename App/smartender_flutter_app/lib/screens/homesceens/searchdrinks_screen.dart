@@ -42,6 +42,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     final allRecipes = [...available, ...unavailable];
 
     final newDrinks = allRecipes.map<Map<String, dynamic>>((recipe) {
+      final recipeId = recipe["recipe_id"] ?? -1; // Sicherstellen, dass recipe_id verfügbar ist
       final recipeName = recipe["recipe_name"] ?? "Unnamed";
       final ingredientsResponse = recipe["ingredientsResponse"] ?? [];
       final isAvailable = available.contains(recipe);
@@ -56,17 +57,13 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
         } else if (pictureId == 0) {
           imagePath = "lib/images/cocktails/cocktail_unavailable.png";
         } else {
-          // Ungültige picture_id, verwende Standardbild
           imagePath = "lib/images/cocktails/cocktail_unavailable.png";
         }
       } else {
-        // Keine picture_id vorhanden, verwende Standardbild
         imagePath = "lib/images/cocktails/cocktail_unavailable.png";
       }
 
-      // Prüfen wir pro Zutat, ob sie fehlt:
-      // Fehlend, wenn 'drink == null' oder 'drink["hardware_id"] != 2'
-      // Hier wird '2' als hardware_id des Geräts angenommen
+      // Zutaten extrahieren und prüfen
       final ingredientList = ingredientsResponse.map<Map<String, dynamic>>((ing) {
         final drinkMap = ing["drink"] as Map<String, dynamic>?;
         final missing = (drinkMap == null || drinkMap["hardware_id"] != 2);
@@ -77,11 +74,15 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
         };
       }).toList();
 
+      final isFavorite = recipe["is_favorite"] ?? false; // Prüfe is_favorite
+      print("Recipe: $recipeName, Recipe ID: $recipeId, Is Favorite: $isFavorite");
+
       return {
+        "recipe_id": recipeId,
         "name": recipeName,
         "image": imagePath,
         "ingredients": ingredientList,
-        "isLiked": false,
+        "is_favorite": isFavorite, // Beibehalten von is_favorite
         "isAvailable": isAvailable
       };
     }).toList();
@@ -91,6 +92,11 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
       filteredDrinks = drinks;
     });
   }
+
+
+
+
+
 
   void filterDrinks(String query) {
     setState(() {
@@ -105,6 +111,8 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     bool isFavorite = drink['is_favorite'] ?? false;
 
+    print("Opening Popup for: ${drink['name']}, isFavorite: $isFavorite"); // Debugging-Ausgabe
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -118,7 +126,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
                   Align(
                     alignment: Alignment.topRight,
                     child: IconButton(
@@ -126,8 +133,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
-
-                  // Drink Image
                   Center(
                     child: Image.asset(
                       drink['image'],
@@ -143,8 +148,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-
-                  // Drink Name and Favorite Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -194,8 +197,6 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-
-                  // Ingredients
                   Text(
                     "Ingredients:",
                     style: TextStyle(
@@ -222,12 +223,10 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     }).toList(),
                   ),
                   const SizedBox(height: 20),
-
-                  // Order Button (Beispiel-Logik)
                   MyButton(
                     onTap: () {
                       Navigator.of(context).pop();
-                      // TODO: Bestelllogik hinzufügen
+                      // TODO: Add ordering logic here
                     },
                     text: "Order",
                     hasMargin: false,
@@ -240,6 +239,11 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
       },
     );
   }
+
+
+
+
+
 
 
   void _changeFavorite(int recipeId, bool isFavorite) async {

@@ -28,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
       errorMessage = '';
     });
 
-    print("GEHT LOS");
 
     final usernameOrEmail = usernameOrEmailController.text.trim();
     final password = passwordController.text;
