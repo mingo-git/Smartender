@@ -48,6 +48,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     // Filtern der favorisierten Drinks
     final favoriteRecipes = allRecipes.where((recipe) => recipe["is_favorite"] == true).toList();
 
+    // Debugging: Anzahl der favorisierten Rezepte
+    print("Number of favorite recipes: ${favoriteRecipes.length}");
+
     final newDrinks = favoriteRecipes.map<Map<String, dynamic>>((recipe) {
       final recipeId = recipe["recipe_id"] ?? -1;
       final recipeName = recipe["recipe_name"] ?? "Unnamed";

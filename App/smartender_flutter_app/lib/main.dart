@@ -1,3 +1,5 @@
+// lib/main.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -11,10 +13,10 @@ import 'package:smartender_flutter_app/services/fetch_data_service.dart';
 import 'package:smartender_flutter_app/services/recipe_service.dart';
 import 'package:smartender_flutter_app/services/slot_service.dart';
 
-
 void main() async {
-  await dotenv.load(fileName: '.env');
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+
   final AuthService _authService = AuthService();
   String? token = await _authService.getToken();
 
@@ -31,26 +33,21 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CocktailCard()),
+        ChangeNotifierProvider(create: (_) => RecipeService()), // Ändere zu ChangeNotifierProvider
         Provider<DrinkService>(create: (_) => DrinkService()),
-        Provider<RecipeService>(create: (_) => RecipeService()),
         Provider<SlotService>(create: (_) => SlotService()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: Builder(
         builder: (context) {
           final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-
-          // Hole die Services aus dem Provider
-          final drinkService = Provider.of<DrinkService>(context, listen: false);
           final recipeService = Provider.of<RecipeService>(context, listen: false);
+          final drinkService = Provider.of<DrinkService>(context, listen: false);
 
-          // Erstelle FetchdData-Objekt und füge Services hinzu
-          // Dies kann nach dem Aufbau der Provider geschehen, damit die Services verfügbar sind.
+          // Initialisiere FetchdData nur einmal
           final fetchdData = FetchdData();
           fetchdData.addService(drinkService);
           fetchdData.addService(recipeService);
-
-          // Starte das Polling
           fetchdData.startPolling(interval: const Duration(seconds: 10));
 
           return MaterialApp(

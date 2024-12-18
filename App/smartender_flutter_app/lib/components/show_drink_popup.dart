@@ -1,3 +1,5 @@
+// lib/components/show_drink_popup.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../config/constants.dart';
@@ -15,6 +17,7 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
   final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
   bool isFavorite = drink['is_favorite'] ?? false;
   bool changed = false; // Flag, um Änderungen zu verfolgen
+  bool isProcessing = false; // Flag, um den Verarbeitungsstatus zu verfolgen
 
   print("Opening Popup for: ${drink['name']}, isFavorite: $isFavorite");
 
@@ -69,7 +72,13 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                         isFavorite ? Icons.favorite : Icons.favorite_border,
                         color: isFavorite ? Colors.red : theme.tertiaryColor,
                       ),
-                      onPressed: () async {
+                      onPressed: isProcessing
+                          ? null // Deaktiviert die Schaltfläche während der Verarbeitung
+                          : () async {
+                        setState(() {
+                          isProcessing = true;
+                        });
+
                         final recipeService = Provider.of<RecipeService>(context, listen: false);
                         bool success;
 
@@ -84,20 +93,15 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                             isFavorite = !isFavorite;
                             changed = true; // Änderung festgestellt
                           });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                isFavorite
-                                    ? "Added to favorites"
-                                    : "Removed from favorites",
-                              ),
-                            ),
-                          );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text("Failed to update favorite status")),
                           );
                         }
+
+                        setState(() {
+                          isProcessing = false;
+                        });
                       },
                     ),
                   ],

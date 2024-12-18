@@ -1,14 +1,14 @@
+// lib/services/recipe_service.dart
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/constants.dart';
 import 'auth_service.dart';
 import 'fetch_data_service.dart';
+import 'package:flutter/foundation.dart'; // Für ChangeNotifier
 
-
-//Notiz: 3 = Gin and Tonic, 2 = Mojito, 1 = Vodka Martini
-
-class RecipeService implements FetchableService {
+class RecipeService extends ChangeNotifier implements FetchableService {
   final String _recipeUrl = "/user/hardware/2/recipes";
   final String _favoriteUrl = "/user/hardware/2/favorite";
 
@@ -23,8 +23,7 @@ class RecipeService implements FetchableService {
     }
 
     final recipeUrl = Uri.parse(baseUrl + _recipeUrl);
-    final favoriteUrl = Uri.parse(baseUrl + _favoriteUrl + "s");
-
+    final favoriteUrl = Uri.parse(baseUrl + _favoriteUrl + "s"); // /favorites
 
     Map<String, dynamic> decoded = {};
     List<int> favoriteIds = [];
@@ -89,17 +88,21 @@ class RecipeService implements FetchableService {
       // Add 'is_favorite' attribute to recipes
       decoded['available'] = (decoded['available'] as List<dynamic>?)
           ?.map((recipe) {
-        recipe['is_favorite'] = favoriteIds.contains(recipe['recipe_id']);
+        int recipeId = recipe['recipe_id'] is int
+            ? recipe['recipe_id']
+            : int.tryParse(recipe['recipe_id'].toString()) ?? -1;
+        recipe['is_favorite'] = favoriteIds.contains(recipeId);
         return recipe;
-      })
-          .toList();
+      }).toList();
 
       decoded['unavailable'] = (decoded['unavailable'] as List<dynamic>?)
           ?.map((recipe) {
-        recipe['is_favorite'] = favoriteIds.contains(recipe['recipe_id']);
+        int recipeId = recipe['recipe_id'] is int
+            ? recipe['recipe_id']
+            : int.tryParse(recipe['recipe_id'].toString()) ?? -1;
+        recipe['is_favorite'] = favoriteIds.contains(recipeId);
         return recipe;
-      })
-          .toList();
+      }).toList();
 
       // DEBUG: Nur Namen und Favoritenstatus ausgeben
       print("");
@@ -117,11 +120,12 @@ class RecipeService implements FetchableService {
       print("RECIPES and FAVORITES fetched and saved locally. "
           "Available Count: ${decoded['available']?.length ?? 0}, "
           "Unavailable Count: ${decoded['unavailable']?.length ?? 0}");
+
+      notifyListeners(); // Benachrichtigen der Zuhörer
     } catch (e) {
       print("Error fetching RECIPES or FAVORITES: $e");
     }
   }
-
 
   Future<void> _saveRecipesLocally(Map<String, dynamic> recipes) async {
     final prefs = await SharedPreferences.getInstance();
@@ -530,11 +534,12 @@ class RecipeService implements FetchableService {
         },
       );
 
-      print("RESPONE: $response");
+      print("RESPONSE: ${response.statusCode}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Recipe (ID: $recipeId) successfully added to favorites.");
         await fetchAndSaveData(); // Aktualisiere die lokale Speicherung
+        notifyListeners(); // Benachrichtigen der Zuhörer
         return true;
       } else {
         print("Failed to add to favorites: ${response.statusCode}, Response: ${response.body}");
@@ -545,7 +550,6 @@ class RecipeService implements FetchableService {
       return false;
     }
   }
-
 
   /// Entfernt ein Rezept aus der Favoritenliste.
   /// [recipeId] - Die ID des Rezepts, das aus der Favoritenliste entfernt werden soll.
@@ -574,6 +578,7 @@ class RecipeService implements FetchableService {
       if (response.statusCode == 200 || response.statusCode == 204) {
         print("Recipe (ID: $recipeId) successfully removed from favorites.");
         await fetchAndSaveData(); // Aktualisiere die lokale Speicherung
+        notifyListeners(); // Benachrichtigen der Zuhörer
         return true;
       } else {
         print("Failed to remove from favorites: ${response.statusCode}, Response: ${response.body}");
@@ -584,9 +589,4 @@ class RecipeService implements FetchableService {
       return false;
     }
   }
-
-
-
-
-
 }
