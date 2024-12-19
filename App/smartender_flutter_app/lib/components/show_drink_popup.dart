@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../config/constants.dart';
 import '../provider/theme_provider.dart';
+import '../services/order_drink_service.dart';
 import '../services/recipe_service.dart';
 import 'my_button.dart';
 
@@ -134,9 +135,20 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                 ),
                 const SizedBox(height: 20),
                 MyButton(
-                  onTap: () {
-                    Navigator.of(context).pop(changed);
-                    // TODO: Add ordering logic here
+                  onTap: () async {
+                    // Implementieren der Order-Funktion
+                    bool orderSuccess = await orderDrink(context, drink['recipe_id']);
+                    Navigator.of(context).pop(); // Schließen des Popups
+
+                    if (orderSuccess) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Bestellung erfolgreich aufgegeben")),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Bestellung fehlgeschlagen")),
+                      );
+                    }
                   },
                   text: "Order",
                   hasMargin: false,
@@ -148,4 +160,10 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
       );
     },
   ) ?? false; // Rückgabe von false, falls kein Ergebnis
+}
+
+Future<bool> orderDrink(BuildContext context, int recipeId) async {
+  final orderDrinkService = Provider.of<OrderDrinkService>(context, listen: false);
+  bool success = await orderDrinkService.orderDrink(recipeId);
+  return success;
 }

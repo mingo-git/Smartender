@@ -10,6 +10,7 @@ import 'package:smartender_flutter_app/screens/login_screen.dart';
 import 'package:smartender_flutter_app/services/auth_service.dart';
 import 'package:smartender_flutter_app/services/drink_service.dart';
 import 'package:smartender_flutter_app/services/fetch_data_service.dart';
+import 'package:smartender_flutter_app/services/order_drink_service.dart';
 import 'package:smartender_flutter_app/services/recipe_service.dart';
 import 'package:smartender_flutter_app/services/slot_service.dart';
 
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RecipeService()), // Ändere zu ChangeNotifierProvider
         Provider<DrinkService>(create: (_) => DrinkService()),
         Provider<SlotService>(create: (_) => SlotService()),
+        Provider<OrderDrinkService>(create: (_) => OrderDrinkService()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: Builder(
@@ -43,6 +45,7 @@ class MyApp extends StatelessWidget {
           final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
           final recipeService = Provider.of<RecipeService>(context, listen: false);
           final drinkService = Provider.of<DrinkService>(context, listen: false);
+          final orderDrinkService = Provider.of<OrderDrinkService>(context, listen: false);
 
           // Initialisiere FetchdData nur einmal
           final fetchdData = FetchdData();
