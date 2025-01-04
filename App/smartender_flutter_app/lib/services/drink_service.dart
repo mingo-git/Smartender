@@ -1,19 +1,18 @@
-import 'dart:async';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/constants.dart';
 import 'auth_service.dart';
-import 'fetch_data_service.dart';
+import 'fetchable_service.dart';
 
-class DrinkService implements FetchableService {
+class DrinkService extends ChangeNotifier implements FetchableService {
   final String _allDrinksUrl = "/user/hardware/2/drinks";
 
-  /// Abrufen und Speichern der Drinks vom Backend
   @override
   Future<void> fetchAndSaveData() async {
-    final AuthService authService = AuthService(); // Auth-Service
-    final String? token = await authService.getToken(); // Token abrufen
+    final AuthService authService = AuthService();
+    final String? token = await authService.getToken();
 
     if (token == null) {
       print("No token available. Skipping fetch.");
@@ -32,53 +31,44 @@ class DrinkService implements FetchableService {
       );
 
       if (response.statusCode == 200) {
-        // Prüfe, ob der Body leer ist oder nicht
         if (response.body.isEmpty) {
-          // Kein Inhalt, leere Liste speichern
           await _saveDrinksLocally([]);
           print("No drinks returned by the server. Saved empty list locally.");
           return;
         }
 
-        // Versuche zu decodieren
         List<dynamic> drinks;
         try {
           final decoded = json.decode(response.body);
-
-          // Stelle sicher, dass decoded auch eine Liste ist
           if (decoded is List) {
             drinks = decoded;
           } else {
-            // Falls kein Listenobjekt, verwende eine leere Liste
             drinks = [];
             print("Response did not return a list, using empty list.");
           }
         } catch (e) {
-          // Falls decoding fehlschlägt
           drinks = [];
           print("Error decoding response: $e. Using empty list.");
         }
 
-        // Drinks als vollständige Objekte speichern
         await _saveDrinksLocally(drinks);
         print("DRINKS fetched and saved locally. Count: ${drinks.length}");
+        notifyListeners();
       } else {
-        print("Failed to fetch DRINKS: ${response.statusCode}");
+        print("Failed to fetch DRINKS: ${response.statusCode}, Response: ${response.body}");
       }
     } catch (e) {
       print("Error fetching DRINKS: $e");
     }
   }
 
-
-  /// Speichere die Drinks lokal in SharedPreferences
   Future<void> _saveDrinksLocally(List<dynamic> drinks) async {
     final prefs = await SharedPreferences.getInstance();
     final drinksJson = json.encode(drinks);
     await prefs.setString('drinks', drinksJson);
+    print("DRINKS saved to SharedPreferences: $drinksJson");
   }
 
-  /// Abrufen der Drinks aus den SharedPreferences
   Future<List<Map<String, dynamic>>> fetchDrinksFromLocal() async {
     final prefs = await SharedPreferences.getInstance();
     final drinksJson = prefs.getString('drinks');
@@ -96,7 +86,7 @@ class DrinkService implements FetchableService {
     final String? token = await authService.getToken();
 
     if (token == null) {
-      print("No token available. Cannot add drink.");
+      print("Kein Token verfügbar. Kann Drink nicht hinzufügen.");
       return false;
     }
 
@@ -116,15 +106,15 @@ class DrinkService implements FetchableService {
       );
 
       if (response.statusCode == 201) {
-        print("DRINK added successfully: $drinkName");
+        print("Drink erfolgreich hinzugefügt: $drinkName");
         await fetchAndSaveData(); // Daten nach Hinzufügen aktualisieren
         return true;
       } else {
-        print("Failed to add DRINK: ${response.statusCode}");
+        print("Fehler beim Hinzufügen des Drinks: ${response.statusCode}");
         return false;
       }
     } catch (e) {
-      print("Error adding DRINK: $e");
+      print("Fehler beim Hinzufügen des Drinks: $e");
       return false;
     }
   }
@@ -135,7 +125,7 @@ class DrinkService implements FetchableService {
     final String? token = await authService.getToken();
 
     if (token == null) {
-      print("No token available. Cannot update drink.");
+      print("Kein Token verfügbar. Kann Drink nicht aktualisieren.");
       return false;
     }
 
@@ -155,15 +145,15 @@ class DrinkService implements FetchableService {
       );
 
       if (response.statusCode == 204) {
-        print("DRINK updated successfully: $drinkName (ID: $drinkId)");
+        print("Drink erfolgreich aktualisiert: $drinkName (ID: $drinkId)");
         await fetchAndSaveData(); // Daten nach Aktualisieren neu laden
         return true;
       } else {
-        print("Failed to update DRINK: ${response.statusCode}");
+        print("Fehler beim Aktualisieren des Drinks: ${response.statusCode}");
         return false;
       }
     } catch (e) {
-      print("Error updating DRINK: $e");
+      print("Fehler beim Aktualisieren des Drinks: $e");
       return false;
     }
   }
@@ -174,7 +164,7 @@ class DrinkService implements FetchableService {
     final String? token = await authService.getToken();
 
     if (token == null) {
-      print("No token available. Cannot delete drink.");
+      print("Kein Token verfügbar. Kann Drink nicht löschen.");
       return false;
     }
 
@@ -189,16 +179,16 @@ class DrinkService implements FetchableService {
         },
       );
 
-      if (response.statusCode == 200) {
-        print("DRINK deleted successfully (ID: $drinkId)");
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        print("Drink erfolgreich gelöscht (ID: $drinkId)");
         await fetchAndSaveData(); // Daten nach Löschen neu laden
         return true;
       } else {
-        print("Failed to delete DRINK: ${response.statusCode}");
+        print("Fehler beim Löschen des Drinks: ${response.statusCode}");
         return false;
       }
     } catch (e) {
-      print("Error deleting DRINK: $e");
+      print("Fehler beim Löschen des Drinks: $e");
       return false;
     }
   }

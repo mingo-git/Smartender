@@ -17,10 +17,11 @@ import 'my_button.dart';
 Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) async {
   final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
   bool isFavorite = drink['is_favorite'] ?? false;
-  bool changed = false; // Flag, um Änderungen zu verfolgen
+  bool changed = false; // Flag, um Änderungen (z.B. Favorit) zu verfolgen
   bool isProcessing = false; // Flag, um den Verarbeitungsstatus zu verfolgen
 
-  print("Opening Popup for: ${drink['name']}, isFavorite: $isFavorite");
+  // Debug-Ausgabe: Wir zeigen einmal ALLES, was im drink-Objekt drinsteckt
+  debugPrint("[DEBUG showDrinkPopup] Drink-Objekt:\n$drink");
 
   return await showDialog<bool>(
     context: context,
@@ -28,13 +29,17 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
       return AlertDialog(
         backgroundColor: theme.backgroundColor,
         shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
-        contentPadding: const EdgeInsets.symmetric(horizontal: horizontalPadding * 2, vertical: 20),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: horizontalPadding * 2,
+          vertical: 20,
+        ),
         content: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Schließen-Button (X)
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
@@ -42,9 +47,11 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                     onPressed: () => Navigator.of(context).pop(changed),
                   ),
                 ),
+
+                // Cocktail-Bild
                 Center(
                   child: Image.asset(
-                    drink['image'],
+                    drink['image'] ?? "lib/images/cocktails/cocktail_unavailable.png",
                     height: 150,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
@@ -57,11 +64,13 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                   ),
                 ),
                 const SizedBox(height: 10),
+
+                // Titel & Favoriten-Icon
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      drink['name'],
+                      drink['name'] ?? "Unknown Drink",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -108,6 +117,8 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                   ],
                 ),
                 const SizedBox(height: 10),
+
+                // Zutaten-Titel
                 Text(
                   "Ingredients:",
                   style: TextStyle(
@@ -117,26 +128,48 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                   ),
                 ),
                 const SizedBox(height: 5),
+
+                // Zutaten-Liste
+                // Hier prüfen wir explizit, ob ingredient['missing'] == true und machen den Text ggf. rot.
                 Wrap(
                   spacing: 8.0,
                   runSpacing: 4.0,
-                  children: (drink['ingredients'] as List<Map<String, dynamic>>).map((ingredient) {
-                    final missing = ingredient['missing'] == true;
+                  children: (drink['ingredients'] as List<Map<String, dynamic>>?)?.map((ingredient) {
+                    final bool missing = ingredient['missing'] == true;
+
+                    // Debug-Ausgabe
+                    debugPrint("[DEBUG showDrinkPopup] "
+                        "Zutat '${ingredient['name']}' => missing=$missing");
+
                     return Chip(
                       label: Text(
-                        ingredient['name'],
+                        ingredient['name'] ?? "Unnamed",
                         style: TextStyle(
-                          color: missing ? Colors.red : theme.tertiaryColor,
+                          fontWeight: FontWeight.bold,
+                          color: missing ? theme.falseColor : theme.tertiaryColor,
                         ),
                       ),
-                      backgroundColor: theme.primaryColor,
+                      // Um "fehlende" Zutaten visuell noch deutlicher zu machen,
+                      // können wir das Chip-Design bei missing ändern:
+                      backgroundColor: missing
+                          ? theme.falseColor.withOpacity(0.1)
+                          : theme.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: missing ? theme.falseColor : theme.tertiaryColor,
+                          width: 1.0,
+                        ),
+                      ),
                     );
-                  }).toList(),
+                  }).toList() ??
+                      [],
                 ),
                 const SizedBox(height: 20),
+
+                // Order-Button
                 MyButton(
                   onTap: () async {
-                    // Implementieren der Order-Funktion
                     bool orderSuccess = await orderDrink(context, drink['recipe_id']);
                     Navigator.of(context).pop(); // Schließen des Popups
 
@@ -159,7 +192,8 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
         ),
       );
     },
-  ) ?? false; // Rückgabe von false, falls kein Ergebnis
+  ) ??
+      false; // Rückgabe von false, falls kein Ergebnis
 }
 
 Future<bool> orderDrink(BuildContext context, int recipeId) async {

@@ -17,7 +17,15 @@ class CupDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    // ThemeProvider holen, um zu prüfen, ob Dark Mode aktiv ist
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final theme = themeProvider.currentTheme;
+    final bool isDarkMode = themeProvider.isDarkMode;
+
+    // Abhängig vom Dark Mode den Pfad wählen
+    final String cupSvgPath = isDarkMode
+        ? 'lib/images/cup_dark.svg'  // Dunkle Version
+        : 'lib/images/cup.svg';      // Helle Version
 
     double totalHeight = 200.0; // Maximale Höhe des Cups
 
@@ -47,6 +55,7 @@ class CupDisplay extends StatelessWidget {
             ),
           ),
         ),
+
         // Ausschnitt mit trapezförmigem Loch
         Positioned(
           bottom: totalHeight * 0.05, // Start 5 % weiter oben
@@ -59,9 +68,10 @@ class CupDisplay extends StatelessWidget {
             ),
           ),
         ),
-        // Der Cup (SVG-Datei, im Vordergrund)
+
+        // Der Cup (SVG-Datei, im Vordergrund) - abhängig vom Dark Mode
         SvgPicture.asset(
-          'lib/images/cup.svg',
+          cupSvgPath,
           width: 170,
           height: totalHeight,
           fit: BoxFit.contain,
@@ -76,19 +86,19 @@ class TrapezoidCutoutClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
     double bottomInset = size.width * 0.30; // Verkleinert die Breite unten
-    double topInset = size.width * 0.18; // Verkleinert die Breite oben
+    double topInset = size.width * 0.18;    // Verkleinert die Breite oben
     double bottomHeightInset = size.height * 0.05; // Abstand vom unteren Rand
-    double topHeightInset = size.height * 0.05; // Abstand vom oberen Rand
+    double topHeightInset = size.height * 0.05;    // Abstand vom oberen Rand
 
-    // Vollflächiges Quadrat
+    // Vollflächiges Rechteck
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     // Trapezförmiger Ausschnitt in der Mitte
     Path trapezoid = Path();
-    trapezoid.moveTo(bottomInset, size.height - bottomHeightInset); // Unten links
+    trapezoid.moveTo(bottomInset, size.height - bottomHeightInset);           // Unten links
     trapezoid.lineTo(size.width - bottomInset, size.height - bottomHeightInset); // Unten rechts
-    trapezoid.lineTo(size.width - topInset, topHeightInset); // Oben rechts
-    trapezoid.lineTo(topInset, topHeightInset); // Oben links
+    trapezoid.lineTo(size.width - topInset, topHeightInset);                  // Oben rechts
+    trapezoid.lineTo(topInset, topHeightInset);                               // Oben links
     trapezoid.close();
 
     // Ausschnitt entfernen

@@ -69,9 +69,14 @@ class _MyTextFieldState extends State<MyTextField> {
             )
                 : null,
           ),
-          style: const TextStyle(fontSize: 20),
+          style: TextStyle(
+            color: theme.tertiaryColor, // Textfarbe auf tertiaryColor setzen
+            fontSize: 20,
+          ),
+          cursorColor: theme.tertiaryColor, // Cursor-Farbe anpassen
         ),
       ),
     );
   }
+
 }

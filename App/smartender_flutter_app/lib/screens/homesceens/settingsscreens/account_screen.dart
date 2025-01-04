@@ -302,7 +302,7 @@ class _AccountScreenState extends State<AccountScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: theme.tertiaryColor),
           ),
           const SizedBox(height: 5),
           SizedBox(

@@ -88,7 +88,7 @@ class AuthService {
     await _storage.delete(key: 'jwt_token');
   }
 
-  //TODO: Test if the right token is transimitted (the Id_token)
+
   Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();

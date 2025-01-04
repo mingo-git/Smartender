@@ -31,27 +31,35 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Initialisierung aller Services
+    final recipeService = RecipeService();
+    final drinkService = DrinkService();
+    final slotService = SlotService();
+    final orderDrinkService = OrderDrinkService();
+
+    // Singleton-Instanz von FetchdData
+    final fetchdData = FetchdData();
+    fetchdData.addService(recipeService);
+    fetchdData.addService(drinkService);
+    fetchdData.addService(slotService);
+    // Fügen Sie weitere Services hinzu, falls vorhanden
+
+    // Starten des Pollings mit einem zentralen Intervall
+    fetchdData.startPolling(interval: const Duration(seconds: 120));
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CocktailCard()),
-        ChangeNotifierProvider(create: (_) => RecipeService()), // Ändere zu ChangeNotifierProvider
-        Provider<DrinkService>(create: (_) => DrinkService()),
-        Provider<SlotService>(create: (_) => SlotService()),
-        Provider<OrderDrinkService>(create: (_) => OrderDrinkService()),
+        ChangeNotifierProvider(create: (_) => RecipeService()), // Falls benötigt
+        ChangeNotifierProvider(create: (_) => DrinkService()), // Falls benötigt
+        ChangeNotifierProvider(create: (_) => SlotService()), // Falls benötigt
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider.value(value: fetchdData), // FetchdData als Provider hinzufügen
       ],
       child: Builder(
         builder: (context) {
-          final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-          final recipeService = Provider.of<RecipeService>(context, listen: false);
-          final drinkService = Provider.of<DrinkService>(context, listen: false);
-          final orderDrinkService = Provider.of<OrderDrinkService>(context, listen: false);
-
-          // Initialisiere FetchdData nur einmal
-          final fetchdData = FetchdData();
-          fetchdData.addService(drinkService);
-          fetchdData.addService(recipeService);
-          fetchdData.startPolling(interval: const Duration(seconds: 10));
+          final themeProvider = Provider.of<ThemeProvider>(context);
+          // Sie können hier weitere Initialisierungen durchführen, falls erforderlich
 
           return MaterialApp(
             debugShowCheckedModeBanner: false,

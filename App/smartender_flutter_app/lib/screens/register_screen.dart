@@ -143,11 +143,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 50),
-              const Icon(Icons.lock, size: 100),
+              Icon(Icons.lock, size: 100, color: theme.primaryColor,),
               const SizedBox(height: 50),
               Text(
                 'Create an account',
-                style: TextStyle(color: theme.primaryFontColor, fontSize: 16),
+                style: TextStyle(color: theme.tertiaryColor, fontSize: 16,),
               ),
               const SizedBox(height: 25),
               MyTextField(

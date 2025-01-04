@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/drink_service.dart';
+import '../provider/theme_provider.dart';
 import 'my_button.dart';
 
 class CreateEditDrinkPopup extends StatefulWidget {
-  /// Wenn `drinkId` null ist, wird ein neuer Drink angelegt.
-  /// Wenn `drinkId` gesetzt ist, wird der bestehende Drink editiert.
   final int? drinkId;
   final String? initialName;
   final bool? initialIsAlcoholic;
@@ -28,7 +27,6 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
   @override
   void initState() {
     super.initState();
-    // Vorbelegung wenn wir im Editier-Modus sind
     if (widget.drinkId != null) {
       _drinkNameController.text = widget.initialName ?? "";
       _isAlcoholic = widget.initialIsAlcoholic ?? false;
@@ -52,11 +50,8 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
 
     bool success;
     if (widget.drinkId == null) {
-      // Neuen Drink erstellen
       success = await drinkService.addDrink(drinkName, _isAlcoholic);
     } else {
-      // Bestehenden Drink aktualisieren
-      // Diese Funktion muss noch im DrinkService implementiert werden!
       success = await drinkService.updateDrink(widget.drinkId!, drinkName, _isAlcoholic);
     }
 
@@ -76,15 +71,20 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final isEditMode = widget.drinkId != null;
 
     return AlertDialog(
+      backgroundColor: theme.backgroundColor,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(isEditMode ? "Edit Drink" : "Add New Drink"),
+          Text(
+            isEditMode ? "Edit Drink" : "Add New Drink",
+            style: TextStyle(color: theme.tertiaryColor),
+          ),
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, color: theme.tertiaryColor),
             onPressed: _closePopup,
           ),
         ],
@@ -94,15 +94,20 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
         children: [
           TextField(
             controller: _drinkNameController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: "Enter drink name",
+              hintStyle: TextStyle(color: theme.hintTextColor),
             ),
+            style: TextStyle(color: theme.tertiaryColor),
           ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Contains Alcohol"),
+              Text(
+                "Contains Alcohol",
+                style: TextStyle(color: theme.tertiaryColor),
+              ),
               Switch(
                 value: _isAlcoholic,
                 onChanged: (value) {
@@ -110,6 +115,7 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
                     _isAlcoholic = value;
                   });
                 },
+                activeColor: theme.tertiaryColor,
               ),
             ],
           ),

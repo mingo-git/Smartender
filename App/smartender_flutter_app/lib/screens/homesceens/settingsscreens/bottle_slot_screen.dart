@@ -117,7 +117,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
             ),
             const SizedBox(height: 50),
             // Überschriften über den Spalten
-            const Row(
+            Row(
               children: [
                 Expanded(
                   child: Center(
@@ -126,6 +126,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: theme.tertiaryColor
                       ),
                     ),
                   ),
@@ -137,6 +138,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                          color: theme.tertiaryColor
                       ),
                     ),
                   ),

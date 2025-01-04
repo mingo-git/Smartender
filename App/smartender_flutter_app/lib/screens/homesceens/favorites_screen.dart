@@ -188,6 +188,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     Row(
                       children: [
                         Expanded(
+                          child: Text(
+                            "Smartender",
+                            style: TextStyle(
+                              fontSize: 30,             // Schriftgröße
+                              fontWeight: FontWeight.bold,  // Fettdruck
+                              color: theme.tertiaryColor,    // Farbe aus dem aktuellen Theme
+                            ),
+                          ),
+                        ),
+/*                        Expanded(
                           child: DeviceDropdown(
                             devices: devices,
                             selectedDevice: selectedDevice,
@@ -199,7 +209,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               }
                             },
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                     const SizedBox(height: 13),

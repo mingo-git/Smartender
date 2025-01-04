@@ -72,22 +72,44 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
+        final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
         return AlertDialog(
-          title: const Text('Delete Recipe'),
-          content: Text('Are you sure you want to delete "$recipeName"?'),
+          backgroundColor: theme.backgroundColor,
+          title: Text(
+            'Delete Recipe',
+            style: TextStyle(color: theme.tertiaryColor),
+          ),
+          content: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Are you sure you want to delete "$recipeName"?\n',
+                  style: TextStyle(color: theme.tertiaryColor),
+                ),
+              ],
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('No'),
+              child: Text(
+                'No',
+                style: TextStyle(color: theme.tertiaryColor),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Yes'),
+              child: Text(
+                'Yes',
+                style: TextStyle(color: theme.tertiaryColor),
+              ),
             ),
           ],
         );
       },
     );
+
 
     if (confirmed == true) {
       await _deleteRecipe(recipeId);

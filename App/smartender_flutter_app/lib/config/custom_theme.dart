@@ -65,8 +65,8 @@ class CustomTheme {
   static final CustomTheme darkTheme = CustomTheme(
     backgroundColor: Color(0xFF121212),
     popupBackgroundColor: Color(0xFF9A2323),
-    fadeOutBackground0: const Color(0x9e000000),
-    fadeOutBackground1: const Color(0x0),
+    fadeOutBackground0: Color(0x7B121212),
+    fadeOutBackground1: Color(0x2121212),
     primaryColor: Color(0xff3f3f3f),
 /*    secondaryColor: Color(0xFFE30000),*/
     tertiaryColor: Color(0xffbed8b3),

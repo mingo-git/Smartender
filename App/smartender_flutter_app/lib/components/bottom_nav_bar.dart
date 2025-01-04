@@ -45,7 +45,6 @@ class MyBottomNavBar extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 15.0), // Hebt die Navbar um 15 nach oben
               child: GNav(
                 onTabChange: (value) => onTabChange!(value),
-                //TODO: Austauschen mit dem was an besten passt oder neue variable anlegen
                 color: theme.primaryColor, // Gradientfarbe für nicht ausgewählte Icons
                 mainAxisAlignment: MainAxisAlignment.center,
                 tabBorderRadius: defaultBorderRadius.topLeft.x,

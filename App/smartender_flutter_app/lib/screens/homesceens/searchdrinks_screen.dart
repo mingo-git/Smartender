@@ -42,18 +42,22 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
 
     final available = recipesData["available"] ?? [];
     final unavailable = recipesData["unavailable"] ?? [];
+    // Kombiniere beide Listen, damit wir alle Rezepte haben
     final allRecipes = [...available, ...unavailable];
 
+    // Wir bauen aus jedem "recipe" eine Map für unser UI
     final newDrinks = allRecipes.map<Map<String, dynamic>>((recipe) {
-      final recipeId = recipe["recipe_id"] ?? -1; // Sicherstellen, dass recipe_id verfügbar ist
+      final recipeId = recipe["recipe_id"] ?? -1;
       final recipeName = recipe["recipe_name"] ?? "Unnamed";
-      final ingredientsResponse = recipe["ingredientsResponse"] ?? [];
-      final isAvailable = available.contains(recipe);
 
-      // Extrahiere picture_id und setze imagePath entsprechend
+      // In recipe_service.dart wird bereits "ingredients" erzeugt,
+      // welches 'missing' korrekt enthält:
+      final List<dynamic> recipeIngredients =
+      (recipe["ingredients"] as List<dynamic>? ?? []);
+
+      // Bild-Auswahl
       final pictureId = recipe["picture_id"];
       String imagePath;
-
       if (pictureId != null && pictureId is int) {
         if (pictureId >= 1 && pictureId <= 30) {
           imagePath = "lib/images/cocktails/$pictureId.png";
@@ -66,26 +70,27 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
         imagePath = "lib/images/cocktails/cocktail_unavailable.png";
       }
 
-      // Zutaten extrahieren und prüfen
-      final ingredientList = ingredientsResponse.map<Map<String, dynamic>>((ing) {
-        final drinkMap = ing["drink"] as Map<String, dynamic>?;
-        final missing = (drinkMap == null || drinkMap["hardware_id"] != 2);
-        final name = missing ? "Unknown" : (drinkMap["drink_name"] ?? "Unknown");
+      // Wichtig: Nutze direkt recipe['ingredients'] statt 'ingredientsResponse'
+      final ingredientList = recipeIngredients.map<Map<String, dynamic>>((ing) {
         return {
-          "name": name,
-          "missing": missing,
+          "name": ing["name"] ?? "Unknown",
+          // Hier übernehmen wir den bereits in recipe_service.dart gesetzten missing-Wert
+          "missing": ing["missing"] ?? false,
+          // Optional kannst du auch die Menge übernehmen
+          "quantity_ml": ing["quantity_ml"] ?? 0,
         };
       }).toList();
 
-      final isFavorite = recipe["is_favorite"] ?? false; // Prüfe is_favorite
-      print("Recipe: $recipeName, Recipe ID: $recipeId, Is Favorite: $isFavorite");
+      final isFavorite = recipe["is_favorite"] ?? false;
+      // "isAvailable" definieren wir so, dass es true ist, wenn das Rezept in der available-Liste steht
+      final isAvailable = available.contains(recipe);
 
       return {
         "recipe_id": recipeId,
         "name": recipeName,
         "image": imagePath,
         "ingredients": ingredientList,
-        "is_favorite": isFavorite, // Beibehalten von is_favorite
+        "is_favorite": isFavorite,
         "isAvailable": isAvailable
       };
     }).toList();
@@ -129,13 +134,15 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                   itemBuilder: (context, index) {
                     final drink = filteredDrinks[index];
                     final isAvailable = drink["isAvailable"] == true;
+
                     return Opacity(
-                      opacity: isAvailable ? 1.0 : 0.5,
+                      opacity: isAvailable ? 1.0 : 0.5, // leicht ausgegraut, wenn nicht verfügbar
                       child: DrinkTile(
                         name: drink["name"],
                         imagePath: drink["image"],
                         onTap: () async {
-                          bool changed = await showDrinkPopup(context, drink); // Verwendung der neuen Funktion
+                          // Hier übergeben wir 'drink' direkt an showDrinkPopup
+                          bool changed = await showDrinkPopup(context, drink);
                           if (changed) {
                             await loadRecipes();
                           }
@@ -180,6 +187,16 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     Row(
                       children: [
                         Expanded(
+                          child: Text(
+                            "Smartender",
+                            style: TextStyle(
+                              fontSize: 30,             // Schriftgröße
+                              fontWeight: FontWeight.bold,  // Fettdruck
+                              color: theme.tertiaryColor,    // Farbe aus dem aktuellen Theme
+                            ),
+                          ),
+                        ),
+/*                        Expanded(
                           child: DeviceDropdown(
                             devices: devices,
                             selectedDevice: selectedDevice,
@@ -191,9 +208,10 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                               }
                             },
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
+
                     const SizedBox(height: 13),
                     TextField(
                       controller: searchController,
