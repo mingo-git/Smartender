@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart'; // Für ChangeNotifier
 
 class RecipeService extends ChangeNotifier implements FetchableService {
   final String _recipeUrl = "/user/hardware/2/recipes";
-  final String _favoriteUrl = "/user/hardware/2/favorites"; // Korrigierte URL
+  final String _favoriteUrl = "/user/hardware/2/favorite"; // Korrigierte URL
 
   /// Abrufen und Speichern der Rezepte vom Backend
   @override
@@ -24,7 +24,8 @@ class RecipeService extends ChangeNotifier implements FetchableService {
     }
 
     final recipeUrl = Uri.parse(baseUrl + _recipeUrl);
-    final favoriteUrl = Uri.parse(baseUrl + _favoriteUrl); // Korrigierte URL
+    final favoriteUrl = Uri.parse(baseUrl + _favoriteUrl + "s"); // Korrigierte URL
+
 
     Map<String, dynamic> decoded = {};
     List<int> favoriteIds = [];
