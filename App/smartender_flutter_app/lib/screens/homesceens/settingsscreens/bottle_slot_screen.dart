@@ -1,4 +1,3 @@
-//TODO: Wenn Hardware oder App keine Verbindung zum Backend. evtl gar keine Items angzeigen (Vllt auch ueberall Meldung anzeigen)
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +45,6 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
   }
 
 
-//TODO: Screen evtl. nochmal neu laden wenn aktualisiert -> Bei Fehlern steht sonst etwas falsches drin
   void _changeSlotPopup(int index) async {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
@@ -102,17 +100,23 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SvgPicture.asset(
-                  'lib/images/drink.svg',
+                  Provider.of<ThemeProvider>(context, listen: false).isDarkMode
+                      ? 'lib/images/drink_dark.svg'
+                      : 'lib/images/drink.svg',
                   width: MediaQuery.of(context).size.width * 0.4,
                   height: MediaQuery.of(context).size.height * 0.2,
                   fit: BoxFit.contain,
                 ),
+
                 SvgPicture.asset(
-                  'lib/images/drink.svg',
+                  Provider.of<ThemeProvider>(context, listen: false).isDarkMode
+                      ? 'lib/images/drink_dark.svg'
+                      : 'lib/images/drink.svg',
                   width: MediaQuery.of(context).size.width * 0.4,
                   height: MediaQuery.of(context).size.height * 0.2,
                   fit: BoxFit.contain,
                 ),
+
               ],
             ),
             const SizedBox(height: 50),
