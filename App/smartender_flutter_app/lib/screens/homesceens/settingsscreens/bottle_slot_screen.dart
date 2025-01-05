@@ -86,13 +86,18 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 20,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(
-                6,
-                    (index) => _buildSpiritsWithBorder(context, index),
+                5,
+                    (index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),  // Abstand rechts und links
+                  child: _buildSpiritsWithBorder(context, index),
+                ),
               ),
             ),
+
             // 6 SVGs mit Umrandung in einer Reihe
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -189,7 +194,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
     final svgAsset = Provider.of<ThemeProvider>(context, listen: false).isDarkMode
         ? 'lib/images/drink_dark.svg'
         : 'lib/images/drink.svg';
-    final borderColor = theme.slotColors[index % theme.slotColors.length];
+    final borderColor = theme.slotColors[5 + index % theme.slotColors.length];
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.15,  // Zurück zur vorherigen Höhe
@@ -219,13 +224,13 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
   Widget _buildSpiritsWithBorder(BuildContext context, int index) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final svgAsset = Provider.of<ThemeProvider>(context, listen: false).isDarkMode
-        ? 'lib/images/wine_dark.svg'
-        : 'lib/images/wine.svg';
+        ? 'lib/images/spirits_dark.svg'
+        : 'lib/images/spirits.svg';
     final borderColor = theme.slotColors[index % theme.slotColors.length];
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.15,  // Zurück zur vorherigen Höhe
-      height: MediaQuery.of(context).size.height * 0.15,
+      height: MediaQuery.of(context).size.height * 0.12,
       clipBehavior: Clip.none,  // Keine Begrenzung auf Container-Ränder
       child: Stack(
         alignment: Alignment.center,

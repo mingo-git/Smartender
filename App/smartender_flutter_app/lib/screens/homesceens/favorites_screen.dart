@@ -36,36 +36,31 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     loadFavorites();
   }
 
-  /// Lädt nur die favorisierten Drinks aus den lokalen SharedPreferences
   Future<void> loadFavorites() async {
     final recipeService = Provider.of<RecipeService>(context, listen: false);
     final recipesData = await recipeService.fetchRecipesFromLocal();
 
     final available = recipesData["available"] ?? [];
     final unavailable = recipesData["unavailable"] ?? [];
+
+    // Kombiniere beide Listen
     final allRecipes = [...available, ...unavailable];
 
-    // Filtern der favorisierten Drinks
+    // Nur Favoriten filtern
     final favoriteRecipes = allRecipes.where((recipe) => recipe["is_favorite"] == true).toList();
-
-    // Debugging: Anzahl der favorisierten Rezepte
-    print("Number of favorite recipes: ${favoriteRecipes.length}");
+    print("[DEBUG] Number of favorite recipes: ${favoriteRecipes.length}");
 
     final newDrinks = favoriteRecipes.map<Map<String, dynamic>>((recipe) {
       final recipeId = recipe["recipe_id"] ?? -1;
       final recipeName = recipe["recipe_name"] ?? "Unnamed";
-      final ingredientsResponse = recipe["ingredientsResponse"] ?? [];
-      final isAvailable = available.contains(recipe);
-
-      // Extrahiere picture_id und setze imagePath entsprechend
       final pictureId = recipe["picture_id"];
-      String imagePath;
+      final isFavorite = recipe["is_favorite"] ?? false;
 
+      // Bild-Pfad bestimmen
+      String imagePath;
       if (pictureId != null && pictureId is int) {
         if (pictureId >= 1 && pictureId <= 30) {
           imagePath = "lib/images/cocktails/$pictureId.png";
-        } else if (pictureId == 0) {
-          imagePath = "lib/images/cocktails/cocktail_unavailable.png";
         } else {
           imagePath = "lib/images/cocktails/cocktail_unavailable.png";
         }
@@ -73,19 +68,28 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         imagePath = "lib/images/cocktails/cocktail_unavailable.png";
       }
 
-      // Zutaten extrahieren und prüfen
-      final ingredientList = ingredientsResponse.map<Map<String, dynamic>>((ing) {
-        final drinkMap = ing["drink"] as Map<String, dynamic>?;
-        final missing = (drinkMap == null || drinkMap["hardware_id"] != 2);
-        final name = missing ? "Unknown" : (drinkMap["drink_name"] ?? "Unknown");
+      // WICHTIG: Hier greifen wir auf recipe["ingredients"] zu
+      // (nicht auf "ingredientsResponse")
+      final List<dynamic> recipeIngredients = recipe["ingredients"] ?? [];
+
+      // Prüfen, ob irgendeine Zutat fehlt
+      final bool anyMissing = recipeIngredients.any(
+            (ing) => ing["missing"] == true,
+      );
+
+      // Serverseitig "available" => in der "available"-Liste?
+      final bool isActuallyAvailableOnServer = available.contains(recipe);
+      // Kombiniere beides: Nur "isAvailable", wenn serverseitig verfügbar UND nichts fehlt
+      final bool isAvailable = isActuallyAvailableOnServer && !anyMissing;
+
+      // Liste für das Popup bauen:
+      final List<Map<String, dynamic>> ingredientList = recipeIngredients.map<Map<String, dynamic>>((ing) {
         return {
-          "name": name,
-          "missing": missing,
+          "name": ing["name"] ?? "Unknown",
+          "missing": ing["missing"] ?? false,
+          "quantity_ml": ing["quantity_ml"] ?? 0,
         };
       }).toList();
-
-      final isFavorite = recipe["is_favorite"] ?? false;
-      print("Favorite Recipe: $recipeName, Recipe ID: $recipeId, Is Favorite: $isFavorite");
 
       return {
         "recipe_id": recipeId,
@@ -93,7 +97,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         "image": imagePath,
         "ingredients": ingredientList,
         "is_favorite": isFavorite,
-        "isAvailable": isAvailable
+        "isAvailable": isAvailable, // Ausgrauen in der GridView
       };
     }).toList();
 
@@ -102,6 +106,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       filteredDrinks = drinks;
     });
   }
+
 
   /// Filtert die Drinks basierend auf der Suchanfrage
   void filterDrinks(String query) {

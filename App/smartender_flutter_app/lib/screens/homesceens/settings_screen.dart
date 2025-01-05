@@ -35,11 +35,11 @@ class SettingsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: 30,),
-            SettingsTile(
+/*            SettingsTile(
               title: "Account",
               icon: Icons.person,
               onTap: () => _navigateToScreen(context, const AccountScreen()),
-            ),
+            ),*/
             SettingsTile(
               title: "Bottle Slots",
               icon: Icons.local_drink,

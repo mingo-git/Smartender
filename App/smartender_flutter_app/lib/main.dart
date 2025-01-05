@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
     // Fügen Sie weitere Services hinzu, falls vorhanden
 
     // Starten des Pollings mit einem zentralen Intervall
-    fetchdData.startPolling(interval: const Duration(seconds: 120));
+    fetchdData.startPolling(interval: const Duration(seconds: 20));
 
     return MultiProvider(
       providers: [

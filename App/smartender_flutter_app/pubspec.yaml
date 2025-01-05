@@ -21,11 +21,19 @@ dependencies:
   flutter_svg: ^2.0.0
   shared_preferences: ^2.3.3
   flutter_typeahead: ^5.2.0
+  flutter_launcher_icons: ^0.13.1
   provider:
   flutter:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/images/smartender_logo.png"
+
+
 
 
 dev_dependencies:
