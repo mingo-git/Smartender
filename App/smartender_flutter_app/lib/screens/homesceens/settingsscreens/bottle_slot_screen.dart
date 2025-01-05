@@ -17,7 +17,7 @@ class BottleSlotsScreen extends StatefulWidget {
 class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
   List<Map<String, dynamic>> slots = List.generate(
     11,
-        (index) => {"id": null, "name": "Empty"}, // Standardwerte für die Slots
+        (index) => {"id": null, "name": "Empty"},
   );
 
   @override
@@ -32,9 +32,9 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
 
     setState(() {
       for (var slot in fetchedSlots) {
-        int slotIndex = (slot["slot_number"] ?? 1) - 1; // Konvertiere slot_number zu Index (1-basiert auf 0-basiert)
+        int slotIndex = (slot["slot_number"] ?? 1) - 1;
         if (slotIndex >= 0 && slotIndex < slots.length) {
-          final drink = slot["drink"]; // Extrahiere den Drink aus dem Slot
+          final drink = slot["drink"];
           slots[slotIndex] = {
             "id": drink != null ? drink["drink_id"] : null,
             "name": drink != null ? drink["drink_name"] : "Empty",
@@ -44,15 +44,11 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
     });
   }
 
-
   void _changeSlotPopup(int index) async {
-    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
-
     showDialog(
       context: context,
       builder: (context) => SelectIngredientPopup(
         onIngredientSelected: (selectedDrink) async {
-          // Lokale Aktualisierung des Slots
           setState(() {
             slots[index] = {
               "id": selectedDrink["drink_id"],
@@ -60,18 +56,13 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
             };
           });
 
-          // Backend-Aufruf, um den Slot zu aktualisieren
           final slotService = Provider.of<SlotService>(context, listen: false);
-          await slotService.updateSlot(index + 1, selectedDrink["drink_id"]); // index + 1, da Slots 1-basiert sind
+          await slotService.updateSlot(index + 1, selectedDrink["drink_id"]);
         },
-        showClearButton: true, // Aktiviert den Clear-Button
+        showClearButton: true,
       ),
     );
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +73,11 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
       appBar: AppBar(
         backgroundColor: theme.backgroundColor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, size: 35, color: theme.tertiaryColor,),
+          icon: Icon(Icons.arrow_back, size: 35, color: theme.tertiaryColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-            "Bottle Slots",
+          "Bottle Slots",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
         ),
       ),
@@ -95,43 +86,31 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Row mit 2 SVG-Bildern
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SvgPicture.asset(
-                  Provider.of<ThemeProvider>(context, listen: false).isDarkMode
-                      ? 'lib/images/drink_dark.svg'
-                      : 'lib/images/drink.svg',
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  fit: BoxFit.contain,
-                ),
-
-                SvgPicture.asset(
-                  Provider.of<ThemeProvider>(context, listen: false).isDarkMode
-                      ? 'lib/images/drink_dark.svg'
-                      : 'lib/images/drink.svg',
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  fit: BoxFit.contain,
-                ),
-
-              ],
+              children: List.generate(
+                6,
+                    (index) => _buildSpiritsWithBorder(context, index),
+              ),
             ),
-            const SizedBox(height: 50),
-            // Überschriften über den Spalten
+            // 6 SVGs mit Umrandung in einer Reihe
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                6,
+                    (index) => _buildBottleWithBorder(context, index),
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            // Labels für die Kategorien
             Row(
               children: [
                 Expanded(
                   child: Center(
                     child: Text(
                       "Spirits",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: theme.tertiaryColor
-                      ),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
                     ),
                   ),
                 ),
@@ -139,22 +118,18 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                   child: Center(
                     child: Text(
                       "Mixers",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                          color: theme.tertiaryColor
-                      ),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
                     ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 10),
-            // Buttons für Slots, links 5 und rechts 6
+
+            // Slot-Buttons
             Expanded(
               child: Row(
                 children: [
-                  // Erste Spalte: Slots 1-5
                   Expanded(
                     child: Column(
                       children: List.generate(
@@ -171,36 +146,13 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                                 borderRadius: defaultBorderRadius,
                               ),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  slots.length > index && slots[index]["name"] != null
-                                      ? slots[index]["name"]
-                                      : "Empty",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    color: theme.tertiaryColor,
-                                  ),
-                                ),
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: theme.slotColors[index % theme.slotColors.length],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            child: _buildSlotText(index),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16), // Abstand zwischen den Spalten
-                  // Zweite Spalte: Slots 6-11
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       children: List.generate(
@@ -217,29 +169,7 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                                 borderRadius: defaultBorderRadius,
                               ),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  slots.length > index + 5 && slots[index + 5]["name"] != null
-                                      ? slots[index + 5]["name"]
-                                      : "Empty",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    color: theme.tertiaryColor
-                                  ),
-                                ),
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: theme.slotColors[(index + 5) % theme.slotColors.length],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            child: _buildSlotText(index + 5),
                           ),
                         ),
                       ),
@@ -251,6 +181,93 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBottleWithBorder(BuildContext context, int index) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    final svgAsset = Provider.of<ThemeProvider>(context, listen: false).isDarkMode
+        ? 'lib/images/drink_dark.svg'
+        : 'lib/images/drink.svg';
+    final borderColor = theme.slotColors[index % theme.slotColors.length];
+
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.15,  // Zurück zur vorherigen Höhe
+      height: MediaQuery.of(context).size.height * 0.15,
+      clipBehavior: Clip.none,  // Keine Begrenzung auf Container-Ränder
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SvgPicture.asset(
+            svgAsset,
+            width: MediaQuery.of(context).size.width * 0.1,
+            height: MediaQuery.of(context).size.height * 0.1,
+            colorFilter: ColorFilter.mode(borderColor, BlendMode.srcATop),
+            fit: BoxFit.contain,
+          ),
+          SvgPicture.asset(
+            svgAsset,
+            width: MediaQuery.of(context).size.width * 0.2,
+            height: MediaQuery.of(context).size.height * 0.2,
+            fit: BoxFit.contain,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpiritsWithBorder(BuildContext context, int index) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    final svgAsset = Provider.of<ThemeProvider>(context, listen: false).isDarkMode
+        ? 'lib/images/wine_dark.svg'
+        : 'lib/images/wine.svg';
+    final borderColor = theme.slotColors[index % theme.slotColors.length];
+
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.15,  // Zurück zur vorherigen Höhe
+      height: MediaQuery.of(context).size.height * 0.15,
+      clipBehavior: Clip.none,  // Keine Begrenzung auf Container-Ränder
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SvgPicture.asset(
+            svgAsset,
+            width: MediaQuery.of(context).size.width * 0.1,
+            height: MediaQuery.of(context).size.height * 0.1,
+            colorFilter: ColorFilter.mode(borderColor, BlendMode.srcATop),
+            fit: BoxFit.contain,
+          ),
+          SvgPicture.asset(
+            svgAsset,
+            width: MediaQuery.of(context).size.width * 0.2,
+            height: MediaQuery.of(context).size.height * 0.2,
+            fit: BoxFit.contain,
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildSlotText(int index) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          slots.length > index && slots[index]["name"] != null ? slots[index]["name"] : "Empty",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: theme.tertiaryColor),
+        ),
+        Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: theme.slotColors[index % theme.slotColors.length],
+          ),
+        ),
+      ],
     );
   }
 }
