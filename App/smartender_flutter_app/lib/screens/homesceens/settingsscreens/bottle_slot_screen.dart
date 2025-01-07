@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/services/slot_service.dart';
 import 'package:smartender_flutter_app/components/select_ingredient_popup.dart';
-
 import '../../../provider/theme_provider.dart';
 
 class BottleSlotsScreen extends StatefulWidget {
@@ -81,24 +80,28 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
         ),
       ),
-      body: Padding(
+
+      // SINGLECHILDSCROLLVIEW um Overflow zu verhindern
+      body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20,),
+            const SizedBox(height: 20),
+
+            // 1. Row (Spirits oben)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(
                 5,
                     (index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),  // Abstand rechts und links
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: _buildSpiritsWithBorder(context, index),
                 ),
               ),
             ),
 
-            // 6 SVGs mit Umrandung in einer Reihe
+            // 2. Row (Mixers unten)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(
@@ -106,9 +109,9 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
                     (index) => _buildBottleWithBorder(context, index),
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
 
-            // Labels für die Kategorien
+            // Labels
             Row(
               children: [
                 Expanded(
@@ -131,57 +134,59 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
             ),
             const SizedBox(height: 10),
 
-            // Slot-Buttons
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: List.generate(
-                        5,
-                            (index) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: ElevatedButton(
-                            onPressed: () => _changeSlotPopup(index),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.primaryColor,
-                              side: BorderSide(color: theme.tertiaryColor),
-                              minimumSize: const Size(double.infinity, 60),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: defaultBorderRadius,
-                              ),
+            // Anstatt Expanded -> direkt Row mit flexible Columns
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Erstes Column für 5 Slots (Spirits)
+                Expanded(
+                  child: Column(
+                    children: List.generate(
+                      5,
+                          (index) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ElevatedButton(
+                          onPressed: () => _changeSlotPopup(index),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.primaryColor,
+                            side: BorderSide(color: theme.tertiaryColor),
+                            minimumSize: const Size(double.infinity, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: defaultBorderRadius,
                             ),
-                            child: _buildSlotText(index),
                           ),
+                          child: _buildSlotText(index),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      children: List.generate(
-                        6,
-                            (index) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: ElevatedButton(
-                            onPressed: () => _changeSlotPopup(index + 5),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.primaryColor,
-                              side: BorderSide(color: theme.tertiaryColor),
-                              minimumSize: const Size(double.infinity, 60),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: defaultBorderRadius,
-                              ),
+                ),
+                const SizedBox(width: 16),
+
+                // Zweites Column für 6 Slots (Mixers)
+                Expanded(
+                  child: Column(
+                    children: List.generate(
+                      6,
+                          (index) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ElevatedButton(
+                          onPressed: () => _changeSlotPopup(index + 5),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.primaryColor,
+                            side: BorderSide(color: theme.tertiaryColor),
+                            minimumSize: const Size(double.infinity, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: defaultBorderRadius,
                             ),
-                            child: _buildSlotText(index + 5),
                           ),
+                          child: _buildSlotText(index + 5),
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
@@ -197,9 +202,9 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
     final borderColor = theme.slotColors[5 + index % theme.slotColors.length];
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.15,  // Zurück zur vorherigen Höhe
+      width: MediaQuery.of(context).size.width * 0.15,
       height: MediaQuery.of(context).size.height * 0.15,
-      clipBehavior: Clip.none,  // Keine Begrenzung auf Container-Ränder
+      clipBehavior: Clip.none,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -229,9 +234,9 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
     final borderColor = theme.slotColors[index % theme.slotColors.length];
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.15,  // Zurück zur vorherigen Höhe
+      width: MediaQuery.of(context).size.width * 0.15,
       height: MediaQuery.of(context).size.height * 0.12,
-      clipBehavior: Clip.none,  // Keine Begrenzung auf Container-Ränder
+      clipBehavior: Clip.none,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -252,7 +257,6 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
       ),
     );
   }
-
 
   Widget _buildSlotText(int index) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
