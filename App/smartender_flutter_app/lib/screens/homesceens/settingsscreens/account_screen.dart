@@ -61,19 +61,34 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> _showDiscardChangesDialog() async {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     final result = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Discard changes?"),
-        content: const Text("You have unsaved changes. Are you sure you want to go back without saving?"),
+        backgroundColor: theme.backgroundColor,  // Hintergrundfarbe
+        title: Text(
+          "Discard changes?",
+          style: TextStyle(color: theme.tertiaryColor),  // Schriftfarbe für den Titel
+        ),
+        content: Text(
+          "You have unsaved changes. Are you sure you want to go back without saving?",
+          style: TextStyle(color: theme.tertiaryColor),  // Schriftfarbe für den Inhalt
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text("No"),
+            child: Text(
+              "No",
+              style: TextStyle(color: theme.tertiaryColor),  // Schriftfarbe für "No"
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text("Yes"),
+            child: Text(
+              "Yes",
+              style: TextStyle(color: theme.falseColor),  // "Yes" in einer auffälligen Farbe
+            ),
           ),
         ],
       ),
@@ -82,6 +97,7 @@ class _AccountScreenState extends State<AccountScreen> {
       Navigator.of(context).pop();
     }
   }
+
 
   Future<bool> _onWillPop() async {
     if (hasUnsavedChanges) {

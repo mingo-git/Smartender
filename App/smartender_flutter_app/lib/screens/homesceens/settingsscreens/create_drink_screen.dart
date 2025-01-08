@@ -248,26 +248,40 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   Future<bool> _confirmDiscardChanges() async {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     return await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Discard Changes?"),
-        content: const Text(
-            "You have unsaved changes. Do you really want to discard them?"),
+        backgroundColor: theme.backgroundColor,  // Hintergrundfarbe
+        title: Text(
+          "Discard Changes?",
+          style: TextStyle(color: theme.tertiaryColor),  // Schriftfarbe für den Titel
+        ),
+        content: Text(
+          "You have unsaved changes. Do you really want to discard them?",
+          style: TextStyle(color: theme.tertiaryColor),  // Schriftfarbe für den Inhalt
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text("Cancel"),
+            child: Text(
+              "Cancel",
+              style: TextStyle(color: theme.tertiaryColor),  // Schriftfarbe für "Cancel"
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text("Discard"),
+            child: Text(
+              "Discard",
+              style: TextStyle(color: theme.falseColor),  // "Discard" in Warnfarbe
+            ),
           ),
         ],
       ),
-    ) ??
-        false;
+    ) ?? false;
   }
+
 
   double _calculateFilledAmount() {
     return ingredients.fold<double>(
@@ -279,11 +293,17 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
 
   /// Öffnet das Bildauswahl-Popup
   void _openImageSelectionPopup() {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Select Cocktail Image"),
+          backgroundColor: theme.backgroundColor,  // Hintergrundfarbe
+          title: Text(
+            "Select Cocktail Image",
+            style: TextStyle(color: theme.tertiaryColor),  // Schriftfarbe für den Titel
+          ),
           content: Container(
             width: double.maxFinite,
             child: GridView.builder(
@@ -321,13 +341,17 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
+              child: Text(
+                "Cancel",
+                style: TextStyle(color: theme.tertiaryColor),  // Schriftfarbe für "Cancel"
+              ),
             ),
           ],
         );
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

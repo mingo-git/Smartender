@@ -36,14 +36,19 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
   Future<void> _loadRecipes() async {
     final recipeService = Provider.of<RecipeService>(context, listen: false);
     final allData = await recipeService.fetchRecipesFromLocal();
+
+    // Kombiniere available und unavailable
     final available = allData["available"] ?? [];
+    final unavailable = allData["unavailable"] ?? [];
+    final allRecipes = [...available, ...unavailable];  // Zusammenführen
 
     setState(() {
-      _recipes = List<Map<String, dynamic>>.from(available);
+      _recipes = List<Map<String, dynamic>>.from(allRecipes);
       _filteredRecipes = _recipes;
       _isLoading = false;
     });
   }
+
 
   void _filterRecipes() {
     final query = _searchController.text.trim().toLowerCase();
