@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
     final recipeService = RecipeService();
     final drinkService = DrinkService();
     final slotService = SlotService();
-    final orderDrinkService = OrderDrinkService();
+
 
     // Singleton-Instanz von FetchdData
     final fetchdData = FetchdData();
@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SlotService()), // Falls benötigt
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: fetchdData), // FetchdData als Provider hinzufügen
+        Provider(create: (_) => OrderDrinkService()),
       ],
       child: Builder(
         builder: (context) {
@@ -68,7 +69,7 @@ class MyApp extends StatelessWidget {
               primaryColor: themeProvider.currentTheme.primaryColor,
             ),
             routes: {
-              '/home': (context) => HomeScreen(),
+              '/home': (context) => const HomeScreen(),
               '/login': (context) => LoginScreen(),
             },
             initialRoute: isLoggedIn ? '/home' : '/login',

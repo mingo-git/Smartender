@@ -67,9 +67,11 @@ class CustomTheme {
     popupBackgroundColor: Color(0xFF9A2323),
     fadeOutBackground0: Color(0x7B121212),
     fadeOutBackground1: Color(0x2121212),
-    primaryColor: Color(0xff3f3f3f),
+    primaryColor: Color(0xff373737),
+    //primaryColor: Color(0xff3f3f3f),
 /*    secondaryColor: Color(0xFFE30000),*/
-    tertiaryColor: Color(0xffbed8b3),
+    tertiaryColor: Color(0xffc4dfb9),
+    //tertiaryColor: Color(0xffbed8b3),
     primaryFontColor: Colors.white,
     secondaryFontColor: Colors.black,
     trueColor: Colors.green,

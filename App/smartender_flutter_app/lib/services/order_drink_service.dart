@@ -2,11 +2,12 @@
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import '../config/constants.dart';
 import 'auth_service.dart';
 
 class OrderDrinkService {
-  final String _orderDrinkUrl = "/user/hardware/2/order";
+  final String _orderDrinkUrl = "/user/action";
 
   /// Funktion zum Bestellen eines Getränks.
   /// [recipeId] - Die ID des Rezepts, das bestellt werden soll.
@@ -17,7 +18,7 @@ class OrderDrinkService {
     final String? token = await authService.getToken();
 
     if (token == null) {
-      print("No token available. Cannot order drink.");
+      debugPrint("No token available. Cannot order drink.");
       return false;
     }
 
@@ -30,19 +31,48 @@ class OrderDrinkService {
           'x-api-key': apiKey,
           'Authorization': 'Bearer $token',
         },
-        body: json.encode({"recipe_id": recipeId}),
+        body: json.encode({
+          "hardware_id": 2, // Hardware-ID festgelegt
+          "recipe_id": recipeId,
+        }),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Drink order placed successfully for Recipe ID: $recipeId");
+      var statusCode = response.statusCode;
+
+      debugPrint("STATUS CODE: $statusCode");
+
+      if (statusCode == 200 || statusCode == 201) {
+        debugPrint("Drink order placed successfully for Recipe ID: $recipeId");
         return true;
       } else {
-        print("Failed to place drink order: ${response.statusCode}, Response: ${response.body}");
+        // Fehlerbehandlung für verschiedene Statuscodes
+        if (statusCode == 404) {
+          _showErrorMessage("Smartender could not be reached");
+        } else if (statusCode == 400) {
+          _showErrorMessage("Bad request: Missing or incorrect data");
+        } else {
+          _showErrorMessage("Drink order failed");
+        }
+        debugPrint(
+            "Failed to place drink order: $statusCode, Response: ${response.body}");
         return false;
       }
     } catch (e) {
-      print("Error placing drink order: $e");
+      debugPrint("Error placing drink order: $e");
+      _showErrorMessage("An unexpected error occurred");
       return false;
     }
+  }
+
+  /// Zeigt eine Fehlermeldung als Snackbar an.
+  void _showErrorMessage(String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = WidgetsBinding.instance.focusManager.primaryFocus?.context;
+      if (context != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    });
   }
 }
