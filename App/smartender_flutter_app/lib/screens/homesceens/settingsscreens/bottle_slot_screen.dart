@@ -14,6 +14,7 @@ class BottleSlotsScreen extends StatefulWidget {
 }
 
 class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
+  // 11 Slots vorbereiten
   List<Map<String, dynamic>> slots = List.generate(
     11,
         (index) => {"id": null, "name": "Empty"},
@@ -81,114 +82,133 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
         ),
       ),
 
-      // SINGLECHILDSCROLLVIEW um Overflow zu verhindern
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
+      // SafeArea, damit nichts in die Notch oder SystemUI reinragt
+      body: SafeArea(
+        // SingleChildScrollView, um eine Scrollbarkeit zu garantieren
+        child: SingleChildScrollView(
+          // Optional: Scroll-Physik, damit selbst bei wenig Inhalt gescrollt werden kann
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
 
-            // 1. Row (Spirits oben)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(
-                5,
-                    (index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: _buildSpiritsWithBorder(context, index),
-                ),
-              ),
-            ),
-
-            // 2. Row (Mixers unten)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(
-                6,
-                    (index) => _buildBottleWithBorder(context, index),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Labels
-            Row(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "Spirits",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "Mixers",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.tertiaryColor),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-
-            // Anstatt Expanded -> direkt Row mit flexible Columns
-            Row(
+          // ConstrainedBox mit minHeight => Inhalt kann sich ausdehnen
+          child: ConstrainedBox(
+            // Mindestens so hoch wie der Bildschirm
+            constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Erstes Column für 5 Slots (Spirits)
-                Expanded(
-                  child: Column(
-                    children: List.generate(
-                      5,
-                          (index) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ElevatedButton(
-                          onPressed: () => _changeSlotPopup(index),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.primaryColor,
-                            side: BorderSide(color: theme.tertiaryColor),
-                            minimumSize: const Size(double.infinity, 60),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: defaultBorderRadius,
-                            ),
-                          ),
-                          child: _buildSlotText(index),
-                        ),
-                      ),
+                const SizedBox(height: 20),
+
+                // 1. Row (Spirits oben)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                    5,
+                        (index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: _buildSpiritsWithBorder(context, index),
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
 
-                // Zweites Column für 6 Slots (Mixers)
-                Expanded(
-                  child: Column(
-                    children: List.generate(
-                      6,
-                          (index) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ElevatedButton(
-                          onPressed: () => _changeSlotPopup(index + 5),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.primaryColor,
-                            side: BorderSide(color: theme.tertiaryColor),
-                            minimumSize: const Size(double.infinity, 60),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: defaultBorderRadius,
-                            ),
+                // 2. Row (Mixers unten)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                    6,
+                        (index) => _buildBottleWithBorder(context, index),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Labels
+                Row(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "Spirits",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: theme.tertiaryColor,
                           ),
-                          child: _buildSlotText(index + 5),
                         ),
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "Mixers",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: theme.tertiaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                // Zwei Expanded-Columns (Spirits / Mixers)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Erstes Column (5 Slots)
+                    Expanded(
+                      child: Column(
+                        children: List.generate(
+                          5,
+                              (index) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ElevatedButton(
+                              onPressed: () => _changeSlotPopup(index),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.primaryColor,
+                                side: BorderSide(color: theme.tertiaryColor),
+                                minimumSize: const Size(double.infinity, 60),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: defaultBorderRadius,
+                                ),
+                              ),
+                              child: _buildSlotText(index),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+
+                    // Zweites Column (6 Slots)
+                    Expanded(
+                      child: Column(
+                        children: List.generate(
+                          6,
+                              (index) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ElevatedButton(
+                              onPressed: () => _changeSlotPopup(index + 5),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.primaryColor,
+                                side: BorderSide(color: theme.tertiaryColor),
+                                minimumSize: const Size(double.infinity, 60),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: defaultBorderRadius,
+                                ),
+                              ),
+                              child: _buildSlotText(index + 5),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -260,13 +280,20 @@ class _BottleSlotsScreenState extends State<BottleSlotsScreen> {
 
   Widget _buildSlotText(int index) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    final slotName = (slots.length > index && slots[index]["name"] != null)
+        ? slots[index]["name"]
+        : "Empty";
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          slots.length > index && slots[index]["name"] != null ? slots[index]["name"] : "Empty",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: theme.tertiaryColor),
+          slotName,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: theme.tertiaryColor,
+          ),
         ),
         Container(
           width: 16,

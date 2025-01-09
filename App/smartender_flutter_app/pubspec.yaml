@@ -50,7 +50,6 @@ flutter:
     - .env
     - lib/images/
     - lib/images/cocktails/
-    - lib/images/themes/
 
 
 

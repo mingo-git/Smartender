@@ -113,9 +113,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
               padding: const EdgeInsets.all(16.0),
               childAspectRatio: 0.7,
               children: [
-                _buildThemeTile("Light", "lib/images/themes/screen.png", theme,
+                _buildThemeTile("Light", "lib/images/screen.png", theme,
                     CustomTheme.lightTheme),
-                _buildThemeTile("Dark", "lib/images/themes/screen.png", theme,
+                _buildThemeTile("Dark", "lib/images/screen_dark.png", theme,
                     CustomTheme.darkTheme),
 /*                _buildThemeTile("Sommer", "lib/images/themes/screen.png", theme,
                     CustomTheme.lightTheme),
