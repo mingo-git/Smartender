@@ -52,4 +52,8 @@ class FetchdData extends ChangeNotifier {
     }
     notifyListeners(); // Optional: Benachrichtige Listener über Aktualisierungen
   }
+
+  Future<void> fetchAllNow() async {
+    await _fetchAllServices();
+  }
 }

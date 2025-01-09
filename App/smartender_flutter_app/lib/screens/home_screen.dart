@@ -34,13 +34,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // DrinkService wird hinzugefügt und regelmäßiges Fetch gestartet
-    final drinkService = Provider.of<DrinkService>(context, listen: false);
-    final slotService = Provider.of<SlotService>(context, listen: false);
-    _fetchDataService.addService(drinkService);
-    _fetchDataService.addService(slotService);
+    // Die globale FetchdData-Instanz aus dem Provider holen
+    final fetchData = Provider.of<FetchdData>(context, listen: false);
 
-    _fetchDataService.startPolling(interval: const Duration(seconds: 10));
+    // Beim Start der App: Direkt einmal Daten vom Backend laden
+    fetchData.fetchAllNow();
   }
 
   @override
@@ -57,10 +55,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
-  void navigateBottomBar(int index) {
+  Future<void> navigateBottomBar(int index) async {
     setState(() {
       _selectedIndex = index;
     });
+
+    final fetchData = Provider.of<FetchdData>(context, listen: false);
+    await fetchData.fetchAllNow();
   }
 
   @override
