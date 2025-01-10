@@ -6,7 +6,7 @@ DIR_PIN = 16    # GPIO 27 (Pin 36)
 PULL_PIN = 12   # GPIO 12 (PWM0 on Pin 32)
 
 # Stepper motor settings
-STEP_DELAY = 0.0001  # Delay between steps in seconds (adjust for speed)
+STEP_DELAY = 0.000001 # Delay between steps in seconds (adjust for speed)
 DIRECTION = 1       # 1 for clockwise, 0 for counter-clockwise
 
 # GPIO Setup
@@ -35,14 +35,14 @@ if __name__ == "__main__":
         # Example: Move motor 200 steps clockwise
         print("Moving motor clockwise...")
         set_direction(DIRECTION)  # Clockwise
-        step_motor(1000)
+        step_motor(20000)
 
         time.sleep(1)
 
         # Example: Move motor 200 steps counter-clockwise
         print("Moving motor counter-clockwise...")
         set_direction(1 - DIRECTION)  # Counter-clockwise
-        step_motor(1000)
+        step_motor(20000)
 
     except KeyboardInterrupt:
         print("\nOperation cancelled by user.")

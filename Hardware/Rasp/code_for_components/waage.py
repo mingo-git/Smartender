@@ -42,7 +42,7 @@ try:
     # Initialisieren und tarieren
     hx.reset()
     print("Bitte kalibrieren... Stelle die Waage auf 0.")
-    time.sleep(2)
+    time.sleep(0.5)
     tare_value = read_weight()
     print(f"Tara-Wert gesetzt: {tare_value}")
 
@@ -62,12 +62,13 @@ try:
             logging.info(f"{smoothed_weight:.2f}")
 
             # Beispiel: System stoppen bei mehr als 400 g
-            if smoothed_weight > 400:
+            if smoothed_weight > 1000:
                 print("System wird gestoppt: Gewicht über 400 g!")
                 logging.info("System gestoppt: Gewicht über 400 g!")
+                clean_and_exit()
                 break
 
-        time.sleep(1)
+        time.sleep(0.25)
 
 except KeyboardInterrupt:
     clean_and_exit()
