@@ -26,12 +26,20 @@ iot_project/
 
 ## TODOs
 
-- [ ] main.py
-- [ ] mapping of the response
+- [ ] main.py anlegen und füllen
+- [ ] Websocket Klasse implementieren
+- [ ] MotorController Klasse anlegen
+- [ ] PumpController Klasse anlegen
+- [ ] PositionHandler Klasse anlegen
+- [ ] WeightSensor Klasse anlegen
+- [ ] LEDController Klasse anlegen
+- [ ] CommandMapper Klasse anlegen
+- [ ] ErrorHandler Klasse anlegen
+- [ ] Logger Klasse anlegen
 
 ## Pins
 
-|        |               |                  |        |               |                         |
+| PINS   | INFO          | USAGE            | PINS   |INFO           | USAGE                   |
 | ------ | ------------- | ---------------- | ------ | ------------- | ----------------------- |
 | Pin 1  | 3.3 V         |                  | Pin 2  | 5 V           |                         |
 | Pin 3  | GPIO 2        |                  | Pin 3  | 5 V           |                         |
@@ -49,7 +57,7 @@ iot_project/
 | Pin 27 | GPIO 0        | Pump 1           | Pin 28 | GPIO 1        | Linear Actuator IN4     |
 | Pin 29 | GPIO 5        | Pump 2           | Pin 30 | Ground        |                         |
 | Pin 31 | GPIO 6        | Pump 3           | Pin 32 | GPIO 12 (PWM) | Stepper DA              |
-| Pin 33 | GPIO 13 [PWM] | Pump 4           | Pin 34 | Ground        | Ground Stepper          |
-| Pin 35 | GPIO 19 [PWM] | Pump 5           | Pin 36 | GPIO 16       | Stepper Dir             |
+| Pin 33 | GPIO 13 (PWM) | Pump 4           | Pin 34 | Ground        | Ground Stepper          |
+| Pin 35 | GPIO 19 (PWM) | Pump 5           | Pin 36 | GPIO 16       | Stepper Dir             |
 | Pin 37 | GPIO 26       | Pump 6           | Pin 38 | GPIO 20       | Scale DT                |
 | Pin 39 | Ground        |                  | Pin 40 | GPIO 21       | Scale SCK               |
