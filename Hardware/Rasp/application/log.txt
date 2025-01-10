@@ -1,8 +1,40 @@
-| 2025-01-10 14:54:41 | INFO     | Main            | Die Anwendung wurde gestartet
-| 2025-01-10 14:54:41 | ERROR    | Database        | Ein Fehler ist aufgetreten
-| 2025-01-10 14:54:41 | DEBUG    | ModuleA         | Debugging des Moduls
-| 2025-01-10 14:54:41 | ALERT    | SystemMonitor   | Kritischer Zustand erkannt
-| 2025-01-10 14:54:47 | INFO     | Main            | Die Anwendung wurde gestartet
-| 2025-01-10 14:54:47 | ERROR    | Database        | Ein Fehler ist aufgetreten
-| 2025-01-10 14:54:47 | DEBUG    | ModuleA         | Debugging des Moduls
-| 2025-01-10 14:54:47 | ALERT    | SystemMonitor   | Kritischer Zustand erkannt
+| 2025-01-10 16:12:47 | INFO     | Main                 | Die Anwendung wurde gestartet
+| 2025-01-10 16:12:47 | INFO     | WebSocketHandler     | Starte WebSocket-Verbindung
+| 2025-01-10 16:12:48 | INFO     | Socket               | Connected to WebSocket server
+| 2025-01-10 16:13:08 | INFO     | Socket               | Received: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-10 16:27:46 | INFO     | Main                 | Die Anwendung wurde gestartet
+| 2025-01-10 16:27:46 | INFO     | WebSocketHandler     | Starte WebSocket-Verbindung
+| 2025-01-10 16:27:48 | INFO     | Socket               | Connected to WebSocket server
+| 2025-01-10 16:27:53 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-10 16:27:53 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-10 16:27:53 | DEBUG    | CommandMapper        | Ingredient: ingredient_1, Quantity: 60 ml, Slot: 1
+| 2025-01-10 16:27:53 | DEBUG    | CommandMapper        | Ingredient: ingredient_2, Quantity: 30 ml, Slot: 3
+| 2025-01-10 16:27:53 | INFO     | WebSocketHandler     | Commands mapped successfully
+| 2025-01-10 16:46:11 | INFO     | Main                 | Application started
+| 2025-01-10 16:46:12 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-10 16:46:25 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-10 16:46:25 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-10 16:46:25 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-10 16:46:25 | DEBUG    | CommandMapper        | Ingredient: ingredient_1, Quantity: 60 ml, Slot: 1
+| 2025-01-10 16:46:25 | DEBUG    | CommandMapper        | Ingredient: ingredient_2, Quantity: 30 ml, Slot: 3
+| 2025-01-10 16:46:25 | INFO     | Main                 | Commands processed: {'ingredient_1': {'quantity_ml': 60, 'slot_number': 1}, 'ingredient_2': {'quantity_ml': 30, 'slot_number': 3}}
+| 2025-01-10 16:47:55 | INFO     | Main                 | Application is shutting down
+| 2025-01-10 16:47:55 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-10 16:54:35 | INFO     | Main                 | Application started
+| 2025-01-10 16:54:35 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-10 16:55:23 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-10 16:55:23 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-10 16:55:23 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-10 16:55:23 | DEBUG    | CommandMapper        | Ingredient: ingredient_1, Quantity: 60 ml, Slot: 1
+| 2025-01-10 16:55:23 | DEBUG    | CommandMapper        | Ingredient: ingredient_2, Quantity: 30 ml, Slot: 3
+| 2025-01-10 16:55:23 | INFO     | Main                 | Commands processed: {'ingredient_1': {'quantity_ml': 60, 'slot_number': 1}, 'ingredient_2': {'quantity_ml': 30, 'slot_number': 3}}
+| 2025-01-10 16:59:22 | INFO     | Main                 | Application started
+| 2025-01-10 16:59:23 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-10 16:59:30 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-10 16:59:30 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-10 16:59:30 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-10 16:59:30 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=1)
+| 2025-01-10 16:59:30 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=3)
+| 2025-01-10 16:59:30 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=60, slot_number=1), Ingredient(quantity_ml=30, slot_number=3)]
+| 2025-01-10 17:23:54 | ERROR    | WebSocketHandler     | WebSocket error: Connection to remote host was lost.
+| 2025-01-10 17:23:55 | INFO     | WebSocketHandler     | Connection closed: None None

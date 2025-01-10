@@ -66,7 +66,7 @@ class Logger:
         # Log-Formatierung mit fester Spaltenbreite
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_entry = (
-            f"| {timestamp:<19} | {level:<8} | {context:<15} | {message}\n"
+            f"| {timestamp:<19} | {level:<8} | {context:<20} | {message}\n"
         )
 
         # Ausgabe in die Konsole
