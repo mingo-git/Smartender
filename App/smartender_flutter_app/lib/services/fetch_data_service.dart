@@ -42,7 +42,11 @@ class FetchdData extends ChangeNotifier {
 
   /// Hole die Daten von allen registrierten Services
   Future<void> _fetchAllServices() async {
-    for (var service in _services) {
+    // Wir erstellen eine Kopie der Liste, um ConcurrentModification zu vermeiden,
+    // falls ein Service während des fetch-Aufrufs entfernt oder hinzugefügt wird.
+    final servicesCopy = List<FetchableService>.from(_services);
+
+    for (var service in servicesCopy) {
       try {
         await service.fetchAndSaveData();
         print("Daten von ${service.runtimeType} aktualisiert.");
@@ -50,9 +54,11 @@ class FetchdData extends ChangeNotifier {
         print("Fehler beim Abrufen der Daten für ${service.runtimeType}: $e");
       }
     }
+
     notifyListeners(); // Optional: Benachrichtige Listener über Aktualisierungen
   }
 
+  /// Manuelles Abrufen aller Services (sofort)
   Future<void> fetchAllNow() async {
     await _fetchAllServices();
   }

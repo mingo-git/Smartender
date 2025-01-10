@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/drink_tile.dart';
-import '../../components/device_dropdown.dart';
-import '../../components/my_button.dart';
-import '../../components/show_drink_popup.dart'; // Import der ausgelagerten Popup-Funktion
+// import '../../components/device_dropdown.dart';  // Falls du das Dropdown wieder nutzen willst
+// import '../../components/my_button.dart';
+import '../../components/show_drink_popup.dart';
 import '../../config/constants.dart';
 import '../../provider/theme_provider.dart';
 import '../../services/recipe_service.dart';
@@ -24,6 +24,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   List<Map<String, dynamic>> drinks = [];
   List<Map<String, dynamic>> filteredDrinks = [];
 
+  // Wenn du das Dropdown wieder nutzen willst, kannst du diese Liste wiederverwenden
   final List<Map<String, dynamic>> devices = [
     {"name": "Exampledevice", "status": "active"},
     {"name": "Exampledevice1", "status": "inactive"},
@@ -36,17 +37,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     loadFavorites();
   }
 
+  /// Lädt nur die favorisierten Rezepte und bereitet sie für die UI auf
   Future<void> loadFavorites() async {
     final recipeService = Provider.of<RecipeService>(context, listen: false);
     final recipesData = await recipeService.fetchRecipesFromLocal();
 
     final available = recipesData["available"] ?? [];
     final unavailable = recipesData["unavailable"] ?? [];
-
-    // Kombiniere beide Listen
     final allRecipes = [...available, ...unavailable];
 
-    // Nur Favoriten filtern
+    // Nur Favoriten extrahieren
     final favoriteRecipes = allRecipes.where((recipe) => recipe["is_favorite"] == true).toList();
     print("[DEBUG] Number of favorite recipes: ${favoriteRecipes.length}");
 
@@ -56,7 +56,30 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       final pictureId = recipe["picture_id"];
       final isFavorite = recipe["is_favorite"] ?? false;
 
-      // Bild-Pfad bestimmen
+      // 1) Zutaten aus "ingredients" (wie in SearchdrinksScreen)
+      final List<dynamic> recipeIngredients =
+      (recipe["ingredients"] as List<dynamic>? ?? []);
+      // Für das Popup
+      final ingredientList = recipeIngredients.map<Map<String, dynamic>>((ing) {
+        return {
+          "name": ing["name"] ?? "Unknown",
+          "missing": ing["missing"] ?? false,
+        };
+      }).toList();
+
+      // 2) Alkohol-Check (via "ingredientsResponse" falls vorhanden)
+      bool isAlcoholic = false;
+      final List<dynamic> ingredientsResponse =
+          recipe["ingredientsResponse"] as List<dynamic>? ?? [];
+      for (var ingResp in ingredientsResponse) {
+        final ingDrink = ingResp["drink"];
+        if (ingDrink != null && ingDrink["is_alcoholic"] == true) {
+          isAlcoholic = true;
+          break;
+        }
+      }
+
+      // 3) Bild-Pfad bestimmen
       String imagePath;
       if (pictureId != null && pictureId is int) {
         if (pictureId >= 1 && pictureId <= 30) {
@@ -68,36 +91,22 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         imagePath = "lib/images/cocktails/cocktail_unavailable.png";
       }
 
-      // WICHTIG: Hier greifen wir auf recipe["ingredients"] zu
-      // (nicht auf "ingredientsResponse")
-      final List<dynamic> recipeIngredients = recipe["ingredients"] ?? [];
-
-      // Prüfen, ob irgendeine Zutat fehlt
-      final bool anyMissing = recipeIngredients.any(
-            (ing) => ing["missing"] == true,
-      );
-
-      // Serverseitig "available" => in der "available"-Liste?
+      // 4) Verfügbarkeit ermitteln
+      // a) Serverseitig "available" = in der "available" Liste
       final bool isActuallyAvailableOnServer = available.contains(recipe);
-      // Kombiniere beides: Nur "isAvailable", wenn serverseitig verfügbar UND nichts fehlt
+      // b) Prüfen, ob eine fehlende Zutat dabei ist
+      final bool anyMissing = recipeIngredients.any((ing) => ing["missing"] == true);
+      // => isAvailable nur, wenn serverseitig verfügbar UND nichts fehlt
       final bool isAvailable = isActuallyAvailableOnServer && !anyMissing;
-
-      // Liste für das Popup bauen:
-      final List<Map<String, dynamic>> ingredientList = recipeIngredients.map<Map<String, dynamic>>((ing) {
-        return {
-          "name": ing["name"] ?? "Unknown",
-          "missing": ing["missing"] ?? false,
-          "quantity_ml": ing["quantity_ml"] ?? 0,
-        };
-      }).toList();
 
       return {
         "recipe_id": recipeId,
-        "name": recipeName,
+        "recipe_name": recipeName,
         "image": imagePath,
         "ingredients": ingredientList,
         "is_favorite": isFavorite,
-        "isAvailable": isAvailable, // Ausgrauen in der GridView
+        "isAvailable": isAvailable,
+        "isAlcoholic": isAlcoholic,
       };
     }).toList();
 
@@ -107,13 +116,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     });
   }
 
-
-  /// Filtert die Drinks basierend auf der Suchanfrage
+  /// Filtert die Drinks nach Suchbegriff
   void filterDrinks(String query) {
     setState(() {
+      final lowerCaseQuery = query.toLowerCase();
       filteredDrinks = drinks.where((drink) {
-        final name = (drink["name"] as String).toLowerCase();
-        return name.contains(query.toLowerCase());
+        final name = (drink["recipe_name"] ?? "").toLowerCase();
+        return name.contains(lowerCaseQuery);
       }).toList();
     });
   }
@@ -127,6 +136,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Stack(
           children: [
+            // Grid mit den Favoriten
             Positioned.fill(
               child: Padding(
                 padding: const EdgeInsets.only(top: 140.0, left: 10, right: 10),
@@ -142,12 +152,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   itemBuilder: (context, index) {
                     final drink = filteredDrinks[index];
                     final isAvailable = drink["isAvailable"] == true;
+
                     return Opacity(
                       opacity: isAvailable ? 1.0 : 0.5,
                       child: DrinkTile(
-                        name: drink["name"],
-                        imagePath: drink["image"],
+                        name: drink["recipe_name"] ?? "Unnamed",
+                        imagePath: drink["image"] ?? "lib/images/cocktails/cocktail_unavailable.png",
+                        isAlcoholic: drink["isAlcoholic"] == true,
                         onTap: () async {
+                          // Wenn das Popup schließt und sich was geändert hat:
                           bool changed = await showDrinkPopup(context, drink);
                           if (changed) {
                             await loadFavorites();
@@ -159,6 +172,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ),
               ),
             ),
+
+            // Hintergrund-Verlauf oben
             Positioned(
               top: 0,
               left: 0,
@@ -182,6 +197,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ),
               ),
             ),
+
+            // Suchfeld & Titel
             Positioned(
               top: 0,
               left: 0,
@@ -196,13 +213,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           child: Text(
                             "Smartender",
                             style: TextStyle(
-                              fontSize: 30,             // Schriftgröße
-                              fontWeight: FontWeight.bold,  // Fettdruck
-                              color: theme.tertiaryColor,    // Farbe aus dem aktuellen Theme
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: theme.tertiaryColor,
                             ),
                           ),
                         ),
-/*                        Expanded(
+                        // Falls du dein DeviceDropdown wieder nutzen willst, entkommentieren
+                        /*
+                        Expanded(
                           child: DeviceDropdown(
                             devices: devices,
                             selectedDevice: selectedDevice,
@@ -214,7 +233,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               }
                             },
                           ),
-                        ),*/
+                        ),
+                        */
                       ],
                     ),
                     const SizedBox(height: 13),

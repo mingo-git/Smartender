@@ -3,9 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/drink_tile.dart';
-import '../../components/device_dropdown.dart';
-import '../../components/my_button.dart';
-import '../../components/show_drink_popup.dart'; // Import der neuen Datei
+import '../../components/show_drink_popup.dart';
 import '../../config/constants.dart';
 import '../../provider/theme_provider.dart';
 import '../../services/recipe_service.dart';
@@ -18,17 +16,10 @@ class SearchdrinksScreen extends StatefulWidget {
 }
 
 class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
-  String selectedDevice = "Exampledevice";
   TextEditingController searchController = TextEditingController();
 
   List<Map<String, dynamic>> drinks = [];
   List<Map<String, dynamic>> filteredDrinks = [];
-
-  final List<Map<String, dynamic>> devices = [
-    {"name": "Exampledevice", "status": "active"},
-    {"name": "Exampledevice1", "status": "inactive"},
-    {"name": "Add new Device", "status": "new"}
-  ];
 
   @override
   void initState() {
@@ -36,26 +27,45 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     loadRecipes();
   }
 
+  /// Lädt alle Rezepte (available + unavailable) und packt sie in [drinks].
   Future<void> loadRecipes() async {
     final recipeService = Provider.of<RecipeService>(context, listen: false);
     final recipesData = await recipeService.fetchRecipesFromLocal();
 
     final available = recipesData["available"] ?? [];
     final unavailable = recipesData["unavailable"] ?? [];
-    // Kombiniere beide Listen, damit wir alle Rezepte haben
     final allRecipes = [...available, ...unavailable];
 
-    // Wir bauen aus jedem "recipe" eine Map für unser UI
+    // Wir mappen jedes Rezept auf eine Map, die wir für die UI verwenden
     final newDrinks = allRecipes.map<Map<String, dynamic>>((recipe) {
       final recipeId = recipe["recipe_id"] ?? -1;
       final recipeName = recipe["recipe_name"] ?? "Unnamed";
 
-      // In recipe_service.dart wird bereits "ingredients" erzeugt,
-      // welches 'missing' korrekt enthält:
+      // 1) Ingredients (so wie in deinem ursprünglichen Code)
       final List<dynamic> recipeIngredients =
       (recipe["ingredients"] as List<dynamic>? ?? []);
 
-      // Bild-Auswahl
+      // Baue eine "ingredients"-Liste für das Popup
+      final ingredientList = recipeIngredients.map<Map<String, dynamic>>((ing) {
+        return {
+          "name": ing["name"] ?? "Unknown",
+          "missing": ing["missing"] ?? false,
+        };
+      }).toList();
+
+      // 2) Alkohol-Check (z. B. via ingredientsResponse, falls vorhanden)
+      bool isAlcoholic = false;
+      final List<dynamic> ingredientsResponse =
+          recipe["ingredientsResponse"] as List<dynamic>? ?? [];
+      for (var ingResp in ingredientsResponse) {
+        final ingDrink = ingResp["drink"];
+        if (ingDrink != null && ingDrink["is_alcoholic"] == true) {
+          isAlcoholic = true;
+          break;
+        }
+      }
+
+      // 3) Bild-Auswahl
       final pictureId = recipe["picture_id"];
       String imagePath;
       if (pictureId != null && pictureId is int) {
@@ -70,28 +80,18 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
         imagePath = "lib/images/cocktails/cocktail_unavailable.png";
       }
 
-      // Wichtig: Nutze direkt recipe['ingredients'] statt 'ingredientsResponse'
-      final ingredientList = recipeIngredients.map<Map<String, dynamic>>((ing) {
-        return {
-          "name": ing["name"] ?? "Unknown",
-          // Hier übernehmen wir den bereits in recipe_service.dart gesetzten missing-Wert
-          "missing": ing["missing"] ?? false,
-          // Optional kannst du auch die Menge übernehmen
-          "quantity_ml": ing["quantity_ml"] ?? 0,
-        };
-      }).toList();
-
+      // 4) Favorit, Verfügbarkeit
       final isFavorite = recipe["is_favorite"] ?? false;
-      // "isAvailable" definieren wir so, dass es true ist, wenn das Rezept in der available-Liste steht
       final isAvailable = available.contains(recipe);
 
       return {
         "recipe_id": recipeId,
-        "name": recipeName,
+        "recipe_name": recipeName,  // => Für DrinkTile-Name
         "image": imagePath,
-        "ingredients": ingredientList,
+        "ingredients": ingredientList, // => Für das Popup
         "is_favorite": isFavorite,
-        "isAvailable": isAvailable
+        "isAvailable": isAvailable,
+        "isAlcoholic": isAlcoholic,
       };
     }).toList();
 
@@ -101,11 +101,13 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
     });
   }
 
+  /// Filtert die Drinks nach dem 'recipe_name'.
   void filterDrinks(String query) {
     setState(() {
+      final lowerCaseQuery = query.toLowerCase();
       filteredDrinks = drinks.where((drink) {
-        final name = (drink["name"] as String).toLowerCase();
-        return name.contains(query.toLowerCase());
+        final name = (drink["recipe_name"] ?? "").toLowerCase();
+        return name.contains(lowerCaseQuery);
       }).toList();
     });
   }
@@ -136,12 +138,12 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                     final isAvailable = drink["isAvailable"] == true;
 
                     return Opacity(
-                      opacity: isAvailable ? 1.0 : 0.5, // leicht ausgegraut, wenn nicht verfügbar
+                      opacity: isAvailable ? 1.0 : 0.5,
                       child: DrinkTile(
-                        name: drink["name"],
-                        imagePath: drink["image"],
+                        name: drink["recipe_name"] ?? "Unnamed",
+                        imagePath: drink["image"] ?? "lib/images/cocktails/cocktail_unavailable.png",
+                        isAlcoholic: drink["isAlcoholic"] == true,
                         onTap: () async {
-                          // Hier übergeben wir 'drink' direkt an showDrinkPopup
                           bool changed = await showDrinkPopup(context, drink);
                           if (changed) {
                             await loadRecipes();
@@ -153,6 +155,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                 ),
               ),
             ),
+            // Hintergrund-Verlauf oben
             Positioned(
               top: 0,
               left: 0,
@@ -176,6 +179,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                 ),
               ),
             ),
+            // Suchfeld
             Positioned(
               top: 0,
               left: 0,
@@ -190,28 +194,14 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
                           child: Text(
                             "Smartender",
                             style: TextStyle(
-                              fontSize: 30,             // Schriftgröße
-                              fontWeight: FontWeight.bold,  // Fettdruck
-                              color: theme.tertiaryColor,    // Farbe aus dem aktuellen Theme
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: theme.tertiaryColor,
                             ),
                           ),
                         ),
-/*                        Expanded(
-                          child: DeviceDropdown(
-                            devices: devices,
-                            selectedDevice: selectedDevice,
-                            onChanged: (String? newValue) {
-                              if (newValue != null) {
-                                setState(() {
-                                  selectedDevice = newValue;
-                                });
-                              }
-                            },
-                          ),
-                        ),*/
                       ],
                     ),
-
                     const SizedBox(height: 13),
                     TextField(
                       controller: searchController,

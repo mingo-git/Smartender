@@ -8,14 +8,14 @@ import '../provider/theme_provider.dart';
 class DrinkTile extends StatelessWidget {
   final String name;
   final String imagePath;
+  final bool isAlcoholic;
   final VoidCallback? onTap;
-
-
 
   const DrinkTile({
     Key? key,
     required this.name,
     required this.imagePath,
+    required this.isAlcoholic,
     this.onTap,
   }) : super(key: key);
 
@@ -37,37 +37,51 @@ class DrinkTile extends StatelessWidget {
           ),
           side: BorderSide(color: theme.tertiaryColor),
         ),
-        child: Stack(
+        child: Column(
           children: [
-            // Haupt-Column mit Bild und Name
-            Column(
-              children: [
-                const SizedBox(height: 30),
-                Expanded(
-                  flex: 6,
-                  child: Center(
+            const SizedBox(height: 30),
+            // (1) Bildbereich + Icon in einem Stack
+            Expanded(
+              flex: 6,
+              child: Stack(
+                clipBehavior: Clip.none, // Wichtig: Kein Clipping im Stack
+                children: [
+                  // Cocktail-Bild mittig
+                  Center(
                     child: Image.asset(
                       imagePath,
                       scale: 5,
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 4,
-                  child: Center(
-                    child: Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                  // Icon unten rechts (leicht überlappend)
+                  if (isAlcoholic)
+                    Positioned(
+                      bottom: -15, // Wert anpassen, um es weiter rausragen zu lassen
+                      right: -10,
+                      child: Icon(
+                        Icons.eighteen_up_rating_outlined,
+                        color: theme.falseColor, // Oder theme.tertiaryColor
+                        size: 28,
                       ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
+                ],
+              ),
+            ),
+            // (2) Namensbereich (unverändert)
+            Expanded(
+              flex: 4,
+              child: Center(
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
                   ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ],
+              ),
             ),
           ],
         ),
