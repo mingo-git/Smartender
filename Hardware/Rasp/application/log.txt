@@ -1,0 +1,8 @@
+| 2025-01-10 14:54:41 | INFO     | Main            | Die Anwendung wurde gestartet
+| 2025-01-10 14:54:41 | ERROR    | Database        | Ein Fehler ist aufgetreten
+| 2025-01-10 14:54:41 | DEBUG    | ModuleA         | Debugging des Moduls
+| 2025-01-10 14:54:41 | ALERT    | SystemMonitor   | Kritischer Zustand erkannt
+| 2025-01-10 14:54:47 | INFO     | Main            | Die Anwendung wurde gestartet
+| 2025-01-10 14:54:47 | ERROR    | Database        | Ein Fehler ist aufgetreten
+| 2025-01-10 14:54:47 | DEBUG    | ModuleA         | Debugging des Moduls
+| 2025-01-10 14:54:47 | ALERT    | SystemMonitor   | Kritischer Zustand erkannt
