@@ -50,6 +50,7 @@ class _SearchdrinksScreenState extends State<SearchdrinksScreen> {
         return {
           "name": ing["name"] ?? "Unknown",
           "missing": ing["missing"] ?? false,
+          "quantity_ml": ing["quantity_ml"] ?? 0, // <--- Menge in ml
         };
       }).toList();
 

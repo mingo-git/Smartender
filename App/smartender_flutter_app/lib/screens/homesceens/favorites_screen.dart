@@ -64,6 +64,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         return {
           "name": ing["name"] ?? "Unknown",
           "missing": ing["missing"] ?? false,
+          "quantity_ml": ing["quantity_ml"] ?? 0, // <--- Menge in ml
         };
       }).toList();
 

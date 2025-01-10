@@ -17,7 +17,7 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
   final bool isAlcoholic = drink['isAlcoholic'] ?? false;
   final String drinkName = drink['recipe_name'] ?? "Unknown Drink";
 
-  // Zutaten, die wir in searchdrinks_screen.dart unter "ingredients" abgelegt haben
+  // Hier liegen Name, missing, quantity_ml
   final List<Map<String, dynamic>> ingredients =
       drink['ingredients'] as List<Map<String, dynamic>>? ?? [];
 
@@ -38,175 +38,186 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
           horizontal: horizontalPadding * 2,
           vertical: 20,
         ),
-        content: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // "X"-Button oben rechts
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: Icon(Icons.close, color: theme.tertiaryColor),
-                      onPressed: () => Navigator.of(context).pop(changed),
+        // Um das content-Widget herum legen wir eine ConstrainedBox, um die Mindestbreite zu erzwingen.
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 250), // Mindestbreite
+          // Anschließend der SingleChildScrollView, damit der Inhalt weiter wachsen kann
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // (1) "X"-Button oben rechts
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(Icons.close, color: theme.tertiaryColor),
+                        onPressed: () => Navigator.of(context).pop(changed),
+                      ),
                     ),
-                  ),
-                  // Stack mit Bild und ggf. Alkohol-Icon
-                  Center(
-                    child: Stack(
-                      clipBehavior: Clip.none,
+
+                    // (2) Bild + Alkohol-Icon
+                    Center(
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Image.asset(
+                            drink['image'] ?? "lib/images/cocktails/cocktail_unavailable.png",
+                            height: 150,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                "lib/images/cocktails/cocktail_unavailable.png",
+                                height: 150,
+                                fit: BoxFit.contain,
+                              );
+                            },
+                          ),
+                          if (isAlcoholic)
+                            Positioned(
+                              top: 130,
+                              right: -35,
+                              child: Icon(
+                                Icons.eighteen_up_rating_outlined,
+                                color: theme.falseColor,
+                                size: 32,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // (3) Name + Fav-Icon
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Image.asset(
-                          drink['image'] ?? "lib/images/cocktails/cocktail_unavailable.png",
-                          height: 150,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              "lib/images/cocktails/cocktail_unavailable.png",
-                              height: 150,
-                              fit: BoxFit.contain,
-                            );
+                        Expanded(
+                          child: Text(
+                            drinkName,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: theme.tertiaryColor,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : theme.tertiaryColor,
+                          ),
+                          onPressed: isProcessing
+                              ? null
+                              : () async {
+                            setState(() => isProcessing = true);
+
+                            final recipeService =
+                            Provider.of<RecipeService>(context, listen: false);
+                            bool success;
+                            final recipeId = drink['recipe_id'] as int? ?? -1;
+
+                            if (isFavorite) {
+                              success = await recipeService.removeRecipeFromFavorites(recipeId);
+                            } else {
+                              success = await recipeService.addRecipeToFavorites(recipeId);
+                            }
+
+                            if (success) {
+                              setState(() {
+                                isFavorite = !isFavorite;
+                                changed = true;
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Failed to update favorite status"),
+                                ),
+                              );
+                            }
+                            setState(() => isProcessing = false);
                           },
                         ),
-                        // Icon weiter unten und weiter rechts
-                        if (isAlcoholic)
-                          Positioned(
-                            top: 130,
-                            right: -35,
-                            child: Icon(
-                              Icons.eighteen_up_rating_outlined,
-                              color: theme.falseColor,
-                              size: 32,
-                            ),
-                          ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 10),
 
-                  // Name + Fav-Icon in einer Row
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          drinkName,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: theme.tertiaryColor,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Ingredients:",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: theme.tertiaryColor,
                       ),
-                      IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : theme.tertiaryColor,
-                        ),
-                        onPressed: isProcessing
-                            ? null
-                            : () async {
-                          setState(() => isProcessing = true);
-
-                          final recipeService =
-                          Provider.of<RecipeService>(context, listen: false);
-                          bool success;
-                          final recipeId = drink['recipe_id'] as int? ?? -1;
-
-                          if (isFavorite) {
-                            success =
-                            await recipeService.removeRecipeFromFavorites(recipeId);
-                          } else {
-                            success =
-                            await recipeService.addRecipeToFavorites(recipeId);
-                          }
-
-                          if (success) {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                              changed = true;
-                            });
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Failed to update favorite status"),
-                              ),
-                            );
-                          }
-                          setState(() => isProcessing = false);
-                        },
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-                  Text(
-                    "Ingredients:",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: theme.tertiaryColor,
                     ),
-                  ),
-                  const SizedBox(height: 5),
+                    const SizedBox(height: 5),
 
-                  // Ingredient-Chips
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children: ingredients.map((ingredient) {
-                      final bool missing = ingredient['missing'] == true;
+                    // (4) Zutaten-Liste
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 2.0,
+                      children: ingredients.map((ingredient) {
+                        final bool missing = ingredient['missing'] == true;
+                        final String name = ingredient['name'] ?? "Unnamed";
+                        final int quantity = (ingredient['quantity_ml'] as int?) ?? 0;
 
-                      debugPrint("[DEBUG showDrinkPopup] "
-                          "Zutat '${ingredient['name']}' => missing=$missing");
+                        // Beschriftung: entweder "Name (10ml)" oder nur Name
+                        String ingredientLabel = name;
+                        if (quantity > 0) {
+                          ingredientLabel = "$name ($quantity ml)";
+                        }
 
-                      return Chip(
-                        label: Text(
-                          ingredient['name'] ?? "Unnamed",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: missing ? theme.falseColor : theme.tertiaryColor,
+                        debugPrint("[DEBUG showDrinkPopup] Ingredient: $ingredientLabel"
+                            " => missing=$missing");
+
+                        return Chip(
+                          label: Text(
+                            ingredientLabel,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: missing ? theme.falseColor : theme.tertiaryColor,
+                            ),
                           ),
-                        ),
-                        backgroundColor: missing
-                            ? theme.falseColor.withOpacity(0.1)
-                            : theme.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(
-                            color: missing ? theme.falseColor : theme.tertiaryColor,
-                            width: 1.0,
+                          backgroundColor: missing
+                              ? theme.falseColor.withOpacity(0.1)
+                              : theme.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(
+                              color: missing ? theme.falseColor : theme.tertiaryColor,
+                              width: 1.0,
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Order-Button
-                  MyButton(
-                    onTap: () async {
-                      bool orderSuccess =
-                      await orderDrink(context, drink['recipe_id'] as int? ?? -1);
-                      if (orderSuccess) {
-                        showOrderProcessingPopup(context, theme);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Order failed")),
                         );
-                      }
-                    },
-                    text: "Order",
-                    hasMargin: false,
-                  ),
-                ],
-              ),
-            );
-          },
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // (5) Order-Button
+                    MyButton(
+                      onTap: () async {
+                        bool orderSuccess =
+                        await orderDrink(context, drink['recipe_id'] as int? ?? -1);
+                        if (orderSuccess) {
+                          showOrderProcessingPopup(context, theme);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Order failed")),
+                          );
+                        }
+                      },
+                      text: "Order",
+                      hasMargin: false,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       );
     },
@@ -214,6 +225,7 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
       false;
 }
 
+/// Zweites Popup (Bestellstatus)
 Future<void> showOrderProcessingPopup(BuildContext parentContext, CustomTheme theme) async {
   showDialog(
     context: parentContext,
@@ -354,6 +366,7 @@ class _OrderProcessingDialogState extends State<_OrderProcessingDialog>
   }
 }
 
+/// Drink bestellen
 Future<bool> orderDrink(BuildContext context, int recipeId) async {
   final orderDrinkService = Provider.of<OrderDrinkService>(context, listen: false);
   final success = await orderDrinkService.orderDrink(recipeId);
