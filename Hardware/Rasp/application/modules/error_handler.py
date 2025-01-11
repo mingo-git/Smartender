@@ -8,11 +8,15 @@ from modules.utils.logger import Logger
 
 
 class ErrorCode(Enum):
-    SENSOR_FAILURE = 1001
-    NETWORK_DISCONNECTED = 1002
-    HIGH_TEMPERATURE = 1003
-    LOW_BATTERY = 1004
-    UNKNOWN_ERROR = 1005
+    UNKNOWN_ERROR = 1
+    NETWORK_DISCONNECTED = 2
+    SCALE_EXCEPTION = 3
+    UNKNOWN_POSITION = 4
+    BUSY = 5
+    INVALID_COMMAND = 6
+    INVALID_PARAMETER = 7
+    INVALID_STATE = 8
+    ABORTION = 9
 
 class ErrorHandler:
     def __init__(self, websocket_url, websocket_instance):
@@ -25,7 +29,7 @@ class ErrorHandler:
         """Send an error code and optional message via WebSocket."""
         if not self._websocket_instance:
             print("No WebSocket connection available.")
-            self.logger.log("ERROR", "No WebSocket connection available.", "ErrorHandler")
+            self.logger.log("ERROR", "No WebSocket connection", "ErrorHandler")
             return
         
         payload = {
@@ -49,6 +53,18 @@ class ErrorHandler:
             observable: The rxpy observable stream.
             error_code: The ErrorCode to send when the stream emits an event.
             message_resolver: Optional function to create a message based on the emitted value.
+        
+        Possible error codes:
+            - ErrorCode.UNKNOWN_ERROR
+            - ErrorCode.NETWORK_DISCONNECTED
+            - ErrorCode.SCALE_EXCEPTION
+            - ErrorCode.UNKNOWN_POSITION
+            - ErrorCode.BUSY
+            - ErrorCode.INVALID_COMMAND
+            - ErrorCode.INVALID_PARAMETER
+            - ErrorCode.INVALID_STATE
+            - ErrorCode.ABORTION
+
         """
         def on_next(value):
             message = message_resolver(value) if message_resolver else None
