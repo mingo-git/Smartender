@@ -17,7 +17,7 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
   final bool isAlcoholic = drink['isAlcoholic'] ?? false;
   final String drinkName = drink['recipe_name'] ?? "Unknown Drink";
 
-  // Hier liegen Name, missing, quantity_ml
+  // Zutaten-Infos (name, missing, quantity_ml) aus searchdrinks_screen.dart
   final List<Map<String, dynamic>> ingredients =
       drink['ingredients'] as List<Map<String, dynamic>>? ?? [];
 
@@ -25,11 +25,9 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
   bool changed = false;
   bool isProcessing = false;
 
-  debugPrint("[DEBUG showDrinkPopup] Drink-Objekt:\n$drink");
-
   return await showDialog<bool>(
     context: context,
-    barrierDismissible: true, // Klick außerhalb schließt das Popup
+    barrierDismissible: true, // Tap außerhalb schließt Popup
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: theme.backgroundColor,
@@ -38,10 +36,9 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
           horizontal: horizontalPadding * 2,
           vertical: 20,
         ),
-        // Um das content-Widget herum legen wir eine ConstrainedBox, um die Mindestbreite zu erzwingen.
+        // Mindestbreite 250 px, kann bei Bedarf breiter/höher werden
         content: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 250), // Mindestbreite
-          // Anschließend der SingleChildScrollView, damit der Inhalt weiter wachsen kann
+          constraints: const BoxConstraints(minWidth: 250),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return SingleChildScrollView(
@@ -49,48 +46,48 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // (1) "X"-Button oben rechts
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        icon: Icon(Icons.close, color: theme.tertiaryColor),
-                        onPressed: () => Navigator.of(context).pop(changed),
-                      ),
-                    ),
-
-                    // (2) Bild + Alkohol-Icon
-                    Center(
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Image.asset(
-                            drink['image'] ?? "lib/images/cocktails/cocktail_unavailable.png",
-                            height: 150,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                "lib/images/cocktails/cocktail_unavailable.png",
-                                height: 150,
-                                fit: BoxFit.contain,
-                              );
-                            },
+                    // ---------------------------------------------
+                    // 1) Kopfzeile: Alkohol-Icon links, X-Button rechts
+                    // ---------------------------------------------
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (isAlcoholic)
+                          Icon(
+                            Icons.eighteen_up_rating_outlined,
+                            color: theme.falseColor,
+                            size: 32,
                           ),
-                          if (isAlcoholic)
-                            Positioned(
-                              top: 130,
-                              right: -35,
-                              child: Icon(
-                                Icons.eighteen_up_rating_outlined,
-                                color: theme.falseColor,
-                                size: 32,
-                              ),
-                            ),
-                        ],
-                      ),
+                        IconButton(
+                          icon: Icon(Icons.close, color: theme.tertiaryColor),
+                          onPressed: () => Navigator.of(context).pop(changed),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
 
-                    // (3) Name + Fav-Icon
+                    // ---------------------------------------------
+                    // 2) Bild (ohne Alkohol-Icon)
+                    // ---------------------------------------------
+                    Center(
+                      child: Image.asset(
+                        drink['image'] ?? "lib/images/cocktails/cocktail_unavailable.png",
+                        height: 150,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            "lib/images/cocktails/cocktail_unavailable.png",
+                            height: 150,
+                            fit: BoxFit.contain,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // ---------------------------------------------
+                    // 3) Name + Favoriten-Icon
+                    // ---------------------------------------------
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -118,11 +115,12 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
 
                             final recipeService =
                             Provider.of<RecipeService>(context, listen: false);
-                            bool success;
                             final recipeId = drink['recipe_id'] as int? ?? -1;
+                            bool success;
 
                             if (isFavorite) {
-                              success = await recipeService.removeRecipeFromFavorites(recipeId);
+                              success =
+                              await recipeService.removeRecipeFromFavorites(recipeId);
                             } else {
                               success = await recipeService.addRecipeToFavorites(recipeId);
                             }
@@ -144,8 +142,11 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 10),
+
+                    // ---------------------------------------------
+                    // 4) Zutaten (Ingredients)
+                    // ---------------------------------------------
                     Text(
                       "Ingredients:",
                       style: TextStyle(
@@ -155,8 +156,6 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                       ),
                     ),
                     const SizedBox(height: 5),
-
-                    // (4) Zutaten-Liste
                     Wrap(
                       spacing: 8.0,
                       runSpacing: 2.0,
@@ -165,14 +164,11 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                         final String name = ingredient['name'] ?? "Unnamed";
                         final int quantity = (ingredient['quantity_ml'] as int?) ?? 0;
 
-                        // Beschriftung: entweder "Name (10ml)" oder nur Name
+                        // Label: "Name (xx ml)" oder nur "Name"
                         String ingredientLabel = name;
                         if (quantity > 0) {
                           ingredientLabel = "$name ($quantity ml)";
                         }
-
-                        debugPrint("[DEBUG showDrinkPopup] Ingredient: $ingredientLabel"
-                            " => missing=$missing");
 
                         return Chip(
                           label: Text(
@@ -197,7 +193,9 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                     ),
                     const SizedBox(height: 20),
 
-                    // (5) Order-Button
+                    // ---------------------------------------------
+                    // 5) Order-Button
+                    // ---------------------------------------------
                     MyButton(
                       onTap: () async {
                         bool orderSuccess =
@@ -225,7 +223,10 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
       false;
 }
 
-/// Zweites Popup (Bestellstatus)
+// ----------------------------------------------
+// Ab hier unverändert: Bestell-Popup etc.
+// ----------------------------------------------
+
 Future<void> showOrderProcessingPopup(BuildContext parentContext, CustomTheme theme) async {
   showDialog(
     context: parentContext,
@@ -277,6 +278,7 @@ class _OrderProcessingDialogState extends State<_OrderProcessingDialog>
       });
     });
 
+    // Nach 10s beide Popups schließen:
     Future.delayed(const Duration(seconds: 10), () {
       _closeBothPopups();
     });
@@ -366,9 +368,7 @@ class _OrderProcessingDialogState extends State<_OrderProcessingDialog>
   }
 }
 
-/// Drink bestellen
 Future<bool> orderDrink(BuildContext context, int recipeId) async {
   final orderDrinkService = Provider.of<OrderDrinkService>(context, listen: false);
-  final success = await orderDrinkService.orderDrink(recipeId);
-  return success;
+  return await orderDrinkService.orderDrink(recipeId);
 }

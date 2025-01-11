@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
     // Fügen Sie weitere Services hinzu, falls vorhanden
 
     // Starten des Pollings mit einem zentralen Intervall
-    fetchdData.startPolling(interval: const Duration(seconds: 20));
+    fetchdData.startPolling(interval: const Duration(seconds: 60));
 
     return MultiProvider(
       providers: [
@@ -65,6 +65,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
+              /*fontFamily: 'Roboto',*/
               scaffoldBackgroundColor: themeProvider.currentTheme.backgroundColor,
               primaryColor: themeProvider.currentTheme.primaryColor,
             ),

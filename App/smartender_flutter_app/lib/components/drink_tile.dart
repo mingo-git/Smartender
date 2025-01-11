@@ -32,42 +32,38 @@ class DrinkTile extends StatelessWidget {
           backgroundColor: theme.primaryColor,
           minimumSize: const Size(double.infinity, 80),
           alignment: Alignment.center,
-          shape: RoundedRectangleBorder(
-            borderRadius: defaultBorderRadius,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
           side: BorderSide(color: theme.tertiaryColor),
         ),
         child: Column(
           children: [
-            const SizedBox(height: 30),
-            // (1) Bildbereich + Icon in einem Stack
+            // 1) Kopfzeile (Icon links, falls alkoholisch)
+            if (isAlcoholic)
+              Align(
+                alignment: Alignment.topLeft,
+                // Statt negative Padding => normale Padding oder Transform
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20, left: 0), // kein negatives left
+                  child: Icon(
+                    Icons.eighteen_up_rating_outlined,
+                    color: theme.falseColor,
+                    size: 28,
+                  ),
+                ),
+              ),
+
+            // 2) Bild
             Expanded(
               flex: 6,
-              child: Stack(
-                clipBehavior: Clip.none, // Wichtig: Kein Clipping im Stack
-                children: [
-                  // Cocktail-Bild mittig
-                  Center(
-                    child: Image.asset(
-                      imagePath,
-                      scale: 5,
-                    ),
-                  ),
-                  // Icon unten rechts (leicht überlappend)
-                  if (isAlcoholic)
-                    Positioned(
-                      bottom: -15, // Wert anpassen, um es weiter rausragen zu lassen
-                      right: -10,
-                      child: Icon(
-                        Icons.eighteen_up_rating_outlined,
-                        color: theme.falseColor, // Oder theme.tertiaryColor
-                        size: 28,
-                      ),
-                    ),
-                ],
+              child: Center(
+                child: Image.asset(
+                  imagePath,
+                  scale: 5,
+                ),
               ),
             ),
-            // (2) Namensbereich (unverändert)
+
+            // 3) Name
             Expanded(
               flex: 4,
               child: Center(

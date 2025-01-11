@@ -51,7 +51,8 @@ class RecipeService extends ChangeNotifier implements FetchableService {
         }
 
         try {
-          decoded = json.decode(body);
+          decoded = json.decode(utf8.decode(recipeResponse.bodyBytes));
+
           if (!decoded.containsKey("available") || !decoded.containsKey("unavailable")) {
             print("Response does not contain expected keys. Saving empty map.");
             decoded = {};
@@ -102,8 +103,6 @@ class RecipeService extends ChangeNotifier implements FetchableService {
               slotDrinkIds.add(slot['drink']['drink_id'] as int);
             }
           }
-          // Debug-Ausgabe: Zeigt alle in Slots gespeicherten drink_ids.
-          print("[DEBUG] Slot Drink IDs (aus SharedPrefs geladen): $slotDrinkIds");
         } catch (e) {
           print("Error decoding slots from SharedPreferences: $e");
         }
@@ -131,10 +130,9 @@ class RecipeService extends ChangeNotifier implements FetchableService {
             final String drinkName = ing['drink']['drink_name'] ?? "Unknown";
             final int quantityMl = ing['quantity_ml'] ?? 0;
 
-            // Debug: genau ausdrucken, was verglichen wird
+
             bool isMissing = !slotDrinkIds.contains(drinkId);
-            print("[DEBUG] (AVAILABLE) Checking ingredient drink_id=$drinkId "
-                "($drinkName), inSlots=${slotDrinkIds.contains(drinkId)} -> missing=$isMissing");
+
 
             return {
               'drink_id': drinkId,
@@ -186,34 +184,7 @@ class RecipeService extends ChangeNotifier implements FetchableService {
         return recipe;
       }).toList();
 
-      // DEBUG-Ausgabe (optional)
-      print("\n[DEBUG] Available Recipes:");
-      (decoded['available'] as List<dynamic>?)?.forEach((recipe) {
-        final recipeName = recipe['recipe_name'] ?? "Unknown";
-        final isFavorite = recipe['is_favorite'] ?? false;
-        print("  Recipe ID: ${recipe['recipe_id']}, Name: $recipeName, Is Favorite: $isFavorite");
-        if (recipe.containsKey('ingredients')) {
-          for (var ingredient in recipe['ingredients']) {
-            print("    -> Ingredient: ${ingredient['name']} (ID: ${ingredient['drink_id']}), "
-                "Missing: ${ingredient['missing']}, "
-                "Quantity: ${ingredient['quantity_ml']} ml");
-          }
-        }
-      });
 
-      print("\n[DEBUG] Unavailable Recipes:");
-      (decoded['unavailable'] as List<dynamic>?)?.forEach((recipe) {
-        final recipeName = recipe['recipe_name'] ?? "Unknown";
-        final isFavorite = recipe['is_favorite'] ?? false;
-        print("  Recipe ID: ${recipe['recipe_id']}, Name: $recipeName, Is Favorite: $isFavorite");
-        if (recipe.containsKey('ingredients')) {
-          for (var ingredient in recipe['ingredients']) {
-            print("    -> Ingredient: ${ingredient['name']} (ID: ${ingredient['drink_id']}), "
-                "Missing: ${ingredient['missing']}, "
-                "Quantity: ${ingredient['quantity_ml']} ml");
-          }
-        }
-      });
 
       // Save combined data locally
       await _saveRecipesLocally(decoded);
@@ -232,25 +203,7 @@ class RecipeService extends ChangeNotifier implements FetchableService {
     final prefs = await SharedPreferences.getInstance();
     final recipesJson = json.encode(recipes);
     await prefs.setString('recipes', recipesJson);
-    print("RECIPES saved to SharedPreferences: $recipesJson");
 
-    // Debugging: Ausgabe der Recipes mit deren Ingredients und drink_id nach dem Speichern
-    print("Gespeicherte Recipes mit drink_id:");
-    recipes.forEach((key, value) {
-      print("Recipe Category: $key");
-      if (value is List) {
-        for (var recipe in value) {
-          print("  Recipe ID: ${recipe['recipe_id']}, Name: ${recipe['recipe_name']}, Is Favorite: ${recipe['is_favorite']}");
-          if (recipe.containsKey('ingredients')) {
-            for (var ingredient in recipe['ingredients']) {
-              print("    Ingredient Drink ID: ${ingredient['drink_id']}, "
-                  "Missing: ${ingredient['missing']}, "
-                  "Quantity: ${ingredient['quantity_ml']} ml");
-            }
-          }
-        }
-      }
-    });
   }
 
   /// Abrufen der Rezepte aus den SharedPreferences
@@ -259,24 +212,6 @@ class RecipeService extends ChangeNotifier implements FetchableService {
     final recipesJson = prefs.getString('recipes');
     if (recipesJson != null) {
       final recipes = Map<String, dynamic>.from(json.decode(recipesJson));
-
-      // Debugging: Ausgabe der Recipes mit deren Ingredients und drink_id
-      print("Recipes aus SharedPreferences:");
-      recipes.forEach((key, value) {
-        print("Recipe Category: $key");
-        if (value is List) {
-          for (var recipe in value) {
-            print("  Recipe ID: ${recipe['recipe_id']}, Name: ${recipe['recipe_name']}, Is Favorite: ${recipe['is_favorite']}");
-            if (recipe.containsKey('ingredients')) {
-              for (var ingredient in recipe['ingredients']) {
-                print("    Ingredient Drink ID: ${ingredient['drink_id']}, "
-                    "Missing: ${ingredient['missing']}, "
-                    "Quantity: ${ingredient['quantity_ml']} ml");
-              }
-            }
-          }
-        }
-      });
 
       return recipes;
     }

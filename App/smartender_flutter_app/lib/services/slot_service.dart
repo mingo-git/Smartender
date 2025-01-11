@@ -35,15 +35,6 @@ class SlotService extends ChangeNotifier implements FetchableService {
       if (response.statusCode == 200) {
         final slots = json.decode(response.body) as List<dynamic>;
 
-        // Debugging: Ausgabe der empfangenen Slots
-        print("Empfangene SLOTS vom Backend:");
-        for (var slot in slots) {
-          String slotNumber = slot['slot_number'].toString();
-          String drinkId = slot.containsKey('drink') && slot['drink'] != null
-              ? slot['drink']['drink_id'].toString()
-              : "None";
-          print("Slot Number: $slotNumber, Drink ID: $drinkId");
-        }
 
         await _saveSlotsLocally(slots);
         print("SLOTS fetched and saved locally.");
@@ -60,17 +51,6 @@ class SlotService extends ChangeNotifier implements FetchableService {
     final prefs = await SharedPreferences.getInstance();
     final slotsJson = json.encode(slots);
     await prefs.setString('slots', slotsJson);
-    print("SLOTS saved to SharedPreferences: $slotsJson");
-
-    // Debugging: Ausgabe der Slots mit deren drink_id nach dem Speichern
-    print("Gespeicherte Slots mit drink_id:");
-    for (var slot in slots) {
-      String slotNumber = slot['slot_number'].toString();
-      String drinkId = slot.containsKey('drink') && slot['drink'] != null
-          ? slot['drink']['drink_id'].toString()
-          : "None";
-      print("Slot Number: $slotNumber, Drink ID: $drinkId");
-    }
   }
 
   Future<List<Map<String, dynamic>>> fetchSlotsFromLocal() async {
@@ -82,15 +62,6 @@ class SlotService extends ChangeNotifier implements FetchableService {
         return Map<String, dynamic>.from(slot);
       }).toList();
 
-      // Debugging: Ausgabe der Slots mit deren drink_id
-      print("Slots aus SharedPreferences:");
-      for (var slot in slots) {
-        String slotNumber = slot['slot_number'].toString();
-        String drinkId = slot.containsKey('drink') && slot['drink'] != null
-            ? slot['drink']['drink_id'].toString()
-            : "None";
-        print("Slot Number: $slotNumber, Drink ID: $drinkId");
-      }
 
       return slots;
     }

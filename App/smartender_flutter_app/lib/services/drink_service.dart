@@ -39,7 +39,7 @@ class DrinkService extends ChangeNotifier implements FetchableService {
 
         List<dynamic> drinks;
         try {
-          final decoded = json.decode(response.body);
+          final decoded = json.decode(utf8.decode(response.bodyBytes));
           if (decoded is List) {
             drinks = decoded;
           } else {
@@ -66,7 +66,6 @@ class DrinkService extends ChangeNotifier implements FetchableService {
     final prefs = await SharedPreferences.getInstance();
     final drinksJson = json.encode(drinks);
     await prefs.setString('drinks', drinksJson);
-    print("DRINKS saved to SharedPreferences: $drinksJson");
   }
 
   Future<List<Map<String, dynamic>>> fetchDrinksFromLocal() async {

@@ -48,7 +48,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     // Nur Favoriten extrahieren
     final favoriteRecipes = allRecipes.where((recipe) => recipe["is_favorite"] == true).toList();
-    print("[DEBUG] Number of favorite recipes: ${favoriteRecipes.length}");
 
     final newDrinks = favoriteRecipes.map<Map<String, dynamic>>((recipe) {
       final recipeId = recipe["recipe_id"] ?? -1;

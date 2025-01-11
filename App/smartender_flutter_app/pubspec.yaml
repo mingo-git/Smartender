@@ -51,6 +51,11 @@ flutter:
     - lib/images/
     - lib/images/cocktails/
 
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: lib/font/Roboto-Regular.ttf
+
 
 
 
