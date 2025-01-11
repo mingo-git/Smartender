@@ -28,6 +28,7 @@ iot_project/
 
 - [ ] main.py anlegen und füllen
 - [ ] Websocket Klasse implementieren
+- [ ] Websocket automatischer reconnect wenn Verbindung unterbrochen wird
 - [ ] MotorController Klasse anlegen
 - [ ] PumpController Klasse anlegen
 - [ ] PositionHandler Klasse anlegen
