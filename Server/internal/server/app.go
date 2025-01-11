@@ -2,7 +2,7 @@ package app
 
 import (
 	"app/internal/config"
-	populate "app/internal/query"
+	// populate "app/internal/query"
 	"database/sql"
 	"log"
 	"net/http"
