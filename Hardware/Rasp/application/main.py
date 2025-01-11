@@ -27,8 +27,8 @@ def main():
 
     # Initialize Hardware Components
     motor_controller = MotorController(dir_pin=16, pull_pin=12)
-    position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])
-    pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26])
+    position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])  # Limit switches 0-5
+    pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26])  # Pumps for slots 6-11
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
     actuator_controller = ActuatorController(in_pins=[25, 8, 7, 1])
 
@@ -84,26 +84,40 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         for command in commands:
             try:
                 # Determine if the drink is alcoholic or non-alcoholic
-                if 1 <= command.slot_number <= 5:  # Alcoholic
+                if 1 <= command.slot_number <= 5:  # Alcoholic (limit switches 1-5)
                     logger.log("INFO", f"Alcoholic drink: Slot {command.slot_number}", "Main")
 
                     # Move to the correct slot
+                    logger.log("INFO", f"Moving to slot {command.slot_number}", "MotorController")
                     motor_controller.set_direction(1)
                     motor_controller.step_motor(200 * (command.slot_number - 1))
 
+                    # Wait for the correct limit switch to be pressed
+                    while position_handler.get_position() != command.slot_number:
+                        pass
+
+                    logger.log("INFO", f"Reached slot {command.slot_number}", "PositionHandler")
+
                     # Pour using the actuator
+                    logger.log("INFO", f"Pouring from slot {command.slot_number}", "ActuatorController")
                     actuator_controller.activate(2)  # Duration placeholder
 
-                elif 6 <= command.slot_number <= 11:  # Non-alcoholic
+                elif 6 <= command.slot_number <= 11:  # Non-alcoholic (limit switch 0)
                     logger.log("INFO", f"Non-alcoholic drink: Slot {command.slot_number}", "Main")
+
+                    # Ensure belt is at the home position (limit switch 0)
+                    while position_handler.get_position() != 0:
+                        motor_controller.set_direction(0)  # Move back to home
+                        motor_controller.step_motor(200)
 
                     # Pump the drink
                     pump_index = command.slot_number - 6
+                    logger.log("INFO", f"Activating pump {pump_index}", "PumpController")
                     pump_controller.activate_pump(pump_index, command.quantity_ml / 10)  # Placeholder logic
 
                 # Check weight sensor for errors
                 current_weight = weight_sensor.read_weight()
-                logger.log("INFO", f"Current weight: {current_weight} g", "Main")
+                logger.log("INFO", f"Current weight: {current_weight} g", "WeightSensor")
 
             except Exception as e:
                 logger.log("ERROR", f"Error processing command: {e}", "Main")

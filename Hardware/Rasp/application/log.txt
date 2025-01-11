@@ -1,4 +1,5 @@
-| 2025-01-10 16:12:47 | INFO     | Main                 | Die Anwendung wurde gestartet
+| 2025-01-11 13:12:05 | INFO     | WebSocketHandler     | Connection closed: None None
+
 | 2025-01-10 16:12:47 | INFO     | WebSocketHandler     | Starte WebSocket-Verbindung
 | 2025-01-10 16:12:48 | INFO     | Socket               | Connected to WebSocket server
 | 2025-01-10 16:13:08 | INFO     | Socket               | Received: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
@@ -50,3 +51,9 @@
 | 2025-01-11 01:37:28 | INFO     | WebSocketHandler     | Connection closed: None None
 | 2025-01-11 01:52:19 | INFO     | Main                 | Application is shutting down
 | 2025-01-11 01:52:19 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-11 13:11:42 | INFO     | Main                 | Application started
+| 2025-01-11 13:11:43 | INFO     | Main                 | Hardware components initialized
+| 2025-01-11 13:11:46 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-11 13:12:05 | INFO     | Main                 | Application is shutting down
+| 2025-01-11 13:12:05 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-11 13:12:05 | INFO     | Main                 | Hardware components cleaned up

@@ -16,12 +16,19 @@ class PositionHandler:
     def get_position(self):
         """
         Check which limit switch is pressed.
-        :return: Index of the active limit switch, or None if none are active.
+        :return: Index of the active limit switch (0-based), or None if none are active.
         """
         for idx, pin in enumerate(self.limit_switch_pins):
-            if GPIO.input(pin) == GPIO.LOW:
-                return idx + 1  # Return 1-based index
+            if GPIO.input(pin) == GPIO.LOW:  # Switch pressed
+                return idx
         return None
+
+    def is_home_position(self):
+        """
+        Check if the cart is at the home position (limit switch 0).
+        :return: True if limit switch 0 is pressed, False otherwise.
+        """
+        return self.get_position() == 0
 
     def cleanup(self):
         """Clean up GPIO settings."""
