@@ -38,3 +38,15 @@
 | 2025-01-10 16:59:30 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=60, slot_number=1), Ingredient(quantity_ml=30, slot_number=3)]
 | 2025-01-10 17:23:54 | ERROR    | WebSocketHandler     | WebSocket error: Connection to remote host was lost.
 | 2025-01-10 17:23:55 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-11 01:15:38 | INFO     | Main                 | Application started
+| 2025-01-11 01:15:38 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-11 01:15:49 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-11 01:15:49 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":1},"ingredient_2":{"quantity_ml":30,"slot_number":3}}
+| 2025-01-11 01:15:49 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-11 01:15:49 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=1)
+| 2025-01-11 01:15:49 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=3)
+| 2025-01-11 01:15:50 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=60, slot_number=1), Ingredient(quantity_ml=30, slot_number=3)]
+| 2025-01-11 01:37:28 | ERROR    | WebSocketHandler     | WebSocket error: Connection to remote host was lost.
+| 2025-01-11 01:37:28 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-11 01:52:19 | INFO     | Main                 | Application is shutting down
+| 2025-01-11 01:52:19 | INFO     | WebSocketHandler     | WebSocket client stopped
