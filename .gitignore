@@ -15,3 +15,6 @@ Server/secrets/service-account-secret.json
 
 # Ignore build directory (Latex)
 build/
+
+# Ignore Python cache
+**/__pycache__*
