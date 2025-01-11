@@ -30,20 +30,20 @@ func (a *App) Initialize() {
 	}
 
 	// Datenbank initialisieren
-	_, err = a.DB.Exec(populate.WipeDatabase())
-	if err != nil {
-		log.Fatalf("Error wiping tables: %v", err)
-	}
+	// _, err = a.DB.Exec(populate.WipeDatabase())
+	// if err != nil {
+	// 	log.Fatalf("Error wiping tables: %v", err)
+	// }
 
-	_, err = a.DB.Exec(populate.CreateTables())
-	if err != nil {
-		log.Fatalf("Error creating tables: %v", err)
-	}
+	// _, err = a.DB.Exec(populate.CreateTables())
+	// if err != nil {
+	// 	log.Fatalf("Error creating tables: %v", err)
+	// }
 
-	_, err = a.DB.Exec(populate.PopulateDatabase())
-	if err != nil {
-		log.Fatalf("Error populating tables: %v", err)
-	}
+	// _, err = a.DB.Exec(populate.PopulateDatabase())
+	// if err != nil {
+	// 	log.Fatalf("Error populating tables: %v", err)
+	// }
 
 	// Router initialisieren
 	a.Router = mux.NewRouter()
