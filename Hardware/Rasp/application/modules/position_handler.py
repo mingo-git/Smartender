@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 from modules.utils.logger import Logger
-
+from rx import create
+from rx.subject import Subject
 
 class PositionHandler:
     def __init__(self, limit_switch_pins):
@@ -9,10 +10,18 @@ class PositionHandler:
         :param limit_switch_pins: List of GPIO pins for the limit switches.
         """
         self.limit_switch_pins = limit_switch_pins
+        self.message_subject = Subject()
         self.logger = Logger()
         GPIO.setmode(GPIO.BCM)
         for pin in self.limit_switch_pins:
             GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    def subscribe(self):
+        """
+        Subscribe to limit switch events.
+        :return: Subscription object.
+        """
+        return self.message_subject.subscribe()
 
     def get_position(self):
         """

@@ -63,7 +63,7 @@ class WebSocketHandler:
         """
         Establish and maintain the WebSocket connection.
         """
-        websocket.enableTrace(True)  # Enable debugging messages
+        websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp(
             self.url,
             header=self.headers,
@@ -73,12 +73,15 @@ class WebSocketHandler:
             on_open=self.on_open,
         )
         self.running = True
+
         while self.running:
             try:
                 self.ws.run_forever()
             except Exception as e:
                 self.logger.log("ERROR", f"Reconnecting after error: {e}", "WebSocketHandler")
                 time.sleep(5)  # Wait before retrying
+
+        self.connect()
 
     def start(self):
         """

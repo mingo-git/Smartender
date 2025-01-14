@@ -8,11 +8,13 @@ from modules.actuator_controller import ActuatorController
 # --------------------------------------------------------------------------------------------------
 from modules.utils.logger import Logger
 from modules.error_handler import ErrorHandler
-
+# --------------------------------------------------------------------------------------------------
+from rx import create
+from rx.subject import Subject
+# --------------------------------------------------------------------------------------------------
 
 def main():
     logger = Logger()
-        # Log application start
     logger.log("INFO", "Application started", "Main")
 
     # Initialize WebSocketHandler
@@ -21,18 +23,8 @@ def main():
         "x-api-key": "b0ec1aa3-98bd-434d-b6b6-f72b99383859",
         "Hardware-Auth-Key": "TODO: Add Hardware-Auth-Key",
     }
-    websocket_handler = WebSocketHandler(url, headers)
-    error_handler = ErrorHandler(websocket_instance=websocket_handler.ws)
-    # TODO: pass error_handler to controllers and handlers
-    # 
-    #  - [ ] command_mapper
-    #  - [?] motor_controller
-    #  - [?] position_handler
-    #  - [?] pump_controller
-    #  - [?] weight_sensor
-    #  - [?] actuator_controller
-    #  - [ ] led_controller
 
+    websocket_handler = WebSocketHandler(url, headers)
     # Initialize CommandMapper
     command_mapper = CommandMapper()
 
@@ -42,6 +34,24 @@ def main():
     pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26])  # Pumps for slots 6-11
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
     actuator_controller = ActuatorController(in_pins=[25, 8, 7, 1])
+
+    # Extract subscriptions to subjects from the hardware components
+    motor_controller_subject = motor_controller.subscribe()
+    position_handler_subject = position_handler.subscribe()
+    pump_controller_subject = pump_controller.subscribe()
+    weight_sensor_subject = weight_sensor.subscribe()
+    actuator_controller_subject = actuator_controller.subscribe()
+
+    error_handler = ErrorHandler(websocket_instance=websocket_handler.ws)
+    # TODO: pass error_handler to controllers and handlers
+    # 
+    #  - [ ] command_mapper
+    #  - [x] motor_controller
+    #  - [x] position_handler
+    #  - [x] pump_controller
+    #  - [x] weight_sensor
+    #  - [x] actuator_controller
+    #  - [ ] led_controller
 
     logger.log("INFO", "Hardware components initialized", "Main")
 

@@ -5,8 +5,6 @@ from rx import create
 from rx.subject import Subject
 from modules.utils.logger import Logger
 
-
-
 class ErrorCode(Enum):
     UNKNOWN_ERROR = 1
     NETWORK_DISCONNECTED = 2
