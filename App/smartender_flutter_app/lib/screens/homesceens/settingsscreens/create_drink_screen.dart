@@ -143,8 +143,6 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   void _saveRecipe() async {
-    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
-
     String recipeName = drinkNameController.text.trim();
     List<Map<String, dynamic>> recipeIngredients = ingredients
         .where((ingredient) => ingredient["id"] != null && ingredient["quantity"] > 0)
@@ -155,49 +153,37 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
         .toList();
 
     bool success;
-    if (widget.recipeId == null) {
+    bool isNew = (widget.recipeId == null);
+
+    if (isNew) {
       // Neuer Drink
-      success = await recipeService.addRecipe(recipeName, recipeIngredients,
-          pictureId: selectedPictureId); // Angepasst
+      success = await recipeService.addRecipe(
+        recipeName,
+        recipeIngredients,
+        pictureId: selectedPictureId,
+      );
     } else {
-      // Existierender Drink -> Update mit add/remove/update von Zutaten
+      // Existierender Drink -> Update
       success = await recipeService.updateRecipeWithIngredients(
-          widget.recipeId!,
-          recipeName,
-          recipeIngredients,
-          _originalIngredients,
-          pictureId: selectedPictureId); // Angepasst
+        widget.recipeId!,
+        recipeName,
+        recipeIngredients,
+        _originalIngredients,
+        pictureId: selectedPictureId,
+      );
     }
 
+    if (!mounted) return;
+
     if (success) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(widget.recipeId == null
-                ? "Recipe saved successfully!"
-                : "Recipe updated successfully!"),
-            backgroundColor: theme.trueColor,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-        Future.delayed(const Duration(seconds: 2), () {
-          Navigator.of(context).pop(true);
-        });
-      }
+      // Gib ein String-Ergebnis zurück, z. B. "created" oder "updated"
+      Navigator.of(context).pop(isNew ? "created" : "updated");
     } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(widget.recipeId == null
-                ? "Failed to save recipe. Please try again."
-                : "Failed to update recipe. Please try again."),
-            backgroundColor: theme.falseColor,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
+      // Schlag fehl
+      Navigator.of(context).pop("failed");
     }
   }
+
 
   bool _canSaveDrink() {
     return drinkNameController.text.trim().isNotEmpty &&

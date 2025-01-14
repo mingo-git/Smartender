@@ -40,7 +40,7 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     // Kombiniere available und unavailable
     final available = allData["available"] ?? [];
     final unavailable = allData["unavailable"] ?? [];
-    final allRecipes = [...available, ...unavailable];  // Zusammenführen
+    final allRecipes = [...available, ...unavailable]; // Zusammenführen
 
     setState(() {
       _recipes = List<Map<String, dynamic>>.from(allRecipes);
@@ -48,7 +48,6 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
       _isLoading = false;
     });
   }
-
 
   void _filterRecipes() {
     final query = _searchController.text.trim().toLowerCase();
@@ -115,7 +114,6 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
       },
     );
 
-
     if (confirmed == true) {
       await _deleteRecipe(recipeId);
     }
@@ -142,14 +140,9 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     final recipeId = recipe["recipe_id"];
     final recipeName = recipe["recipe_name"] ?? "Unnamed";
     final ingredientsResponse = recipe["ingredientsResponse"] ?? [];
-    final pictureId = recipe["picture_id"]; // Hole die picture_id aus dem Rezept
+    final pictureId = recipe["picture_id"];
 
-    if (recipeId == null) {
-      print("Cannot edit recipe without an ID");
-      return;
-    }
-
-    // Bereite die ingredients für CreateDrinkScreen vor:
+    // initialIngredients vorbereiten
     final initialIngredients = ingredientsResponse.map<Map<String, dynamic>>((ing) {
       final drink = ing["drink"];
       return {
@@ -167,17 +160,29 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
           recipeId: recipeId,
           initialName: recipeName,
           initialIngredients: initialIngredients,
-          initialPictureId: pictureId, // Übergibt die picture_id
+          initialPictureId: pictureId,
         ),
       ),
     );
 
-    // Wenn result == true, bedeutet das erfolgreich gespeichert -> neu laden
-    if (result == true) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    if (result == "updated") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Recipe updated successfully!"),
+          backgroundColor: theme.trueColor, // <-- Erfolgsfarbe
+        ),
+      );
       await _loadRecipes();
+    } else if (result == "failed") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Failed to update recipe."),
+          backgroundColor: theme.falseColor, // <-- Misserfolgsfarbe
+        ),
+      );
     }
   }
-
 
   bool _isRecipeAlcoholic(Map<String, dynamic> recipe) {
     final ingredients = recipe["ingredientsResponse"] ?? [];
@@ -191,15 +196,27 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
   }
 
   Future<void> _createNewRecipe() async {
-    // Öffnet CreateDrinkScreen ohne Parameter -> neuer Drink
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const CreateDrinkScreen()),
     );
 
-    // Wenn result == true, neu laden
-    if (result == true) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    if (result == "created") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Recipe created successfully!"),
+          backgroundColor: theme.trueColor, // <-- Erfolgsfarbe
+        ),
+      );
       await _loadRecipes();
+    } else if (result == "failed") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Failed to create recipe."),
+          backgroundColor: theme.falseColor, // <-- Misserfolgsfarbe
+        ),
+      );
     }
   }
 
