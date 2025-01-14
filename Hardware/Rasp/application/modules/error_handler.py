@@ -1,6 +1,6 @@
 from enum import Enum
 import asyncio
-import websockets
+import websocket
 from rx import create
 from rx.subject import Subject
 from modules.utils.logger import Logger
@@ -19,8 +19,7 @@ class ErrorCode(Enum):
     ABORTION = 9
 
 class ErrorHandler:
-    def __init__(self, websocket_url, websocket_instance):
-        self._websocket_url = websocket_url
+    def __init__(self, websocket_instance):
         self._websocket_instance = websocket_instance
         self._subscriptions = []
         self.logger = Logger()

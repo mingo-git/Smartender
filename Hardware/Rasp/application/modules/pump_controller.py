@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-
+from modules.utils.logger import Logger
 
 class PumpController:
     def __init__(self, pump_pins):
@@ -9,7 +9,7 @@ class PumpController:
         :param pump_pins: List of GPIO pins for the pumps.
         """
         self.pump_pins = pump_pins
-
+        self.logger = Logger()
         GPIO.setmode(GPIO.BCM)
         for pin in self.pump_pins:
             GPIO.setup(pin, GPIO.OUT)
@@ -22,6 +22,7 @@ class PumpController:
         :param duration: Duration in seconds to run the pump.
         """
         if pump_index < 0 or pump_index >= len(self.pump_pins):
+            self.logger.log("ERROR", f"Invalid pump index: {pump_index}", "PumpController")
             raise ValueError("Invalid pump index")
         GPIO.output(self.pump_pins[pump_index], GPIO.HIGH)
         time.sleep(duration)
@@ -30,3 +31,4 @@ class PumpController:
     def cleanup(self):
         """Clean up GPIO settings."""
         GPIO.cleanup()
+        self.logger.log("INFO", "GPIO cleanup complete", "PumpController")

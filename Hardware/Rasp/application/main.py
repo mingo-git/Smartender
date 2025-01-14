@@ -1,17 +1,18 @@
 from modules.websocket_handler import WebSocketHandler
 from modules.command_mapper import CommandMapper
-from modules.utils.logger import Logger
 from modules.motor_controller import MotorController
 from modules.position_handler import PositionHandler
 from modules.pump_controller import PumpController
 from modules.weight_sensor import WeightSensor
 from modules.actuator_controller import ActuatorController
+# --------------------------------------------------------------------------------------------------
+from modules.utils.logger import Logger
+from modules.error_handler import ErrorHandler
 
 
 def main():
     logger = Logger()
-
-    # Log application start
+        # Log application start
     logger.log("INFO", "Application started", "Main")
 
     # Initialize WebSocketHandler
@@ -21,12 +22,22 @@ def main():
         "Hardware-Auth-Key": "TODO: Add Hardware-Auth-Key",
     }
     websocket_handler = WebSocketHandler(url, headers)
+    error_handler = ErrorHandler(websocket_instance=websocket_handler.ws)
+    # TODO: pass error_handler to controllers and handlers
+    # 
+    #  - [ ] command_mapper
+    #  - [?] motor_controller
+    #  - [?] position_handler
+    #  - [?] pump_controller
+    #  - [?] weight_sensor
+    #  - [?] actuator_controller
+    #  - [ ] led_controller
 
     # Initialize CommandMapper
     command_mapper = CommandMapper()
 
     # Initialize Hardware Components
-    motor_controller = MotorController(dir_pin=16, pull_pin=12)
+    motor_controller = MotorController(dir_pin=16, pull_pin=12, error_handler=error_handler)
     position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])  # Limit switches 0-5
     pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26])  # Pumps for slots 6-11
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)

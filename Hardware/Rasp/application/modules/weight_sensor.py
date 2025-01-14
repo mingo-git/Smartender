@@ -1,5 +1,6 @@
 from hx711 import HX711
 import statistics
+from modules.utils.logger import Logger
 
 
 class WeightSensor:
@@ -16,8 +17,10 @@ class WeightSensor:
 
     def tare(self):
         """Set the tare (zero) value for the scale."""
+        self.logger.log("INFO", "Taring weight sensor", "WeightSensor")
         self.hx.reset()
 
+    # TODO: raise error if value is None/ over a certain threshold
     def read_weight(self):
         """Read and return the current weight."""
         raw_data = self.hx.get_raw_data()

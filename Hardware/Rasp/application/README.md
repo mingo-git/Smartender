@@ -34,9 +34,9 @@ iot_project/
 - [ ] PositionHandler Klasse anlegen
 - [ ] WeightSensor Klasse anlegen
 - [ ] LEDController Klasse anlegen
-- [ ] CommandMapper Klasse anlegen
+- [x] CommandMapper Klasse anlegen
 - [ ] ErrorHandler Klasse anlegen
-- [ ] Logger Klasse anlegen
+- [x] Logger Klasse anlegen
 
 ## Pins
 
