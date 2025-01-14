@@ -23,6 +23,7 @@ class PositionHandler:
             if GPIO.input(pin) == GPIO.LOW:  # Switch pressed
                 self.logger.log("INFO", f"Limit switch {idx} pressed", "PositionHandler")
                 return idx
+        self.logger.log("INFO", f"Limit switch {idx} was not reached", "PositionHandler")
         return None
 
     def is_home_position(self):

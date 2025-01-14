@@ -1,18 +1,18 @@
 from modules.websocket_handler import WebSocketHandler
 from modules.command_mapper import CommandMapper
+from modules.utils.logger import Logger
 from modules.motor_controller import MotorController
 from modules.position_handler import PositionHandler
 from modules.pump_controller import PumpController
 from modules.weight_sensor import WeightSensor
 from modules.actuator_controller import ActuatorController
-# --------------------------------------------------------------------------------------------------
-from modules.utils.logger import Logger
-from modules.error_handler import ErrorHandler
+import time
 
 
 def main():
     logger = Logger()
-        # Log application start
+
+    # Log application start
     logger.log("INFO", "Application started", "Main")
 
     # Initialize WebSocketHandler
@@ -22,24 +22,14 @@ def main():
         "Hardware-Auth-Key": "TODO: Add Hardware-Auth-Key",
     }
     websocket_handler = WebSocketHandler(url, headers)
-    error_handler = ErrorHandler(websocket_instance=websocket_handler.ws)
-    # TODO: pass error_handler to controllers and handlers
-    # 
-    #  - [ ] command_mapper
-    #  - [?] motor_controller
-    #  - [?] position_handler
-    #  - [?] pump_controller
-    #  - [?] weight_sensor
-    #  - [?] actuator_controller
-    #  - [ ] led_controller
 
     # Initialize CommandMapper
     command_mapper = CommandMapper()
 
     # Initialize Hardware Components
-    motor_controller = MotorController(dir_pin=16, pull_pin=12, error_handler=error_handler)
-    position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])  # Limit switches 0-5
-    pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26])  # Pumps for slots 6-11
+    motor_controller = MotorController(dir_pin=16, pull_pin=12)
+    position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])
+    pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26])
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
     actuator_controller = ActuatorController(in_pins=[25, 8, 7, 1])
 
@@ -60,7 +50,7 @@ def main():
     try:
         # Keep the main thread running
         while True:
-            pass  # Main thread remains active
+            pass
     except KeyboardInterrupt:
         logger.log("INFO", "Application is shutting down", "Main")
         websocket_handler.stop()
@@ -95,13 +85,13 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         for command in commands:
             try:
                 # Determine if the drink is alcoholic or non-alcoholic
-                if 1 <= command.slot_number <= 5:  # Alcoholic (limit switches 1-5)
+                if 1 <= command.slot_number <= 5:  # Alcoholic
                     logger.log("INFO", f"Alcoholic drink: Slot {command.slot_number}", "Main")
 
-                    # Move to the correct slot
-                    logger.log("INFO", f"Moving to slot {command.slot_number}", "MotorController")
+                    # Move to the correct slot with acceleration
+                    logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
                     motor_controller.set_direction(1)
-                    motor_controller.step_motor(200 * (command.slot_number - 1))
+                    motor_controller.accelerate_motor(200 * (command.slot_number - 1))  # Use accelerate_motor
 
                     # Wait for the correct limit switch to be pressed
                     while position_handler.get_position() != command.slot_number:
@@ -113,7 +103,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     logger.log("INFO", f"Pouring from slot {command.slot_number}", "ActuatorController")
                     actuator_controller.activate(2)  # Duration placeholder
 
-                elif 6 <= command.slot_number <= 11:  # Non-alcoholic (limit switch 0)
+                elif 6 <= command.slot_number <= 11:  # Non-alcoholic
                     logger.log("INFO", f"Non-alcoholic drink: Slot {command.slot_number}", "Main")
 
                     # Ensure belt is at the home position (limit switch 0)
