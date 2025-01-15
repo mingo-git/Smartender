@@ -37,20 +37,23 @@ class DrinkTile extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // 1) Kopfzeile (Icon links, falls alkoholisch)
-            if (isAlcoholic)
-              Align(
-                alignment: Alignment.topLeft,
-                // Statt negative Padding => normale Padding oder Transform
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 0), // kein negatives left
-                  child: Icon(
-                    Icons.eighteen_up_rating_outlined,
-                    color: theme.falseColor,
-                    size: 28,
-                  ),
-                ),
+            // 1) Kopfzeile (Icon oder Platzhalter, um Konsistenz zu gewährleisten)
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20, left: 0),
+                child: isAlcoholic
+                    ? Icon(
+                  Icons.eighteen_up_rating_outlined,
+                  color: theme.falseColor,
+                  size: 28,
+                )
+                    : SizedBox(
+                  width: 28,
+                  height: 28,
+                ), // Platzhalter mit gleicher Größe wie das Icon
               ),
+            ),
 
             // 2) Bild
             Expanded(
