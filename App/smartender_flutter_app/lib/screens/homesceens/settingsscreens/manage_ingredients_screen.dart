@@ -120,17 +120,25 @@ class _ManageIngredientsScreenState extends State<ManageIngredientsScreen> {
   }
 
   Future<void> _deleteDrink(int drinkId) async {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final drinkService = Provider.of<DrinkService>(context, listen: false);
     final success = await drinkService.deleteDrink(drinkId);
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Drink deleted successfully!")),
+        SnackBar(
+            content: Text("Drink deleted successfully!", style: TextStyle(color: theme.primaryColor),),
+          backgroundColor: theme.trueColor,
+
+        ),
       );
       await _loadDrinks();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to delete drink.")),
+        SnackBar(
+            content: Text("Failed to delete drink.", style: TextStyle(color: theme.primaryColor),),
+          backgroundColor: theme.falseColor,
+        ),
       );
     }
   }

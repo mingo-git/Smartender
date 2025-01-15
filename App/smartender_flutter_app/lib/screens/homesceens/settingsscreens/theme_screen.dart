@@ -103,7 +103,8 @@ class _ThemeScreenState extends State<ThemeScreen> {
               });
             },
             activeColor: theme.tertiaryColor, // Farbe des Toggle-Buttons, wenn aktiv
-            inactiveThumbColor: theme.primaryColor, // Farbe des Toggle-Buttons, wenn inaktiv
+            inactiveThumbColor: theme.tertiaryColor, // Farbe des Toggle-Buttons, wenn inaktiv
+            inactiveTrackColor: theme.primaryColor,
           ),
 
 

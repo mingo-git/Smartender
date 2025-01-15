@@ -293,6 +293,7 @@ class RecipeService extends ChangeNotifier implements FetchableService {
 
       // Schritt 3: Erfolgreicher Abschluss
       print("All ingredients added successfully.");
+      await fetchAndSaveData(); // Daten nach Hinzufügen aktualisieren
       return true;
     } catch (e) {
       print("Error adding recipe: $e");

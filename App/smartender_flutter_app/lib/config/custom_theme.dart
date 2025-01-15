@@ -42,8 +42,8 @@ class CustomTheme {
     tertiaryColor: Colors.black,
     primaryFontColor: Colors.black,
     secondaryFontColor: Colors.white,
-    trueColor: const Color(0xEF5AEC05),
-    falseColor: Colors.red,
+    trueColor: const Color(0xF4ABFA88),
+    falseColor: const Color(0xF4C12D36),
     uncertainColor: const Color(0xFFCCCCCC),
     hintTextColor: const Color(0xd03c3c3c),
     slotColors: [
@@ -74,8 +74,8 @@ class CustomTheme {
     //tertiaryColor: Color(0xffbed8b3),
     primaryFontColor: Colors.white,
     secondaryFontColor: Colors.black,
-    trueColor: Colors.green,
-    falseColor: Colors.red,
+    trueColor: const Color(0xF4ABFA88),
+    falseColor: const Color(0xF4C12D36),
     uncertainColor: Colors.grey,
     hintTextColor: const Color(0x8CB6EF93),
     slotColors: [

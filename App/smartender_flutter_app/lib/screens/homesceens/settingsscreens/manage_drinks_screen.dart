@@ -120,17 +120,24 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
   }
 
   Future<void> _deleteRecipe(int recipeId) async {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final recipeService = Provider.of<RecipeService>(context, listen: false);
     final success = await recipeService.deleteRecipe(recipeId);
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Recipe deleted successfully!")),
+        SnackBar(
+            content: Text("Recipe deleted successfully!", style: TextStyle(color: theme.primaryColor)),
+          backgroundColor: theme.trueColor,
+        ),
       );
       await _loadRecipes();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to delete recipe.")),
+        SnackBar(
+          content: Text("Failed to delete recipe.", style: TextStyle(color: theme.primaryColor)),
+          backgroundColor: theme.falseColor,
+        ),
       );
     }
   }
@@ -169,7 +176,7 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     if (result == "updated") {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Recipe updated successfully!"),
+          content: Text("Recipe updated successfully!", style: TextStyle(color: theme.primaryColor),),
           backgroundColor: theme.trueColor, // <-- Erfolgsfarbe
         ),
       );
@@ -177,7 +184,7 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     } else if (result == "failed") {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Failed to update recipe."),
+          content: Text("Failed to update recipe.", style: TextStyle(color: theme.primaryColor)),
           backgroundColor: theme.falseColor, // <-- Misserfolgsfarbe
         ),
       );
@@ -205,7 +212,7 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     if (result == "created") {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Recipe created successfully!"),
+          content: Text("Recipe created successfully!", style: TextStyle(color: theme.primaryColor)),
           backgroundColor: theme.trueColor, // <-- Erfolgsfarbe
         ),
       );
@@ -213,7 +220,7 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen> {
     } else if (result == "failed") {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Failed to create recipe."),
+          content: Text("Failed to create recipe.", style: TextStyle(color: theme.primaryColor)),
           backgroundColor: theme.falseColor, // <-- Misserfolgsfarbe
         ),
       );

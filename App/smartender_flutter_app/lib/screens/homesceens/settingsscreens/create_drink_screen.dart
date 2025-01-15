@@ -86,6 +86,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   }
 
   void _addIngredientField() {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     setState(() {
       if (ingredients.length < 11) {
         ingredients.add({
@@ -99,9 +100,9 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
         _updateIngredientColors();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("You can only add up to 11 ingredients."),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text("You can only add up to 11 ingredients.", style: TextStyle(color: theme.primaryColor)),
+            backgroundColor: theme.trueColor,
           ),
         );
       }
@@ -156,7 +157,6 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     bool isNew = (widget.recipeId == null);
 
     if (isNew) {
-      print("NEWWW");
       // Neuer Drink
       success = await recipeService.addRecipe(
         recipeName,
@@ -634,7 +634,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                     if (isOverCapacity) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text("The drink cannot be saved because it exceeds the cup's capacity."),
+                          content: Text("The drink cannot be saved because it exceeds the cup's capacity.", style: TextStyle(color: theme.primaryColor),),
                           backgroundColor: theme.falseColor,
                         ),
                       );

@@ -38,10 +38,14 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
   }
 
   Future<void> _saveDrink() async {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final drinkName = _drinkNameController.text.trim();
     if (drinkName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter a drink name.")),
+        SnackBar(
+            content: Text("Please enter a drink name.", style: TextStyle(color: theme.primaryColor),            ),
+            backgroundColor: theme.falseColor,
+        ),
       );
       return;
     }
@@ -59,12 +63,17 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(widget.drinkId == null
             ? "Drink added successfully!"
-            : "Drink updated successfully!")),
+            : "Drink updated successfully!", style: TextStyle(color: theme.primaryColor),),
+            backgroundColor: theme.trueColor,
+        ),
       );
       _closePopup();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to save drink. Please try again.")),
+        SnackBar(
+            content: Text("Failed to save drink. Please try again.", style: TextStyle(color: theme.primaryColor),),
+            backgroundColor: theme.falseColor,
+        ),
       );
     }
   }

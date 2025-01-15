@@ -3,7 +3,9 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../config/constants.dart';
+import '../provider/theme_provider.dart';
 import 'auth_service.dart';
 
 class OrderDrinkService {
@@ -68,11 +70,13 @@ class OrderDrinkService {
   void _showErrorMessage(String message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final context = WidgetsBinding.instance.focusManager.primaryFocus?.context;
-      if (context != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
-      }
-    });
+      final theme = Provider.of<ThemeProvider>(context!, listen: false).currentTheme;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message, style: TextStyle(color: theme.primaryColor)),
+          backgroundColor: theme.falseColor,
+        ),
+      );
+        });
   }
 }

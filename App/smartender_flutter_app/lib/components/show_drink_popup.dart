@@ -137,8 +137,9 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                               });
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Failed to update favorite status"),
+                                SnackBar(
+                                  content: Text("Failed to update favorite status", style: TextStyle(color: theme.primaryColor)),
+                                  backgroundColor: theme.falseColor,
                                 ),
                               );
                             }
@@ -208,9 +209,7 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                         if (orderSuccess) {
                           showOrderProcessingPopup(context, theme);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Order failed")),
-                          );
+                          Navigator.of(context).pop();
                         }
                       },
                       text: "Order",
