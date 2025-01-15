@@ -242,7 +242,8 @@ class RecipeService extends ChangeNotifier implements FetchableService {
     print("Recipe URL: $recipeUrl");
 
     try {
-      final response = await http.post(
+      // Schritt 1: Rezept anlegen
+      final recipeResponse = await http.post(
         recipeUrl,
         headers: {
           'Content-Type': 'application/json',
@@ -251,36 +252,54 @@ class RecipeService extends ChangeNotifier implements FetchableService {
         },
         body: json.encode({
           "recipe_name": recipeName,
-          "ingredients": ingredients.map((ing) => {
-            "drink_id": ing["id"],
-            "quantity_ml": ing["quantity"],
-          }).toList(),
-          "picture_id": pictureId ?? 0, // Hier wird picture_id hinzugefügt
+          "picture_id": pictureId ?? 0,
         }),
       );
 
-      if (response.statusCode == 201) {
-        final responseData = json.decode(response.body);
-        final int recipeId = responseData["recipe_id"];
-        print("Recipe created with ID: $recipeId");
+      if (recipeResponse.statusCode != 201) {
+        print("Failed to create recipe: ${recipeResponse.statusCode}, Response: ${recipeResponse.body}");
+        return false;
+      }
 
-        final bool recipeReady = await _waitForRecipeAvailability(recipeId, token);
-        if (!recipeReady) {
-          print("Recipe not available after retries.");
+      // Extrahiere die Rezept-ID aus der Antwort
+      final responseData = json.decode(recipeResponse.body);
+      final int recipeId = responseData["recipe_id"];
+      print("Recipe created with ID: $recipeId");
+
+      // Schritt 2: Zutaten hinzufügen
+      final ingredientsUrl = Uri.parse("$baseUrl$_recipeUrl/$recipeId/ingredients");
+
+      for (final ingredient in ingredients) {
+        final response = await http.post(
+          ingredientsUrl,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'Authorization': 'Bearer $token',
+          },
+          body: json.encode({
+            "drink_id": ingredient["id"],
+            "quantity_ml": ingredient["quantity"],
+          }),
+        );
+
+        if (response.statusCode != 201) {
+          print("Failed to add ingredient: ${response.statusCode}, Response: ${response.body}");
           return false;
         }
 
-        print("All ingredients added successfully.");
-        return true;
-      } else {
-        print("Failed to add recipe: ${response.statusCode}, Response: ${response.body}");
-        return false;
+        print("Ingredient added successfully: ${ingredient["id"]} with quantity ${ingredient["quantity"]}ml");
       }
+
+      // Schritt 3: Erfolgreicher Abschluss
+      print("All ingredients added successfully.");
+      return true;
     } catch (e) {
       print("Error adding recipe: $e");
       return false;
     }
   }
+
 
   /// Aktualisiert ein bestehendes Rezept mit neuen Zutaten.
   /// [recipeId] - Die ID des zu aktualisierenden Rezepts.

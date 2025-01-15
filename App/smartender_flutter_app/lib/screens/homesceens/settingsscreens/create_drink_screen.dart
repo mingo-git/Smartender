@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smartender_flutter_app/services/fetch_data_service.dart';
 import '../../../components/cup_display.dart';
 import '../../../components/liter_display.dart';
 import '../../../config/constants.dart';
@@ -157,6 +156,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
     bool isNew = (widget.recipeId == null);
 
     if (isNew) {
+      print("NEWWW");
       // Neuer Drink
       success = await recipeService.addRecipe(
         recipeName,
