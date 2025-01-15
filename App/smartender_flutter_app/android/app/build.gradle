@@ -1,7 +1,6 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -20,19 +19,35 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.smartender_flutter_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    // Lade die Keystore-Eigenschaften aus der key.properties-Datei
+    def keystorePropertiesFile = rootProject.file('key.properties')
+    def keystoreProperties = [:]
+
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.withReader { reader ->
+            reader.eachLine { line ->
+                def (key, value) = line.split('=')
+                keystoreProperties[key.trim()] = value.trim()
+            }
+        }
+    }
+
     signingConfigs {
+        release {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+
         debug {
-            //TODO: Pfad ändern
             storeFile file("C:\\Users\\jonas\\Desktop\\Smartender\\App\\smartender_flutter_app\\android\\app\\smartender-keystore.jks")
             storePassword "smartender-2024"
             keyAlias "androiddebugkey"
@@ -41,11 +56,15 @@ android {
     }
 
     buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
         debug {
             signingConfig signingConfigs.debug
-            minifyEnabled true // Aktiviert das Code-Shrinking
-            shrinkResources true // Entfernt ungenutzte Ressourcen
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled false
         }
     }
 }

@@ -45,6 +45,11 @@ app.*.map.json
 # key for OAuth
 ./android/app/smartender-keystore.jks
 
+
 # env - File
 .env
+
+# release Build
+./android/app/key.jks
+./android/key.properties
 
