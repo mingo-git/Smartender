@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 100),
-                Icon(Icons.lock, size: 100, color: theme.primaryFontColor,),
+                Icon(Icons.lock, size: 100, color: theme.tertiaryColor,),
                 const SizedBox(height: 50),
                 Text(
                   'Welcome back, you\'ve been missed!',
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: signUserIn,
                 ),
                 const SizedBox(height: 30),
-                Padding(
+/*                Padding(
                   padding: EdgeInsets.all(horizontalPadding),
                   child: Row(
                     children: [
@@ -165,20 +165,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: signInWithGoogle,
                       child: const SquareTile(imagePath: 'lib/images/google.png'),
                     ),
-/*                    const SizedBox(width: 25),
+*//*                    const SizedBox(width: 25),
                     GestureDetector(
                       onTap: signInWithApple,
                       child: const SquareTile(imagePath: 'lib/images/apple.png'),
-                    ),*/
+                    ),*//*
                   ],
-                ),
+                ),*/
+                const SizedBox(height: 100,),
                 const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Not a member?',
-                      style: TextStyle(color: theme.primaryFontColor),
+                      style: TextStyle(color: theme.tertiaryColor, fontSize: 15),
                     ),
                     const SizedBox(width: 4),
                     GestureDetector(
@@ -193,6 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
+                            fontSize: 15
                         ),
                       ),
                     ),

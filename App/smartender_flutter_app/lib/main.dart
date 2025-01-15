@@ -24,48 +24,81 @@ void main() async {
   runApp(MyApp(isLoggedIn: token != null));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final bool isLoggedIn;
 
   const MyApp({Key? key, required this.isLoggedIn}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Initialisierung aller Services
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  late final FetchdData fetchdData;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    // Initialisiere FetchdData
     final recipeService = RecipeService();
     final drinkService = DrinkService();
     final slotService = SlotService();
 
-
-    // Singleton-Instanz von FetchdData
-    final fetchdData = FetchdData();
+    fetchdData = FetchdData();
     fetchdData.addService(recipeService);
     fetchdData.addService(drinkService);
     fetchdData.addService(slotService);
-    // Fügen Sie weitere Services hinzu, falls vorhanden
 
-    // Starten des Pollings mit einem zentralen Intervall
+    // Starte Polling mit einem Intervall
     fetchdData.startPolling(interval: const Duration(seconds: 60));
 
+    // Daten beim Start der App laden
+    _initializeApp();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Daten aktualisieren, wenn die App wieder in den Vordergrund kommt
+      _onResume();
+    }
+  }
+
+  Future<void> _initializeApp() async {
+    await fetchdData.fetchAllNow();
+  }
+
+  Future<void> _onResume() async {
+    await fetchdData.fetchAllNow();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CocktailCard()),
-        ChangeNotifierProvider(create: (_) => RecipeService()), // Falls benötigt
-        ChangeNotifierProvider(create: (_) => DrinkService()), // Falls benötigt
-        ChangeNotifierProvider(create: (_) => SlotService()), // Falls benötigt
+        ChangeNotifierProvider(create: (_) => RecipeService()),
+        ChangeNotifierProvider(create: (_) => DrinkService()),
+        ChangeNotifierProvider(create: (_) => SlotService()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider.value(value: fetchdData), // FetchdData als Provider hinzufügen
+        ChangeNotifierProvider.value(value: fetchdData),
         Provider(create: (_) => OrderDrinkService()),
       ],
       child: Builder(
         builder: (context) {
           final themeProvider = Provider.of<ThemeProvider>(context);
-          // Sie können hier weitere Initialisierungen durchführen, falls erforderlich
 
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
-              /*fontFamily: 'Roboto',*/
               scaffoldBackgroundColor: themeProvider.currentTheme.backgroundColor,
               primaryColor: themeProvider.currentTheme.primaryColor,
             ),
@@ -73,7 +106,7 @@ class MyApp extends StatelessWidget {
               '/home': (context) => const HomeScreen(),
               '/login': (context) => LoginScreen(),
             },
-            initialRoute: isLoggedIn ? '/home' : '/login',
+            initialRoute: widget.isLoggedIn ? '/home' : '/login',
           );
         },
       ),

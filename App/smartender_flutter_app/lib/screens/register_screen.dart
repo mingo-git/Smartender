@@ -125,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         leading: IconButton(
           icon: Icon(
             Icons.close,
-            color: theme.primaryFontColor,
+            color: theme.tertiaryColor,
             size: 40,
           ),
           onPressed: () {
@@ -143,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 50),
-              Icon(Icons.lock, size: 100, color: theme.primaryColor,),
+              Icon(Icons.lock, size: 100, color: theme.tertiaryColor,),
               const SizedBox(height: 50),
               Text(
                 'Create an account',
