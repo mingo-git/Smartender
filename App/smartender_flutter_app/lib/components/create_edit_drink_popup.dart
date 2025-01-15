@@ -97,6 +97,12 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
             decoration: InputDecoration(
               hintText: "Enter drink name",
               hintStyle: TextStyle(color: theme.hintTextColor),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: theme.tertiaryColor),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: theme.primaryColor, width: 2.0),
+              ),
             ),
             style: TextStyle(color: theme.tertiaryColor),
           ),
@@ -116,6 +122,8 @@ class _CreateEditDrinkPopupState extends State<CreateEditDrinkPopup> {
                   });
                 },
                 activeColor: theme.tertiaryColor,
+                inactiveThumbColor: theme.tertiaryColor,
+                inactiveTrackColor: theme.primaryColor,
               ),
             ],
           ),

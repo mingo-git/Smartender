@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smartender_flutter_app/services/fetch_data_service.dart';
 import '../../../components/cup_display.dart';
 import '../../../components/liter_display.dart';
 import '../../../config/constants.dart';
@@ -342,6 +343,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    final filledAmount = _calculateFilledAmount();
+    final isOverCapacity = filledAmount > 400;
 
     return WillPopScope(
       onWillPop: () async {
@@ -389,6 +392,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       child: LiterDisplay(
                         currentAmount: _calculateFilledAmount(),
                         maxCapacity: 400,
+                        color: isOverCapacity ? theme.falseColor : theme.tertiaryColor,
                       ),
                     ),
                   ),
@@ -412,6 +416,14 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                         hintStyle: TextStyle(color: theme.hintTextColor),
                         border: OutlineInputBorder(
                           borderRadius: defaultBorderRadius,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: defaultBorderRadius,
+                          borderSide: BorderSide(color: theme.tertiaryColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: defaultBorderRadius,
+                          borderSide: BorderSide(color: theme.tertiaryColor, width: 2.0),
                         ),
                         filled: true,
                         fillColor: theme.primaryColor,
@@ -451,8 +463,11 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                           },
                         )
                             : Image.asset(
-                          "lib/images/cocktails/select_image.png",
-                          fit: BoxFit.cover,
+                          Provider.of<ThemeProvider>(context, listen: false).isDarkMode
+                          ?  "lib/images/cocktails/select_image_dark.png"
+                          : "lib/images/cocktails/select_image.png",
+                          width: 10,
+                          height: 10,
                         ),
                       ),
                     ),
@@ -615,7 +630,19 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       borderRadius: defaultBorderRadius,
                     ),
                   ),
-                  onPressed: _saveRecipe,
+                  onPressed: () {
+                    if (isOverCapacity) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text("The drink cannot be saved because it exceeds the cup's capacity."),
+                          backgroundColor: theme.falseColor,
+                        ),
+                      );
+                    } else {
+                      _saveRecipe();
+                    }
+                  },
+
                   child: Text(
                     widget.recipeId == null ? "Save Drink" : "Update Drink",
                     style: TextStyle(

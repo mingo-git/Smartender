@@ -58,6 +58,11 @@ Future<bool> showDrinkPopup(BuildContext context, Map<String, dynamic> drink) as
                             color: theme.falseColor,
                             size: 32,
                           ),
+                        if (!isAlcoholic)
+                          const SizedBox(
+                            width: 32,
+                            height: 32,
+                          ),
                         IconButton(
                           icon: Icon(Icons.close, color: theme.tertiaryColor),
                           onPressed: () => Navigator.of(context).pop(changed),

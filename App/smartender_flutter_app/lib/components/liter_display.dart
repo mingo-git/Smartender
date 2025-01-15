@@ -6,16 +6,21 @@ import '../provider/theme_provider.dart';
 class LiterDisplay extends StatelessWidget {
   final double currentAmount; // Aktuelle Füllmenge
   final double maxCapacity; // Maximale Kapazität
+  final Color? color; // Benutzerdefinierte Farbe
 
   const LiterDisplay({
     Key? key,
     required this.currentAmount,
     required this.maxCapacity,
+    this.color,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+
+    // Fallback auf Theme-Farbe, falls keine benutzerdefinierte Farbe angegeben ist
+    final displayColor = color ?? theme.tertiaryColor;
 
     return SizedBox(
       width: 100, // Breite des gesamten Widgets
@@ -32,7 +37,7 @@ class LiterDisplay extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: theme.tertiaryColor
+                color: displayColor,
               ),
             ),
           ),
@@ -44,7 +49,7 @@ class LiterDisplay extends StatelessWidget {
               child: Container(
                 width: 150, // Länge des Strichs
                 height: 2, // Dicke des Strichs
-                color: theme.tertiaryColor,
+                color: displayColor,
               ),
             ),
           ),
@@ -57,7 +62,7 @@ class LiterDisplay extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: theme.tertiaryColor,
+                color: displayColor,
               ),
             ),
           ),

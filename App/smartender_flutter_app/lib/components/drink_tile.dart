@@ -48,7 +48,7 @@ class DrinkTile extends StatelessWidget {
                   color: theme.falseColor,
                   size: 28,
                 )
-                    : SizedBox(
+                    : const SizedBox(
                   width: 28,
                   height: 28,
                 ), // Platzhalter mit gleicher Größe wie das Icon

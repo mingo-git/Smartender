@@ -14,17 +14,21 @@ class FetchdData extends ChangeNotifier {
 
   final List<FetchableService> _services = [];
   Timer? _pollingTimer;
+  bool _isFetching = false; // Flag, um doppelte Abrufe zu verhindern
 
   /// Füge einen neuen Service hinzu, der regelmäßig abgefragt werden soll
   void addService(FetchableService service) {
-    if (!_services.contains(service)) {
+    if (!_services.any((s) => s.runtimeType == service.runtimeType)) {
       _services.add(service);
+      print("Service hinzugefügt: ${service.runtimeType}");
+    } else {
+      print("Service bereits registriert: ${service.runtimeType}");
     }
   }
 
   /// Starte das regelmäßige Abrufen der Daten
   void startPolling({Duration interval = const Duration(seconds: 10)}) {
-    if (_pollingTimer != null) return; // Timer bereits gestartet
+    stopPolling(); // Beende eventuell laufendes Polling
 
     _pollingTimer = Timer.periodic(interval, (timer) {
       _fetchAllServices();
@@ -42,8 +46,14 @@ class FetchdData extends ChangeNotifier {
 
   /// Hole die Daten von allen registrierten Services
   Future<void> _fetchAllServices() async {
-    // Wir erstellen eine Kopie der Liste, um ConcurrentModification zu vermeiden,
-    // falls ein Service während des fetch-Aufrufs entfernt oder hinzugefügt wird.
+    if (_isFetching) {
+      print("Abruf übersprungen: Ein Abruf läuft bereits.");
+      return; // Kein Abruf starten, wenn einer bereits läuft
+    }
+
+    _isFetching = true; // Setze das Flag auf "läuft"
+    print("Datenabruf gestartet...");
+
     final servicesCopy = List<FetchableService>.from(_services);
 
     for (var service in servicesCopy) {
@@ -55,11 +65,21 @@ class FetchdData extends ChangeNotifier {
       }
     }
 
+    _isFetching = false; // Abruf abgeschlossen
     notifyListeners(); // Optional: Benachrichtige Listener über Aktualisierungen
+    print("Datenabruf abgeschlossen.");
   }
 
   /// Manuelles Abrufen aller Services (sofort)
   Future<void> fetchAllNow() async {
     await _fetchAllServices();
+  }
+
+  /// Debugging: Liste aller registrierten Services anzeigen
+  void debugServices() {
+    print("Registrierte Services:");
+    for (var service in _services) {
+      print("- ${service.runtimeType}");
+    }
   }
 }
