@@ -431,7 +431,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       style: TextStyle(
                         color: drinkNameController.text.isEmpty
                             ? theme.hintTextColor
-                            : theme.primaryFontColor,
+                            : theme.tertiaryColor,
                       ),
                       onChanged: (_) {
                         setState(() {});
