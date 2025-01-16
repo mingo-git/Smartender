@@ -67,12 +67,6 @@ class ThemeProvider extends ChangeNotifier {
         case 'Dark':
           _currentTheme = CustomTheme.darkTheme;
           break;
-        case 'Sommer':
-          _currentTheme = CustomTheme.sommerTheme;
-          break;
-        case 'Crazy':
-          _currentTheme = CustomTheme.crazyTheme;
-          break;
         default:
           _currentTheme = CustomTheme.lightTheme;
       }
@@ -94,8 +88,6 @@ class ThemeProvider extends ChangeNotifier {
   String _getCustomThemeName(CustomTheme theme) {
     if (theme == CustomTheme.lightTheme) return 'Light';
     if (theme == CustomTheme.darkTheme) return 'Dark';
-    if (theme == CustomTheme.sommerTheme) return 'Sommer';
-    if (theme == CustomTheme.crazyTheme) return 'Crazy';
     return 'Custom';
   }
 }

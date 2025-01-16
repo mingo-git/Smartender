@@ -41,12 +41,6 @@ class _ThemeScreenState extends State<ThemeScreen> {
       case 'Dark':
         themeProvider.isDarkMode = true;
         break;
-      case 'Sommer':
-        themeProvider.setCustomTheme(CustomTheme.sommerTheme);
-        break;
-      case 'Crazy':
-        themeProvider.setCustomTheme(CustomTheme.crazyTheme);
-        break;
     }
 
     final prefs = await SharedPreferences.getInstance();
