@@ -90,8 +90,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     # Move to the correct slot with acceleration
                     logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
-                    motor_controller.set_direction(1)
-                    motor_controller.accelerate_motor(200 * (command.slot_number - 1))  # Use accelerate_motor
+                    motor_controller.step_motor(1000, 1)  # Use accelerate_motor
 
                     # Wait for the correct limit switch to be pressed
                     while position_handler.get_position() != command.slot_number:

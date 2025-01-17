@@ -1,4 +1,277 @@
-| 2025-01-14 15:30:56 | INFO     | Main                 | Application started
-| 2025-01-14 15:30:57 | INFO     | Main                 | Hardware components initialized
-| 2025-01-14 15:30:59 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-14 16:19:41 | INFO     | Main                 | Application started
+| 2025-01-14 18:26:37 | INFO     | MotorController      | GPIO cleanup complete
+ed
+ached
+4 18:24:49 | INFO     | Main                 | Hardware components initialized
+| 2025-01-14 18:24:52 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-14 18:24:58 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-14 18:25:00 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-14 18:25:00 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-14 18:25:00 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-14 18:25:00 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-14 18:25:00 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=60, slot_number=3), Ingredient(quantity_ml=30, slot_number=4)]
+| 2025-01-14 18:25:00 | INFO     | Main                 | Alcoholic drink: Slot 3
+| 2025-01-14 18:25:00 | INFO     | MotorController      | Moving to slot 3 with acceleration
+| 2025-01-14 18:25:00 | INFO     | MotorController      | Direction set to 0
+| 2025-01-14 18:25:00 | INFO     | MotorController      | ACC: 200, DEC: 200
+| 2025-01-14 18:25:02 | INFO     | MotorController      | Accelerated motor for 200 steps
+| 2025-01-14 18:25:11 | INFO     | MotorController      | Decelerated motor for 200 steps
+| 2025-01-14 18:25:11 | INFO     | MotorController      | Stepped motor 1000 steps with acceleration and deceleration
+| 2025-01-14 18:25:11 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:11 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:11 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:11 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:11 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:12 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:13 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:14 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:15 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:16 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:17 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:18 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:19 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:20 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:21 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:22 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:22 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:22 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:22 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:25:22 | ERROR    | Main                 | Error processing command: 'unknown handle'
+| 2025-01-14 18:25:22 | INFO     | Main                 | Alcoholic drink: Slot 4
+| 2025-01-14 18:25:22 | INFO     | MotorController      | Moving to slot 4 with acceleration
+| 2025-01-14 18:26:18 | INFO     | Main                 | Application started
+| 2025-01-14 18:26:19 | INFO     | Main                 | Hardware components initialized
+| 2025-01-14 18:26:21 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-14 18:26:23 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-14 18:26:23 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-14 18:26:24 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-14 18:26:24 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-14 18:26:24 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-14 18:26:24 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=60, slot_number=3), Ingredient(quantity_ml=30, slot_number=4)]
+| 2025-01-14 18:26:24 | INFO     | Main                 | Alcoholic drink: Slot 3
+| 2025-01-14 18:26:24 | INFO     | MotorController      | Moving to slot 3 with acceleration
+| 2025-01-14 18:26:24 | INFO     | MotorController      | Direction set to 1
+| 2025-01-14 18:26:24 | INFO     | MotorController      | ACC: 200, DEC: 200
+| 2025-01-14 18:26:26 | INFO     | MotorController      | Accelerated motor for 200 steps
+| 2025-01-14 18:26:35 | INFO     | MotorController      | Decelerated motor for 200 steps
+| 2025-01-14 18:26:35 | INFO     | MotorController      | Stepped motor 1000 steps with acceleration and deceleration
+| 2025-01-14 18:26:35 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:36 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | Main                 | Application is shutting down
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | INFO     | PositionHandler      | Limit switch 5 was not reached
+| 2025-01-14 18:26:37 | ERROR    | Main                 | Error processing command: 'unknown handle'
+| 2025-01-14 18:26:37 | INFO     | Main                 | Alcoholic drink: Slot 4
+| 2025-01-14 18:26:37 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-14 18:26:37 | ERROR    | Main                 | Error processing command: Please set pin numbering mode using GPIO.setmode(GPIO.BOARD) or GPIO.setmode(GPIO.BCM)
+| 2025-01-14 18:34:11 | INFO     | Main                 | Application started
+| 2025-01-14 18:34:12 | INFO     | Main                 | Hardware components initialized
+| 2025-01-14 18:34:13 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-14 18:39:54 | INFO     | Main                 | Application started
+| 2025-01-14 18:39:55 | INFO     | Main                 | Hardware components initialized
+| 2025-01-14 18:39:56 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-14 18:52:18 | INFO     | Main                 | Application started
+| 2025-01-14 18:52:19 | INFO     | Main                 | Hardware components initialized
+| 2025-01-14 18:52:21 | INFO     | WebSocketHandler     | Connected to WebSocket server
