@@ -14,6 +14,8 @@ from rx import create
 from rx.subject import Subject
 import time
 import threading
+from dotenv import load_dotenv
+import os
 # --------------------------------------------------------------------------------------------------
 
 def main():
@@ -22,9 +24,12 @@ def main():
 
     # Initialize WebSocketHandler
     url = "wss://smartender-432708816033.europe-west3.run.app/smartender/socket"
+    # Load environment variables from .env file
+    load_dotenv()
+
     headers = {
-        "x-api-key": "b0ec1aa3-98bd-434d-b6b6-f72b99383859",
-        "Hardware-Auth-Key": "TODO: Add Hardware-Auth-Key",
+        "x-api-key": os.getenv("X_API_KEY"),
+        "Hardware-Auth-Key": os.getenv("HARDWARE_AUTH_KEY"),
     }
 
     websocket_handler = WebSocketHandler(url, headers)
