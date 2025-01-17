@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"os"
 
 	utils "app/internal/utils"
 
@@ -17,10 +18,9 @@ import (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	// TODO: Add origin check for 'Hardware-Auth-Key' header
 	CheckOrigin: func(r *http.Request) bool {
-		return r.Header.Get("Hardware-Auth-Key") == "TODO: Add Hardware-Auth-Key"
-	}, // Akzeptiert alle Ursprünge, für Tests ok
+		return r.Header.Get("Hardware-Auth-Key") == os.Getenv("HARDWARE_AUTH_KEY")
+	},
 }
 
 var hardwareConnections = make(map[string]*websocket.Conn) // Speichert Verbindungen nach Hardware-ID
@@ -30,29 +30,49 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("WebSocket upgrade failed:", err)
+		log.Default().Println("WebSocket upgrade failed:", err)
 		return
 	}
 	defer conn.Close()
 
 	hardwareID := "2" //r.URL.Query().Get("id") // Hardware-ID zur Identifikation
 	if hardwareID == "" {
-		log.Println("Hardware ID missing")
+		log.Default().Println("Hardware ID missing")
 		return
 	}
 
 	hardwareConnections[hardwareID] = conn // Verbindung speichern
-	log.Printf("Hardware %s connected", hardwareID)
+	log.Default().Printf("Hardware %s connected", hardwareID)
 
 	// Hält die Verbindung aktiv, liest Nachrichten (optional)
 	for {
-		_, msg, err := conn.ReadMessage()
+		_, resMsgRaw, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("Error reading from WebSocket:", err)
+			log.Default().Println("Error reading from WebSocket:", err)
 			delete(hardwareConnections, hardwareID)
 			break
 		}
-		log.Printf("Message from hardware %s: %s", hardwareID, string(msg))
+		// TODO: Fehlermeldungen verarbeiten und an User zurückgeben  
+		var resMsg models.ResponseMsg
+		err = json.Unmarshal(resMsgRaw, &resMsg)
+		if err != nil {
+			http.Error(w, "Invalid request payload", http.StatusBadRequest)
+			return
+		}
+
+		switch resMsg.Type {
+		case models.Info:
+			log.Default().Printf("Info: %s", resMsg.Message)
+		case models.Warn:
+			log.Default().Printf("Warn: %s", resMsg.Message)
+		case models.Error:
+			log.Default().Printf("Error: %s", resMsg.Message)
+		case models.Fatal:
+			log.Default().Printf("Fatal: %s", resMsg.Message)
+		case models.Success:
+			log.Default().Printf("Success: %s", resMsg.Message)
+		}
+
 	}
 }
 
@@ -102,7 +122,7 @@ func SendCommandToHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Not authorized for this hardware", http.StatusUnauthorized)
 			return
 		}
-		log.Println("Failed to map recipe to protocol:", protokollMapperError)
+		log.Default().Println("Failed to map recipe to protocol:", protokollMapperError)
 		http.Error(w, "Failed to map recipe to protocol", http.StatusInternalServerError)
 		return
 	}
@@ -110,7 +130,7 @@ func SendCommandToHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	err = conn.WriteMessage(websocket.TextMessage, []byte(result))
 
 	if err != nil {
-		log.Println("Failed to send command:", err)
+		log.Default().Println("Failed to send command:", err)
 		http.Error(w, "Failed to send command", http.StatusInternalServerError)
 		return
 	}
