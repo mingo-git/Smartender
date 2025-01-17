@@ -1,6 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 from modules.utils.logger import Logger
+from modules.error_handler import ErrorHandler
+from rx import create
+from rx.subject import Subject
 
 class MotorController:
     def __init__(self, dir_pin=16, pull_pin=12, min_delay=0.0005, max_delay=0.001, error_handler=None):
@@ -12,6 +15,7 @@ class MotorController:
         :param max_delay: Maximum delay between steps (for starting speed).
         """
         self.logger = Logger()
+        self.message_subject = Subject()
         self.dir_pin = dir_pin
         self.pull_pin = pull_pin
         self.min_delay = min_delay
@@ -21,6 +25,13 @@ class MotorController:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.dir_pin, GPIO.OUT)
         GPIO.setup(self.pull_pin, GPIO.OUT)
+
+    def subscribe(self):
+        """
+        Subscribe to limit switch events.
+        :return: Subscription object.
+        """
+        return self.message_subject.subscribe()
 
     def set_direction(self, direction):
         """Set the direction of the stepper motor."""

@@ -1,7 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 from modules.utils.logger import Logger
-
+from rx import create
+from rx.subject import Subject
 
 class ActuatorController:
     def __init__(self, in_pins):
@@ -9,12 +10,20 @@ class ActuatorController:
         Initialize the actuator controller.
         :param in_pins: List of GPIO pins for actuator control.
         """
-        self.in_pins = in_pins
         self.logger = Logger()
+        self.message_subject = Subject()
+        self.in_pins = in_pins
         GPIO.setmode(GPIO.BCM)
         for pin in self.in_pins:
             GPIO.setup(pin, GPIO.OUT)
             GPIO.output(pin, GPIO.LOW)
+
+    def subscribe(self):
+        """
+        Subscribe to limit switch events.
+        :return: Subscription object.
+        """
+        return self.message_subject.subscribe()
 
     def activate(self, duration):
         """

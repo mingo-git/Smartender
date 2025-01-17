@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 from modules.utils.logger import Logger
+from rx import create
+from rx.subject import Subject
 
 class PumpController:
     def __init__(self, pump_pins):
@@ -8,12 +10,20 @@ class PumpController:
         Initialize the pump controller.
         :param pump_pins: List of GPIO pins for the pumps.
         """
-        self.pump_pins = pump_pins
         self.logger = Logger()
+        self.message_subject = Subject()
+        self.pump_pins = pump_pins
         GPIO.setmode(GPIO.BCM)
         for pin in self.pump_pins:
             GPIO.setup(pin, GPIO.OUT)
             GPIO.output(pin, GPIO.LOW)
+
+    def subscribe(self):
+        """
+        Subscribe to limit switch events.
+        :return: Subscription object.
+        """
+        return self.message_subject.subscribe()
 
     def activate_pump(self, pump_index, duration):
         """

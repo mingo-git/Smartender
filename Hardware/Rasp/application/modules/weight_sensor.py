@@ -1,7 +1,8 @@
 from hx711 import HX711
 import statistics
 from modules.utils.logger import Logger
-
+from rx import create
+from rx.subject import Subject
 
 class WeightSensor:
     def __init__(self, dt_pin=20, sck_pin=21, scaling_factor=1140):
@@ -11,9 +12,18 @@ class WeightSensor:
         :param sck_pin: GPIO pin for clock.
         :param scaling_factor: Scaling factor for the sensor.
         """
+        self.logger = Logger()
+        self.message_subject = Subject()
         self.hx = HX711(dt_pin, sck_pin)
         self.scaling_factor = scaling_factor
         self.weight_samples = []
+
+    def subscribe(self):
+        """
+        Subscribe to limit switch events.
+        :return: Subscription object.
+        """
+        return self.message_subject.subscribe()
 
     def tare(self):
         """Set the tare (zero) value for the scale."""
