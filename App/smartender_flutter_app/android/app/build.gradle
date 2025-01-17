@@ -40,12 +40,12 @@ android {
     }
 
     signingConfigs {
-        release {
+/*        release {
             storeFile file(keystoreProperties['storeFile'])
             storePassword keystoreProperties['storePassword']
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
-        }
+        }*/
 
         debug {
             storeFile file("C:\\Users\\jonas\\Desktop\\Smartender\\App\\smartender_flutter_app\\android\\app\\smartender-keystore.jks")
@@ -56,11 +56,11 @@ android {
     }
 
     buildTypes {
-        release {
+/*        release {
             signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+        }*/
 
         debug {
             signingConfig signingConfigs.debug

@@ -1,6 +1,7 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/provider/theme_provider.dart';
@@ -16,6 +17,12 @@ import 'package:smartender_flutter_app/services/slot_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Bildschirmrotation deaktivieren
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
   await dotenv.load(fileName: '.env');
 
   final AuthService _authService = AuthService();
