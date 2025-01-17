@@ -2,13 +2,14 @@ package handlers
 
 import (
 	models "app/internal/models"
+	"app/internal/query"
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
-	"os"
 
 	utils "app/internal/utils"
 
@@ -23,9 +24,9 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-var hardwareConnections = make(map[string]*websocket.Conn) // Speichert Verbindungen nach Hardware-ID
+var hardwareConnections = make(map[int]*websocket.Conn) // Speichert Verbindungen nach Hardware-ID
 
-func Socket(w http.ResponseWriter, r *http.Request) {
+func Socket(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [GET] /socket at %s", time.Now())
 
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -35,14 +36,27 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	hardwareID := "2" //r.URL.Query().Get("id") // Hardware-ID zur Identifikation
-	if hardwareID == "" {
+	mac := r.Header.Get("Identifier")
+	log.Default().Printf("Identifier: %s", mac)
+
+	// hardwareID := "2" //identifier
+	var hardwareID int
+
+	error := db.QueryRow(query.GetHardwareForMAC_Adress(), mac).Scan(&hardwareID)
+	if error != nil {
+		log.Default().Println("Error reading from Database:", error)
+		http.Error(w, "Error reading from Database", http.StatusInternalServerError)
+		return
+	}
+
+	if hardwareID == 0 {
 		log.Default().Println("Hardware ID missing")
+		http.Error(w, "Hardware Identifier Missing", http.StatusBadRequest)
 		return
 	}
 
 	hardwareConnections[hardwareID] = conn // Verbindung speichern
-	log.Default().Printf("Hardware %s connected", hardwareID)
+	log.Default().Printf("Hardware %d connected", hardwareID)
 
 	// Hält die Verbindung aktiv, liest Nachrichten (optional)
 	for {
@@ -52,7 +66,7 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 			delete(hardwareConnections, hardwareID)
 			break
 		}
-		// TODO: Fehlermeldungen verarbeiten und an User zurückgeben  
+		// TODO: Fehlermeldungen verarbeiten und an User zurückgeben
 		var resMsg models.ResponseMsg
 		err = json.Unmarshal(resMsgRaw, &resMsg)
 		if err != nil {
@@ -95,7 +109,7 @@ func SendCommandToHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	conn, exists := hardwareConnections[strconv.Itoa(*hardwareID)]
+	conn, exists := hardwareConnections[*hardwareID]
 	if !exists {
 		log.Default().Printf("Hardware %d not connected", hardwareID)
 		http.Error(w, "Hardware not connected", http.StatusNotFound)
