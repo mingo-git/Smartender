@@ -16,6 +16,7 @@ import time
 import threading
 from dotenv import load_dotenv
 import os
+import uuid
 # --------------------------------------------------------------------------------------------------
 
 def main():
@@ -26,10 +27,14 @@ def main():
     url = "wss://smartender-432708816033.europe-west3.run.app/smartender/socket"
     # Load environment variables from .env file
     load_dotenv()
-
+    
+    mac = uuid.getnode()
+    mac_address = ':'.join(f'{(mac >> i) & 0xFF:02x}' for i in range(40, -1, -8))
+    
     headers = {
         "x-api-key": os.getenv("X_API_KEY"),
         "Hardware-Auth-Key": os.getenv("HARDWARE_AUTH_KEY"),
+        "Identifier": mac_address,
     }
 
     websocket_handler = WebSocketHandler(url, headers)
