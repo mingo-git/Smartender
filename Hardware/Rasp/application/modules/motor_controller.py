@@ -4,6 +4,7 @@ from modules.utils.logger import Logger
 from modules.error_handler import ErrorHandler
 from rx import create
 from rx.subject import Subject
+import pigpio
 
 class MotorController:
     def __init__(self, dir_pin=16, pull_pin=12, min_delay=0.0005, max_delay=0.001, error_handler=None):
@@ -21,6 +22,10 @@ class MotorController:
         self.min_delay = min_delay
         self.max_delay = max_delay
         self.current_delay = max_delay
+
+        self.pi = pigpio.pi()
+        self.pi.set_mode(self.pull_pin, pigpio.OUTPUT)
+        self.pi.set_mode(self.dir_pin, pigpio.OUTPUT)
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.dir_pin, GPIO.OUT)
@@ -98,3 +103,39 @@ class MotorController:
         """Clean up GPIO settings."""
         GPIO.cleanup()
         self.logger.log("INFO", "GPIO cleanup complete", "MotorController")
+
+
+
+    def rotate_stepper(self, steps, direction, start_delay=0.001/8, end_delay=0.0005/8, acceleration_steps=2000):
+        GPIO.output(self.dir_pin, direction)
+        delay = start_delay
+        step = 0
+        while step < steps:
+            GPIO.output(self.pull_pin, GPIO.HIGH)
+            time.sleep(delay)
+            GPIO.output(self.pull_pin, GPIO.LOW)
+            time.sleep(delay)
+            if step < acceleration_steps:
+                delay -= (start_delay - end_delay) / acceleration_steps
+            step += 1
+
+    # try:
+    #     # Rotate 200 steps counterclockwise with acceleration ramping
+    #     rotate_stepper(steps=1000*8, direction=1, start_delay=0.001/8, end_delay=0.0005/8, acceleration_steps=2000)
+    #     time.sleep(1)  # Pause for 1 second
+    #     # Rotate 200 steps clockwise with acceleration ramping
+    #     rotate_stepper(steps=1000*8, direction=0, start_delay=0.001/8, end_delay=0.0005/8, acceleration_steps=2000)
+
+
+    # except KeyboardInterrupt:
+    #     print("Program stopped")
+
+    # finally:
+    #     GPIO.cleanup()
+
+
+    def rotate_stepper_pigpio(self, steps, direction, frequency):
+        self.pi.write(self.dir_pin, direction)
+        self.pi.hardware_PWM(self.pull_pin, frequency, 750000)  # 50% duty cycle
+        time.sleep(steps / frequency)
+        self.pi.hardware_PWM(self.pull_pin, 0, 0)  # Stop PWM
