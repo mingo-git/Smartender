@@ -12,6 +12,8 @@ from modules.error_handler import ErrorHandler
 # --------------------------------------------------------------------------------------------------
 from rx import create
 from rx.subject import Subject
+import time
+import threading
 # --------------------------------------------------------------------------------------------------
 
 def main():
@@ -105,13 +107,25 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         logger.log("INFO", f"Commands processed: {commands}", "Main")
         for command in commands:
             try:
+                # pump_controller.activate_pump(5, 3)  # Placeholder logic
                 # Determine if the drink is alcoholic or non-alcoholic
                 if 1 <= command.slot_number <= 5:  # Alcoholic
                     logger.log("INFO", f"Alcoholic drink: Slot {command.slot_number}", "Main")
 
                     # Move to the correct slot with acceleration
                     logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
-                    motor_controller.step_motor(1000, 1)  # Use accelerate_motor
+                    # motor_controller.step_motor(1000, 1)  # Use accelerate_motor
+                    # motor_controller.rotate_stepper(1000*8, 0)
+                    # time.sleep(1)
+                    # motor_controller.rotate_stepper(1000*8, 1)
+
+                    # Start the motor in a separate thread
+                    # motor_thread = threading.Thread(target=run_motor)
+                    # motor_thread.start()
+                    # motor_thread.join()  # Optional: Wait for the thread to complete
+
+                    motor_controller.rotate_stepper_pigpio(2000, 0, 4000)
+
 
                     # Wait for the correct limit switch to be pressed
                     while position_handler.get_position() != command.slot_number:
@@ -142,6 +156,12 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
             except Exception as e:
                 logger.log("ERROR", f"Error processing command: {e}", "Main")
+
+def run_motor():
+    motor_controller = MotorController(dir_pin=16, pull_pin=12)
+    motor_controller.rotate_stepper(1000*8, 0)
+    time.sleep(1)
+    motor_controller.rotate_stepper(1000*8, 1)
 
 
 if __name__ == "__main__":

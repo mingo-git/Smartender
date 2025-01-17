@@ -25,10 +25,10 @@ def rotate_stepper(steps, direction, start_delay=0.002, end_delay=0.0005, accele
 
 try:
     # Rotate 200 steps counterclockwise with acceleration ramping
-    rotate_stepper(steps=1000*8, direction=0, start_delay=0.001/8, end_delay=0.0005/8, acceleration_steps=2000)
+    rotate_stepper(steps=1000*8, direction=1, start_delay=0.001/8, end_delay=0.0005/8, acceleration_steps=2000)
     time.sleep(1)  # Pause for 1 second
     # Rotate 200 steps clockwise with acceleration ramping
-    rotate_stepper(steps=1000*8, direction=1, start_delay=0.001/8, end_delay=0.0005/8, acceleration_steps=2000)
+    rotate_stepper(steps=1000*8, direction=0, start_delay=0.001/8, end_delay=0.0005/8, acceleration_steps=2000)
 
 
 except KeyboardInterrupt:
