@@ -46,14 +46,18 @@ def main():
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
     motor_controller = MotorController(dir_pin=16, pull_pin=12)
     pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26], weight_sensor=weight_sensor, position_handler=position_handler)
-    actuator_controller = ActuatorController(in_pins=[25, 8, 7, 1], weight_sensor=weight_sensor, position_handler=position_handler)
+    actuator_controller = ActuatorController(
+        in_pins={"in3": 7, "in4": 8},
+        weight_sensor=weight_sensor,
+        position_handler=position_handler,
+    )
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
     position_handler_subject = position_handler.subscribe()
     pump_controller_subject = pump_controller.subscribe()
     weight_sensor_subject = weight_sensor.subscribe()
-    actuator_controller_subject = actuator_controller.subscribe()
+    # actuator_controller_subject = actuator_controller.subscribe()
 
     error_handler = ErrorHandler(websocket_instance=websocket_handler.ws)
     # TODO: pass error_handler to controllers and handlers
@@ -119,6 +123,9 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
     if commands:
         sorted_commands = sorted(commands, key=lambda item: item.slot_number)
+
+        # actuator_controller._move_up()
+        # time.sleep(1000)
 
         logger.log("INFO", f"Commands processed: {sorted_commands}", "Main")
         for command in sorted_commands:
