@@ -79,7 +79,7 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 func SendCommandToHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /action at %s", time.Now())
 
-	// Deserialise the request body
+	// Deserialize the request body
 	var instruction models.Instruction
 	err := json.NewDecoder(r.Body).Decode(&instruction)
 	if err != nil {
@@ -114,15 +114,14 @@ func SendCommandToHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	log.Default().Printf("BEFORE THE MAPPER IT WORKS")
 
-	result, protokollMapperError := utils.CocktailProtokollMapper(db, *hardwareID, recipeIdInt, r)
+	result, protocolMapperError := utils.CocktailProtokollMapper(db, *hardwareID, recipeIdInt, r)
 
-	log.Default().Printf("AFTER MAPPER IT WORKS (GUESS NOt, but maybeee)")
-	if protokollMapperError != nil {
-		if protokollMapperError.Error() == "failed to get hardware from Database" {
+	if protocolMapperError != nil {
+		if protocolMapperError.Error() == "failed to get hardware from Database" {
 			http.Error(w, "Not authorized for this hardware", http.StatusUnauthorized)
 			return
 		}
-		log.Default().Println("Failed to map recipe to protocol:", protokollMapperError)
+		log.Default().Println("Failed to map recipe to protocol:", protocolMapperError)
 		http.Error(w, "Failed to map recipe to protocol", http.StatusInternalServerError)
 		return
 	}
