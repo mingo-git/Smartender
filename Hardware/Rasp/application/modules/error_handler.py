@@ -19,7 +19,6 @@ class ErrorCode(Enum):
 class ErrorHandler:
     def __init__(self, websocket_instance):
         self._websocket_instance = websocket_instance
-        self._subscriptions = []
         self.logger = Logger()
     
     async def send_error(self, error_code, message=None):
@@ -41,37 +40,3 @@ class ErrorHandler:
         except Exception as e:
             print(f"Failed to send error: {e}")
             self.logger.log("ERROR", f"Failed to send error: {e}", "ErrorHandler")
-    
-    def subscribe_to_stream(self, observable, error_code, message_resolver=None):
-        """
-        Subscribe to an observable stream and react to errors.
-
-        Args:
-            observable: The rxpy observable stream.
-            error_code: The ErrorCode to send when the stream emits an event.
-            message_resolver: Optional function to create a message based on the emitted value.
-        
-        Possible error codes:
-            - ErrorCode.UNKNOWN_ERROR
-            - ErrorCode.NETWORK_DISCONNECTED
-            - ErrorCode.SCALE_EXCEPTION
-            - ErrorCode.UNKNOWN_POSITION
-            - ErrorCode.BUSY
-            - ErrorCode.INVALID_COMMAND
-            - ErrorCode.INVALID_PARAMETER
-            - ErrorCode.INVALID_STATE
-            - ErrorCode.ABORTION
-
-        """
-        def on_next(value):
-            message = message_resolver(value) if message_resolver else None
-            asyncio.create_task(self.send_error(error_code, message))
-        
-        subscription = observable.subscribe(on_next)
-        self._subscriptions.append(subscription)
-    
-    def unsubscribe_all(self):
-        """Unsubscribe from all streams."""
-        for subscription in self._subscriptions:
-            subscription.dispose()
-        self._subscriptions = []

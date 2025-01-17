@@ -37,6 +37,7 @@ iot_project/
 - [x] CommandMapper Klasse anlegen
 - [ ] ErrorHandler Klasse anlegen
 - [x] Logger Klasse anlegen
+- [ ] BashScript für schnelle Installation aller Python Packages
 
 ## Pins
 
@@ -62,3 +63,10 @@ iot_project/
 | Pin 35 | GPIO 19 (PWM) | Pump 5           | Pin 36 | GPIO 16       | Stepper Dir             |
 | Pin 37 | GPIO 26       | Pump 6           | Pin 38 | GPIO 20       | Scale DT                |
 | Pin 39 | Ground        |                  | Pin 40 | GPIO 21       | Scale SCK               |
+
+## Liste der nötigen Python-Imports
+
+- `sudo apt install python3-websocket`
+- `sudo apt install python3-rx`
+- `sudo apt-get install python3-pip`
+- `pip install --break-system-packages 'git+https://github.com/gandalf15/HX711.git#egg=HX711&subdirectory=HX711_Python3'`
