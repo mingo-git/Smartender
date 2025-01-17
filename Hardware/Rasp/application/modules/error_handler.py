@@ -29,8 +29,7 @@ class ErrorHandler:
             return
         
         payload = {
-            "error_code": error_code.value,
-            "error_name": error_code.name,
+            "type": "ERROR",
             "message": message or "No additional information."
         }
 
