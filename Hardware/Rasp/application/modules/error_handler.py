@@ -33,9 +33,11 @@ class ErrorHandler:
             "error_name": error_code.name,
             "message": message or "No additional information."
         }
+
+        self. logger.log("ERROR", f"Error reported: {payload}", "ErrorHandler") 
+
         try:
             await self._websocket_instance.send(str(payload))
-            print(f"Error reported: {payload}")
             self.logger.log("ERROR", f"Error reported: {payload}", "ErrorHandler")
         except Exception as e:
             print(f"Failed to send error: {e}")

@@ -5,13 +5,15 @@ from rx import create
 from rx.subject import Subject
 
 class ActuatorController:
-    def __init__(self, in_pins):
+    def __init__(self, in_pins, weight_sensor, position_handler):
         """
         Initialize the actuator controller.
         :param in_pins: List of GPIO pins for actuator control.
         """
         self.logger = Logger()
         self.message_subject = Subject()
+        self.weight_sensor = weight_sensor
+        self.position_handler = position_handler
         self.in_pins = in_pins
         GPIO.setmode(GPIO.BCM)
         for pin in self.in_pins:

@@ -30,11 +30,11 @@ def main():
     command_mapper = CommandMapper()
 
     # Initialize Hardware Components
-    motor_controller = MotorController(dir_pin=16, pull_pin=12)
     position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])
-    pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26])
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
-    actuator_controller = ActuatorController(in_pins=[25, 8, 7, 1])
+    motor_controller = MotorController(dir_pin=16, pull_pin=12)
+    pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26], weight_sensor=weight_sensor, position_handler=position_handler)
+    actuator_controller = ActuatorController(in_pins=[25, 8, 7, 1], weight_sensor=weight_sensor, position_handler=position_handler)
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
@@ -110,17 +110,21 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     logger.log("INFO", f"Alcoholic drink: Slot {command.slot_number}", "Main")
 
                     # Move to the correct slot with acceleration
-                    logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
+                    logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "Main")
                     motor_controller.step_motor(1000, 1)  # Use accelerate_motor
 
                     # Wait for the correct limit switch to be pressed
                     while position_handler.get_position() != command.slot_number:
                         pass
 
-                    logger.log("INFO", f"Reached slot {command.slot_number}", "PositionHandler")
+                    if position_handler.get_position() != command.slot_number:
+                        logger.log("ERROR", "Failed to reach the correct slot", "Main")
+                        break
+
+                    logger.log("INFO", f"Reached slot {command.slot_number}", "Main")
 
                     # Pour using the actuator
-                    logger.log("INFO", f"Pouring from slot {command.slot_number}", "ActuatorController")
+                    logger.log("INFO", f"Pouring from slot {command.slot_number}", "Main")
                     actuator_controller.activate(2)  # Duration placeholder
 
                 elif 6 <= command.slot_number <= 11:  # Non-alcoholic
@@ -131,17 +135,31 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                         motor_controller.set_direction(0)  # Move back to home
                         motor_controller.step_motor(200)
 
+                    if position_handler.get_position() != 0:
+                        logger.log("ERROR", "Failed to return to home position", "Main")
+                        break
+
                     # Pump the drink
                     pump_index = command.slot_number - 6
-                    logger.log("INFO", f"Activating pump {pump_index}", "PumpController")
-                    pump_controller.activate_pump(pump_index, command.quantity_ml / 10)  # Placeholder logic
+                    logger.log("INFO", f"Activating pump {pump_index}", "Main")
+                    pump_controller.activate_pump(pump_index, command.quantity_ml)
+                else:
+                    logger.log("ERROR", "Invalid slot number", "Main")
+                    break
 
                 # Check weight sensor for errors
                 current_weight = weight_sensor.read_weight()
-                logger.log("INFO", f"Current weight: {current_weight} g", "WeightSensor")
+                logger.log("INFO", f"Current weight: {current_weight} g", "Main")
+                
+                if current_weight > 395:
+                    logger.log("ERROR", "Weight to high, potential physical Overflow", "Main")
+                    break
+
 
             except Exception as e:
                 logger.log("ERROR", f"Error processing command: {e}", "Main")
+    else:
+        logger.log("ERROR", "No Commands received", "Main")
 
 
 if __name__ == "__main__":
