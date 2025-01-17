@@ -80,6 +80,10 @@ def main():
     # Start WebSocket handler
     websocket_handler.start()
 
+    # Move stepper motor to position 0
+    motor_controller.rotate_stepper_pigpio(200, 0, 2000)
+    motor_controller.rotate_until_limit(0, position_handler, 1)
+
     try:
         # Keep the main thread running
         while True:
@@ -114,8 +118,10 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
     commands = command_mapper.map_command(message)
 
     if commands:
-        logger.log("INFO", f"Commands processed: {commands}", "Main")
-        for command in commands:
+        sorted_commands = sorted(commands, key=lambda item: item.slot_number)
+
+        logger.log("INFO", f"Commands processed: {sorted_commands}", "Main")
+        for command in sorted_commands:
             try:
                 # pump_controller.activate_pump(5, 3)  # Placeholder logic
                 # Determine if the drink is alcoholic or non-alcoholic
@@ -124,22 +130,14 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     # Move to the correct slot with acceleration
                     logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
-                    # motor_controller.step_motor(1000, 1)  # Use accelerate_motor
-                    # motor_controller.rotate_stepper(1000*8, 0)
-                    # time.sleep(1)
-                    # motor_controller.rotate_stepper(1000*8, 1)
 
-                    # Start the motor in a separate thread
-                    # motor_thread = threading.Thread(target=run_motor)
-                    # motor_thread.start()
-                    # motor_thread.join()  # Optional: Wait for the thread to complete
+                    # motor_controller.rotate_stepper_pigpio(2000, 1, 2000)
+                    # motor_controller.rotate_stepper_pigpio(2000, 0, 2000)
 
-                    motor_controller.rotate_stepper_pigpio(2000, 0, 4000)
-
-
-                    # Wait for the correct limit switch to be pressed
-                    while position_handler.get_position() != command.slot_number:
-                        pass
+                    # Rotate the stepper motor and stop when the limit switch is pressed
+                    motor_controller.rotate_until_limit(command.slot_number, position_handler, 0)
+                    logger.log("INFO", f"Moved to slot {command.slot_number}", "MotorController")
+                    time.sleep(2)
 
                     if position_handler.get_position() != command.slot_number:
                         logger.log("ERROR", "Failed to reach the correct slot", "Main")
@@ -149,7 +147,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     # Pour using the actuator
                     logger.log("INFO", f"Pouring from slot {command.slot_number}", "Main")
-                    actuator_controller.activate(2)  # Duration placeholder
+                    # actuator_controller.activate(2)  # Duration placeholder
 
                 elif 6 <= command.slot_number <= 11:  # Non-alcoholic
                     logger.log("INFO", f"Non-alcoholic drink: Slot {command.slot_number}", "Main")
@@ -166,30 +164,28 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     # Pump the drink
                     pump_index = command.slot_number - 6
                     logger.log("INFO", f"Activating pump {pump_index}", "Main")
-                    pump_controller.activate_pump(pump_index, command.quantity_ml)
+                    # pump_controller.activate_pump(pump_index, command.quantity_ml)
                 else:
                     logger.log("ERROR", "Invalid slot number", "Main")
                     break
 
-                # Check weight sensor for errors
-                current_weight = weight_sensor.read_weight()
-                logger.log("INFO", f"Current weight: {current_weight} g", "Main")
+                # # Check weight sensor for errors
+                # current_weight = weight_sensor.read_weight()
+                # logger.log("INFO", f"Current weight: {current_weight} g", "Main")
                 
-                if current_weight > 395:
-                    logger.log("ERROR", "Weight to high, potential physical Overflow", "Main")
-                    break
+                # if current_weight > 395:
+                #     logger.log("ERROR", "Weight to high, potential physical Overflow", "Main")
+                #     break
 
 
             except Exception as e:
                 logger.log("ERROR", f"Error processing command: {e}", "Main")
+        if position_handler.get_position() != 0:
+            logger.log("INFO", "Moving to slot 0", "Main")
+            motor_controller.rotate_stepper_pigpio(200, 0, 2000)
+            motor_controller.rotate_until_limit(0, position_handler, 1)
     else:
         logger.log("ERROR", "No Commands received", "Main")
-
-def run_motor():
-    motor_controller = MotorController(dir_pin=16, pull_pin=12)
-    motor_controller.rotate_stepper(1000*8, 0)
-    time.sleep(1)
-    motor_controller.rotate_stepper(1000*8, 1)
 
 
 if __name__ == "__main__":
