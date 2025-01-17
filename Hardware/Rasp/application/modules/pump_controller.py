@@ -27,7 +27,7 @@ class PumpController:
         """
         return self.message_subject.subscribe()
 
-    def activate_pump(self, pump_index, amount: int):
+    def activate_pump(self, pump_index: int, amount: int):
         """
         Activate a specific pump for a given duration.
         :param pump_index: Index of the pump (0-based).
