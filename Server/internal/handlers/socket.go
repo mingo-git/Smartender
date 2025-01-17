@@ -123,10 +123,7 @@ func SendCommandToHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Default().Printf("BEFORE THE CONVERSION IT WORKS")
 	recipeIdInt := strconv.Itoa(*command)
-
-	log.Default().Printf("BEFORE THE MAPPER IT WORKS")
 
 	result, protocolMapperError := utils.CocktailProtokollMapper(db, *hardwareID, recipeIdInt, r)
 
