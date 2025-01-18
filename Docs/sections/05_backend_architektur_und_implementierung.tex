@@ -1,1 +1,125 @@
 % Hier folgt der Inhalt des Abschnitts "Backend-Architektur und Implementierung".
+
+\textbf{DRAFT}
+
+Das Backend bildet das zentrale Bindeglied zwischen der mobilen App, der Hardwarekomponente des 
+Cocktailautomaten und der cloudbasierten Datenbank. Es ist dafür verantwortlich, Datenflüsse zu 
+koordinieren, Benutzer- und Rezeptinformationen zu verwalten und eine nahtlose Kommunikation 
+zwischen den Systemkomponenten zu gewährleisten.
+
+\subsection{Allgemeine Architektur}
+
+Das Backend folgt einer einfachen serverbasierten Struktur und stellt HTTP-Endpunkte bereit, die 
+von der mobilen App aufgerufen werden können. Diese Endpunkte aktivieren spezifische Handler-
+Funktionen, die in der Regel direkte Datenbankoperationen ausführen. Zusätzlich ermöglicht das 
+Backend über eine Websocket-Schnittstelle die Kommunikation mit der Hardware, um Bestellungen in 
+Echtzeit an die Geräte weiterzuleiten.
+
+Technologisch basiert das Backend vollständig auf Golang, unterstützt durch Frameworks wie gorilla/
+mux für die Routenverwaltung und database/sql für den Zugriff auf die PostgreSQL-Datenbank. Die 
+gesamte Umgebung ist containerisiert und nutzt Docker Compose für lokale Entwicklungsumgebungen 
+sowie Google Cloud Run für das Live-Deployment. In der Live-Umgebung wird Google Cloud SQL 
+anstelle einer lokalen PostgreSQL-Datenbank eingesetzt.
+
+\subsection{Funktionale 
+Anforderungen}
+
+Das Backend übernimmt mehrere Kernfunktionen:
+\begin{itemize}
+	\item Benutzerdatenverwaltung: Erstellung und Authentifizierung von Benutzerkonten mittels API-
+	Schlüsseln und JWT.
+	\item Rezept- und Zutatenmanagement: Speicherung, Bearbeitung und Abfrage von Rezepten und deren 
+	zugehörigen Zutaten.
+	\item Hardwareintegration: Verwaltung der Hardwaregeräte, ihrer Zuordnung zu Benutzern und ihrer 
+	Bestückung.
+	\item Echtzeit-Bestellungen: Weiterleitung von Cocktailbestellungen aus der App an die 
+	angeschlossene Hardware über Websockets.
+\end{itemize}
+
+Besonders anspruchsvoll ist die Echtzeitkommunikation zwischen App und Hardware. Sobald eine 
+Bestellung eingeht, wird das Rezept aus der Datenbank abgerufen und über die Websocket-Verbindung 
+an die entsprechende Hardware weitergeleitet. Dies ermöglicht eine nahezu sofortige Ausführung der 
+Bestellung.
+
+\subsection{Datenbank}
+
+Für die Datenhaltung kommt PostgreSQL zum Einsatz. Die Datenbank ist in der lokalen 
+Entwicklungsumgebung als Docker-Container verfügbar, während im Deployment auf Google Cloud SQL 
+gesetzt wird. Zu den gespeicherten Entitäten gehören unter anderem Benutzer, Hardwaregeräte, 
+Rezepte, Zutaten und deren Zuordnungen.
+
+Das Datenbankschema wird im Anhang dokumentiert, um die Arbeit kompakt zu halten. Der 
+Datenbankzugriff erfolgt mittels database/sql und direkter SQL-Statements. Durch diese Methode 
+wird SQL-Injection auf Basis von Best Practices effektiv verhindert.
+
+\subsection{API und 
+Schnittstellen}
+
+Die Backend-API ist primär REST-orientiert, verwendet jedoch keine Hypermedia-Links, da sie nicht 
+für den öffentlichen Gebrauch konzipiert ist. Zu den wichtigsten Endpunkten gehören:
+
+\textbf{Benutzerregistrierung und - login:}
+\begin{enumerate}
+  \item \texttt{/api/auth/register}
+  \item \texttt{/api/auth/login}
+\end{enumerate}
+
+\textbf{Hardware- und Rezeptverwaltung:}
+\begin{enumerate}
+	\item \texttt{/api/user/hardware/\{hardware\_id\}/drinks}
+	\item \texttt{/api/user/hardware/\{hardware\_id\}/recipes/\{recipe\_id\}}
+	\item \texttt{/api/user/hardware/\{hardware\_id\}/slots}
+\end{enumerate}
+
+\textbf{Cocktailbestellungen:}
+\begin{enumerate}
+  \item \texttt{/api/user/action}
+\end{enumerate}
+
+Die Authentifizierung erfolgt durch eine Kombination aus API-Schlüsseln für allgemeine API-Zugriffe, 
+Hardware-spezifischen Schlüsseln und JWT für Benutzerzugriffe .
+
+\subsection{Cloud-Dienste und Infrastruktur}
+
+Das Backend verwendet mehrere Dienste von Google Cloud:
+\begin{itemize}
+	\item Google Cloud Run: Für das Hosting der containerisierten Backend-Anwendung.
+	\item Google Cloud SQL: Für die zentrale Datenhaltung.
+	\item Google Artifact Registry: Zur Verwaltung von Container-Images.
+	\item Cloud Logging: Zur Erfassung und Analyse von Backend- Logs.
+\end{itemize}
+
+Skalierbarkeit ist durch die Nutzung von Google Cloud Run gegeben, da die Container automatisch 
+skaliert werden können. Aktuell ist diese Funktion jedoch deaktiviert, um das Gratiskontingent von 
+Google nicht zu überschreiten.
+
+
+\subsection{Sicherheitsaspekte}
+
+Für die Sicherheit wurden die folgenden Maßnahmen implementiert:
+\begin{itemize}
+	\item HTTPS: Sämtliche Datenübertragungen erfolgen verschlüsselt.
+	\item SQL-Injection-Schutz: Durch die Verwendung von database/sql wird sichergestellt, dass keine 
+unsicheren SQL-Statements ausgeführt werden.
+	\item API-Schlüssel und JWT: Nur authentifizierte Benutzer und Hardwaregeräte können auf die 
+entsprechenden Ressourcen zugreifen.
+\end{itemize}
+
+
+\subsection{Implementierungsdetails}
+
+Während der Entwicklung traten keine größeren Herausforderungen auf, abgesehen von anfänglichen 
+Problemen mit dem Hosting, die durch den Wechsel zu Google Cloud Run gelöst wurden. Die 
+Echtzeitkommunikation zwischen Hardware und Backend wurde erfolgreich über Websockets umgesetzt, 
+um eine sofortige Reaktion auf Benutzeranfragen zu gewährleisten.
+
+
+\subsection{Entwicklungsprozess}
+
+Zur Unterstützung des Entwicklungsprozesses wurden folgende Tools und Best Practices genutzt:
+\begin{itemize}
+	\item Postman: Für die Erstellung und das Testen von API-Endpunkten, teils auch automatisiert.
+	\item Intensives Logging: Um Debugging und Fehleranalyse zu erleichtern.
+	\item Code Reviews und Code Pairing: Zur Qualitätssicherung.
+	\item Agile Methoden: Planung und Umsetzung erfolgten in Sprints mithilfe eines Ticketsystems.
+\end{itemize}

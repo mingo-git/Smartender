@@ -1,11 +1,13 @@
-\documentclass[a4paper, 12pt]{article} % A4-Seitenformat und Schriftgröße 12pt
+\documentclass[a4paper, 12pt]{IEEEconf} % A4-Seitenformat und Schriftgröße 12pt
 
 % Pakete für Sprache, Schrift und andere wichtige Anpassungen
-\usepackage[utf8]{inputenc} % UTF-8 Unterstützung für Umlaute
+\usepackage[utf8]{inputenc} % UTF-8 Unterstützung für Umlaute (ä, ü, ö)
 \usepackage[T1]{fontenc}    % Korrekte Silbentrennung bei Umlauten
 \usepackage[ngerman]{babel} % Deutsche Spracheinstellungen (z. B. Texttrennung, Typografie)
 \usepackage{csquotes}       % Korrekte deutsche Anführungszeichen („ “)
 \usepackage{geometry}       % Seitenränder anpassen
+\usepackage{tikz}           % Grafiken und Diagramme
+
 \geometry{a4paper, left=3cm, right=3cm, top=2.5cm, bottom=2.5cm} % Beispiel für Seitenränder
 
 \title{Automatisierter Smarter Cocktail-Automat mit Cloud Anbindung}
@@ -25,7 +27,7 @@
 % TODO: 
 % - [x] Einleitung
 % - [x] Technologischer Hintergrund und Grundlagen
-% - [-] Anforderungen und Konzept
+% - [x] Anforderungen und Konzept
 % - [ ] Umsetzung der Hardware
 % - [ ] Backend-Architektur und Implementierung
 % - [ ] Mobile App-Entwicklung
