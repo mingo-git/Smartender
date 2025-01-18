@@ -29,7 +29,7 @@ func CreateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Insert new drink into the database
 	err = db.QueryRow(query.CreateDrink(), newDrink.Name, newDrink.Alcoholic, hardwareID).Scan(&newDrink.DrinkID)
 	if err != nil {
-		log.Printf("Error inserting new drink: %v", err)
+		log.Default().Printf("Error inserting new drink: %v", err)
 		http.Error(w, "Could not create drink", http.StatusInternalServerError)
 		return
 	}
@@ -56,7 +56,7 @@ func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	rows, err := db.Query(query.GetAllDrinksForHardware(), hardwareID)
 	if err != nil {
-		log.Printf("Error getting drinks: %v", err)
+		log.Default().Printf("Error getting drinks: %v", err)
 		http.Error(w, "Could not get drinks", http.StatusInternalServerError)
 		return
 	}
@@ -68,7 +68,7 @@ func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		var drink models.Drink
 		err := rows.Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic)
 		if err != nil {
-			log.Printf("Error scanning drink: %v", err)
+			log.Default().Printf("Error scanning drink: %v", err)
 			http.Error(w, "Error processing drinks", http.StatusInternalServerError)
 			return
 		}
@@ -77,7 +77,7 @@ func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	// Überprüfe auf Fehler nach der Iteration
 	if err = rows.Err(); err != nil {
-		log.Printf("Error after iterating rows: %v", err)
+		log.Default().Printf("Error after iterating rows: %v", err)
 		http.Error(w, "Error processing drinks", http.StatusInternalServerError)
 		return
 	}
@@ -100,7 +100,7 @@ func GetSingleDrinkForHardwareByDrinkID(db *sql.DB, w http.ResponseWriter, r *ht
 
 	err := db.QueryRow(query.GetDrinkByID(), drinkID, hardwareID).Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic)
 	if err != nil {
-		log.Printf("Error getting drink: %v", err)
+		log.Default().Printf("Error getting drink: %v", err)
 		http.Error(w, "Could not get drink", http.StatusInternalServerError)
 		return
 	}
@@ -127,7 +127,7 @@ func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Update drink in the database
 	result, err := db.Exec(query.UpdateDrink(), updatedDrink.Name, updatedDrink.Alcoholic, drinkID, hardwareID)
 	if err != nil {
-		log.Printf("Error updating drink: %v", err)
+		log.Default().Printf("Error updating drink: %v", err)
 		http.Error(w, "Could not update drink", http.StatusInternalServerError)
 		return
 	}
@@ -152,7 +152,7 @@ func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Delete drink from the database
 	result, err := db.Exec(query.DeleteDrink(), drinkID, hardwareID)
 	if err != nil {
-		log.Printf("Error deleting drink: %v", err)
+		log.Default().Printf("Error deleting drink: %v", err)
 		http.Error(w, "Could not delete drink", http.StatusInternalServerError)
 		return
 	}

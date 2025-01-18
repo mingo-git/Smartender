@@ -104,7 +104,7 @@ func PopulateDatabase() string {
 	
 	InSERT INTO hardware (hardware_name, mac_address) VALUES
 		('Smartender von Jonas', '00:00:00:00:00:01'),
-		('Smartender von Fachschaft', '00:00:00:00:00:02'),
+		('Smartender von Fachschaft', '00:1A:2B:3C:4D:5E'),
 		('Smartender von Philipp', '00:00:00:00:00:03');
 	
 	INSERT INTO drinks (hardware_id, drink_name, is_alcoholic) VALUES
