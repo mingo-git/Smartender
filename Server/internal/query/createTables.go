@@ -130,7 +130,13 @@ func PopulateDatabase() string {
 		(2, 2, 1),
 		(2, 3, 3),
 		(2, 4, 4),
-		(2, 5, NULL);
+		(2, 5, NULL),
+		(2, 6, NULL),
+		(2, 7, NULL),
+		(2, 8, NULL),
+		(2, 9, NULL),
+		(2, 10, NULL),
+		(2, 11, NULL);
 
 	INSERT INTO recipes (hardware_id, recipe_name, picture_id) VALUES
 		(2, 'Vodka Martini', 1),
