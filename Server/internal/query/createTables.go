@@ -34,15 +34,15 @@ func CreateTables() string {
 
 	CREATE TABLE IF NOT EXISTS drinks (
 		drink_id SERIAL PRIMARY KEY,
-		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each drink belongs to a hardware
+		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE NOT NULL,  -- Each drink belongs to a hardware
 		drink_name VARCHAR(100) NOT NULL,
-		is_alcoholic BOOLEAN DEFAULT TRUE
+		is_alcoholic BOOLEAN DEFAULT TRUE NOT NULL
 	);
 
 	CREATE TABLE IF NOT EXISTS user_hardware (
 		user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
 		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,
-		role VARCHAR(50) DEFAULT 'user',  -- User role for the hardware
+		role VARCHAR(50) DEFAULT 'user' NOT NULL,  -- User role for the hardware
 		PRIMARY KEY (user_id, hardware_id)
 	);
 
