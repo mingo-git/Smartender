@@ -34,15 +34,15 @@ func CreateTables() string {
 
 	CREATE TABLE IF NOT EXISTS drinks (
 		drink_id SERIAL PRIMARY KEY,
-		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each drink belongs to a hardware
+		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE NOT NULL,  -- Each drink belongs to a hardware
 		drink_name VARCHAR(100) NOT NULL,
-		is_alcoholic BOOLEAN DEFAULT TRUE
+		is_alcoholic BOOLEAN DEFAULT TRUE NOT NULL
 	);
 
 	CREATE TABLE IF NOT EXISTS user_hardware (
 		user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
 		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,
-		role VARCHAR(50) DEFAULT 'user',  -- User role for the hardware
+		role VARCHAR(50) DEFAULT 'user' NOT NULL,  -- User role for the hardware
 		PRIMARY KEY (user_id, hardware_id)
 	);
 
@@ -73,7 +73,8 @@ func CreateTables() string {
 	CREATE TABLE IF NOT EXISTS recipes (
 		recipe_id SERIAL PRIMARY KEY,
 		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each recipe belongs to a hardware
-		recipe_name VARCHAR(100) NOT NULL UNIQUE  -- Unique recipe name per hardware
+		recipe_name VARCHAR(100) NOT NULL UNIQUE,  -- Unique recipe name per hardware
+		picture_id INT NOT NULL DEFAULT 0  -- Default picture for the recipe
 	);
 
 	CREATE TABLE IF NOT EXISTS recipe_ingredients (
@@ -103,7 +104,7 @@ func PopulateDatabase() string {
 	
 	InSERT INTO hardware (hardware_name, mac_address) VALUES
 		('Smartender von Jonas', '00:00:00:00:00:01'),
-		('Smartender von Fachschaft', '00:00:00:00:00:02'),
+		('Smartender von Fachschaft', '00:1A:2B:3C:4D:5E'),
 		('Smartender von Philipp', '00:00:00:00:00:03');
 	
 	INSERT INTO drinks (hardware_id, drink_name, is_alcoholic) VALUES
@@ -131,11 +132,11 @@ func PopulateDatabase() string {
 		(2, 4, 4),
 		(2, 5, NULL);
 
-	INSERT INTO recipes (hardware_id, recipe_name) VALUES
-		(2, 'Vodka Martini'),
-		(2, 'Mojito'),
-		(2, 'Gin and Tonic'),
-		(1, 'Whiskey O');
+	INSERT INTO recipes (hardware_id, recipe_name, picture_id) VALUES
+		(2, 'Vodka Martini', 1),
+		(2, 'Mojito', 2),
+		(2, 'Gin and Tonic', 3),
+		(1, 'Whiskey O', 4);
 
 	INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml) VALUES
 		(1, 1, 60),

@@ -25,7 +25,7 @@ func CreateFavorite(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	err := db.QueryRow(query.CheckRecipeForHardwareForUser(), userID, recipeID).Scan(&hasHardware)
 
 	if err != nil {
-		log.Printf("Error checking hardware for user: %v", err)
+		log.Default().Printf("Error checking hardware for user: %v", err)
 		http.Error(w, "Could not check hardware for user", http.StatusInternalServerError)
 		return
 	}
@@ -38,7 +38,7 @@ func CreateFavorite(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Insert new favorite into the database
 	_, err = db.Exec(query.CreateFavorite(), userID, recipeID)
 	if err != nil {
-		log.Printf("Error inserting new favorite: %v", err)
+		log.Default().Printf("Error inserting new favorite: %v", err)
 		http.Error(w, "Could not create favorite", http.StatusInternalServerError)
 		return
 	}
@@ -58,7 +58,7 @@ func DeleteFavorite(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Delete favorite from the database
 	_, err := db.Exec(query.DeleteFavorite(), userID, recipeID)
 	if err != nil {
-		log.Printf("Error deleting favorite: %v", err)
+		log.Default().Printf("Error deleting favorite: %v", err)
 		http.Error(w, "Could not delete favorite", http.StatusInternalServerError)
 		return
 	}
@@ -76,7 +76,7 @@ func GetAllFavoritesForUser(db *sql.DB, w http.ResponseWriter, r *http.Request) 
 
 	rows, err := db.Query(query.GetAllFavoritesForUser(), userID)
 	if err != nil {
-		log.Printf("Error getting favorites: %v", err)
+		log.Default().Printf("Error getting favorites: %v", err)
 		http.Error(w, "Could not get favorites", http.StatusInternalServerError)
 		return
 	}
@@ -88,7 +88,7 @@ func GetAllFavoritesForUser(db *sql.DB, w http.ResponseWriter, r *http.Request) 
 		var favorite int
 		err := rows.Scan(&favorite)
 		if err != nil {
-			log.Printf("Error scanning favorite: %v", err)
+			log.Default().Printf("Error scanning favorite: %v", err)
 			http.Error(w, "Error processing favorites", http.StatusInternalServerError)
 			return
 		}
@@ -97,7 +97,7 @@ func GetAllFavoritesForUser(db *sql.DB, w http.ResponseWriter, r *http.Request) 
 
 	// Check for errors after iteration
 	if err = rows.Err(); err != nil {
-		log.Printf("Error after iterating rows: %v", err)
+		log.Default().Printf("Error after iterating rows: %v", err)
 		http.Error(w, "Error processing favorites", http.StatusInternalServerError)
 		return
 	}
