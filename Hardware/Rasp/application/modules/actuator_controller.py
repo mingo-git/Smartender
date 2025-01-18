@@ -46,21 +46,21 @@ class ActuatorController:
 
         self._move_down()
 
-    def _move_up(self):
+    def _move_up(self, duration):
+        """Move the actuator down."""
+        GPIO.output(self.in3, GPIO.LOW)
+        GPIO.output(self.in4, GPIO.HIGH)
+        time.sleep(duration)  # Duration for moving down (adjust as needed)
+        GPIO.output(self.in4, GPIO.LOW)
+        self.logger.log("INFO", "Actuator moving down", "ActuatorController")
+
+    def _move_down(self, duration):
         """Move the actuator up."""
         GPIO.output(self.in3, GPIO.HIGH)
         GPIO.output(self.in4, GPIO.LOW)
         self.logger.log("INFO", "Actuator moving up", "ActuatorController")
-        time.sleep(1)
+        time.sleep(duration)
         GPIO.output(self.in3, GPIO.LOW)
-
-    def _move_down(self):
-        """Move the actuator down."""
-        GPIO.output(self.in3, GPIO.LOW)
-        GPIO.output(self.in4, GPIO.HIGH)
-        time.sleep(1)  # Duration for moving down (adjust as needed)
-        GPIO.output(self.in4, GPIO.LOW)
-        self.logger.log("INFO", "Actuator moving down", "ActuatorController")
 
     def _emergency_stop(self):
         """Stop the actuator in an emergency."""

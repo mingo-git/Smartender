@@ -70,3 +70,5 @@ iot_project/
 - `sudo apt install python3-rx`
 - `sudo apt-get install python3-pip`
 - `pip install --break-system-packages 'git+https://github.com/gandalf15/HX711.git#egg=HX711&subdirectory=HX711_Python3'`
+
+- `sudo pip3 install XYZ --break-system-packages`

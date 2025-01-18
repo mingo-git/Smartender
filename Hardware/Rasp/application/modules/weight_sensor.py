@@ -39,5 +39,7 @@ class WeightSensor:
             weight = avg_data / self.scaling_factor
             self.weight_samples.append(weight)
             self.weight_samples = self.weight_samples[-5:]  # Keep last 5 samples
+            self.logger.log("INFO", f"Weight: {statistics.median(self.weight_samples)}", "Weight Sensor")
             return statistics.median(self.weight_samples)
+        self.logger.log("ERROR", "Scale could not be reached", "Weight Sensor")
         return None

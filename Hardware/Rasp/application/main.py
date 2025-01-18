@@ -6,6 +6,7 @@ from modules.position_handler import PositionHandler
 from modules.pump_controller import PumpController
 from modules.weight_sensor import WeightSensor
 from modules.actuator_controller import ActuatorController
+from modules.led_controller import LEDController
 # --------------------------------------------------------------------------------------------------
 from modules.utils.logger import Logger
 from modules.error_handler import ErrorHandler
@@ -13,7 +14,6 @@ from modules.error_handler import ErrorHandler
 from rx import create
 from rx.subject import Subject
 import time
-import threading
 from dotenv import load_dotenv
 import os
 import uuid
@@ -37,6 +37,8 @@ def main():
         "Identifier": mac_address,
     }
 
+    logger.log("INFO", headers, "Main")
+
     websocket_handler = WebSocketHandler(url, headers)
     # Initialize CommandMapper
     command_mapper = CommandMapper()
@@ -47,10 +49,11 @@ def main():
     motor_controller = MotorController(dir_pin=16, pull_pin=12)
     pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26], weight_sensor=weight_sensor, position_handler=position_handler)
     actuator_controller = ActuatorController(
-        in_pins={"in3": 7, "in4": 8},
+        in_pins={"in3": 7, "in4": 1},
         weight_sensor=weight_sensor,
         position_handler=position_handler,
     )
+    led_controller = LEDController(LV1_pin=18)
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
@@ -75,7 +78,7 @@ def main():
     # Subscribe to WebSocket messages
     websocket_handler.message_subject.subscribe(
         on_next=lambda message: process_message(
-            message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, weight_sensor, logger
+            message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, led_controller, weight_sensor, logger
         ),
         on_error=lambda e: logger.log("ERROR", f"WebSocket stream error: {e}", "Main"),
         on_completed=lambda: logger.log("INFO", "WebSocket stream completed", "Main"),
@@ -83,10 +86,16 @@ def main():
 
     # Start WebSocket handler
     websocket_handler.start()
+    #actuator_controller._move_down(3)
+    led_controller.progress_bar()
+    time.sleep(2)
+
+    actuator_controller._move_down(1)
 
     # Move stepper motor to position 0
-    motor_controller.rotate_stepper_pigpio(200, 0, 2000)
-    motor_controller.rotate_until_limit(0, position_handler, 1)
+    motor_controller.rotate_stepper_pigpio(500, 0, 2000)
+    motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+
 
     try:
         # Keep the main thread running
@@ -101,10 +110,11 @@ def main():
         position_handler.cleanup()
         pump_controller.cleanup()
         actuator_controller.cleanup()
+        led_controller.cleanup()
         logger.log("INFO", "Hardware components cleaned up", "Main")
 
 
-def process_message(message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, weight_sensor, logger):
+def process_message(message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, led_controller, weight_sensor, logger):
     """
     Process a single WebSocket message.
 
@@ -124,7 +134,14 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
     if commands:
         sorted_commands = sorted(commands, key=lambda item: item.slot_number)
 
-        # actuator_controller._move_up()
+        # motor_controller.rotate_until_limit(1, position_handler, 0, 1000)
+
+        # time.sleep(5)
+
+        # actuator_controller._move_up(2.7)
+        # #led_controller.progress_bar()
+        # time.sleep(10)
+        # actuator_controller._move_down(3)
         # time.sleep(1000)
 
         logger.log("INFO", f"Commands processed: {sorted_commands}", "Main")
@@ -137,9 +154,6 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     # Move to the correct slot with acceleration
                     logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
-
-                    # motor_controller.rotate_stepper_pigpio(2000, 1, 2000)
-                    # motor_controller.rotate_stepper_pigpio(2000, 0, 2000)
 
                     # Rotate the stepper motor and stop when the limit switch is pressed
                     motor_controller.rotate_until_limit(command.slot_number, position_handler, 0)
@@ -189,7 +203,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                 logger.log("ERROR", f"Error processing command: {e}", "Main")
         if position_handler.get_position() != 0:
             logger.log("INFO", "Moving to slot 0", "Main")
-            motor_controller.rotate_stepper_pigpio(200, 0, 2000)
+            motor_controller.rotate_stepper_pigpio(500, 0, 2000)
             motor_controller.rotate_until_limit(0, position_handler, 1)
     else:
         logger.log("ERROR", "No Commands received", "Main")

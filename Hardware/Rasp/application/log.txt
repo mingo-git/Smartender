@@ -1,10 +1,892 @@
-| 2025-01-17 14:13:05 | INFO     | WebSocketHandler     | WebSocket client stopped
-| 2025-01-17 14:13:06 | INFO     | PositionHandler      | GPIO cleanup complete
-| 2025-01-17 14:13:06 | INFO     | PumpController       | GPIO cleanup complete
-| 2025-01-17 14:13:06 | INFO     | ActuatorController   | GPIO cleanup complete for actuator
-| 2025-01-17 14:13:06 | INFO     | Main                 | Hardware components cleaned up
-| 2025-01-17 14:13:16 | INFO     | Main                 | Application started
-| 2025-01-17 14:13:20 | INFO     | Main                 | Hardware components initialized
-| 2025-01-17 14:13:20 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-17 14:13:20 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-17 14:13:22 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:15:08 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:20:17 | INFO     | Main                 | Application started
+| 2025-01-17 19:20:17 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:20:18 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:20:18 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:20:23 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:24 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:29 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:20:29 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:20:39 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:20:39 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:20:39 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-17 19:20:39 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-17 19:20:39 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-17 19:20:39 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:20:39 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:20:44 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:20:44 | INFO     | MotorController      | Limit switch 1 triggered. Motor stopped.
+| 2025-01-17 19:20:52 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-17 19:21:02 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:21:10 | INFO     | Main                 | Application is shutting down
+| 2025-01-17 19:21:10 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-17 19:21:10 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-17 19:21:10 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-17 19:21:10 | INFO     | ActuatorController   | GPIO cleanup complete for actuator
+| 2025-01-17 19:21:10 | INFO     | Main                 | Hardware components cleaned up
+| 2025-01-17 19:22:17 | INFO     | Main                 | Application started
+| 2025-01-17 19:22:17 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:22:19 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:22:19 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:22:24 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:26 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:22:27 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:24:05 | INFO     | Main                 | Application started
+| 2025-01-17 19:24:05 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:24:06 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:24:06 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:24:11 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:12 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:24:13 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:25:06 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:25:06 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:25:11 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:25:11 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:25:11 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-17 19:25:12 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-17 19:25:12 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-17 19:25:12 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:25:16 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:25:16 | INFO     | MotorController      | Limit switch 1 triggered. Motor stopped.
+| 2025-01-17 19:25:24 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-17 19:25:34 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:25:58 | INFO     | Main                 | Application started
+| 2025-01-17 19:25:58 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:25:59 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:25:59 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:26:04 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:05 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:26:06 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:29:04 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:29:04 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:29:10 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:29:10 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:29:10 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-17 19:29:10 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-17 19:29:10 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-17 19:29:10 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:29:15 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:29:15 | INFO     | MotorController      | Limit switch 1 triggered. Motor stopped.
+| 2025-01-17 19:29:23 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-17 19:29:33 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:30:11 | INFO     | Main                 | Application started
+| 2025-01-17 19:30:11 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:30:13 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:30:13 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:29:57 | INFO     | Main                 | Application started
+| 2025-01-17 19:29:57 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:29:59 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:31:27 | INFO     | Main                 | Application started
+| 2025-01-17 19:31:27 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:31:29 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:31:29 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:31:34 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:40 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:31:40 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:31:51 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:31:51 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:31:51 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-17 19:31:52 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-17 19:31:52 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-17 19:31:52 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:31:56 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:31:56 | INFO     | MotorController      | Limit switch 1 triggered. Motor stopped.
+| 2025-01-17 19:32:04 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-17 19:32:14 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:32:23 | INFO     | Main                 | Application is shutting down
+| 2025-01-17 19:32:23 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-17 19:32:23 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-17 19:32:23 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-17 19:32:23 | INFO     | ActuatorController   | GPIO cleanup complete for actuator
+| 2025-01-17 19:32:23 | INFO     | Main                 | Hardware components cleaned up
+| 2025-01-17 19:34:27 | INFO     | Main                 | Application started
+| 2025-01-17 19:34:27 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:34:28 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:34:28 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:34:33 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:34 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:39 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:34:39 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:34:42 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:34:42 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:34:42 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-17 19:34:42 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-17 19:34:42 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-17 19:34:43 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:34:47 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:34:47 | INFO     | MotorController      | Limit switch 1 triggered. Motor stopped.
+| 2025-01-17 19:34:55 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-17 19:34:55 | ERROR    | WebSocketHandler     | WebSocket error: name 'led_controller' is not defined
+| 2025-01-17 19:35:17 | INFO     | Main                 | Application is shutting down
+| 2025-01-17 19:35:17 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-17 19:36:27 | INFO     | Main                 | Application started
+| 2025-01-17 19:36:27 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:36:28 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:36:28 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:36:29 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:38:49 | INFO     | Main                 | Application started
+| 2025-01-17 19:38:49 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:38:50 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:38:51 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:38:55 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:38:57 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:39:02 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:39:02 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:40:30 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:40:30 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:40:30 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-17 19:40:30 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-17 19:40:31 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-17 19:40:31 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:40:35 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:40:35 | INFO     | MotorController      | Limit switch 1 triggered. Motor stopped.
+| 2025-01-17 19:40:43 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-17 19:43:11 | INFO     | Main                 | Application started
+| 2025-01-17 19:43:11 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:43:12 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:43:12 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:43:13 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:43:20 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:22 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:43:27 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:43:27 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:44:03 | INFO     | Main                 | Application is shutting down
+| 2025-01-17 19:44:03 | INFO     | WebSocketHandler     | WebSocket client stopped
+one
+| 2025-01-17 19:44:03 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-17 19:44:03 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-17 19:44:03 | INFO     | ActuatorController   | GPIO cleanup complete for actuator
+| 2025-01-17 19:44:03 | INFO     | Main                 | Hardware components cleaned up
+| 2025-01-17 19:57:32 | INFO     | Main                 | Application started
+| 2025-01-17 19:57:32 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
+| 2025-01-17 19:57:33 | INFO     | Main                 | Hardware components initialized
+| 2025-01-17 19:57:34 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-17 19:57:38 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-17 19:57:40 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:57:40 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-17 19:57:50 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:57:50 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
+| 2025-01-17 19:57:51 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-17 19:57:51 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
+| 2025-01-17 19:57:51 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
+| 2025-01-17 19:57:51 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-17 19:57:55 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-17 19:57:56 | INFO     | MotorController      | Limit switch 1 triggered. Motor stopped.
+| 2025-01-17 19:58:03 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-17 19:58:13 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-18 11:05:03 | INFO     | WeightSensor         | Taring weight sensor
+| 2025-01-18 11:07:05 | INFO     | WeightSensor         | Taring weight sensor
+| 2025-01-18 11:08:54 | INFO     | WeightSensor         | Taring weight sensor
+| 2025-01-18 11:09:10 | INFO     | WeightSensor         | Taring weight sensor
+| 2025-01-18 11:11:50 | INFO     | WeightSensor         | Taring weight sensor

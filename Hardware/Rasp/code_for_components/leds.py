@@ -6,7 +6,7 @@ from rpi_ws281x import PixelStrip, Color
 # ----------------------
 #   KONFIGURATION
 # ----------------------
-LED_COUNT      = 43      # Anzahl deiner LEDs
+LED_COUNT      = 41      # Anzahl deiner LEDs
 LED_PIN        = 18      # GPIO (BCM) für DATA
 LED_FREQ_HZ    = 800000  # Frequenz
 LED_DMA        = 10      # DMA-Kanal
