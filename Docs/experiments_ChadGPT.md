@@ -28,7 +28,7 @@
    - Metriken: Zeit für die Erstellung eines Rezepts, Fehlerquote, subjektives Benutzerfeedback.
    - Erwartetes Ergebnis: Die Mehrheit bewertet die App als intuitiv und funktional.
 
-5. Netzwerk   - und Cloud-Stabilität
+5. Netzwerk - und Cloud-Stabilität
 
    - Experiment: Simuliert Netzwerkausfälle oder eine hohe Serverauslastung, während der Automat Cocktails zubereitet.
    - Ziel: Bewertung der Robustheit des Systems bei schlechten Verbindungen.
@@ -63,7 +63,7 @@
    - Methode: Analyse von Rückständen mit Wasserindikator oder pH-Messung.
    - Erwartetes Ergebnis: Keine signifikanten Rückstände nach dem Reinigungsprozess.
 
-10. Kosten   -Nutzen-Analyse
+10. Kosten-Nutzen-Analyse
 
     - Experiment: Stellt eine Liste der verwendeten Komponenten und deren Kosten auf und berechnet die Produktionskosten eines Cocktails.
     - Ziel: Evaluierung der Wirtschaftlichkeit.
