@@ -36,6 +36,20 @@ func RegisterHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var slotAmount uint8 = 11
+
+	for i := 1; i <= int(slotAmount); i++ {
+		_, err := db.Exec(query.InitSlotsForHardware(), newHardwareID, i)
+		if err != nil {
+			log.Default().Printf("Error inserting new slot: %v", err)
+			http.Error(w, "Could not create slot", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(map[string]int{
+		"hardwareID": newHardwareID,
+	})
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
 }
