@@ -53,7 +53,7 @@ def main():
         weight_sensor=weight_sensor,
         position_handler=position_handler,
     )
-    #led_controller = LEDController(LV1_pin=18)
+    led_controller = LEDController(LV1_pin=18)
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
@@ -87,7 +87,7 @@ def main():
     # Start WebSocket handler
     websocket_handler.start()
     #actuator_controller._move_down(3)
-    #led_controller.progress_bar()
+    led_controller.progress_bar()
     #time.sleep(2)
 
     actuator_controller._move_down(1)
@@ -111,7 +111,7 @@ def main():
         position_handler.cleanup()
         pump_controller.cleanup()
         actuator_controller.cleanup()
-        #led_controller.cleanup()
+        led_controller.cleanup()
         #weight_sensor.cleanup()
         logger.log("INFO", "Hardware components cleaned up", "Main")
 
@@ -137,16 +137,16 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         sorted_commands = sorted(commands, key=lambda item: item.slot_number)
 
         motor_controller.rotate_until_limit(2, position_handler, 0, 1000)
-
         time.sleep(3)
 
         actuator_controller._move_up(2.7)
         time.sleep(10)
         actuator_controller._move_down(3.5)
+        #led_controller.progress_bar()
         #motor_controller.rotate_stepper_pigpio(1000, 0, 1000)
         motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
         return 
-        time.sleep(1000)
+        #time.sleep(1000)
 
         logger.log("INFO", f"Commands processed: {sorted_commands}", "Main")
         for command in sorted_commands:
@@ -172,9 +172,9 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     # Pour using the actuator
                     logger.log("INFO", f"Pouring from slot {command.slot_number}", "Main")
-                    #actuator_controller._move_up(2.7)
-                    #time.sleep(10)
-                    #actuator_controller._move_down(3)
+                    actuator_controller._move_up(2.7)
+                    time.sleep(10)
+                    actuator_controller._move_down(3)
 
                 elif 6 <= command.slot_number <= 11:  # Non-alcoholic
                     logger.log("INFO", f"Non-alcoholic drink: Slot {command.slot_number}", "Main")
@@ -191,7 +191,9 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     # Pump the drink
                     pump_index = command.slot_number - 6
                     logger.log("INFO", f"Activating pump {pump_index}", "Main")
+                    actuator_controller._move_up(5)
                     pump_controller.activate_pump(pump_index, command.quantity_ml/100)
+                    actuator_controller._move_down(6)
                 else:
                     logger.log("ERROR", "Invalid slot number", "Main")
                     break
