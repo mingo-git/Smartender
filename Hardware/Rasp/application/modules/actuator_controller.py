@@ -52,13 +52,13 @@ class ActuatorController:
         GPIO.output(self.in4, GPIO.HIGH)
         time.sleep(duration)  # Duration for moving down (adjust as needed)
         GPIO.output(self.in4, GPIO.LOW)
-        self.logger.log("INFO", "Actuator moving down", "ActuatorController")
+        self.logger.log("INFO", "Actuator moving up", "ActuatorController")
 
     def _move_down(self, duration):
         """Move the actuator up."""
         GPIO.output(self.in3, GPIO.HIGH)
         GPIO.output(self.in4, GPIO.LOW)
-        self.logger.log("INFO", "Actuator moving up", "ActuatorController")
+        self.logger.log("INFO", "Actuator moving down", "ActuatorController")
         time.sleep(duration)
         GPIO.output(self.in3, GPIO.LOW)
 

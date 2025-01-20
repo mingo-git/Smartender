@@ -14,4 +14,4 @@ def rotate_stepper_pigpio(steps, direction, frequency):
     time.sleep(steps / frequency)
     pi.hardware_PWM(PUL, 0, 0)  # Stop PWM
 
-rotate_stepper_pigpio(2000, 0, 4000)  # 1000 steps at 1 kHz
+rotate_stepper_pigpio(2000, 1, 2000)  # 1000 steps at 1 kHz

@@ -34,7 +34,7 @@ class PumpController:
         :param duration: Duration in seconds to run the pump.
         """
 
-        if self.position_handler.current_position != 0:
+        if self.position_handler.get_position()!= 0:
             self.logger.log("ERROR", "Pump can only be activated in position 0", "PumpController")
             raise ValueError("Pump can only be activated in position 0")
 
@@ -42,14 +42,14 @@ class PumpController:
             self.logger.log("ERROR", f"Invalid pump index: {pump_index}", "PumpController")
             raise ValueError("Invalid pump index")
 
-        weight_before_pour = self.weight_sensor.get_weight()
+        #weight_before_pour = self.weight_sensor.get_weight()
         added_liquid = 0
         # TODO: make interruptable if weight sensor detects liquid overflow
         GPIO.output(self.pump_pins[pump_index], GPIO.HIGH)
-        while self.weight_sensor.get_weight() > 400 and added_liquid < amount:
-            GPIO.output(self.pump_pins[pump_index], GPIO.LOW)
-            added_liquid = self.weight_sensor.get_weight() - weight_before_pour
-
+        #while self.weight_sensor.get_weight() > 400 and added_liquid < amount:
+        #    GPIO.output(self.pump_pins[pump_index], GPIO.LOW)
+        #    added_liquid = self.weight_sensor.get_weight() - weight_before_pour
+        time.sleep(amount)
         GPIO.output(self.pump_pins[pump_index], GPIO.LOW)
 
 

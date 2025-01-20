@@ -9,8 +9,8 @@ import statistics
 logging.basicConfig(filename="waage.log", level=logging.INFO, format="%(asctime)s - Gewicht: %(message)s g")
 
 # Pin-Definitionen
-DT_PIN = 2   # GPIO 5 (Pin 29)
-SCK_PIN = 3  # GPIO 6 (Pin 31)
+DT_PIN = 20   # GPIO 5 (Pin 29)
+SCK_PIN = 21  # GPIO 6 (Pin 31)
 
 # HX711 initialisieren
 hx = HX711(DT_PIN, SCK_PIN)

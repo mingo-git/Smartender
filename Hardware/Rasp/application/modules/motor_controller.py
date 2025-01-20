@@ -7,21 +7,16 @@ from rx.subject import Subject
 import pigpio
 
 class MotorController:
-    def __init__(self, dir_pin=16, pull_pin=12, min_delay=0.0005, max_delay=0.001, error_handler=None):
+    def __init__(self, dir_pin=16, pull_pin=12, error_handler=None):
         """
         Initialize the stepper motor controller.
         :param dir_pin: GPIO pin for direction control.
         :param pull_pin: GPIO pin for pulsing steps.
-        :param min_delay: Minimum delay between steps (for maximum speed).
-        :param max_delay: Maximum delay between steps (for starting speed).
         """
         self.logger = Logger()
         self.message_subject = Subject()
         self.dir_pin = dir_pin
         self.pull_pin = pull_pin
-        self.min_delay = min_delay
-        self.max_delay = max_delay
-        self.current_delay = max_delay
 
         self.pi = pigpio.pi()
         self.pi.set_mode(self.pull_pin, pigpio.OUTPUT)
@@ -37,7 +32,7 @@ class MotorController:
 
     def rotate_stepper_pigpio(self, steps, direction, frequency):
             self.pi.write(self.dir_pin, direction)
-            self.pi.hardware_PWM(self.pull_pin, frequency, 500000)  # 75% duty cycle
+            self.pi.hardware_PWM(self.pull_pin, frequency, 500000)  # 50% duty cycle
             time.sleep(steps / frequency)
             self.pi.hardware_PWM(self.pull_pin, 0, 0)  # Stop PWM
 

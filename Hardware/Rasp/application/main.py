@@ -53,7 +53,7 @@ def main():
         weight_sensor=weight_sensor,
         position_handler=position_handler,
     )
-    led_controller = LEDController(LV1_pin=18)
+    #led_controller = LEDController(LV1_pin=18)
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
@@ -78,7 +78,7 @@ def main():
     # Subscribe to WebSocket messages
     websocket_handler.message_subject.subscribe(
         on_next=lambda message: process_message(
-            message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, led_controller, weight_sensor, logger
+            message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, weight_sensor, logger
         ),
         on_error=lambda e: logger.log("ERROR", f"WebSocket stream error: {e}", "Main"),
         on_completed=lambda: logger.log("INFO", "WebSocket stream completed", "Main"),
@@ -87,14 +87,15 @@ def main():
     # Start WebSocket handler
     websocket_handler.start()
     #actuator_controller._move_down(3)
-    led_controller.progress_bar()
-    time.sleep(2)
+    #led_controller.progress_bar()
+    #time.sleep(2)
 
     actuator_controller._move_down(1)
 
     # Move stepper motor to position 0
-    motor_controller.rotate_stepper_pigpio(500, 0, 2000)
-    motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+    if not position_handler.is_home_position():
+        motor_controller.rotate_stepper_pigpio(500, 0, 2000)
+        motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
 
 
     try:
@@ -110,11 +111,12 @@ def main():
         position_handler.cleanup()
         pump_controller.cleanup()
         actuator_controller.cleanup()
-        led_controller.cleanup()
+        #led_controller.cleanup()
+        #weight_sensor.cleanup()
         logger.log("INFO", "Hardware components cleaned up", "Main")
 
 
-def process_message(message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, led_controller, weight_sensor, logger):
+def process_message(message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, weight_sensor, logger):
     """
     Process a single WebSocket message.
 
@@ -134,15 +136,17 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
     if commands:
         sorted_commands = sorted(commands, key=lambda item: item.slot_number)
 
-        # motor_controller.rotate_until_limit(1, position_handler, 0, 1000)
+        motor_controller.rotate_until_limit(2, position_handler, 0, 1000)
 
-        # time.sleep(5)
+        time.sleep(3)
 
-        # actuator_controller._move_up(2.7)
-        # #led_controller.progress_bar()
-        # time.sleep(10)
-        # actuator_controller._move_down(3)
-        # time.sleep(1000)
+        actuator_controller._move_up(2.7)
+        time.sleep(10)
+        actuator_controller._move_down(3.5)
+        #motor_controller.rotate_stepper_pigpio(1000, 0, 1000)
+        motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+        return 
+        time.sleep(1000)
 
         logger.log("INFO", f"Commands processed: {sorted_commands}", "Main")
         for command in sorted_commands:
@@ -168,24 +172,26 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     # Pour using the actuator
                     logger.log("INFO", f"Pouring from slot {command.slot_number}", "Main")
-                    # actuator_controller.activate(2)  # Duration placeholder
+                    #actuator_controller._move_up(2.7)
+                    #time.sleep(10)
+                    #actuator_controller._move_down(3)
 
                 elif 6 <= command.slot_number <= 11:  # Non-alcoholic
                     logger.log("INFO", f"Non-alcoholic drink: Slot {command.slot_number}", "Main")
 
                     # Ensure belt is at the home position (limit switch 0)
-                    while position_handler.get_position() != 0:
-                        motor_controller.set_direction(0)  # Move back to home
-                        motor_controller.step_motor(200)
+                    if position_handler.get_position() != 0:
+                        motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
 
                     if position_handler.get_position() != 0:
                         logger.log("ERROR", "Failed to return to home position", "Main")
                         break
 
+                    time.sleep(0.5)
                     # Pump the drink
                     pump_index = command.slot_number - 6
                     logger.log("INFO", f"Activating pump {pump_index}", "Main")
-                    # pump_controller.activate_pump(pump_index, command.quantity_ml)
+                    pump_controller.activate_pump(pump_index, command.quantity_ml/100)
                 else:
                     logger.log("ERROR", "Invalid slot number", "Main")
                     break
