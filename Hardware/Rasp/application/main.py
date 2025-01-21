@@ -53,7 +53,7 @@ def main():
         weight_sensor=weight_sensor,
         position_handler=position_handler,
     )
-    led_controller = LEDController(LV1_pin=18)
+    #led_controller = LEDController(LV1_pin=18)
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
@@ -87,7 +87,7 @@ def main():
     # Start WebSocket handler
     websocket_handler.start()
     #actuator_controller._move_down(3)
-    led_controller.progress_bar()
+    #led_controller.progress_bar()
     #time.sleep(2)
 
     actuator_controller._move_down(1)
@@ -111,7 +111,7 @@ def main():
         position_handler.cleanup()
         pump_controller.cleanup()
         actuator_controller.cleanup()
-        led_controller.cleanup()
+        #led_controller.cleanup()
         #weight_sensor.cleanup()
         logger.log("INFO", "Hardware components cleaned up", "Main")
 
