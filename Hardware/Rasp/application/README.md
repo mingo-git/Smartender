@@ -1,6 +1,6 @@
 # Suggested File structure according to ChadGPT
 
-``` plainText
+```plainText
 iot_project/
 │
 ├── main.py                    # Einstiegspunkt der Anwendung
@@ -41,7 +41,7 @@ iot_project/
 
 ## Pins
 
-| PINS   | INFO          | USAGE            | PINS   |INFO           | USAGE                   |
+| PINS   | INFO          | USAGE            | PINS   | INFO          | USAGE                   |
 | ------ | ------------- | ---------------- | ------ | ------------- | ----------------------- |
 | Pin 1  | 3.3 V         |                  | Pin 2  | 5 V           |                         |
 | Pin 3  | GPIO 2        |                  | Pin 3  | 5 V           |                         |
@@ -53,7 +53,7 @@ iot_project/
 | Pin 15 | GPIO 22       | Limit Switch 4 C | Pin 16 | GPIO 23       |                         |
 | Pin 17 | 3.3 V         |                  | Pin 18 | GPIO 24       |                         |
 | Pin 19 | GPIO 10       | Limit Switch 5 C | Pin 20 | Ground        |                         |
-| Pin 21 | GPIO  9       | Limit Switch 6 C | Pin 22 | GPIO 25       | Linear Actuator IN1     |
+| Pin 21 | GPIO 9        | Limit Switch 6 C | Pin 22 | GPIO 25       | Linear Actuator IN1     |
 | Pin 23 | GPIO 11       | Limit Switch 7 C | Pin 24 | GPIO 8        | Linear Actuator IN2     |
 | Pin 25 | Ground        |                  | Pin 26 | GPIO 7        | Linear Actuator IN3     |
 | Pin 27 | GPIO 0        | Pump 1           | Pin 28 | GPIO 1        | Linear Actuator IN4     |
@@ -72,3 +72,27 @@ iot_project/
 - `pip install --break-system-packages 'git+https://github.com/gandalf15/HX711.git#egg=HX711&subdirectory=HX711_Python3'`
 
 - `sudo pip3 install XYZ --break-system-packages`
+
+## Pi neu aufsetzen
+
+- sudo apt install git
+- ssh-keygen -t ed25519 -C "your_email@example.com"
+- git config --global user.email "you@example.com"
+- git config --global user.name "Your Name"
+
+- sudo apt install vim
+- python3 -m venv ~/myenv
+- source ~/myenv/bin/activate
+- pip install websocket-client
+- pip install rx
+- sudo apt update
+- sudo apt install python3-dev
+- sudo apt install build-essential
+- pip install RPi.GPIO
+- pip install pigpio
+- sudo systemctl enable pigpiod
+- sudo systemctl start pigpiod
+- pip install hx711
+- pip install rpi_ws281x
+- pip install python-dotenv
+-
