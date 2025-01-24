@@ -7,8 +7,122 @@
 \usepackage{csquotes}       % Korrekte deutsche Anführungszeichen („ “)
 \usepackage{hyperref} 		  % Klickbare Links im PDF
 \usepackage{geometry}       % Seitenränder anpassen
+\usepackage{float}					% Positionierung von Bildern und Tabellen
+
+\usepackage{listings}			  % Code-Listings
+
 \usepackage{tikz}           % Grafiken und Diagramme
+% \tikzexternalize 					% Externe Speicherung von TikZ-Grafiken (schnelleres Kompilieren)
+\usetikzlibrary{shadings}
+\usetikzlibrary{calc,arrows.meta}
+
 \usepackage{pgfplots}			  % Diagramme und Plots
+\usepgfplotslibrary{external} % Externe Speicherung von Plots (schnelleres Kompilieren)
+\pgfplotsset{compat=1.18}
+
+\usepackage{fullpage} 		 	% Seitenränder auf 1 Zoll setzen
+\usepackage{ulem} 				 	% Unterstreichungen und Durchstreichungen
+
+\usepackage{amssymb,amsmath,changepage,tabularx,siunitx} % Mathematische Symbole und Umgebungen
+\usepackage{darkmode}
+\enabledarkmode 						% Dunkler Modus für bessere Lesbarkeit
+\usepackage{makecell} 			% Tabellenzellen formatieren
+
+\usepackage[most]{tcolorbox}
+\definecolor{red1}{HTML}{ffccd5}
+\definecolor{red2}{HTML}{ffb3c1}
+\definecolor{red3}{HTML}{ff8fa3}
+\definecolor{red4}{HTML}{ff758f}
+\definecolor{red5}{HTML}{ff4d6d}
+\definecolor{red6}{HTML}{c9184a}
+\definecolor{red7}{HTML}{a4133c}
+\definecolor{red8}{HTML}{800f2f}
+\definecolor{red9}{HTML}{590d22} 
+\definecolor{red10}{HTML}{c9181e}
+\definecolor{red11}{HTML}{c91876}
+\definecolor{red12}{HTML}{e5235a}
+\definecolor{pag}{HTML}{293133}
+	\usepgfplotslibrary{colormaps,patchplots}
+\definecolor{cbada55}{RGB}{186,218,85}
+\definecolor{c2c2c2c}{RGB}{44,44,44}
+\definecolor{cc9184a}{RGB}{201,24,74}
+\definecolor{c8d354e}{RGB}{141,53,78}
+\definecolor{cff4d6d}{RGB}{255,77,109}
+\definecolor{cff758f}{RGB}{255,117,143}
+		\usetikzlibrary{3d,perspective}
+
+\newtcolorbox{qq}[2][]{  
+	boxrule=0.75pt, % Thin border
+	sharp corners, 	% Square edges
+	colframe=white, % Set the color of the outline
+	colback=pag,  	% Set the color of the fill
+	coltext=white,	% Set the color of the text
+	#1,							% Other options
+}
+
+\lstset{
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries\color{red3},
+  commentstyle=\itshape\color{red12},
+  stringstyle=\color{red5},
+  numbers=left,
+  numberstyle=\small,
+  stepnumber=1,
+  breaklines=true,
+	frame=single,
+	backgroundcolor=\color{pag},
+	captionpos=b,
+	xleftmargin=0.1cm,
+	xrightmargin=0.1cm,	
+}
+
+% JavaScript definieren
+\lstdefinelanguage{JavaScript}{
+    keywords={break,case,catch,class,const,continue,debugger,default,delete,do,
+      else,export,extends,finally,for,function,if,import,in,instanceof,let,new,
+      return,super,switch,this,throw,try,typeof,var,void,while,with,yield, from},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]'
+}
+
+% Python definieren
+\lstdefinelanguage{Python}{
+	keywords={},
+	sensitive=true,
+	morecomment=[l]{\#},
+	morestring=[b]',
+	morestring=[b]",
+}
+
+\usepackage{mathpazo} % Palatino Schriftart
+
+\usetikzlibrary{decorations.markings,arrows.meta,bending}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{3d,backgrounds,intersections}
+
+\makeatletter
+\tikzoption{canvas is xy plane at z}[]{%
+	\def\tikz@plane@origin{\pgfpointxyz{0}{0}{#1}}%
+	\def\tikz@plane@x{\pgfpointxyz{1}{0}{#1}}%
+	\def\tikz@plane@y{\pgfpointxyz{0}{1}{#1}}%
+	\tikz@canvas@is@plane}
+\makeatother
+
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{colortbl}
+\usepackage{caption}
+\usepackage{polynom}
+
+% \usepackage[top=1in,bottom=1in,right=1in,left=1in]{geometry}
+% \usepackage{mdframed}
+\usepackage{array}
+\usepackage{multirow}
+\definecolor{pagtwo}{HTML}{3E4547}
 
 \geometry{a4paper, left=3cm, right=3cm, top=2.5cm, bottom=2.5cm} % Beispiel für Seitenränder
 

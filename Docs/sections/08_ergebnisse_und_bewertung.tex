@@ -1,7 +1,48 @@
 % Hier folgt der Inhalt des Abschnitts "Ergebnisse und Bewertung".
 
+\subsection{Lasttest Ergebnisse - k6}
+% Wir haben einen Lasttest durchgeführt, um die Leistung und Stabilität der API zu bewerten. Die 
+% Ergebnisse zeigen, dass die API insgesamt 37.900 Anfragen verarbeiten konnte, wobei 17.097 Anfragen 
+% fehlgeschlagen sind. Die durchschnittliche Antwortzeit betrug 66,26 ms, was akzeptabel ist. Die 
+% Erfolgsquote für die Benutzerregistrierung und Rezeptverwaltung lag bei 9.
 
 \subsection{Beispiele Plots und Diagramme}
+
+\begin{tikzpicture}[scale=1]
+    \begin{axis}[
+        axis lines=middle,
+        xlabel=,
+        ylabel={},
+        legend style={
+            fill=pag, draw=pag!60, % Red background with black border
+            font=\small, % Smaller font size
+            inner sep=2pt, % Inner spacing (padding around the text)
+            outer sep=1pt  % Outer spacing (margin around the border)
+        },
+        domain=0:8000,
+        xtick=\empty,
+        ytick=\empty,
+        grid=both,
+        grid style={line width=.1pt, draw=gray!10},
+        major grid style={line width=.2pt,draw=gray!50},
+        minor tick num=5,
+        width=1.15*\textwidth,
+        height=5cm,
+        clip=false,
+        ticklabel style={font=\tiny,fill=white},
+        xlabel style={at={(ticklabel* cs:1)},anchor=north west},
+        ylabel style={at={(ticklabel* cs:1)},anchor=south west},
+        ]
+
+        \addplot[color=red1,ultra thick,samples=100]{x};
+        \addplot[color=red2,ultra thick,samples=100]{1/x};
+        \addplot[color=red3,ultra thick,samples=100]{1/x^2};
+
+        \legend{100, 300, 1000}
+    \end{axis}
+    \node at (3.5,-0.3) {Velocity};
+    \node[rotate=90] at (-0.3,1.65) {Probability};
+\end{tikzpicture}
 
 \begin{tikzpicture}
 	\begin{axis}
@@ -23,15 +64,18 @@
     ymin=0, ymax=120,
     xtick={0,20,40,60,80,100},
     ytick={0,20,40,60,80,100,120},
+    legend style={
+        fill=pag, draw=pag!60, % Red background with black border
+        font=\small, % Smaller font size
+        inner sep=2pt, % Inner spacing (padding around the text)
+        outer sep=1pt  % Outer spacing (margin around the border)
+    },
     legend pos=north west,
     ymajorgrids=true,
     grid style=dashed,
 ]
 
-\addplot[
-    color=blue,
-    mark=square,
-    ]
+\addplot[color=red2, ultra thick, mark=triangle*]
     coordinates {
     (0,23.1)(10,27.5)(20,32)(30,37.8)(40,44.6)(60,61.8)(80,83.8)(100,114)
     };
@@ -69,10 +113,16 @@ Or here: \url{https://pgfplots.net/}
             xmin=0, xmax=700,
             xtick={0,100,200,300,400,500,600,700},
             ytick={0,20,40,60,80,100},
+            legend style={
+                fill=pag, draw=pag!60, % Red background with black border
+                font=\small, % Smaller font size
+                inner sep=2pt, % Inner spacing (padding around the text)
+                outer sep=1pt  % Outer spacing (margin around the border)
+            },
             legend pos=north east,
             grid=both,
             ]
-            \addplot[blue, thick] coordinates {
+            \addplot[red3,ultra thick] coordinates {
                 (14, 0) (87, 50) (105, 90) (140, 95) (522, 99) (644, 100)
             };
             \addlegendentry{Antwortzeit}
