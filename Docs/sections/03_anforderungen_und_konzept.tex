@@ -47,7 +47,52 @@ Das System besteht aus drei Kernkomponenten:
   \item Mobile App: Eine Smartphone-App ermöglicht die Benutzerinteraktion mit dem System und bietet Funktionen wie Rezeptverwaltung und Steuerung des Automaten.
 \end{enumerate}
 
-Die Interaktionen zwischen diesen Komponenten sind in Abbildung X dargestellt. Dabei wird insbesondere der Datenfluss zwischen den Modulen hervorgehoben.
+% TODO: Add figure with system overview
+Die Interaktionen zwischen diesen Komponenten sind in Abbildung \ref{fig:system_overview} dargestellt. Dabei wird insbesondere der Datenfluss zwischen den Modulen hervorgehoben.
+
+\begin{figure}[htbp]
+  \centering
+	\begin{tikzpicture}[
+		>=stealth,   					% Standardpfeilspitzen
+		outer sep=6pt,				% Abstand zwischen Text und Rahmen
+		inner sep=5pt,				% Abstand zwischen Text und Rahmen
+		node distance=6.5cm,		% Abstand zwischen den Knoten
+		font=\sffamily				% Verwendete Schriftart
+	]
+	
+	% Knoten
+	\node[draw, rectangle, rounded corners, fill=red7, minimum width=3cm, minimum height=1.2cm] (hardware) {Hardware};
+	\node[draw, rectangle, rounded corners, fill=red6, minimum width=3cm, minimum height=1.2cm, left of=hardware] (backend) {Backend};
+	\node[draw, rectangle, rounded corners, fill=red5, minimum width=3cm, minimum height=1.2cm, left of=backend] (app) {Mobile App};
+	
+	% Pfeil 1: ein Wort pro Zeile, zentriert
+	\draw[<-, thick] 
+	(hardware) 
+	-- node[below]{
+		\parbox{2.7cm}{\centering
+			Rezeptdaten,\\
+			Slotbestückung 
+		}
+	} 
+	(backend);
+
+	% Pfeil 2: ein Wort pro Zeile, zentriert
+	\draw[<->, thick] 
+	(app) 
+	-- node[below]{
+		\parbox{2.7cm}{\centering
+			Benutzerdaten,\\
+			Rezepte \&\\
+			Konfiguration
+		}
+	} 
+	(backend);
+
+	\end{tikzpicture}
+
+	\caption{Systemübersicht: Interaktionen zwischen Hardware, Backend und mobiler App}
+	\label{fig:system_overview}
+\end{figure}
 
 Datenflüsse und Interaktionen
 
