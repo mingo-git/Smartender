@@ -2,11 +2,11 @@
 Die Hardwareplattform für das Projekt bildet das Herzstück des Cocktailautomaten und wurde mit dem Ziel ausgewählt, eine robuste und flexible Steuerung der mechanischen und elektronischen Komponenten zu gewährleisten. Die Wahl fiel auf den \textbf{Raspberry Pi Zero 2 W}, eine kompakte und leistungsfähige Single-Board-Computer-Lösung, die sich aufgrund ihrer Vielseitigkeit und der umfangreichen Unterstützung von Python-Bibliotheken ideal für IoT-Anwendungen eignet. Ergänzt wird der Raspberry Pi durch eine Vielzahl von Sensoren, Aktoren und Peripheriegeräten, die zusammen die präzise Steuerung des Automaten ermöglichen.
 
 \subsection{Zentrale Steuerung}
-Der Raspberry Pi Zero 2 W übernimmt die zentrale Steuerung des Systems. Mit einem Quad-Core ARM Cortex-A53-Prozessor und integrierter WLAN- und Bluetooth-Konnektivität eignet sich der Pi optimal für die Verarbeitung der Steuerungslogik und die Kommunikation mit dem Backend. Seine kompakte Bauform erleichtert die Integration in das Gehäuse des Automaten.
+Der Raspberry Pi Zero 2 W übernimmt die zentrale Steuerung des Systems. Mit einem Quad-Core ARM Cortex-A53-Prozessor und integrierter WLAN- und Bluetooth-Konnektivität eignet sich der Pi optimal für die Verarbeitung der Steuerungslogik und die Kommunikation mit dem Backend.
 
 \subsection{Mechanische Komponenten}
 \subsubsection{Schrittmotor für die Positionierung}
-Ein Schrittmotor steuert die präzise Bewegung eines Förderbandsystems, das die verschiedenen Getränkezutaten in die richtige Position bringt. Mit einem Dir- und Pul-Pin-Design wird der Schrittmotor über einen \textbf{Treiber} angesteuert, der eine feine Steuerung der Bewegung und Geschwindigkeit ermöglicht. Ein Schlitten bewegt sich zwischen den Slots, die durch Endschalter (Limit Switches) abgegrenzt sind.
+Ein Schrittmotor steuert die präzise Bewegung eines Förderbandsystems, welches die verschiedenen Getränkezutaten anfahren kann. Mit einem Dir- und Pul-Pin-Design wird der Schrittmotor über einen \textbf{Treiber} angesteuert, der eine feine Steuerung der Bewegung und Geschwindigkeit ermöglicht. Ein Schlitten bewegt sich zwischen den Slots, die durch Endschalter (Limit Switches) abgegrenzt sind.
 
 \subsubsection{Linearantrieb für alkoholische Getränke}
 Ein Linearmotor aktiviert die Dosiermechanismen für alkoholische Zutaten, die kopfüber montiert sind. Der Antrieb hebt die Dosiermechanik an, um Flüssigkeiten aus den Flaschen freizugeben, und stellt sicher, dass die gewünschte Menge präzise abgefüllt wird.
@@ -16,13 +16,10 @@ Sechs Membranpumpen sind für die Abgabe von nicht-alkoholischen Zutaten zustän
 
 \subsection{Sensorik}
 \subsubsection{Endschalter für die Positionserkennung}
-Sieben Endschalter (Limit Switches) überwachen die genaue Position des Schlittenmechanismus. Ein spezieller Endschalter ist für die Kalibrierung vorgesehen und dient als Referenzpunkt, während die übrigen Schalter die Position der einzelnen Slots (1--11) abbilden.
+Sechs Endschalter (Limit Switches) überwachen die genaue Position des Schlittenmechanismus. Endschalter 0 ist für die Kalibrierung vorgesehen und dient als Referenzpunkt. Außerdem werden an diesem Punkt die nicht-alkoholischen Getränke am Ende der Zubereitung zugefügt. Die übrigen Schalter (1--5) bilden die Position der Slots für alkoholische Getränke (ebenfalls 1--5) ab.
 
 \subsubsection{Waage für Gewichtsmessung}
 Eine elektronische Waage auf Basis eines HX711-Sensors misst das Gewicht der Getränke während der Zubereitung. Sie dient nicht nur der Überwachung der genauen Flüssigkeitsmengen, sondern auch der Erkennung, ob eine Zutat aufgebraucht ist.
-
-\subsubsection{16x2 LCD-Display}
-Das LCD-Display zeigt Statusinformationen wie Fortschritt, Fehler oder Benutzerhinweise an. Es wird über das I2C-Protokoll mit dem Raspberry Pi verbunden und kann in Echtzeit aktualisiert werden.
 
 \subsection{Stromversorgung}
 Die gesamte Hardware wird von einem \textbf{24V-Netzteil} mit ausreichender Leistung (mindestens 3A) versorgt. Ein \textbf{Step-Down-Spannungsregler} wandelt die Spannung auf 5V für den Raspberry Pi und weitere elektronische Komponenten um. Zur Vermeidung von Spannungsschwankungen und elektromagnetischen Störungen wurden \textbf{Kondensatoren} integriert, die die Stabilität der Stromversorgung sicherstellen.
@@ -32,7 +29,6 @@ Alle Hardwarekomponenten arbeiten nahtlos zusammen, um die Zubereitung eines Coc
 \begin{itemize}
     \item Die \textbf{Positionserkennung} sorgt dafür, dass der Schlitten immer die korrekte Position ansteuert.
     \item Die \textbf{Waage} und die Pumpen oder der Linearantrieb arbeiten zusammen, um die exakte Menge jeder Zutat abzugeben.
-    \item Das \textbf{LCD-Display} liefert dem Benutzer kontinuierlich Rückmeldungen über den Fortschritt der Zubereitung.
 \end{itemize}
 
 \subsection{Integration und Herausforderungen}
