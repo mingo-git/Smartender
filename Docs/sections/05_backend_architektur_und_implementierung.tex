@@ -25,6 +25,9 @@ anstelle einer lokalen PostgreSQL-Datenbank eingesetzt.
 Anforderungen}
 
 Das Backend übernimmt mehrere Kernfunktionen:
+
+\vspace{0.5cm}
+
 \begin{itemize}
 	\item Benutzerdatenverwaltung: Erstellung und Authentifizierung von Benutzerkonten mittels API-
 	Schlüsseln und JWT.
@@ -58,12 +61,14 @@ Schnittstellen}
 Die Backend-API ist primär REST-orientiert, verwendet jedoch keine Hypermedia-Links, da sie nicht 
 für den öffentlichen Gebrauch konzipiert ist. Zu den wichtigsten Endpunkten gehören:
 
+\vspace{0.5cm}
 \textbf{Benutzerregistrierung und - login:}
 \begin{enumerate}
   \item \texttt{/api/auth/register}
   \item \texttt{/api/auth/login}
 \end{enumerate}
 
+\vspace{0.5cm}
 \textbf{Hardware- und Rezeptverwaltung:}
 \begin{enumerate}
 	\item \texttt{/api/user/hardware/\{hardware\_id\}/drinks}
@@ -71,6 +76,7 @@ für den öffentlichen Gebrauch konzipiert ist. Zu den wichtigsten Endpunkten ge
 	\item \texttt{/api/user/hardware/\{hardware\_id\}/slots}
 \end{enumerate}
 
+\vspace{0.5cm}
 \textbf{Cocktailbestellungen:}
 \begin{enumerate}
   \item \texttt{/api/user/action}
