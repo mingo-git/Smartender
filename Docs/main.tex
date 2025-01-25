@@ -117,6 +117,7 @@
 \usepackage{colortbl}
 \usepackage{caption}
 \usepackage{polynom}
+\usepackage[backend=biber]{biblatex}
 
 % \usepackage[top=1in,bottom=1in,right=1in,left=1in]{geometry}
 % \usepackage{mdframed}
@@ -155,6 +156,8 @@
 % - [ ] Interaktionen zwischen Komponenten - Abbildung, in 3.5
 
 \linespread{1.5}
+
+\addbibresource{literaturverzeichnis.bib}
 
 \begin{document}
 
@@ -225,7 +228,8 @@ Elektronikkomponenten sowie die effiziente Integration von Cloud-Diensten gemeis
 \newpage
 
 \section{Literaturverzeichnis}(1–2 Seiten)
-\input{sections/11_literaturverzeichnis}    
+% \input{sections/11_literaturverzeichnis}
+\printbibliography    
 \newpage
 
 \end{document}
