@@ -1,9 +1,4 @@
-% Hier folgt der Inhalt des Abschnitts "Ergebnisse und Bewertung".
-\section{Ergebnisse und Bewertung}
-
-In diesem Abschnitt werden die erzielten Ergebnisse des Projekts beschrieben und kritisch bewertet. 
-Der Fokus liegt auf der funktionalen Umsetzung, der Leistungsbewertung des Systems und einer Analyse 
-der Stärken und Schwächen.
+In diesem Abschnitt werden die erzielten Ergebnisse des Projekts beschrieben und kritisch bewertet. Der Fokus liegt auf der funktionalen Umsetzung, der Leistungsbewertung des Systems und einer Analyse der Stärken und Schwächen.
 
 \subsection{Funktionale Ergebnisse}
 
@@ -56,71 +51,33 @@ unterschiedliche Verarbeitungskomplexität hinweisen. Die wichtigsten Werte sind
         Login & 155,91 & 102,52 & 283,80 & 1.530,32 \\
         Rezept anlegen & 136,99 & 19,10 & 42,42 & 282.282,60 \\
         Slot setzen & 1.341,94 & 23,35 & 79,70 & 282.292,87 \\
-        „Get Slots“ & 64,93 & 48,97 & 112,32 & 355,33 \\
-        „Get Favorites“ & 29,59 & 20,02 & 51,68 & 227,09 \\
-        „Create Drink“ & 588,13 & 19,39 & 52,83 & 282.275,99 \\
+        \"Get Slots\" & 64,93 & 48,97 & 112,32 & 355,33 \\
+        \"Get Favorites\" & 29,59 & 20,02 & 51,68 & 227,09 \\
+        \"Create Drink\" & 588,13 & 19,39 & 52,83 & 282.275,99 \\
         \hline
     \end{tabular}
     \caption{Antwortzeiten pro Endpunkt}
     \label{tab:response_times}
 \end{table}
 
-\subsubsection*{Visualisierung der Antwortzeiten}
+\subsection{User-Test Ergebnisse}
 
-\begin{figure}[h!]
+Zur Evaluation der Benutzerfreundlichkeit, des Funktionsumfangs und der Stabilität der mobilen App wurden neun Personen eingeladen, die App zu testen. Sie bewerteten die App in den drei Kategorien auf einer Skala von 1 (schlecht) bis 5 (sehr gut). Die Ergebnisse sind in Tabelle \ref{tab:user_tests} und in der Visualisierung in Abbildung \ref{fig:user_tests} dargestellt.
+
+\begin{table}[h!]
     \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-            width=\textwidth,
-            height=8cm,
-            xlabel={Antwortzeit (ms)},
-            ylabel={Prozentsatz der Anfragen},
-            ymin=0, ymax=100,
-            xmin=0, xmax=300,
-            xtick={0,50,100,150,200,250,300},
-            ytick={0,20,40,60,80,100},
-            grid=both,
-            ]
-            \addplot[red, thick] coordinates {
-                (14, 0) (87, 50) (105, 90) (140, 95) (522, 99) (644, 100)
-            };
-            \addlegendentry{Antwortzeit}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Verteilung der Antwortzeiten}
-    \label{fig:response_time_distribution}
-\end{figure}
-
-\subsubsection*{Erfolgsquoten der API-Endpunkte}
-
-Die Erfolgsquoten einzelner Endpunkte zeigen, dass die meisten Anfragen erfolgreich waren, jedoch 
-bei einigen spezifischen Funktionen wie der \\Slot-Registrierung Verbesserungspotenzial besteht (
-siehe Abbildung \ref{fig:success_rates}).
-
-\begin{figure}[h!]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-            ybar,
-            width=\textwidth,
-            height=8cm,
-            xlabel={API-Endpunkt},
-            ylabel={Erfolgsquote (\%)},
-            ymin=0, ymax=100,
-            symbolic x coords={register, login, create drink, create recipe},
-            xtick=data,
-            bar width=0.5cm,
-            nodes near coords,
-            nodes near coords align={vertical},
-            ]
-            \addplot coordinates {(register, 99) (login, 99) (create drink, 99) (create recipe, 99)};
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Erfolgsquoten der API-Endpunkte}
-    \label{fig:success_rates}
-\end{figure}
-
-\subsubsection*{Zusammenfassung der Ergebnisse}
+    \begin{tabular}{|l|c|}
+        \hline
+        \textbf{Kategorie} & \textbf{Durchschnittliche Bewertung} \\
+        \hline
+        Benutzerfreundlichkeit & 4,44 \\
+        Funktionsumfang & 4,22 \\
+        Stabilität und Leistung & 4,88 \\
+        \hline
+    \end{tabular}
+    \caption{Ergebnisse der Benutzerbewertungen}
+    \label{tab:user_tests}
+\end{table}
 
 \hyphenation{Live-Umgebung}
 \hyphenation{Web-socket-Ver-bind-ung}
