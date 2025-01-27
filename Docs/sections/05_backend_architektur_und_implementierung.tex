@@ -1,7 +1,4 @@
 % Hier folgt der Inhalt des Abschnitts "Backend-Architektur und Implementierung".
-
-\textbf{DRAFT}
-
 Das Backend bildet das zentrale Bindeglied zwischen der mobilen App, der Hardwarekomponente des 
 Cocktailautomaten und der cloudbasierten Datenbank. Es ist dafür verantwortlich, Datenflüsse zu 
 koordinieren, Benutzer- und Rezeptinformationen zu verwalten und eine nahtlose Kommunikation 
@@ -9,33 +6,31 @@ zwischen den Systemkomponenten zu gewährleisten.
 
 \subsection{Allgemeine Architektur}
 
-Das Backend folgt einer einfachen serverbasierten Struktur und stellt HTTP-Endpunkte bereit, die 
+Das Backend folgt einer einfachen serverbasierten Struktur und stellt HTTP - Endpunkte bereit, die 
 von der mobilen App aufgerufen werden können. Diese Endpunkte aktivieren spezifische Handler-
 Funktionen, die in der Regel direkte Datenbankoperationen ausführen. Zusätzlich ermöglicht das 
 Backend über eine Websocket-Schnittstelle die Kommunikation mit der Hardware, um Bestellungen in 
 Echtzeit an die Geräte weiterzuleiten.
 
-Technologisch basiert das Backend vollständig auf Golang, unterstützt durch Frameworks wie gorilla/
-mux für die Routenverwaltung und database/sql für den Zugriff auf die PostgreSQL-Datenbank. Die 
-gesamte Umgebung ist containerisiert und nutzt Docker Compose für lokale Entwicklungsumgebungen 
-sowie Google Cloud Run für das Live-Deployment. In der Live-Umgebung wird Google Cloud SQL 
-anstelle einer lokalen PostgreSQL-Datenbank eingesetzt.
+Technologisch basiert das Backend vollständig auf Golang, unterstützt durch Frameworks wie \texttt{
+gorilla/ mux} für die Routenverwaltung und \texttt{database/sql} für den Zugriff auf die PostgreSQL 
+- Datenbank. Die gesamte Umgebung ist containerisiert und nutzt Docker Compose für lokale 
+Entwicklungsumgebungen sowie Google Cloud Run für das Live-Deployment. In der Live-Umgebung wird 
+Google Cloud SQL anstelle einer lokalen PostgreSQL-Datenbank eingesetzt.
 
 \subsection{Funktionale 
 Anforderungen}
 
 Das Backend übernimmt mehrere Kernfunktionen:
 
-\vspace{0.5cm}
-
 \begin{itemize}
-	\item Benutzerdatenverwaltung: Erstellung und Authentifizierung von Benutzerkonten mittels API-
+	\item \textbf{\textcolor{red7}{Benutzerdatenverwaltung:}} Erstellung und Authentifizierung von Benutzerkonten mittels API-
 	Schlüsseln und JWT.
-	\item Rezept- und Zutatenmanagement: Speicherung, Bearbeitung und Abfrage von Rezepten und deren 
+	\item \textbf{\textcolor{red7}{Rezept- und Zutatenmanagement:}} Speicherung, Bearbeitung und Abfrage von Rezepten und deren 
 	zugehörigen Zutaten.
-	\item Hardwareintegration: Verwaltung der Hardwaregeräte, ihrer Zuordnung zu Benutzern und ihrer 
+	\item \textbf{\textcolor{red7}{Hardwareintegration:}} Verwaltung der Hardwaregeräte, ihrer Zuordnung zu Benutzern und ihrer 
 	Bestückung.
-	\item Echtzeit-Bestellungen: Weiterleitung von Cocktailbestellungen aus der App an die 
+	\item \textbf{\textcolor{red7}{Echtzeit-Bestellungen:}} Weiterleitung von Cocktailbestellungen aus der App an die 
 	angeschlossene Hardware über Websockets.
 \end{itemize}
 
@@ -51,9 +46,9 @@ Entwicklungsumgebung als Docker-Container verfügbar, während im Deployment auf
 gesetzt wird. Zu den gespeicherten Entitäten gehören unter anderem Benutzer, Hardwaregeräte, 
 Rezepte, Zutaten und deren Zuordnungen.
 
-Das Datenbankschema wird im Anhang dokumentiert, um die Arbeit kompakt zu halten. Der 
-Datenbankzugriff erfolgt mittels database/sql und direkter SQL-Statements. Durch diese Methode 
-wird SQL-Injection auf Basis von Best Practices effektiv verhindert.
+Das Datenbankschema \ref{fig:database_diagram} wird im Anhang dokumentiert, um die Arbeit kompakt zu 
+halten. Der Datenbankzugriff erfolgt mittels \texttt{database/sql} und direkter SQL-Statements. 
+Durch diese Methode wird SQL-Injection auf Basis von Best Practices effektiv verhindert.
 
 \subsection{API und 
 Schnittstellen}
@@ -89,10 +84,10 @@ Hardware-spezifischen Schlüsseln und JWT für Benutzerzugriffe .
 
 Das Backend verwendet mehrere Dienste von Google Cloud:
 \begin{itemize}
-	\item Google Cloud Run: Für das Hosting der containerisierten Backend-Anwendung.
-	\item Google Cloud SQL: Für die zentrale Datenhaltung.
-	\item Google Artifact Registry: Zur Verwaltung von Container-Images.
-	\item Cloud Logging: Zur Erfassung und Analyse von Backend- Logs.
+	\item \textbf{\textcolor{red7}{Google Cloud Run:}} Für das Hosting der containerisierten Backend-Anwendung\cite{googlecloudrun}.
+	\item \textbf{\textcolor{red7}{Google Cloud SQL:}} Für die zentrale Datenhaltung\cite{googlecloudsql}.
+	\item \textbf{\textcolor{red7}{Google Artifact Registry:}} Zur Verwaltung von Container-Images\cite{googleartifactregistry}.
+	\item \textbf{\textcolor{red7}{Cloud Logging:}} Zur Erfassung und Analyse von Backend-Logs\cite{googlecloudlogging}.
 \end{itemize}
 
 Skalierbarkeit ist durch die Nutzung von Google Cloud Run gegeben, da die Container automatisch 
@@ -104,10 +99,10 @@ Google nicht zu überschreiten.
 
 Für die Sicherheit wurden die folgenden Maßnahmen implementiert:
 \begin{itemize}
-	\item HTTPS: Sämtliche Datenübertragungen erfolgen verschlüsselt.
-	\item SQL-Injection-Schutz: Durch die Verwendung von database/sql wird sichergestellt, dass keine 
+	\item \textbf{\textcolor{red7}{HTTPS:}} Sämtliche Datenübertragungen erfolgen verschlüsselt.
+	\item \textbf{\textcolor{red7}{SQL-Injection-Schutz:}} Durch die Verwendung von database/sql wird sichergestellt, dass keine 
 unsicheren SQL-Statements ausgeführt werden.
-	\item API-Schlüssel und JWT: Nur authentifizierte Benutzer und Hardwaregeräte können auf die 
+	\item \textbf{\textcolor{red7}{API-Schlüssel und JWT:}} Nur authentifizierte Benutzer und Hardwaregeräte können auf die 
 entsprechenden Ressourcen zugreifen.
 \end{itemize}
 
@@ -124,8 +119,8 @@ um eine sofortige Reaktion auf Benutzeranfragen zu gewährleisten.
 
 Zur Unterstützung des Entwicklungsprozesses wurden folgende Tools und Best Practices genutzt:
 \begin{itemize}
-	\item Postman: Für die Erstellung und das Testen von API-Endpunkten, teils auch automatisiert.
-	\item Intensives Logging: Um Debugging und Fehleranalyse zu erleichtern.
-	\item Code Reviews und Code Pairing: Zur Qualitätssicherung.
-	\item Agile Methoden: Planung und Umsetzung erfolgten in Sprints mithilfe eines Ticketsystems.
+	\item \textbf{Postman:} Für die Erstellung und das Testen von API-Endpunkten, teils auch automatisiert.
+	\item \textbf{Intensives Logging:} Um Debugging und Fehleranalyse zu erleichtern.
+	\item \textbf{Code Reviews und Code Pairing:} Zur Qualitätssicherung.
+	\item \textbf{Agile Methoden:} Planung und Umsetzung erfolgten in Sprints mithilfe eines Ticketsystems.
 \end{itemize}

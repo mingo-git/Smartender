@@ -22,10 +22,11 @@
 
 \usepackage{fullpage} 		 	% Seitenränder auf 1 Zoll setzen
 \usepackage{ulem} 				 	% Unterstreichungen und Durchstreichungen
+\usepackage{xcolor}
 
 \usepackage{amssymb,amsmath,changepage,tabularx,siunitx} % Mathematische Symbole und Umgebungen
 \usepackage{darkmode}
-\enabledarkmode 						% Dunkler Modus für bessere Lesbarkeit
+% \enabledarkmode 						% Dunkler Modus für bessere Lesbarkeit
 \usepackage{makecell} 			% Tabellenzellen formatieren
 
 \usepackage[most]{tcolorbox}
@@ -141,7 +142,10 @@
 
 \date{\today}
 
-% TODO: 
+\linespread{1.5}
+\addbibresource{literaturverzeichnis.bib}
+
+% TODO: Chapters
 % - [x] Einleitung
 % - [x] Technologischer Hintergrund und Grundlagen
 % - [x] Anforderungen und Konzept
@@ -152,12 +156,12 @@
 % - [ ] Ergebnisse und Bewertung 
 % - [ ] Fazit und Ausblick 
 % - [ ] Anhang
-% - [ ] Literaturverzeichnis
-% - [ ] Interaktionen zwischen Komponenten - Abbildung, in 3.5
+% - [x] Literaturverzeichnis
 
-\linespread{1.5}
-
-\addbibresource{literaturverzeichnis.bib}
+% TODO: Korrekturen
+% - [ ] Kostenanalyse? , Abschnitt 1.2
+% - [ ] 
+% - [x] Interaktionen zwischen Komponenten - Abbildung, Abschnitt 3.5
 
 \begin{document}
 
@@ -191,19 +195,19 @@ Elektronikkomponenten sowie die effiziente Integration von Cloud-Diensten gemeis
 \input{sections/01_einleitung}    
 \newpage
 
-\section{Technologischer Hintergrund und Grundlagen}(3–5 Seiten)
+\section{Technologischer Hintergrund und Grundlagen}
 \input{sections/02_technologischer_hintergrund}    
 \newpage
 
-\section{Anforderungen und Konzept}(4–5 Seiten)
+\section{Anforderungen und Konzept}
 \input{sections/03_anforderungen_und_konzept}    
 \newpage
 
-\section{Umsetzung der Hardware}(4–6 Seiten)
+\section{Umsetzung der Hardware}
 \input{sections/04_umsetzung_hardware}    
 \newpage
 
-\section{Backend-Architektur und Implementierung}(4–6 Seiten)
+\section{Backend-Architektur und Implementierung}
 \input{sections/05_backend_architektur_und_implementierung}    
 \newpage
 

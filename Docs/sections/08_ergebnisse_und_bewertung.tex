@@ -1,4 +1,148 @@
 % Hier folgt der Inhalt des Abschnitts "Ergebnisse und Bewertung".
+\section{Ergebnisse und Bewertung}
+
+In diesem Abschnitt werden die erzielten Ergebnisse des Projekts beschrieben und kritisch bewertet. Der Fokus liegt auf der funktionalen Umsetzung, der Leistungsbewertung des Systems und einer Analyse der Stärken und Schwächen.
+
+\subsection{Funktionale Ergebnisse}
+
+Das Projektziel, einen voll funktionsfähigen Prototypen für einen smarten Cocktailautomaten zu entwickeln, wurde erfolgreich erreicht. Die wesentlichen funktionalen Anforderungen konnten umgesetzt werden:
+
+\begin{itemize}
+  \item \textbf{Automatisierte Cocktailzubereitung:} Die Hardware steuert präzise die Pumpen und Motoren, um Zutaten gemäß den Rezeptvorgaben abzugeben.
+  \item \textbf{Mobile App:} Benutzer können über eine intuitive App Rezepte erstellen, verwalten und Bestellungen auslösen.
+  \item \textbf{Backend-Integration:} Das Backend verarbeitet Bestellungen zuverlässig, synchronisiert Benutzerdaten und leitet Steuerbefehle an die Hardware weiter.
+\end{itemize}
+
+Die abschließenden Integrationstests zeigten, dass das Gesamtsystem von der Rezeptbestellung in der App bis zur Zubereitung durch die Hardware stabil funktioniert.
+
+\subsection{Lasttestergebnisse und Analyse}
+
+Zur Bewertung der Performance und Skalierbarkeit des Systems wurden umfassende Lasttests mit dem Tool \texttt{k6} durchgeführt. Diese Tests simulierten eine Vielzahl gleichzeitiger Benutzeranfragen, um Engpässe und Optimierungspotenziale zu identifizieren. Die wichtigsten Ergebnisse sind im Folgenden zusammengefasst.
+
+\subsubsection*{Wichtige Metriken}
+\begin{itemize}
+    \item \textbf{Gesamtanfragen:} 16.506
+    \item \textbf{Fehlerrate:} 0,08\% (14 fehlgeschlagene Anfragen)
+    \item \textbf{Durchschnittliche Antwortzeit:} 274,48 ms
+    \item \textbf{Maximale Antwortzeit:} 282.415,99 ms
+    \item \textbf{90. Perzentil der Antwortzeit:} 78,66 ms
+    \item \textbf{95. Perzentil der Antwortzeit:} 121,84 ms
+\end{itemize}
+
+\subsubsection*{Antwortzeiten pro Endpunkt}
+
+Die Antwortzeiten für spezifische API-Endpunkte zeigen deutliche Unterschiede, die auf unterschiedliche Verarbeitungskomplexität hinweisen. Die wichtigsten Werte sind in Tabelle \ref{tab:response_times} dargestellt.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Endpunkt} & \textbf{Durchschnitt (ms)} & \textbf{Median (ms)} & \textbf{90. Perzentil (ms)} & \textbf{Max (ms)} \\
+        \hline
+        Registrierung & 145,60 & 102,71 & 219,24 & 1.224,99 \\
+        Login & 155,91 & 102,52 & 283,80 & 1.530,32 \\
+        Rezept anlegen & 136,99 & 19,10 & 42,42 & 282.282,60 \\
+        Slot setzen & 1.341,94 & 23,35 & 79,70 & 282.292,87 \\
+        „Get Slots“ & 64,93 & 48,97 & 112,32 & 355,33 \\
+        „Get Favorites“ & 29,59 & 20,02 & 51,68 & 227,09 \\
+        „Create Drink“ & 588,13 & 19,39 & 52,83 & 282.275,99 \\
+        \hline
+    \end{tabular}
+    \caption{Antwortzeiten pro Endpunkt}
+    \label{tab:response_times}
+\end{table}
+
+\subsubsection*{Visualisierung der Antwortzeiten}
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=\textwidth,
+            height=8cm,
+            xlabel={Antwortzeit (ms)},
+            ylabel={Prozentsatz der Anfragen},
+            ymin=0, ymax=100,
+            xmin=0, xmax=300,
+            xtick={0,50,100,150,200,250,300},
+            ytick={0,20,40,60,80,100},
+            grid=both,
+            ]
+            \addplot[red, thick] coordinates {
+                (14, 0) (87, 50) (105, 90) (140, 95) (522, 99) (644, 100)
+            };
+            \addlegendentry{Antwortzeit}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Verteilung der Antwortzeiten}
+    \label{fig:response_time_distribution}
+\end{figure}
+
+\subsubsection*{Erfolgsquoten der API-Endpunkte}
+
+Die Erfolgsquoten einzelner Endpunkte zeigen, dass die meisten Anfragen erfolgreich waren, jedoch bei einigen spezifischen Funktionen wie der Slot-Registrierung Verbesserungspotenzial besteht (siehe Abbildung \ref{fig:success_rates}).
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            ybar,
+            width=\textwidth,
+            height=8cm,
+            xlabel={API-Endpunkt},
+            ylabel={Erfolgsquote (\%)},
+            ymin=0, ymax=100,
+            symbolic x coords={register, login, create drink, create recipe},
+            xtick=data,
+            bar width=0.5cm,
+            nodes near coords,
+            nodes near coords align={vertical},
+            ]
+            \addplot coordinates {(register, 99) (login, 99) (create drink, 99) (create recipe, 99)};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Erfolgsquoten der API-Endpunkte}
+    \label{fig:success_rates}
+\end{figure}
+
+\subsubsection*{Zusammenfassung der Ergebnisse}
+
+Die Tests haben gezeigt, dass das System in einer Live-Umgebung grundsätzlich stabil arbeitet. Allerdings wurden Skalierungsprobleme bei Websocket-Verbindungen identifiziert, die durch eine zentrale Verwaltung oder eine konsistente Lastverteilung gelöst werden könnten. Die meisten API-Endpunkte zeigten zufriedenstellende Antwortzeiten und Erfolgsquoten. Die Schwachstellen bieten jedoch Anknüpfungspunkte für zukünftige Optimierungen.
+
+\subsection{Stärken und Schwächen}
+
+\subsubsection*{Stärken}
+
+Das Projekt weist folgende Stärken auf:
+\begin{itemize}
+  \item \textbf{Benutzerfreundlichkeit:} Die App bietet eine intuitive Benutzeroberfläche und ermöglicht eine einfache Verwaltung von Rezepten und Geräten.
+  \item \textbf{Technische Umsetzung:} Die Kombination aus App, Backend und Hardware zeigt das Potenzial von IoT-Technologien in Smart-Home-Umgebungen.
+  \item \textbf{Modularität:} Die Architektur des Systems ermöglicht zukünftige Erweiterungen, z. B. die Integration zusätzlicher Geräte oder neue Funktionen.
+\end{itemize}
+
+\subsubsection*{Schwächen}
+
+Einige Schwächen des aktuellen Prototyps wurden identifiziert:
+\begin{itemize}
+  \item \textbf{Skalierbarkeit:} Die Verwaltung von Websocket-Verbindungen in einer containerisierten Umgebung führte bei hoher Last zu Problemen.
+  \item \textbf{Fehlende Tests:} Es wurden keine umfassenden automatisierten Tests für die einzelnen Systemkomponenten implementiert.
+  \item \textbf{Hardware:} Obwohl die Hardware zuverlässig arbeitet, könnten Optimierungen in der Dosiergenauigkeit und Stabilität vorgenommen werden.
+\end{itemize}
+
+\subsection{Zusammenfassung der Ergebnisse}
+
+Das Projekt hat gezeigt, dass IoT-Technologien erfolgreich zur Automatisierung von Alltagsaufgaben eingesetzt werden können. Die entwickelten Systeme arbeiten zuverlässig und erfüllen die definierten funktionalen Anforderungen. Gleichzeitig wurden Schwächen aufgedeckt, die als Grundlage für zukünftige Optimierungen dienen können.
+
+\subsection{Empfehlungen}
+
+Auf Basis der Testergebnisse und identifizierten Schwächen werden folgende Maßnahmen für zukünftige Verbesserungen empfohlen:
+\begin{itemize}
+  \item \textbf{Optimierung der Skalierung:} Einführung eines zentralen Websocket-Servers oder konsistenter Lastverteilung, um Kommunikationsprobleme bei hoher Last zu beheben.
+  \item \textbf{Automatisierte Tests:} Entwicklung und Implementierung umfassender Unit- und Integrationstests.
+  \item \textbf{Hardware-Optimierungen:} Verbesserung der Dosiergenauigkeit und Integration zusätzlicher Sensorik zur Überwachung.
+\end{itemize}
+
+\section{DUMP}
 
 \subsection{Lasttest Ergebnisse - k6}
 % Wir haben einen Lasttest durchgeführt, um die Leistung und Stabilität der API zu bewerten. Die 
