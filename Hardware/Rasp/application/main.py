@@ -17,6 +17,7 @@ import time
 from dotenv import load_dotenv
 import os
 import uuid
+import math
 # --------------------------------------------------------------------------------------------------
 
 def main():
@@ -136,16 +137,17 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
     if commands:
         sorted_commands = sorted(commands, key=lambda item: item.slot_number)
 
-        motor_controller.rotate_until_limit(2, position_handler, 0, 1000)
-        time.sleep(3)
+        #motor_controller.rotate_until_limit(1, position_handler, 0, 1000)
+        #time.sleep(3)
 
-        actuator_controller._move_up(2.7)
-        time.sleep(10)
-        actuator_controller._move_down(3.5)
+        #actuator_controller._move_up(2.7)
+        #time.sleep(10)
+        #actuator_controller._move_down(3.5)
         #led_controller.progress_bar()
-        #motor_controller.rotate_stepper_pigpio(1000, 0, 1000)
-        motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
-        return 
+        #motor_controller.rotate_stepper_pigpio(4000, 0, 10000)
+        #motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+        #pump_controller.activate_pump(0, 4)
+        #return 
         #time.sleep(1000)
 
         logger.log("INFO", f"Commands processed: {sorted_commands}", "Main")
@@ -170,11 +172,15 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     logger.log("INFO", f"Reached slot {command.slot_number}", "Main")
 
-                    # Pour using the actuator
-                    logger.log("INFO", f"Pouring from slot {command.slot_number}", "Main")
-                    actuator_controller._move_up(2.7)
-                    time.sleep(10)
-                    actuator_controller._move_down(3)
+                    
+                    pump_amount = math.ceil(command.quantity_ml/40)          
+                    
+                    for i in range(pump_amount):
+                        # Pour using the actuator
+                        logger.log("INFO", f"Pouring from slot {command.slot_number}", "Main")
+                        actuator_controller._move_up(2.7)
+                        time.sleep(6)
+                        actuator_controller._move_down(3)
 
                 elif 6 <= command.slot_number <= 11:  # Non-alcoholic
                     logger.log("INFO", f"Non-alcoholic drink: Slot {command.slot_number}", "Main")
@@ -192,7 +198,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     pump_index = command.slot_number - 6
                     logger.log("INFO", f"Activating pump {pump_index}", "Main")
                     actuator_controller._move_up(5)
-                    pump_controller.activate_pump(pump_index, command.quantity_ml/100)
+                    pump_controller.activate_pump(pump_index, command.quantity_ml/32.5)
                     actuator_controller._move_down(6)
                 else:
                     logger.log("ERROR", "Invalid slot number", "Main")
