@@ -1,23 +1,34 @@
 % Hier folgt der Inhalt des Abschnitts "Ergebnisse und Bewertung".
 \section{Ergebnisse und Bewertung}
 
-In diesem Abschnitt werden die erzielten Ergebnisse des Projekts beschrieben und kritisch bewertet. Der Fokus liegt auf der funktionalen Umsetzung, der Leistungsbewertung des Systems und einer Analyse der Stärken und Schwächen.
+In diesem Abschnitt werden die erzielten Ergebnisse des Projekts beschrieben und kritisch bewertet. 
+Der Fokus liegt auf der funktionalen Umsetzung, der Leistungsbewertung des Systems und einer Analyse 
+der Stärken und Schwächen.
 
 \subsection{Funktionale Ergebnisse}
 
-Das Projektziel, einen voll funktionsfähigen Prototypen für einen smarten Cocktailautomaten zu entwickeln, wurde erfolgreich erreicht. Die wesentlichen funktionalen Anforderungen konnten umgesetzt werden:
+Das Projektziel, einen voll funktionsfähigen Prototypen für einen smarten Cocktailautomaten zu 
+entwickeln, wurde erfolgreich erreicht. Die wesentlichen funktionalen Anforderungen konnten 
+umgesetzt werden:
 
 \begin{itemize}
-  \item \textbf{Automatisierte Cocktailzubereitung:} Die Hardware steuert präzise die Pumpen und Motoren, um Zutaten gemäß den Rezeptvorgaben abzugeben.
-  \item \textbf{Mobile App:} Benutzer können über eine intuitive App Rezepte erstellen, verwalten und Bestellungen auslösen.
-  \item \textbf{Backend-Integration:} Das Backend verarbeitet Bestellungen zuverlässig, synchronisiert Benutzerdaten und leitet Steuerbefehle an die Hardware weiter.
+  \item \textbf{Automatisierte Cocktailzubereitung:} Die Hardware steuert präzise die \\Pumpen und 
+  Motoren, um Zutaten gemäß den Rezeptvorgaben abzugeben.
+  \item \textbf{Mobile App:} Benutzer können über eine intuitive App Rezepte erstellen, verwalten 
+  und Bestellungen auslösen.
+  \item \textbf{Backend-Integration:} Das Backend verarbeitet Bestellungen zuverlässig, 
+  \\synchronisiert Benutzerdaten und leitet Steuerbefehle an die Hardware \\weiter.
 \end{itemize}
 
-Die abschließenden Integrationstests zeigten, dass das Gesamtsystem von der Rezeptbestellung in der App bis zur Zubereitung durch die Hardware stabil funktioniert.
+Die abschließenden Integrationstests zeigten, dass das Gesamtsystem von der Rezeptbestellung in der 
+App bis zur Zubereitung durch die Hardware stabil \\funktioniert.
 
 \subsection{Lasttestergebnisse und Analyse}
 
-Zur Bewertung der Performance und Skalierbarkeit des Systems wurden umfassende Lasttests mit dem Tool \texttt{k6} durchgeführt. Diese Tests simulierten eine Vielzahl gleichzeitiger Benutzeranfragen, um Engpässe und Optimierungspotenziale zu identifizieren. Die wichtigsten Ergebnisse sind im Folgenden zusammengefasst.
+Zur Bewertung der Performance und Skalierbarkeit des Systems wurden umfassende Lasttests mit dem 
+Tool \texttt{k6} durchgeführt. Diese Tests simulierten eine Vielzahl gleichzeitiger 
+Benutzeranfragen, um Engpässe und Optimierungspotenziale zu identifizieren. Die wichtigsten 
+Ergebnisse sind im Folgenden zusammengefasst.
 
 \subsubsection*{Wichtige Metriken}
 \begin{itemize}
@@ -31,7 +42,9 @@ Zur Bewertung der Performance und Skalierbarkeit des Systems wurden umfassende L
 
 \subsubsection*{Antwortzeiten pro Endpunkt}
 
-Die Antwortzeiten für spezifische API-Endpunkte zeigen deutliche Unterschiede, die auf unterschiedliche Verarbeitungskomplexität hinweisen. Die wichtigsten Werte sind in Tabelle \ref{tab:response_times} dargestellt.
+Die Antwortzeiten für spezifische API-Endpunkte zeigen deutliche Unterschiede, die auf 
+unterschiedliche Verarbeitungskomplexität hinweisen. Die wichtigsten Werte sind in Tabelle \ref{tab
+:response_times} dargestellt.
 
 \begin{table}[h!]
     \centering
@@ -80,7 +93,9 @@ Die Antwortzeiten für spezifische API-Endpunkte zeigen deutliche Unterschiede, 
 
 \subsubsection*{Erfolgsquoten der API-Endpunkte}
 
-Die Erfolgsquoten einzelner Endpunkte zeigen, dass die meisten Anfragen erfolgreich waren, jedoch bei einigen spezifischen Funktionen wie der Slot-Registrierung Verbesserungspotenzial besteht (siehe Abbildung \ref{fig:success_rates}).
+Die Erfolgsquoten einzelner Endpunkte zeigen, dass die meisten Anfragen erfolgreich waren, jedoch 
+bei einigen spezifischen Funktionen wie der \\Slot-Registrierung Verbesserungspotenzial besteht (
+siehe Abbildung \ref{fig:success_rates}).
 
 \begin{figure}[h!]
     \centering
@@ -107,7 +122,14 @@ Die Erfolgsquoten einzelner Endpunkte zeigen, dass die meisten Anfragen erfolgre
 
 \subsubsection*{Zusammenfassung der Ergebnisse}
 
-Die Tests haben gezeigt, dass das System in einer Live-Umgebung grundsätzlich stabil arbeitet. Allerdings wurden Skalierungsprobleme bei Websocket-Verbindungen identifiziert, die durch eine zentrale Verwaltung oder eine konsistente Lastverteilung gelöst werden könnten. Die meisten API-Endpunkte zeigten zufriedenstellende Antwortzeiten und Erfolgsquoten. Die Schwachstellen bieten jedoch Anknüpfungspunkte für zukünftige Optimierungen.
+\hyphenation{Live-Umgebung}
+\hyphenation{Web-socket-Ver-bind-ung}
+
+Die Tests haben gezeigt, dass das System in einer Live-Umgebung grundsätzlich stabil arbeitet. 
+Allerdings wurden Skalierungsprobleme bei Websocket-Verbindungen identifiziert, die durch eine 
+zentrale Verwaltung oder eine konsistente Lastverteilung gelöst werden könnten. Die meisten API-
+Endpunkte zeigten zufriedenstellende Antwortzeiten und Erfolgsquoten. Die Schwachstellen bieten 
+jedoch Anknüpfungspunkte für zukünftige Optimierungen.
 
 \subsection{Stärken und Schwächen}
 
@@ -152,14 +174,82 @@ Auf Basis der Testergebnisse und identifizierten Schwächen werden folgende Maß
 
 \subsection{Beispiele Plots und Diagramme}
 
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            boxplot/draw direction=y,
+            ylabel={ Menge in Milliliter }, % Beschriftung der y-Achse
+            xlabel={ Pumpen }, % Beschriftung der x-Achse
+            xtick={ 1, 2, 3, 4, 5, 6 }, % Positionen der xticks
+            xticklabels={ 1, 2, 3, 4, 5, 6 }, % Labels der xticks
+            ymin=210, 
+            ymax=430, % Begrenzung der y-Achse
+        ]
+        \addplot+ [
+            boxplot,
+            fill=red4,
+            draw=red7 
+        ] table[row sep=\\, y index=0] {
+            370 \\ 375 \\ 357 \\ 364 \\ 358 \\ 362 \\ 382 \\ 383 \\ 370 \\ 366 \\ 370 \\ 368 \\ 
+            383 \\ 373 \\ 360 \\ 355 \\ 373 \\ 381 \\ 356 \\ 349 \\ 362 \\ 370 \\ 369 \\ 361 \\
+        };
+        \addplot+ [
+            boxplot,
+            fill=red4,
+            draw=red7 
+        ] table[row sep=\\, y index=0] {
+            399 \\ 388 \\ 395 \\ 395 \\ 399 \\ 409 \\ 402 \\ 400 \\ 386 \\ 401 \\ 400 \\ 400 \\ 
+            404 \\ 387 \\ 405 \\ 400 \\ 400 \\ 390 \\ 388 \\ 400 \\ 400 \\ 399 \\ 405 \\ 399 \\
+        };
+        \addplot+ [
+            boxplot,
+            fill=red4,
+            draw=red7 
+        ] table[row sep=\\, y index=0] {
+            397 \\ 402 \\ 395 \\ 398 \\ 400 \\ 400 \\ 395 \\ 400 \\ 402 \\ 400 \\ 399 \\ 408 \\ 
+            395 \\ 388 \\ 403 \\ 400 \\ 402 \\ 400 \\ 408 \\ 388 \\ 396 \\ 408 \\ 397 \\ 390 \\
+        };
+        \addplot+ [
+            boxplot,
+            fill=red4,
+            draw=red7 
+        ] table[row sep=\\, y index=0] {
+            411 \\ 400 \\ 398 \\ 399 \\ 400 \\ 408 \\ 408 \\ 415 \\ 400 \\ 386 \\ 393 \\ 390 \\ 
+            400 \\ 404 \\ 400 \\ 406 \\ 409 \\ 400 \\ 403 \\ 396 \\ 406 \\ 407 \\ 405 \\ 396 \\
+        };
+        \addplot+ [
+            boxplot,
+            fill=red4,
+            draw=red7 
+        ] table[row sep=\\, y index=0] {
+            267 \\ 259 \\ 305 \\ 242 \\ 306 \\ 315 \\ 313 \\ 287 \\ 266 \\ 300 \\ 298 \\ 260 \\ 
+            285 \\ 251 \\ 283 \\ 243 \\ 266 \\ 263 \\ 255 \\ 278 \\ 241 \\ 255 \\ 315 \\ 280 \\
+        };
+        \addplot+ [
+            boxplot,
+            fill=red4,
+            draw=red7 
+        ] table[row sep=\\, y index=0] {
+            382 \\ 385 \\ 387 \\ 382 \\ 390 \\ 386 \\ 390 \\ 377 \\ 393 \\ 388 \\ 383 \\ 398 \\
+        };
+        \end{axis}
+
+    \end{tikzpicture}
+    \caption{Pumpenleistung für 400ml}
+    \label{fig:pump_performance}
+\end{figure}
+
+\newpage
+
 \begin{tikzpicture}[scale=1]
     \begin{axis}[
         axis lines=middle,
         xlabel=,
         ylabel={},
         legend style={
-            fill=pag, draw=pag!60, % Red background with black border
-            font=\small, % Smaller font size
+            draw=pag!60,   % Red background with black border
+            font=\small,   % Smaller font size
             inner sep=2pt, % Inner spacing (padding around the text)
             outer sep=1pt  % Outer spacing (margin around the border)
         },
@@ -170,7 +260,7 @@ Auf Basis der Testergebnisse und identifizierten Schwächen werden folgende Maß
         grid style={line width=.1pt, draw=gray!10},
         major grid style={line width=.2pt,draw=gray!50},
         minor tick num=5,
-        width=1.15*\textwidth,
+        width=\textwidth,
         height=5cm,
         clip=false,
         ticklabel style={font=\tiny,fill=white},
@@ -195,7 +285,7 @@ Auf Basis der Testergebnisse und identifizierten Schwächen werden folgende Maß
 	]
 	{exp(-x^2-y^2)*x};
 	\end{axis}
-	\end{tikzpicture}
+\end{tikzpicture}
 
 	Plotting from data:
 

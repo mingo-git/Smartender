@@ -18,7 +18,8 @@
 
 \usepackage{pgfplots}			  % Diagramme und Plots
 \usepgfplotslibrary{external} % Externe Speicherung von Plots (schnelleres Kompilieren)
-\pgfplotsset{compat=1.18}
+\pgfplotsset{width=\textwidth,compat=1.18}
+\usepgfplotslibrary{statistics}
 
 \usepackage{fullpage} 		 	% Seitenränder auf 1 Zoll setzen
 \usepackage{ulem} 				 	% Unterstreichungen und Durchstreichungen
@@ -142,7 +143,7 @@
 
 \date{\today}
 
-\linespread{1.5}
+% \linespread{1.5}
 \addbibresource{literaturverzeichnis.bib}
 
 % TODO: Chapters
@@ -162,6 +163,7 @@
 % - [ ] Kostenanalyse? , Abschnitt 1.2
 % - [ ] 
 % - [x] Interaktionen zwischen Komponenten - Abbildung, Abschnitt 3.5
+
 
 \begin{document}
 
