@@ -1,1 +1,40 @@
 % Hier folgt der Inhalt des Abschnitts "Fazit und Ausblick".
+
+\subsection{Fazit}
+Das Projekt hat gezeigt, dass die Kombination aus Hardware, Software und Cloud-Diensten erfolgreich zur Automatisierung der Cocktailzubereitung genutzt werden kann. Die definierten Hauptziele des Projekts wurden weitestgehend erreicht:
+
+\begin{itemize}
+    \item Die Maschine kann Cocktails entsprechend der über die App ausgewählten Rezepte zusammenmixen.
+    \item In der App können Benutzer Getränke, Zutaten und Slots anlegen, ändern und löschen.
+    \item Die Integration zwischen App, Backend und Hardware funktioniert stabil und erfüllt die Kernanforderungen.
+\end{itemize}
+
+Besonders positiv hervorzuheben ist die erfolgreiche Umsetzung folgender Punkte:
+
+\begin{itemize}
+    \item Hosting des Backends über Google Cloud
+    \item Erstellung einer funktionsfähigen Android-App
+    \item Zuverlässige Verkabelung und Integration der Hardware
+\end{itemize}
+
+Trotz der Erfolge gab es auch Herausforderungen, die nur teilweise gelöst werden konnten. Beispielsweise verursachen die Treiber des Schrittmotors und des Linearmotors Schwankungen im Ground, was die Übertragung von Daten beeinträchtigt. Dies führt insbesondere bei feineren Komponenten wie der Waage zu Störungen, obwohl diese außerhalb des Systems problemlos funktioniert hat.
+
+Zudem gab es Einschränkungen bei der Auswahl bestimmter Hardware-Komponenten. So sind die Spirituosenausschänker gelegentlich unzuverlässig, was zu Ausfällen führen kann. Die Kraft, die erforderlich ist, um diese Ausschänker zu bedienen, wurde ebenfalls unterschätzt. Dies machte einen Wechsel von Servomotoren zu einem leistungsfähigeren Linearmotor notwendig.
+
+Insgesamt hat das Projekt die Kenntnisse im Bereich Elektronik, Stromversorgung sowie in der Entwicklung und Bereitstellung von Apps und Backends erheblich erweitert.
+
+\subsection{Ausblick}
+Für die Zukunft sind mehrere Erweiterungen und Optimierungen geplant, um die Funktionalität und Zuverlässigkeit des Systems weiter zu verbessern:
+
+\begin{itemize}
+    \item \textbf{Ansteuerbare LEDs:} Diese sollen für eine ansprechende Optik sorgen. Die Implementierung wird jedoch durch Störsignale im Ground erschwert, die behoben werden müssen.
+    \item \textbf{Rollenzuweisung:} Benutzer sollen unterschiedliche Rollen erhalten, um beispielsweise das Verändern von Rezepten und Zutaten auf autorisierte Nutzer zu beschränken.
+    \item \textbf{Hardwareverwaltung in der App:} Es soll möglich sein, mehrere Smartender-Geräte über die App zu steuern und zu verwalten.
+    \item \textbf{Spülprogramm:} Ein automatisches Spülprogramm soll die Reinigung der Schläuche erleichtern und Restflüssigkeiten entfernen.
+    \item \textbf{WLAN-Einrichtung:} Die WLAN-Konfiguration soll über die App erfolgen, um die Notwendigkeit einer Tastatur und eines Displays am Raspberry Pi zu vermeiden und die Einrichtung zu erleichtern.
+    \item \textbf{Integration einer Waage:} Eine Waage soll die genaue Bestimmung der im Becher befindlichen Flüssigkeitsmenge ermöglichen. Dies erfordert jedoch die Behebung der bestehenden Störsignale im Ground.
+\end{itemize}
+
+Diese Erweiterungen würden den Smartender zu einer noch vielseitigeren Lösung für private und kommerzielle Anwendungen machen.
+
+
