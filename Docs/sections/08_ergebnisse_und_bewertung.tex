@@ -1,4 +1,6 @@
-In diesem Abschnitt werden die erzielten Ergebnisse des Projekts beschrieben und kritisch bewertet. Der Fokus liegt auf der funktionalen Umsetzung, der Leistungsbewertung des Systems und einer Analyse der Stärken und Schwächen.
+In diesem Abschnitt werden die erzielten Ergebnisse des Projekts beschrieben und kritisch bewertet. 
+Der Fokus liegt auf der funktionalen Umsetzung, der Leistungsbewertung des Systems und einer Analyse 
+der Stärken und Schwächen.
 
 \subsection{Funktionale Ergebnisse}
 
@@ -25,44 +27,108 @@ Tool \texttt{k6} durchgeführt. Diese Tests simulierten eine Vielzahl gleichzeit
 Benutzeranfragen, um Engpässe und Optimierungspotenziale zu identifizieren. Die wichtigsten 
 Ergebnisse sind im Folgenden zusammengefasst.
 
+\subsubsection*{Gesamtergebnisse}
+
 \subsubsection*{Wichtige Metriken}
 \begin{itemize}
     \item \textbf{Gesamtanfragen:} 16.506
     \item \textbf{Fehlerrate:} 0,08\% (14 fehlgeschlagene Anfragen)
     \item \textbf{Durchschnittliche Antwortzeit:} 274,48 ms
+    \item \textbf{Minimale Antwortzeit:} 13,87 ms
+    \item \textbf{Median der Antwortzeit:} 19,75 ms
     \item \textbf{Maximale Antwortzeit:} 282.415,99 ms
     \item \textbf{90. Perzentil der Antwortzeit:} 78,66 ms
     \item \textbf{95. Perzentil der Antwortzeit:} 121,84 ms
 \end{itemize}
 
+% ERFOLGSRATE --------------------------------------------------------------------------------------
+\subsubsection*{Erfolgsrate}
+
+\begin{table}[!htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{|l|r|r|r|}
+            \hline
+            \textbf{Test} & \textbf{Erfolgreich} & \textbf{Fehlgeschlagen} & \textbf{Erfolgsrate} \\
+            \hline
+            Nutzerregistrierung   &  263 &   0 &  100\% \\
+            Nutzer einloggen      &  263 &   0 &  100\% \\
+            Hardwareregistrierung &  262 &   1 &   99\% \\
+            Drink erstellen       & 2615 &   5 &   99\% \\
+            Slot setzen           & 1304 &   6 &   99\% \\
+            Rezept erstellen      & 2619 &   1 &   99\% \\
+            Zutat hinzufügen      & 2620 &   0 &  100\% \\
+            Favorit erstellen     &  785 &   1 &   99\% \\
+            Slots abfragen        &  262 &   0 &  100\% \\
+            Favoriten abfragen    &  263 &   0 &  100\% \\
+            \hline
+        \end{tabular}
+    }
+    \caption{Tests je Endpunkt und Erfolgsrate}
+    \label{tab:test_success_rate}    
+\end{table}
+
+Die Erfolgsrate der einzelnen API-Endpunkte ist insgesamt hoch. Die Nutzerregistrierung und das 
+Einloggen waren zu 100\% erfolgreich, während die Hardwareregistrierung eine Erfolgsrate von 99\% 
+aufweisen. Die Fehlerrate bei der Erstellung von Getränken und Rezepten, dem setzen von Slots und 
+dem hinzufügen von Bestandteilen zu einem Rezept liegt bei 1\%. Diese Fehler lassen sich aber 
+allesamt durch das Fehlschlagen der Hardwareregistrierung erklären, da diese für einen Eintrag in 
+die Datenbank benötigt wird. Die Erfolgsrate der Favoritenfunktion liegt aus dem selben Grund 
+lediglich bei 99\%. Alles in allem sind die Ergebnisse zufriedenstellend. 
+Das scheitern der Hardware registrieren Anfrage ist auf eine Auslastung der Container Instanz 
+zurückzuführen, und könnte mit mehr Leistung, mit weiteren Container Instanzen oder einer 
+Optimierung der Anfrage behoben werden.
+
+% ANTOWRTZEITEN ------------------------------------------------------------------------------------
 \subsubsection*{Antwortzeiten pro Endpunkt}
 
 Die Antwortzeiten für spezifische API-Endpunkte zeigen deutliche Unterschiede, die auf 
-unterschiedliche Verarbeitungskomplexität hinweisen. Die wichtigsten Werte sind in Tabelle \ref{tab
-:response_times} dargestellt.
+unterschiedliche Verarbeitungskomplexität hinweisen. Die wichtigsten Werte sind in Tabelle 
+\ref{tab:response_times} dargestellt.
 
-\begin{table}[h!]
+\begin{table}[!ht] 
     \centering
-    \begin{tabular}{|l|c|c|c|c|}
-        \hline
-        \textbf{Endpunkt} & \textbf{Durchschnitt (ms)} & \textbf{Median (ms)} & \textbf{90. Perzentil (ms)} & \textbf{Max (ms)} \\
-        \hline
-        Registrierung & 145,60 & 102,71 & 219,24 & 1.224,99 \\
-        Login & 155,91 & 102,52 & 283,80 & 1.530,32 \\
-        Rezept anlegen & 136,99 & 19,10 & 42,42 & 282.282,60 \\
-        Slot setzen & 1.341,94 & 23,35 & 79,70 & 282.292,87 \\
-        \"Get Slots\" & 64,93 & 48,97 & 112,32 & 355,33 \\
-        \"Get Favorites\" & 29,59 & 20,02 & 51,68 & 227,09 \\
-        \"Create Drink\" & 588,13 & 19,39 & 52,83 & 282.275,99 \\
-        \hline
-    \end{tabular}
-    \caption{Antwortzeiten pro Endpunkt}
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{|l|r|r|r|r|}
+            \hline
+            \textbf{Endpunkt} &
+            \textbf{Durchschnitt} & 
+            \textbf{Median} & 
+            \textbf{90. Perzentil} & 
+            \textbf{Max} \\
+            \hline
+            Nutzer registrieren     &  145,60 & 102,70 & 219,23 &   1224,98 \\
+            Nutzer einlogen         &  155,90 & 102,51 & 283,79 &   1530,31 \\
+            Hardware registrieren   & 1241,48 &  70,54 & 218,08 & 282415,99 \\
+            Drink erstellen         &  588,13 &  19,39 &  52,83 & 282275,98 \\
+            Rezept erstellen        &  136,98 &  19,10 &  42,42 & 282282,60 \\
+            Zutat hinzufügen        &   29,39 &  18,85 &  46,66 &    422,70 \\
+            Slot setzen             & 1341,94 &  23,35 &  79,69 & 282292,87 \\
+            Rezept favorisieren     &  268,85 &  24,01 &  64,44 & 183405,20 \\
+            Alle Favoriten abfragen &   29,58 &  20,01 &  51,67 &    227,09 \\
+            Slotbelegung abfragen   &   64,92 &  48,96 & 112,32 &    355,33 \\
+            \hline
+        \end{tabular}
+    }
+    \caption{Antwortzeiten je Endpunkt in Millisekunden}
     \label{tab:response_times}
 \end{table}
 
+Bei einer genaueren Betrachtung der Antwortzeiten pro Endpunkt fällt auf, dass die Endpunkte mit 
+den höchsten Maximalwerten (Hardware registrieren, Drink erstellen, Rezept erstellen, Slot setzen, 
+Favorit setzen) wieder die selben Punkte sind welche bereits zuvor als fehleranfällig identifiziert
+wurden. Die Antwortzeiten sind in diesen Fällen sehr hoch, was auf eine Überlastung der Container 
+Instanz zurückzuführen ist. Die Antwortzeiten der anderen Endpunkte sind im Vergleich dazu sehr
+gering. Die Antwortzeiten der Endpunkte Zutat hinzufügen, Alle Favoriten abfragen und Slotbelegung
+abfragen sind besonders niedrig, was auf eine geringe Verarbeitungskomplexität hinweist.
+
+% USABILITY ----------------------------------------------------------------------------------------
 \subsection{User-Test Ergebnisse}
 
-Zur Evaluation der Benutzerfreundlichkeit, des Funktionsumfangs und der Stabilität der mobilen App wurden neun Personen eingeladen, die App zu testen. Sie bewerteten die App in den drei Kategorien auf einer Skala von 1 (schlecht) bis 5 (sehr gut). Die Ergebnisse sind in Tabelle \ref{tab:user_tests} und in der Visualisierung in Abbildung \ref{fig:user_tests} dargestellt.
+Zur Evaluation der Benutzerfreundlichkeit, des Funktionsumfangs und der Stabilität der mobilen App 
+wurden neun Personen eingeladen, die App zu testen. Sie bewerteten die App in den drei Kategorien 
+auf einer Skala von 1 (schlecht) bis 5 (sehr gut). Die Ergebnisse sind in Tabelle 
+\ref{tab:user_tests} und in der Visualisierung in Abbildung \ref{fig:user_tests} dargestellt.
 
 \begin{table}[h!]
     \centering
@@ -81,7 +147,6 @@ Zur Evaluation der Benutzerfreundlichkeit, des Funktionsumfangs und der Stabilit
 
 \hyphenation{Live-Umgebung}
 \hyphenation{Web-socket-Ver-bind-ung}
-
 Die Tests haben gezeigt, dass das System in einer Live-Umgebung grundsätzlich stabil arbeitet. 
 Allerdings wurden Skalierungsprobleme bei Websocket-Verbindungen identifiziert, die durch eine 
 zentrale Verwaltung oder eine konsistente Lastverteilung gelöst werden könnten. Die meisten API-
@@ -90,47 +155,52 @@ jedoch Anknüpfungspunkte für zukünftige Optimierungen.
 
 \subsection{Stärken und Schwächen}
 
-\subsubsection*{Stärken}
+\subsubsection{Stärken}
 
 Das Projekt weist folgende Stärken auf:
 \begin{itemize}
-  \item \textbf{Benutzerfreundlichkeit:} Die App bietet eine intuitive Benutzeroberfläche und ermöglicht eine einfache Verwaltung von Rezepten und Geräten.
-  \item \textbf{Technische Umsetzung:} Die Kombination aus App, Backend und Hardware zeigt das Potenzial von IoT-Technologien in Smart-Home-Umgebungen.
-  \item \textbf{Modularität:} Die Architektur des Systems ermöglicht zukünftige Erweiterungen, z. B. die Integration zusätzlicher Geräte oder neue Funktionen.
+  \item \textbf{Benutzerfreundlichkeit:} Die App bietet eine intuitive Benutzeroberfläche und 
+  ermöglicht eine einfache Verwaltung von Rezepten und Geräten.
+  \item \textbf{Technische Umsetzung:} Die Kombination aus App, Backend und Hardware zeigt das 
+  Potenzial von IoT-Technologien in Smart-Home-Umgebungen.
+  \item \textbf{Modularität:} Die Architektur des Systems ermöglicht zukünftige Erweiterungen, z. B. 
+  die Integration zusätzlicher Geräte oder neue Funktionen.
 \end{itemize}
 
 \subsubsection*{Schwächen}
 
 Einige Schwächen des aktuellen Prototyps wurden identifiziert:
 \begin{itemize}
-  \item \textbf{Skalierbarkeit:} Die Verwaltung von Websocket-Verbindungen in einer containerisierten Umgebung führte bei hoher Last zu Problemen.
-  \item \textbf{Fehlende Tests:} Es wurden keine umfassenden automatisierten Tests für die einzelnen Systemkomponenten implementiert.
-  \item \textbf{Hardware:} Obwohl die Hardware zuverlässig arbeitet, könnten Optimierungen in der Dosiergenauigkeit und Stabilität vorgenommen werden.
+  \item \textbf{Skalierbarkeit:} Die Verwaltung von Websocket-Verbindungen in einer 
+  containerisierten Umgebung führte bei hoher Last zu Problemen.
+  \item \textbf{Fehlende Tests:} Es wurden keine umfassenden automatisierten Tests für die einzelnen 
+  Systemkomponenten implementiert.
+  \item \textbf{Hardware:} Obwohl die Hardware zuverlässig arbeitet, könnten Optimierungen in der 
+  Dosiergenauigkeit und Stabilität vorgenommen werden.
 \end{itemize}
 
 \subsection{Zusammenfassung der Ergebnisse}
 
-Das Projekt hat gezeigt, dass IoT-Technologien erfolgreich zur Automatisierung von Alltagsaufgaben eingesetzt werden können. Die entwickelten Systeme arbeiten zuverlässig und erfüllen die definierten funktionalen Anforderungen. Gleichzeitig wurden Schwächen aufgedeckt, die als Grundlage für zukünftige Optimierungen dienen können.
+Das Projekt hat gezeigt, dass IoT-Technologien erfolgreich zur Automatisierung von Alltagsaufgaben 
+eingesetzt werden können. Die entwickelten Systeme arbeiten zuverlässig und erfüllen die definierten 
+funktionalen Anforderungen. Gleichzeitig wurden Schwächen aufgedeckt, die als Grundlage für 
+zukünftige Optimierungen dienen können.
 
 \subsection{Empfehlungen}
-
-Auf Basis der Testergebnisse und identifizierten Schwächen werden folgende Maßnahmen für zukünftige Verbesserungen empfohlen:
+\hyphenation{Web-socket-Ser-ver}
+Auf Basis der Testergebnisse und identifizierten Schwächen werden folgende Maßnahmen für zukünftige 
+Verbesserungen empfohlen:
 \begin{itemize}
-  \item \textbf{Optimierung der Skalierung:} Einführung eines zentralen Websocket-Servers oder konsistenter Lastverteilung, um Kommunikationsprobleme bei hoher Last zu beheben.
-  \item \textbf{Automatisierte Tests:} Entwicklung und Implementierung umfassender Unit- und Integrationstests.
-  \item \textbf{Hardware-Optimierungen:} Verbesserung der Dosiergenauigkeit und Integration zusätzlicher Sensorik zur Überwachung.
+  \item \textbf{Optimierung der Skalierung:} Einführung eines zentralen Websocket-Servers oder 
+  konsistenter Lastverteilung, um Kommunikationsprobleme bei hoher Last zu beheben.
+  \item \textbf{Automatisierte Tests:} Entwicklung und Implementierung umfassender \\
+  Unit- und Integrationstests.
+  \item \textbf{Hardware-Optimierungen:} Verbesserung der Dosiergenauigkeit und Integration 
+  zusätzlicher Sensorik zur Überwachung.
 \end{itemize}
 
-\section{DUMP}
-
-\subsection{Lasttest Ergebnisse - k6}
-% Wir haben einen Lasttest durchgeführt, um die Leistung und Stabilität der API zu bewerten. Die 
-% Ergebnisse zeigen, dass die API insgesamt 37.900 Anfragen verarbeiten konnte, wobei 17.097 Anfragen 
-% fehlgeschlagen sind. Die durchschnittliche Antwortzeit betrug 66,26 ms, was akzeptabel ist. Die 
-% Erfolgsquote für die Benutzerregistrierung und Rezeptverwaltung lag bei 9.
-
-\subsection{Beispiele Plots und Diagramme}
-
+% BOXPLOT PUMPEN -----------------------------------------------------------------------------------
+\newpage
 \begin{figure}[h!]
     \centering
     \begin{tikzpicture}
@@ -144,6 +214,10 @@ Auf Basis der Testergebnisse und identifizierten Schwächen werden folgende Maß
             ymax=430, % Begrenzung der y-Achse
             boxplot/every box/.style={solid}
         ]
+        \addplot [
+            thick, dashed, blue,
+            domain=0:7, % Definiert den Bereich der x-Achse
+        ] {400};
         \addplot+ [
             boxplot,
             fill=red4,
@@ -203,191 +277,29 @@ Auf Basis der Testergebnisse und identifizierten Schwächen werden folgende Maß
     \caption{Pumpenleistung für 400ml}
     \label{fig:pump_performance}
 \end{figure}
-
 \newpage
-
-\begin{tikzpicture}[scale=1]
-    \begin{axis}[
-        axis lines=middle,
-        xlabel=,
-        ylabel={},
-        legend style={
-            draw=pag!60,   % Red background with black border
-            font=\small,   % Smaller font size
-            inner sep=2pt, % Inner spacing (padding around the text)
-            outer sep=1pt  % Outer spacing (margin around the border)
-        },
-        domain=0:8000,
-        xtick=\empty,
-        ytick=\empty,
-        grid=both,
-        grid style={line width=.1pt, draw=gray!10},
-        major grid style={line width=.2pt,draw=gray!50},
-        minor tick num=5,
-        width=\textwidth,
-        height=5cm,
-        clip=false,
-        ticklabel style={font=\tiny,fill=white},
-        xlabel style={at={(ticklabel* cs:1)},anchor=north west},
-        ylabel style={at={(ticklabel* cs:1)},anchor=south west},
-        ]
-
-        \addplot[color=red1,ultra thick,samples=100]{x};
-        \addplot[color=red2,ultra thick,samples=100]{1/x};
-        \addplot[color=red3,ultra thick,samples=100]{1/x^2};
-
-        \legend{100, 300, 1000}
-    \end{axis}
-    \node at (3.5,-0.3) {Velocity};
-    \node[rotate=90] at (-0.3,1.65) {Probability};
-\end{tikzpicture}
-
-\begin{tikzpicture}
-	\begin{axis}
-	\addplot3[
-			surf,
-	]
-	{exp(-x^2-y^2)*x};
-	\end{axis}
-\end{tikzpicture}
-
-	Plotting from data:
-
-\begin{tikzpicture}
-\begin{axis}[
-    title={Temperature dependence of CuSO\(_4\cdot\)5H\(_2\)O solubility},
-    xlabel={Temperature [\textcelsius]},
-    ylabel={Solubility [g per 100 g water]},
-    xmin=0, xmax=100,
-    ymin=0, ymax=120,
-    xtick={0,20,40,60,80,100},
-    ytick={0,20,40,60,80,100,120},
-    legend style={
-        fill=pag, draw=pag!60, % Red background with black border
-        font=\small, % Smaller font size
-        inner sep=2pt, % Inner spacing (padding around the text)
-        outer sep=1pt  % Outer spacing (margin around the border)
-    },
-    legend pos=north west,
-    ymajorgrids=true,
-    grid style=dashed,
-]
-
-\addplot[color=red2, ultra thick, mark=triangle*]
-    coordinates {
-    (0,23.1)(10,27.5)(20,32)(30,37.8)(40,44.6)(60,61.8)(80,83.8)(100,114)
-    };
-    \legend{CuSO\(_4\cdot\)5H\(_2\)O}
-    
-\end{axis}
-\end{tikzpicture}
-
-\paragraph*{Info}
-Find more examples here: \url{https://www.overleaf.com/learn/latex/Pgfplots_package}
-Or here: \url{https://pgfplots.net/}
-
-
-\section*{Testergebnisse}
-
-\subsection*{Wichtige Metriken}
-\begin{itemize}
-    \item \textbf{Gesamtanfragen:} 37.900
-    \item \textbf{Fehlerrate:} 45,11\% (17.097 Anfragen fehlgeschlagen)
-    \item \textbf{Durchschnittliche Antwortzeit:} 66,26 ms
-    \item \textbf{Erfolgsquote Registrierung:} 9\% (927 von 9.475 Iterationen erfolgreich)
-    \item \textbf{Erfolgsquote Rezeptverwaltung:} 9\% (926 von 9.475 Iterationen erfolgreich)
-\end{itemize}
-
-\subsection*{Antwortzeiten}
-\begin{figure}
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-            width=\textwidth,
-            height=8cm,
-            xlabel={Antwortzeit (ms)},
-            ylabel={Prozentsatz der Anfragen},
-            ymin=0, ymax=100,
-            xmin=0, xmax=700,
-            xtick={0,100,200,300,400,500,600,700},
-            ytick={0,20,40,60,80,100},
-            legend style={
-                fill=pag, draw=pag!60, % Red background with black border
-                font=\small, % Smaller font size
-                inner sep=2pt, % Inner spacing (padding around the text)
-                outer sep=1pt  % Outer spacing (margin around the border)
-            },
-            legend pos=north east,
-            grid=both,
-            ]
-            \addplot[red3,ultra thick] coordinates {
-                (14, 0) (87, 50) (105, 90) (140, 95) (522, 99) (644, 100)
-            };
-            \addlegendentry{Antwortzeit}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Antwortzeiten der API (90. Perzentil: 105 ms, 95. Perzentil: 140 ms)}
-    \label{fig:response_time}
-\end{figure}
-
-\subsection*{Erfolgsquoten der Checks}
-\begin{figure}
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-            ybar,
-            width=\textwidth,
-            height=8cm,
-            xlabel={API-Endpunkt},
-            ylabel={Erfolgsquote (\%)},
-            ymin=0, ymax=100,
-            symbolic x coords={register, login, create drink, create recipe},
-            xtick=data,
-            bar width=0.5cm,
-            nodes near coords,
-            nodes near coords align={vertical},
-            ]
-            \addplot coordinates {(register, 9) (login, 100) (create drink, 100) (create recipe, 9)};
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Erfolgsquoten der Haupt-API-Endpunkte}
-    \label{fig:success_rates}
-\end{figure}
-
-\subsection*{Fehlerrate über die Zeit}
-\begin{figure}
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-            width=\textwidth,
-            height=8cm,
-            xlabel={Zeit (Minuten)},
-            ylabel={Fehlerrate (\%)},
-            xmin=0, xmax=20,
-            ymin=0, ymax=100,
-            grid=both,
-            ]
-            \addplot[red, thick] coordinates {
-                (0, 30) (5, 45) (10, 50) (15, 55) (20, 45)
-            };
-            \addlegendentry{Fehlerrate}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Fehlerrate im Verlauf des Tests}
-    \label{fig:error_rate}
-\end{figure}
+% --------------------------------------------------------------------------------------------------
+% --------------------------------------------------------------------------------------------------
+% --------------------------------------------------------------------------------------------------
+% --------------------------------------------------------------------------------------------------
+% --------------------------------------------------------------------------------------------------
 
 \section*{Schlussfolgerungen}
 Die Ergebnisse zeigen, dass:
 \begin{itemize}
-    \item Die Benutzerregistrierung und Rezeptverwaltung besonders fehleranfällig sind (nur 9\% Erfolgsquote).
-    \item Die API insgesamt eine hohe Fehlerrate von 45,11\% aufweist, was auf Skalierungs- oder Ressourcenprobleme hindeuten könnte.
-    \item Die durchschnittliche Antwortzeit (66,26 ms) akzeptabel ist, aber in Spitzenzeiten (max. 644 ms) stark ansteigt.
+    \item Die Benutzerregistrierung und Rezeptverwaltung besonders fehleranfällig sind (nur 9\% 
+        Erfolgsquote).
+    \item Die API insgesamt eine hohe Fehlerrate von 45,11\% aufweist, was auf Skalierungs- oder 
+        Ressourcenprobleme hindeuten könnte.
+    \item Die durchschnittliche Antwortzeit (66,26 ms) akzeptabel ist, aber in Spitzenzeiten (max. 
+        644 ms) stark ansteigt.
 \end{itemize}
 
 \section*{Empfehlungen}
 \begin{itemize}
     \item Optimieren Sie die Ressourcen- und Skalierungseinstellungen von Google Cloud Run.
-    \item Reduzieren Sie die Last in der Benutzerregistrierung durch bessere Datenbankabfragen oder asynchrone Prozesse.
-    \item Testen Sie kleinere Benutzergruppen, um die Schwellenwerte für Stabilitätsprobleme zu identifizieren.
+    \item Reduzieren Sie die Last in der Benutzerregistrierung durch bessere Datenbankabfragen 
+        oder asynchrone Prozesse.
+    \item Testen Sie kleinere Benutzergruppen, um die Schwellenwerte für Stabilitätsprobleme zu 
+        identifizieren.
 \end{itemize}

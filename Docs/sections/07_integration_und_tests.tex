@@ -1,50 +1,84 @@
-Die Integration und Tests spielten eine zentrale Rolle im Entwicklungsprozess des Projekts, um sicherzustellen, dass die einzelnen Komponenten (App, Backend und Hardware) nahtlos zusammenarbeiten und die gesamte Funktionalität des Cocktailautomaten zuverlässig bereitstellen.
+Die Integration und Tests spielten eine zentrale Rolle im Entwicklungsprozess des Projekts, um 
+sicherzustellen, dass die einzelnen Komponenten (App, Backend und Hardware) nahtlos 
+zusammenarbeiten und die gesamte Funktionalität des Cocktailautomaten zuverlässig bereitstellen.
 
 \subsection{Integration der Komponenten}
 
-Die Integration des Gesamtsystems wurde schrittweise durchgeführt. Der Fokus lag darauf, die Kommunikation zwischen der App, dem Backend und der Hardware zu überprüfen und sicherzustellen, dass Bestellungen korrekt verarbeitet und an die Hardware weitergeleitet werden. Im Rahmen des Projekts wurde dabei folgender Prozess verifiziert:
+Die Integration des Gesamtsystems wurde schrittweise durchgeführt. Der Fokus lag darauf, die 
+Kommunikation zwischen der App, dem Backend und der Hardware zu überprüfen und sicherzustellen, 
+dass Bestellungen korrekt verarbeitet und an die Hardware weitergeleitet werden. Im Rahmen des 
+Projekts wurde dabei folgender Prozess verifiziert:
 
 \begin{itemize}
   \item Die mobile App sendet eine Bestellung mit einem Rezept an das Backend.
-  \item Das Backend verarbeitet die Bestellung, greift auf die Rezeptdatenbank zu und leitet die relevanten Steuerbefehle an die Hardware weiter.
-  \item Die Hardware führt die Befehle aus, steuert die Pumpen und Motoren an und stellt das gewünschte Rezept her.
+  \item Das Backend verarbeitet die Bestellung, greift auf die Rezeptdatenbank zu und leitet die 
+relevanten Steuerbefehle an die Hardware weiter.
+  \item Die Hardware führt die Befehle aus, steuert die Pumpen und Motoren an und stellt das 
+gewünschte Rezept her.
 \end{itemize}
 
-Die Integrationsprüfung umfasste dabei verschiedene Szenarien, einschließlich der Erstellung und Zubereitung mehrerer Testrezepte, wobei aus praktischen Gründen Wasser anstelle der tatsächlichen Zutaten verwendet wurde. Die erfolgreiche Durchführung dieser Tests zeigte, dass die gesamte Prozesskette von der App bis zur Hardware stabil und fehlerfrei funktioniert.
+Die Integrationsprüfung umfasste dabei verschiedene Szenarien, einschließlich der Erstellung und 
+Zubereitung mehrerer Testrezepte, wobei aus praktischen Gründen Wasser anstelle der tatsächlichen 
+Zutaten verwendet wurde. Die erfolgreiche Durchführung dieser Tests zeigte, dass die gesamte 
+Prozesskette von der App bis zur Hardware stabil und fehlerfrei funktioniert.
 
 \subsection{Teststrategie}
 
-Im Projekt wurden die Tests ad hoc und iterativ durchgeführt, um Fehler schnell zu identifizieren und zu beheben. Die wichtigsten Tests waren:
+Im Projekt wurden die Tests ad hoc und iterativ durchgeführt, um Fehler schnell zu identifizieren 
+und zu beheben. Die wichtigsten Tests waren:
 
+\hyphenation{Funk-tio-na-li-tät}
+% TODO: fix overfull hbox in 'App-Usability-Tests'
 \begin{itemize}
-  \item \textbf{Integrationstests:} Regelmäßige Überprüfung, ob die gesamte Prozesskette (App \textrightarrow{} Backend \textrightarrow{} Hardware) wie gewünscht funktioniert.
-  \item \textbf{Systemtests:} Abschließende Tests, bei denen mehrere Testrezepte angelegt und zubereitet wurden. Diese Tests stellten sicher, dass die Datenübertragung, Rezeptverwaltung und Hardwaresteuerung korrekt umgesetzt sind.
-  \item \textbf{Lasttests:} Überprüfung der Systemperformance und Stabilität bei höherer Belastung (siehe Abschnitt \ref{subsec:lasttests}).
-  \item \textbf{App-Usability-Tests:} Um die Benutzerfreundlichkeit und Funktionalität der mobilen App zu evaluieren, wurde diese neun Personen vorgestellt. Die Nutzer erhielten die Gelegenheit, alle Funktionen der App zu testen. Anschließend bewerteten sie die App in den Kategorien \textit{Benutzerfreundlichkeit}, \textit{Funktionsumfang} sowie \textit{Stabilität und Leistung} auf einer Skala von 1 (schlecht) bis 5 (sehr gut). Die Ergebnisse waren überwiegend positiv, insbesondere im Bereich Stabilität und Leistung, wo keine Probleme festgestellt wurden. Alle Teilnehmer lobten die intuitive Bedienung und das klare Design.
+  \item \textbf{Integrationstests:} Regelmäßige Überprüfung, ob die gesamte Prozesskette 
+    (App \textrightarrow{} Backend \textrightarrow{} Hardware) wie gewünscht funktioniert.
+  \item \textbf{Systemtests:} Abschließende Tests, bei denen mehrere Testrezepte angelegt und 
+    zubereitet wurden. Diese Tests stellten sicher, dass die Datenübertragung, Rezeptverwaltung und 
+    Hardwaresteuerung korrekt umgesetzt sind.
+  \item \textbf{Lasttests:} Überprüfung der Systemperformance und Stabilität bei höherer Belastung 
+    (siehe Abschnitt \ref{subsec:lasttests}).
+  \item \textbf{App-Usability-Tests:} Um die Benutzerfreundlichkeit und Funktionalität der mobilen 
+    App zu evaluieren, wurde diese neun Personen vorgestellt. Die Nutzer erhielten die Gelegenheit, 
+    alle Funktionen der App zu testen. Anschließend bewerteten sie die App in den Kategorien 
+    \textit{Benutzerfreundlichkeit}, \textit{Funktionsumfang} sowie \textit{Stabilität und Leistung} 
+    auf einer Skala von 1 (schlecht) bis 5 (sehr gut). Die Ergebnisse waren überwiegend positiv, 
+    insbesondere im Bereich Stabilität und Leistung, wo keine Probleme festgestellt wurden. Alle 
+    Teilnehmer lobten die intuitive Bedienung und das klare Design.
 \end{itemize}
 
 \subsection{Lasttests}
 \label{subsec:lasttests}
 
-Um die Skalierbarkeit und Performance des Systems zu überprüfen, wurden Lasttests mithilfe von \texttt{k6} durchgeführt. Die Tests konzentrierten sich auf die Belastbarkeit der Backend-API bei einer großen Anzahl gleichzeitiger Anfragen. Dabei wurden unterschiedliche Szenarien simuliert, darunter das Abrufen von Rezepten und das Auslösen von Bestellungen.\newline
+Um die Skalierbarkeit und Performance des Systems zu überprüfen, wurden Lasttests mithilfe von 
+\texttt{k6} durchgeführt. Die Tests konzentrierten sich auf die Belastbarkeit der Backend-API bei 
+einer großen Anzahl gleichzeitiger Anfragen. Dabei wurden unterschiedliche Szenarien simuliert, 
+darunter das Abrufen von Rezepten und das Auslösen von Bestellungen.\newline
 
 \textbf{Beispiel-Szenario:}
 \begin{itemize}
-  \item Stufenweise Erhöhung der gleichzeitigen Benutzer von 10 auf 100 in Intervallen von 30 Sekunden.
+  \item Stufenweise Erhöhung der gleichzeitigen Benutzer von 1 auf 20 in Intervallen von 30 Sekunden.
   \item Messung von Latenzzeiten, Fehlerraten und Erfolgsquoten.
 \end{itemize}
 
-\textbf{Herausforderungen:} Während der Tests zeigte sich, dass bei starker Auslastung und mehreren Containerinstanzen Bestellungen nicht immer korrekt verarbeitet wurden. Dies lag daran, dass Websocket-Verbindungen jeweils im RAM der Container gehalten werden. Wenn eine Anfrage an einen anderen Container weitergeleitet wird, als den, der die Verbindung hält, konnte diese nicht verarbeitet werden.\newline
+\textbf{Herausforderungen:} Während der Tests zeigte sich, dass bei starker Auslastung und 
+mehreren Containerinstanzen Bestellungen nicht immer korrekt verarbeitet wurden. Dies lag daran, 
+dass Websocket-Verbindungen jeweils im RAM der Container gehalten werden. Wenn eine Anfrage an 
+einen anderen Container weitergeleitet wird, als den, der die Verbindung hält, konnte diese nicht 
+verarbeitet werden.\newline
 
-\textbf{Ergebnisse:} Die genaue Analyse der Lasttestergebnisse wird in Abschnitt \ref{subsec:lasttest_results} beschrieben.
+% TODO: fix tangling references
+\textbf{Ergebnisse:} Die genaue Analyse der Lasttestergebnisse wird in Abschnitt 
+\ref{subsec:lasttest_results} beschrieben.
 
 \subsection{Fehlerbehebung und Lösungen}
 
-Ein Hauptproblem während der Lasttests war die Verwaltung der Websocket-Verbindungen. Um dieses Problem zu beheben, könnten folgende Maßnahmen zukünftig implementiert werden:
+Ein Hauptproblem während der Lasttests war die Verwaltung der Websocket-Verbindungen. Um dieses 
+Problem zu beheben, könnten folgende Maßnahmen zukünftig implementiert werden:
 
 \begin{itemize}
   \item Verwendung eines dedizierten Websocket-Servers, der Verbindungen zentral verwaltet.
-  \item Einführung eines Lastverteilers, der Anfragen konsistent an die richtigen Container weiterleitet.
+  \item Einführung eines Lastverteilers, der Anfragen konsistent an die richtigen Container 
+  weiterleitet.
 \end{itemize}
 
 Diese Maßnahmen könnten die Zuverlässigkeit und Skalierbarkeit des Systems erheblich verbessern.

@@ -18,8 +18,8 @@
 
 \usepackage{pgfplots}			  % Diagramme und Plots
 \usepgfplotslibrary{external} % Externe Speicherung von Plots (schnelleres Kompilieren)
-\pgfplotsset{width=\textwidth,compat=1.18}
 \usepgfplotslibrary{statistics}
+\pgfplotsset{width=\textwidth,compat=1.18}
 
 \usepackage{fullpage} 		 	% Seitenränder auf 1 Zoll setzen
 \usepackage{ulem} 				 	% Unterstreichungen und Durchstreichungen
@@ -27,8 +27,9 @@
 
 \usepackage{amssymb,amsmath,changepage,tabularx,siunitx} % Mathematische Symbole und Umgebungen
 \usepackage{darkmode}
-\enabledarkmode 						% Dunkler Modus für bessere Lesbarkeit
+% \enabledarkmode 					% Dunkler Modus für bessere Lesbarkeit
 \usepackage{makecell} 			% Tabellenzellen formatieren
+\usepackage{bookmark} 			% Lesezeichen im PDF
 
 \usepackage[most]{tcolorbox}
 \definecolor{red1}{HTML}{ffccd5}
@@ -72,7 +73,6 @@
   stepnumber=1,
   breaklines=true,
 	frame=single,
-	backgroundcolor=\color{pag},
 	captionpos=b,
 	xleftmargin=0.1cm,
 	xrightmargin=0.1cm,	
@@ -217,25 +217,25 @@ Elektronikkomponenten sowie die effiziente Integration von Cloud-Diensten gemeis
 \input{sections/06_mobile_app_entwicklung}    
 \newpage
 
-\section{Integration und Tests}(4–5 Seiten)
+\section{Integration und Tests}
 \input{sections/07_integration_und_tests}    
 \newpage
 
-\section{Ergebnisse und Bewertung}(3–4 Seiten)
+\section{Ergebnisse und Bewertung}
 \input{sections/08_ergebnisse_und_bewertung}
 \newpage
 
-\section{Fazit und Ausblick}(2 Seiten)
+\section{Fazit und Ausblick}
 \input{sections/09_fazit_und_ausblick}    
 \newpage
 
-\section{Anhang}(variabel)
+\section{Anhang}
 \input{sections/10_anhang}    
 \newpage
 
-\section{Literaturverzeichnis}(1–2 Seiten)
+\section{Literaturverzeichnis}
 % \input{sections/11_literaturverzeichnis}
-\printbibliography    
+\printbibliography
 \newpage
 
 \end{document}

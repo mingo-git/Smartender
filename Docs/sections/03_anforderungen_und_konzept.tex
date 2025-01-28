@@ -1,50 +1,59 @@
 % Hier folgt der Inhalt des Abschnitts "Anforderungen und Konzept".
-Im Rahmen des Projekts „Smarter Cocktailautomat“ wurden grundlegende Anforderungen definiert, die sich aus den Zielsetzungen und den zu erwartenden Einsatzszenarien ableiten lassen. Dieser Abschnitt gliedert sich in eine Analyse der funktionalen und nicht-funktionalen Anforderungen sowie die Entwicklung eines konzeptionellen Architekturansatzes, der die Interaktionen zwischen Hardware, Backend und mobiler App beschreibt.
+Im Rahmen des Projekts „Smarter Cocktailautomat“ wurden grundlegende Anforderungen definiert, die 
+sich aus den Zielsetzungen und den zu erwartenden Einsatzszenarien ableiten lassen. Dieser 
+Abschnitt gliedert sich in eine Analyse der funktionalen und nicht-funktionalen Anforderungen 
+sowie die Entwicklung eines konzeptionellen Architekturansatzes, der die Interaktionen zwischen 
+Hardware, Backend und mobiler App beschreibt.
 
 \subsection{Anforderungsanalyse}
 
-Die Anforderungsanalyse bildet die Grundlage für die Entwicklung des Prototyps. Dabei werden sowohl funktionale als auch nicht-funktionale Anforderungen betrachtet.
+Die Anforderungsanalyse bildet die Grundlage für die Entwicklung des Prototyps. Dabei werden 
+sowohl funktionale als auch nicht-funktionale Anforderungen betrachtet.
 
 \subsection{Funktionale Anforderungen}
 
-Funktionale Anforderungen beschreiben die Kernfunktionen, die das System erfüllen muss, um die Projektziele zu erreichen:
+Funktionale Anforderungen beschreiben die Kernfunktionen, die das System erfüllen muss, um die 
+Projektziele zu erreichen:
+
 \begin{itemize}
-	  \item \textbf{\textcolor{red7}{Benutzerregistrierung und -verwaltung:}} Möglichkeit, Benutzerkonten anzulegen, zu bearbeiten und zu löschen.
-	  \item \textbf{\textcolor{red7}{Rezeptverwaltung:}} Hinzufügen, Bearbeiten und Löschen von Cocktailrezepten über die mobile App.
-	  \item \textbf{\textcolor{red7}{Zutatenverwaltung:}} Verwaltung der im Automaten verfügbaren Zutaten mit Anzeige von Füllständen.
-	  \item \textbf{\textcolor{red7}{Automatisierte Zubereitung:}} Präzise Dosierung und Mischung der ausgewählten Zutaten basierend auf den Rezepten.
-	  \item \textbf{\textcolor{red7}{App-Steuerung:}} Steuerung des Cocktailautomaten über eine intuitive Benutzeroberfläche der mobilen App.
-	  \item \textbf{\textcolor{red7}{Synchronisation mit der Cloud:}} Speicherung und Abruf von Benutzerdaten, Rezepten und Maschinenkonfigurationen über ein cloudbasiertes Backend.
+	  \item \textbf{Benutzerregistrierung und -verwaltung:} Möglichkeit, Benutzerkonten anzulegen, zu bearbeiten und zu löschen.
+	  \item \textbf{Rezeptverwaltung:} Hinzufügen, Bearbeiten und Löschen von Cocktailrezepten über die mobile App.
+	  \item \textbf{Zutatenverwaltung:} Verwaltung der im Automaten verfügbaren Zutaten mit Anzeige von Füllständen.
+	  \item \textbf{Automatisierte Zubereitung:} Präzise Dosierung und Mischung der ausgewählten Zutaten basierend auf den Rezepten.
+	  \item \textbf{App-Steuerung:} Steuerung des Cocktailautomaten über eine intuitive Benutzeroberfläche der mobilen App.
+	  \item \textbf{Synchronisation mit der Cloud:} Speicherung und Abruf von Benutzerdaten, Rezepten und Maschinenkonfigurationen über ein cloudbasiertes Backend.
 \end{itemize}
 
 \subsection{Nicht-funktionale Anforderungen}
 
-Neben den funktionalen Aspekten spielen auch nicht-funktionale Anforderungen eine zentrale Rolle, um die Qualität und Benutzerfreundlichkeit des Systems sicherzustellen:
+Neben den funktionalen Aspekten spielen auch nicht-funktionale Anforderungen eine zentrale Rolle, 
+um die Qualität und Benutzerfreundlichkeit des Systems sicherzustellen:
 
 \begin{itemize}
-	  \item	\textbf{\textcolor{red7}{Skalierbarkeit:}} Das System muss in der Lage sein, mehrere Benutzer und Automaten zu unterstützen, ohne Leistungseinbußen zu erleiden.
-	  \item	\textbf{\textcolor{red7}{Sicherheitsaspekte:}} Schutz von Benutzerdaten durch verschlüsselte Kommunikation und sichere Authentifizierungsverfahren.
-	  \item	\textbf{\textcolor{red7}{Benutzerfreundlichkeit:}} Intuitive Bedienung der mobilen App sowie einfache Wartung und Erweiterung der Hardware.
-	  \item	\textbf{\textcolor{red7}{Fehlerresistenz:}} Robustheit des Systems gegenüber Hardware- und Softwarefehlern.
-	  \item	\textbf{\textcolor{red7}{Performance:}} Minimierung von Latenzen bei der Kommunikation zwischen App, Backend und Hardware.
+	  \item	\textbf{Skalierbarkeit:} Das System muss in der Lage sein, mehrere Benutzer und Automaten zu unterstützen, ohne Leistungseinbußen zu erleiden.
+	  \item	\textbf{Sicherheitsaspekte:} Schutz von Benutzerdaten durch verschlüsselte Kommunikation und sichere Authentifizierungsverfahren.
+	  \item	\textbf{Benutzerfreundlichkeit:} Intuitive Bedienung der mobilen App sowie einfache Wartung und Erweiterung der Hardware.
+	  \item	\textbf{Fehlerresistenz:} Robustheit des Systems gegenüber Hardware- und Softwarefehlern.
+	  \item	\textbf{Performance:} Minimierung von Latenzen bei der Kommunikation zwischen App, Backend und Hardware.
 \end{itemize}
 
 \subsection{Konzeptionelle Architektur}
 
-Auf Basis der definierten Anforderungen wurde eine konzeptionelle Architektur entwickelt, die das Gesamtsystem in seinen zentralen Komponenten beschreibt.
+Auf Basis der definierten Anforderungen wurde eine konzeptionelle Architektur entwickelt, die das 
+Gesamtsystem in seinen zentralen Komponenten beschreibt.
 
 Gesamtsystem-Übersicht
 
 Das System besteht aus drei Kernkomponenten:
 
 \begin{enumerate}
-  \item \textbf{\textcolor{red7}{Hardware:}} Der Cocktailautomat als physisches Gerät übernimmt die Dosierung und Mischung der Zutaten.
-  \item \textbf{\textcolor{red7}{Backend:}} Ein containerisiertes Backend, das in Google Cloud Run gehostet wird, dient als zentrale Schnittstelle für die Speicherung und Verarbeitung von Daten.
-  \item \textbf{\textcolor{red7}{Mobile App:}} Eine Smartphone-App ermöglicht die Benutzerinteraktion mit dem System und bietet Funktionen wie Rezeptverwaltung und Steuerung des Automaten.
+  \item \textbf{Hardware:} Der Cocktailautomat als physisches Gerät übernimmt die Dosierung und Mischung der Zutaten.
+  \item \textbf{Backend:} Ein containerisiertes Backend, das in Google Cloud Run gehostet wird, dient als zentrale Schnittstelle für die Speicherung und Verarbeitung von Daten.
+  \item \textbf{Mobile App:} Eine Smartphone-App ermöglicht die Benutzerinteraktion mit dem System und bietet Funktionen wie Rezeptverwaltung und Steuerung des Automaten.
 \end{enumerate}
 
-% TODO: Add figure with system overview
-Die Interaktionen zwischen diesen Komponenten sind in Abbildung \ref{fig:system_overview} dargestellt. Dabei wird insbesondere der Datenfluss zwischen den Modulen hervorgehoben.
+Die Interaktionen zwischen diesen Komponenten sind in Abbildung \ref{fig:system_overview} 
+dargestellt. Dabei wird insbesondere der Datenfluss zwischen den Modulen hervorgehoben.
 
 \vspace{1 cm}
 \begin{figure}[htbp]
@@ -105,7 +114,7 @@ Die Interaktionen zwischen diesen Komponenten sind in Abbildung \ref{fig:system_
 Im Rahmen des Projekts wurde besonderes Augenmerk auf die folgenden Aspekte gelegt:
 
 \begin{itemize}
-  \item \textbf{\textcolor{red7}{Backend:}} Aufgrund der hohen Anforderungen an Skalierbarkeit und Sicherheit wurde das Backend so konzipiert, dass es sowohl eine zuverlässige Kommunikation zwischen den Komponenten als auch eine effiziente Datenverwaltung ermöglicht.
-  \item \textbf{\textcolor{red7}{Mobile App:}} Der Fokus lag auf einer benutzerfreundlichen und intuitiven Bedienung, um die Nutzung auch für technisch unerfahrene Anwender zu vereinfachen.
-  \item \textbf{\textcolor{red7}{Hardware:}} Die Hardwareentwicklung zielte auf eine modulare und erweiterbare Bauweise ab, um zukünftige Anpassungen und Erweiterungen zu ermöglichen.
+  \item \textbf{Hardware:} Die Hardwareentwicklung zielte auf eine modulare und erweiterbare Bauweise ab, um zukünftige Anpassungen und Erweiterungen zu ermöglichen.
+  \item \textbf{Backend:} Aufgrund der hohen Anforderungen an Skalierbarkeit und Sicherheit wurde das Backend so konzipiert, dass es sowohl eine zuverlässige Kommunikation zwischen den Komponenten als auch eine effiziente Datenverwaltung ermöglicht.
+  \item \textbf{Mobile App:} Der Fokus lag auf einer benutzerfreundlichen und intuitiven Bedienung, um die Nutzung auch für technisch unerfahrene Anwender zu vereinfachen.
 \end{itemize}

@@ -24,13 +24,13 @@ Anforderungen}
 Das Backend übernimmt mehrere Kernfunktionen:
 
 \begin{itemize}
-	\item \textbf{\textcolor{red7}{Benutzerdatenverwaltung:}} Erstellung und Authentifizierung von Benutzerkonten mittels API-
-	Schlüsseln und JWT.
-	\item \textbf{\textcolor{red7}{Rezept- und Zutatenmanagement:}} Speicherung, Bearbeitung und Abfrage von Rezepten und deren 
-	zugehörigen Zutaten.
-	\item \textbf{\textcolor{red7}{Hardwareintegration:}} Verwaltung der Hardwaregeräte, ihrer Zuordnung zu Benutzern und ihrer 
-	Bestückung.
-	\item \textbf{\textcolor{red7}{Echtzeit-Bestellungen:}} Weiterleitung von Cocktailbestellungen aus der App an die 
+	\item \textbf{Benutzerdatenverwaltung:} Erstellung und Authentifizierung von Benutzerkonten 
+	mittels API- Schlüsseln und JWT.
+	\item \textbf{Rezept- und Zutatenmanagement:} Speicherung, Bearbeitung und Abfrage von Rezepten 
+	und deren zugehörigen Zutaten.
+	\item \textbf{Hardwareintegration:} Verwaltung der Hardwaregeräte, ihrer Zuordnung zu Benutzern 
+	und ihrer Bestückung.
+	\item \textbf{Echtzeit-Bestellungen:} Weiterleitung von Cocktailbestellungen aus der App an die 
 	angeschlossene Hardware über Websockets.
 \end{itemize}
 
@@ -83,11 +83,16 @@ Hardware-spezifischen Schlüsseln und JWT für Benutzerzugriffe .
 \subsection{Cloud-Dienste und Infrastruktur}
 
 Das Backend verwendet mehrere Dienste von Google Cloud:
+
+\hyphenation{con-tai-ner-i-sier-ten}
+\hyphenation{Back-end-An-wen-dung}
+% TODO: fix hyphenation to fix overfull hbox in 'containerisierten Backend-Anwendung'
 \begin{itemize}
-	\item \textbf{\textcolor{red7}{Google Cloud Run:}} Für das Hosting der containerisierten Backend-Anwendung\cite{googlecloudrun}.
-	\item \textbf{\textcolor{red7}{Google Cloud SQL:}} Für die zentrale Datenhaltung\cite{googlecloudsql}.
-	\item \textbf{\textcolor{red7}{Google Artifact Registry:}} Zur Verwaltung von Container-Images\cite{googleartifactregistry}.
-	\item \textbf{\textcolor{red7}{Cloud Logging:}} Zur Erfassung und Analyse von Backend-Logs\cite{googlecloudlogging}.
+	\item \textbf{Google Cloud Run:} Für das Hosting der containerisierten\\
+	Backend-Anwendung\cite{googlecloudrun}.
+	\item \textbf{Google Cloud SQL:} Für die zentrale Datenhaltung\cite{googlecloudsql}.
+	\item \textbf{Google Artifact Registry:} Zur Verwaltung von Container-Images\cite{googleartifactregistry}.
+	\item \textbf{Cloud Logging:} Zur Erfassung und Analyse von Backend-Logs\cite{googlecloudlogging}.
 \end{itemize}
 
 Skalierbarkeit ist durch die Nutzung von Google Cloud Run gegeben, da die Container automatisch 
@@ -99,11 +104,11 @@ Google nicht zu überschreiten.
 
 Für die Sicherheit wurden die folgenden Maßnahmen implementiert:
 \begin{itemize}
-	\item \textbf{\textcolor{red7}{HTTPS:}} Sämtliche Datenübertragungen erfolgen verschlüsselt.
-	\item \textbf{\textcolor{red7}{SQL-Injection-Schutz:}} Durch die Verwendung von database/sql wird sichergestellt, dass keine 
-unsicheren SQL-Statements ausgeführt werden.
-	\item \textbf{\textcolor{red7}{API-Schlüssel und JWT:}} Nur authentifizierte Benutzer und Hardwaregeräte können auf die 
-entsprechenden Ressourcen zugreifen.
+	\item \textbf{HTTPS:} Sämtliche Datenübertragungen erfolgen verschlüsselt.
+	\item \textbf{SQL-Injection-Schutz:} Durch die Verwendung von database/sql wird sichergestellt, 
+	dass keine unsicheren SQL-Statements ausgeführt werden.
+	\item \textbf{API-Schlüssel und JWT:} Nur authentifizierte Benutzer und Hardwaregeräte können auf 
+	die entsprechenden Ressourcen zugreifen.
 \end{itemize}
 
 

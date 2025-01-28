@@ -4,7 +4,7 @@
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\textwidth]{graphics/images/pinning_final.pdf} % PDF-Datei einfügen
+  \includegraphics[width=\textwidth]{graphics/images/pinning_final.pdf}
   \caption{Pinbelegung des Rapsberry Pi Zero 2 W}
   \label{fig:pinning}
 \end{figure}
@@ -15,29 +15,23 @@
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\textwidth]{graphics/images/schaltplan.pdf} % Seite 2 der PDF einfügen
+  \includegraphics[height=0.84\textwidth, angle=270]{graphics/images/schaltplan.pdf}
   \caption{Schaltplan der Hardwarekomponenten}
   \label{fig:schaltplan}
 \end{figure}
-
-\newpage
-
-\include{graphics/listings/k6_script}
 
 \newpage
 \subsection{Datenbankdiagramm}
 
 \begin{figure}[H]
   \centering
-\includegraphics[height=0.9\textwidth, angle=90]{graphics/schemes/postgres_db_scheme.png}
+\includegraphics[height=0.96\textwidth, angle=270]{graphics/schemes/postgres_db_scheme.png}
   \caption{Datenbankdiagramm}
   \label{fig:database_diagram}
 \end{figure}
 
+\subsection{Pinbelegung Tabelle}
 \newpage
-
-\subsection{Weiterer Anhang}
-
 \begin{figure}[H]
   \footnotesize
   \begin{tabularx}{\textwidth}{|l|X|X|l|X|X|}
@@ -90,3 +84,7 @@
   \label{fig:raspberry_pi_pinout_tabularx}
 \end{figure}
   
+\newpage
+\subsection{Weiterer Anhang}
+
+\include{graphics/listings/k6_script}
