@@ -6,6 +6,10 @@
 \usepackage[ngerman]{babel} % Deutsche Spracheinstellungen (z. B. Texttrennung, Typografie)
 \usepackage{csquotes}       % Korrekte deutsche Anführungszeichen („ “)
 \usepackage{hyperref} 		  % Klickbare Links im PDF
+\hypersetup{
+  colorlinks = false,       % Keine farbigen Links
+  pdfborder  = {0 0 0}      % Kein Rahmen um Links
+}
 \usepackage{geometry}       % Seitenränder anpassen
 \usepackage{float}					% Positionierung von Bildern und Tabellen
 
@@ -238,15 +242,17 @@ Das Projekt verdeutlicht das Potenzial von IoT-Technologien zur Automatisierung 
 
 \section{Fazit und Ausblick}
 \input{sections/09_fazit_und_ausblick}    
-% \newpage
+\newpage
 
 \section{Anhang}
 \input{sections/10_anhang}    
-% \newpage
+\newpage
 
 \section{Literaturverzeichnis}
 % \input{sections/11_literaturverzeichnis}
 \printbibliography
+\listoffigures
+\listoftables
 % \newpage
 
 \end{document}
