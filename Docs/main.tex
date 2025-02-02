@@ -192,18 +192,27 @@
 
 \begin{abstract}
 	\normalsize
-Die Digitalisierung und Automatisierung alltäglicher Prozesse gewinnen zunehmend an Bedeutung, insbesondere im Bereich des Smart Homes und des Internet of Things (IoT). In diesem Projekt wurde ein intelligenter Cocktailautomat entwickelt, der die Prinzipien moderner IoT-Technologien mit der präzisen Steuerung mechanischer Komponenten kombiniert. Ziel des Projekts ist die vollständige Automatisierung der Cocktailzubereitung, wobei der gesamte Prozess über eine mobile App gesteuert wird. Durch die cloudbasierte Architektur wird eine flexible und skalierbare Lösung geschaffen, die sowohl für den Heimgebrauch als auch für den kommerziellen Einsatz weiterentwickelt werden kann.
+	Im Rahmen dieses Projekts wurde ein smarter Cocktailautomat entwi-
+	ckelt, der wesentliche Elemente des Internet of Things (IoT) mit den Anfor-
+	derungen moderner Smart-Home-Lösungen verbindet. Ziel war die Umset-
+	zung eines skalierbaren Prototyps, der die automatisierte Zubereitung von
+	Cocktails ermöglicht und dabei durch eine intuitive Bedienung über eine
+	Smartphone-App sowie die Anbindung an ein cloudbasiertes Backend be-
+	sticht.
 
-Die technische Umsetzung des Cocktailautomaten basiert auf drei zentralen Komponenten: einer modularen Hardwarestruktur, einem containerisierten Backend, das in Google Cloud Run gehostet wird, und einer mobilen App, die eine intuitive Bedienung ermöglicht. Der Automat umfasst verschiedene mechanische und elektronische Komponenten, darunter einen Schrittmotor zur präzisen Positionierung, einen Linearmotor zur Aktivierung der alkoholischen Getränkespender, sechs Membranpumpen für nicht-alkoholische Zutaten sowie eine digitale Waage zur genauen Mengenmessung. Zur Steuerung dieser Komponenten wurde ein \textbf{Raspberry Pi Zero 2 W} gewählt, der aufgrund seiner kompakten Bauweise und der umfangreichen Unterstützung für Python-Bibliotheken ideal für diese Anwendung geeignet ist.
+	Die Lösung umfasst drei Kernkomponenten: eine modular aufgebaute
+	Hardware für die Cocktailzubereitung, ein containerisiertes Backend gehos-
+	tet in Google Cloud Run mit einer Cloud-SQL-Datenbank, sowie eine mo-
+	bile App, die eine benutzerfreundliche Verwaltung von Rezepten, Zutaten
+	und Maschinenkonfigurationen erlaubt. Besonderes Augenmerk wurde auf
+	die Skalierbarkeit und Erweiterbarkeit des Systems gelegt.
 
-Das Backend des Systems wurde mit \textbf{Go} entwickelt und nutzt eine \textbf{Google Cloud SQL}-Datenbank zur Speicherung von Rezepten und Benutzerinformationen. Durch die Containerisierung mittels \textbf{Docker} und die Bereitstellung über Cloud Run kann das Backend flexibel skaliert und einfach gewartet werden. Die Kommunikation zwischen App, Backend und Hardware erfolgt über ein WebSocket-Protokoll, wodurch eine nahezu verzögerungsfreie Steuerung gewährleistet wird. Besondere Sicherheitsmaßnahmen wurden implementiert, darunter die Nutzung von \textbf{API-Schlüsseln} und \textbf{JSON Web Tokens (JWT)} zur Authentifizierung der Benutzer.
-
-Die mobile App, die mit \textbf{Flutter} entwickelt wurde, bietet eine plattformübergreifende Lösung für Android und iOS. Sie ermöglicht es den Benutzern, Cocktails auszuwählen, Zutaten individuell anzupassen und den Automaten in Echtzeit zu steuern.
-
-Während der Entwicklung des Projekts traten verschiedene Herausforderungen auf, darunter die präzise Steuerung der Hardwarekomponenten, die Integration der unterschiedlichen Technologien sowie die Sicherstellung einer stabilen und ausfallsicheren Cloud-Architektur. Insbesondere die Kalibrierung der Sensorik und die Gewährleistung einer zuverlässigen Spannungsversorgung stellten zentrale technische Herausforderungen dar. Durch gezielte Software- und Hardwareoptimierungen konnten diese Probleme erfolgreich gelöst werden.
-
-Das Projekt verdeutlicht das Potenzial von IoT-Technologien zur Automatisierung alltäglicher Aufgaben und zeigt, wie eine enge Verzahnung von Hard- und Software innovative Lösungen hervorbringen kann. Der entwickelte Prototyp dient als Grundlage für zukünftige Weiterentwicklungen, beispielsweise zur Integration zusätzlicher Sensoren, zur Verbesserung der Benutzererfahrung oder zur Implementierung von KI-gestützten Rezeptempfehlungen. Durch die offene Architektur ist der Cocktailautomat zudem erweiterbar, sodass er langfristig für unterschiedliche Anwendungsbereiche adaptiert werden kann.
-
+	Das Projekt zeigt die Potenziale von IoT-Technologien auf, alltägliche Auf-
+	gaben zu automatisieren und dabei innovative Ansätze für Smart-Home-
+	Umgebungen zu entwickeln. Gleichzeitig wurden Herausforderungen wie
+	die Einarbeitung in neue Technologien, der Umgang mit komplexen Elek-
+	tronikkomponenten sowie die effiziente Integration von Cloud-Diensten ge-
+	meistert.
 \end{abstract}
 
 \newpage
