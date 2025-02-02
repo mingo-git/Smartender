@@ -62,14 +62,14 @@ dargestellt. Dabei wird insbesondere der Datenfluss zwischen den Modulen hervorg
 		>=stealth,   					% Standardpfeilspitzen
 		outer sep=6pt,				% Abstand zwischen Text und Rahmen
 		inner sep=5pt,				% Abstand zwischen Text und Rahmen
-		node distance=6.5cm,	% Abstand zwischen den Knoten
+		node distance=6cm,	% Abstand zwischen den Knoten
 		font=\sffamily				% Verwendete Schriftart
 	]
 	
 	% Knoten
-	\node[draw, rectangle, rounded corners, fill=red5, minimum width=3cm, minimum height=1.2cm] (hardware) {Hardware};
-	\node[draw, rectangle, rounded corners, fill=red5, minimum width=3cm, minimum height=1.2cm, left of=hardware] (backend) {Backend};
-	\node[draw, rectangle, rounded corners, fill=red5, minimum width=3cm, minimum height=1.2cm, left of=backend] (app) {Mobile App};
+	\node[draw, rectangle, rounded corners, fill=red3, minimum width=2.5cm, minimum height=1.2cm] (hardware) {Hardware};
+	\node[draw, rectangle, rounded corners, fill=red3, minimum width=2.5cm, minimum height=1.2cm, left of=hardware] (backend) {Backend};
+	\node[draw, rectangle, rounded corners, fill=red3, minimum width=2.5cm, minimum height=1.2cm, left of=backend] (app) {Mobile App};
 	
 	% Pfeil 1: ein Wort pro Zeile, zentriert
 	\draw[<-, thick] 

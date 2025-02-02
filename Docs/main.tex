@@ -31,6 +31,20 @@
 \usepackage{makecell} 			% Tabellenzellen formatieren
 \usepackage{bookmark} 			% Lesezeichen im PDF
 
+\usepackage{titlesec}
+% Syntax: \titlespacing*{\section}{left}{before}{after}
+% - left  = linker Einzug
+% - before = Abstand vor der Überschrift
+% - after  = Abstand nach der Überschrift
+\titlespacing*{\section}{0pt}{0.8\baselineskip}{0.6\baselineskip}
+\titlespacing*{\subsection}{0pt}{0.6\baselineskip}{0.4\baselineskip}
+\titlespacing*{\subsubsection}{0pt}{\baselineskip}{0.4\baselineskip}
+
+\usepackage{enumitem}
+\setlist[itemize]{itemsep=0.3em, topsep=0.4em}
+\setlist[enumerate]{itemsep=0.3em, topsep=0.4em}
+
+
 \usepackage[most]{tcolorbox}
 \definecolor{red1}{HTML}{ffccd5}
 \definecolor{red2}{HTML}{ffb3c1}
@@ -150,7 +164,7 @@
 % - [x] Einleitung
 % - [x] Technologischer Hintergrund und Grundlagen
 % - [x] Anforderungen und Konzept
-% - [ ] Umsetzung der Hardware
+% - [x] Umsetzung der Hardware
 % - [x] Backend-Architektur und Implementierung
 % - [ ] Mobile App-Entwicklung
 % - [ ] Integration und Tests 
@@ -173,7 +187,7 @@
 \newpage
 
 \begin{abstract}
-	\large
+	\normalsize
 Im Rahmen dieses Projekts wurde ein smarter Cocktailautomat entwickelt, der wesentliche Elemente des
 Internet of Things (IoT) mit den Anforderungen moderner Smart-Home-Lösungen verbindet. Ziel war die
 Umsetzung eines skalierbaren Prototyps, der die automatisierte Zubereitung von Cocktails ermöglicht 
