@@ -139,18 +139,21 @@ auf einer Skala von 1 (schlecht) bis 5 (sehr gut). Die Ergebnisse sind in Tabell
 
 \begin{table}[h!]
     \centering
+    \renewcommand{\arraystretch}{1.2} % Erhöht den Zeilenabstand (Standard ist 1.0)
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Kategorie} & \textbf{Durchschnittliche Bewertung} \\
         \hline
-        Benutzerfreundlichkeit & 4,44 \\
-        Funktionsumfang & 4,22 \\
-        Stabilität und Leistung & 4,88 \\
+        Benutzerfreundlichkeit & $4.\overline{4}$ \\
+        Funktionsumfang & $4.\overline{2}$ \\
+        Stabilität und Leistung & $4.\overline{8}$ \\
         \hline
     \end{tabular}
+    \renewcommand{\arraystretch}{1.0} % Setzt den Standardwert zurück
     \caption{Ergebnisse der Benutzerbewertungen}
     \label{tab:user_tests}
 \end{table}
+
 
 \begin{figure}[h!]
     \centering
