@@ -279,24 +279,3 @@ Verbesserungen empfohlen:
   \item \textbf{Hardware-Optimierungen:} Verbesserung der Dosiergenauigkeit und Integration 
   zusätzlicher Sensorik zur Überwachung.
 \end{itemize}
-
-
-\section*{Schlussfolgerungen}
-Die Ergebnisse zeigen, dass:
-\begin{itemize}
-    \item Die Benutzerregistrierung und Rezeptverwaltung besonders fehleranfällig sind (nur 9\% 
-        Erfolgsquote).
-    \item Die API insgesamt eine hohe Fehlerrate von 45,11\% aufweist, was auf Skalierungs- oder 
-        Ressourcenprobleme hindeuten könnte.
-    \item Die durchschnittliche Antwortzeit (66,26 ms) akzeptabel ist, aber in Spitzenzeiten (max. 
-        644 ms) stark ansteigt.
-\end{itemize}
-
-\section*{Empfehlungen}
-\begin{itemize}
-    \item Optimieren Sie die Ressourcen- und Skalierungseinstellungen von Google Cloud Run.
-    \item Reduzieren Sie die Last in der Benutzerregistrierung durch bessere Datenbankabfragen 
-        oder asynchrone Prozesse.
-    \item Testen Sie kleinere Benutzergruppen, um die Schwellenwerte für Stabilitätsprobleme zu 
-        identifizieren.
-\end{itemize}
