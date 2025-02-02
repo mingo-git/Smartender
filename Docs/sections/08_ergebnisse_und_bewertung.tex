@@ -9,16 +9,86 @@ entwickeln, wurde erfolgreich erreicht. Die wesentlichen funktionalen Anforderun
 umgesetzt werden:
 
 \begin{itemize}
-  \item \textbf{Automatisierte Cocktailzubereitung:} Die Hardware steuert präzise die \\Pumpen und 
+  \item \textbf{Automatisierte Cocktailzubereitung:} Die Hardware steuert präzise die Pumpen und 
   Motoren, um Zutaten gemäß den Rezeptvorgaben abzugeben.
   \item \textbf{Mobile App:} Benutzer können über eine intuitive App Rezepte erstellen, verwalten 
   und Bestellungen auslösen.
   \item \textbf{Backend-Integration:} Das Backend verarbeitet Bestellungen zuverlässig, 
-  \\synchronisiert Benutzerdaten und leitet Steuerbefehle an die Hardware \\weiter.
+  \\synchronisiert Benutzerdaten und leitet Steuerbefehle an die Hardware weiter.
 \end{itemize}
 
 Die abschließenden Integrationstests zeigten, dass das Gesamtsystem von der Rezeptbestellung in der 
-App bis zur Zubereitung durch die Hardware stabil \\funktioniert.
+App bis zur Zubereitung durch die Hardware stabil funktioniert.
+
+\subsection{Leistungsbewertung der Pumpen}
+
+Der Test der Pumpen ergab, dass die Dosiergenauigkeit der einzelnen Pumpen mitunter Stark abweicht. 
+Die Leistung der Pumpen ist in Abbildung \ref{fig:pump_performance} dargestellt. Grund für das 
+Abweichen der Pumpen 1 und 5 ist vermutlich ein Defekt durch eine anfänglich unsachgemäße 
+Inbetriebnahme unsererseits. Die Pumpen 2, 3, 4 und 6 zeigen eine gute Leistung und eine geringe 
+Abweichung. Die Pumpen 2, 3 und 4 sind dabei besonders genau und weisen eine geringe Abweichung auf.
+
+Die Probleme der Pumpen lassen sich jedoch mittels einer Kalibrierung des Pumpfaktors beheben. 
+Alternativ kann auch eine Zukünftige Verwendung der Waage das Problem beheben, da die Waage die
+tatsächlich ausgegebene Menge misst und die Pumpen entsprechend rechtzeitig gestoppt werden können.
+
+\begin{figure}[H] 
+    \centering 
+    \begin{tikzpicture} 
+        \begin{axis}[ 
+            boxplot/draw direction=y, 
+            ylabel={ Menge in Milliliter }, % Beschriftung der y-Achse 
+            xlabel={ Pumpen }, % Beschriftung der x-Achse
+            xtick={ 1, 2, 3, 4, 5, 6 }, % Positionen der xticks 
+            xticklabels={ 1, 2, 3, 4, 5, 6 }, % Labels der xticks
+            ymin=210, 
+            ymax=430, % Begrenzung der y-Achse 
+            boxplot/every box/.style={solid}
+            ] 
+            \addplot [ 
+                thick, dashed, blue, 
+                domain=0:7, 
+            ] {400}; 
+            \addplot+ [ boxplot, fill=red4, draw=red7, solid ] 
+            table[row sep=\\, y index=0] 
+            { 
+                370 \\ 375 \\ 357 \\ 364 \\ 358 \\ 362 \\ 382 \\ 383 \\ 370 \\ 366 \\ 370 \\ 368 \\ 
+                383 \\ 373 \\ 360 \\ 355 \\ 373 \\ 381 \\ 356 \\ 349 \\ 362 \\ 370 \\ 369 \\ 361 \\ 
+            }; 
+            \addplot+ [ boxplot, fill=red4, draw=red7, solid ] 
+            table[row sep=\\, y index=0] 
+            { 
+                399 \\ 388 \\ 395 \\ 395 \\ 399 \\ 409 \\ 402 \\ 400 \\ 386 \\ 401 \\ 400 \\ 400 \\ 
+                404 \\ 387 \\ 405 \\ 400 \\ 400 \\ 390 \\ 388 \\ 400 \\ 400 \\ 399 \\ 405 \\ 399 \\ 
+            }; 
+            \addplot+ [ boxplot, fill=red4, draw=red7, solid ] 
+            table[row sep=\\, y index=0] 
+            { 
+                397 \\ 402 \\ 395 \\ 398 \\ 400 \\ 400 \\ 395 \\ 400 \\ 402 \\ 400 \\ 399 \\ 408 \\ 
+                395 \\ 388 \\ 403 \\ 400 \\ 402 \\ 400 \\ 408 \\ 388 \\ 396 \\ 408 \\ 397 \\ 390 \\ 
+            }; 
+            \addplot+ [ boxplot, fill=red4, draw=red7, solid ]
+            table[row sep=\\, y index=0] 
+            { 
+                411 \\ 400 \\ 398 \\ 399 \\ 400 \\ 408 \\ 408 \\ 415 \\ 400 \\ 386 \\ 393 \\ 390 \\ 
+                400 \\ 404 \\ 400 \\ 406 \\ 409 \\ 400 \\ 403 \\ 396 \\ 406 \\ 407 \\ 405 \\ 396 \\ 
+            };
+            \addplot+ [ boxplot, fill=red4, draw=red7, solid ] 
+            table[row sep=\\, y index=0] 
+            { 
+                267 \\ 259 \\ 305 \\ 242 \\ 306 \\ 315 \\ 313 \\ 287 \\ 266 \\ 300 \\ 298 \\ 260 \\
+                285 \\ 251 \\ 283 \\ 243 \\ 266 \\ 263 \\ 255 \\ 278 \\ 241 \\ 255 \\ 315 \\ 280 \\ 
+            }; 
+            \addplot+ [ boxplot, fill=red4, draw=red7, solid ] 
+            table[row sep=\\, y index=0] 
+            { 
+                382 \\ 385 \\ 387 \\ 382 \\ 390 \\ 386 \\ 390 \\ 377 \\ 393 \\ 388 \\ 383 \\ 398 \\ 
+            }; 
+        \end{axis}
+    \end{tikzpicture} 
+    \caption{Pumpenleistung für 400ml} 
+    \label{fig:pump_performance} 
+\end{figure}
 
 \subsection{Lasttestergebnisse und Analyse}
 
