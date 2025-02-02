@@ -137,7 +137,7 @@
 \usepackage{colortbl}
 \usepackage{caption}
 \usepackage{polynom}
-\usepackage[backend=biber]{biblatex}
+\usepackage[backend=biber, sorting=none, style=numeric]{biblatex}
 
 % \usepackage[top=1in,bottom=1in,right=1in,left=1in]{geometry}
 % \usepackage{mdframed}
@@ -257,8 +257,7 @@
 \input{sections/10_anhang}    
 \newpage
 
-\section{Literaturverzeichnis}
-\printbibliography
+\printbibliography[heading=bibintoc, title={Literaturverzeichnis}, notcategory=ignore]
 \listoffigures
 \listoftables
 % \newpage
