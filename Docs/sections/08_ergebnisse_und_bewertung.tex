@@ -122,6 +122,14 @@ Instanz zurückzuführen ist. Die Antwortzeiten der anderen Endpunkte sind im Ve
 gering. Die Antwortzeiten der Endpunkte Zutat hinzufügen, Alle Favoriten abfragen und Slotbelegung
 abfragen sind besonders niedrig, was auf eine geringe Verarbeitungskomplexität hinweist.
 
+\hyphenation{Live-Umgebung}
+\hyphenation{Web-socket-Ver-bind-ung}
+Die Tests haben gezeigt, dass das System in einer Live-Umgebung grundsätzlich stabil arbeitet. 
+Allerdings wurden Skalierungsprobleme bei Websocket-Verbindungen identifiziert, die durch eine 
+zentrale Verwaltung oder eine konsistente Lastverteilung gelöst werden könnten. Die meisten API-
+Endpunkte zeigten zufriedenstellende Antwortzeiten und Erfolgsquoten. Die Schwachstellen bieten 
+jedoch Anknüpfungspunkte für zukünftige Optimierungen.
+
 % USABILITY ----------------------------------------------------------------------------------------
 \subsection{User-Test Ergebnisse}
 
@@ -145,7 +153,6 @@ auf einer Skala von 1 (schlecht) bis 5 (sehr gut). Die Ergebnisse sind in Tabell
     \label{tab:user_tests}
 \end{table}
 
-\clearpage
 \begin{figure}[h!]
     \centering
     \begin{minipage}{0.80\textwidth}
@@ -156,14 +163,6 @@ auf einer Skala von 1 (schlecht) bis 5 (sehr gut). Die Ergebnisse sind in Tabell
     \end{minipage}
 \end{figure}
 
-
-\hyphenation{Live-Umgebung}
-\hyphenation{Web-socket-Ver-bind-ung}
-Die Tests haben gezeigt, dass das System in einer Live-Umgebung grundsätzlich stabil arbeitet. 
-Allerdings wurden Skalierungsprobleme bei Websocket-Verbindungen identifiziert, die durch eine 
-zentrale Verwaltung oder eine konsistente Lastverteilung gelöst werden könnten. Die meisten API-
-Endpunkte zeigten zufriedenstellende Antwortzeiten und Erfolgsquoten. Die Schwachstellen bieten 
-jedoch Anknüpfungspunkte für zukünftige Optimierungen.
 
 \subsection{Stärken und Schwächen}
 
