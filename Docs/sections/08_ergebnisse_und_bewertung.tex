@@ -44,9 +44,9 @@ Ergebnisse sind im Folgenden zusammengefasst.
 % ERFOLGSRATE --------------------------------------------------------------------------------------
 \subsubsection*{Erfolgsrate}
 
-\begin{table}[!htbp]
+\begin{table}[H]
     \centering
-    \resizebox{\textwidth}{!}{%
+    % \resizebox{\textwidth}{!}{%
         \begin{tabular}{|l|r|r|r|}
             \hline
             \textbf{Test} & \textbf{Erfolgreich} & \textbf{Fehlgeschlagen} & \textbf{Erfolgsrate} \\
@@ -63,7 +63,7 @@ Ergebnisse sind im Folgenden zusammengefasst.
             Favoriten abfragen    &  263 &   0 &  100\% \\
             \hline
         \end{tabular}
-    }
+    % }
     \caption{Tests je Endpunkt und Erfolgsrate}
     \label{tab:test_success_rate}    
 \end{table}
@@ -86,9 +86,9 @@ Die Antwortzeiten für spezifische API-Endpunkte zeigen deutliche Unterschiede, 
 unterschiedliche Verarbeitungskomplexität hinweisen. Die wichtigsten Werte sind in Tabelle 
 \ref{tab:response_times} dargestellt.
 
-\begin{table}[!ht] 
+\begin{table}[H] 
     \centering
-    \resizebox{\textwidth}{!}{%
+    % \resizebox{\textwidth}{!}{%
         \begin{tabular}{|l|r|r|r|r|}
             \hline
             \textbf{Endpunkt} &
@@ -109,7 +109,7 @@ unterschiedliche Verarbeitungskomplexität hinweisen. Die wichtigsten Werte sind
             Slotbelegung abfragen   &   64,92 &  48,96 & 112,32 &    355,33 \\
             \hline
         \end{tabular}
-    }
+    % }
     \caption{Antwortzeiten je Endpunkt in Millisekunden}
     \label{tab:response_times}
 \end{table}
