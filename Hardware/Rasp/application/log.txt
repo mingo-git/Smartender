@@ -1,640 +1,1001 @@
-| 2025-01-20 13:08:45 | INFO     | Main                 | Application started
-| 2025-01-20 13:08:45 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:08:46 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:08:46 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:08:49 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:49 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | | 2025-01-20 13:30:39 | INFO     | WebSocketHandler     | WebSocket client stopped
-sitionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:50 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:09:58 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:09:58 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-20 13:10:01 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:10:01 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:10:01 | INFO     | CommandMapper        | Command deserialization successful
-| 2025-01-20 13:10:01 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
-| 2025-01-20 13:10:01 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
-| 2025-01-20 13:10:01 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:10:06 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:10:06 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:10:06 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:10:06 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:10:06 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:10:10 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:10:10 | INFO     | MotorController      | Limit switch 2 triggered. Motor stopped.
-| 2025-01-20 13:10:16 | INFO     | ActuatorController   | Actuator moving up
-| 2025-01-20 13:10:26 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:12:17 | INFO     | Main                 | Application started
-| 2025-01-20 13:12:17 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:12:18 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:12:19 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:12:21 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:12:22 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:22 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:23 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:27 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:32 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:12:32 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-20 13:12:49 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:12:49 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:12:49 | INFO     | CommandMapper        | Command deserialization successful
-| 2025-01-20 13:12:49 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
-| 2025-01-20 13:12:49 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
-| 2025-01-20 13:12:49 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:12:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:54 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:12:58 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:12:58 | INFO     | MotorController      | Limit switch 2 triggered. Motor stopped.
-| 2025-01-20 13:13:04 | INFO     | ActuatorController   | Actuator moving up
-| 2025-01-20 13:13:14 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:13:17 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:13:17 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:13:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:13:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:13:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:13:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:13:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:13:26 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:13:26 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-20 13:20:07 | INFO     | Main                 | Application started
-| 2025-01-20 13:20:07 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:20:08 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:20:08 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:20:11 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:20:12 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:20:12 | INFO     | PositionHandler      | Cart is at home position
-| 2025-01-20 13:20:12 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:20:14 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:20:14 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:20:14 | INFO     | CommandMapper        | Command deserialization successful
-| 2025-01-20 13:20:14 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
-| 2025-01-20 13:20:14 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
-| 2025-01-20 13:20:14 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:20:14 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:21:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:21:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:21:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:21:21 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:21:25 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:21:25 | INFO     | MotorController      | Limit switch 2 triggered. Motor stopped.
-| 2025-01-20 13:21:31 | INFO     | ActuatorController   | Actuator moving up
-| 2025-01-20 13:21:41 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:21:44 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:21:44 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:21:48 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:21:48 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:21:48 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:21:48 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:21:53 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:21:53 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-20 13:26:53 | INFO     | Main                 | Application started
-| 2025-01-20 13:26:53 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:26:54 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:26:54 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:26:57 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:26:58 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:26:58 | INFO     | PositionHandler      | Cart is at home position
-| 2025-01-20 13:26:58 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:27:04 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:27:04 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:27:04 | INFO     | CommandMapper        | Command deserialization successful
-| 2025-01-20 13:27:04 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
-| 2025-01-20 13:27:04 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
-| 2025-01-20 13:27:04 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:27:04 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:27:05 | INFO     | Main                 | Application is shutting down
-| 2025-01-20 13:27:05 | INFO     | WebSocketHandler     | WebSocket client stopped
-| 2025-01-20 13:27:06 | ERROR    | WebSocketHandler     | WebSocket error: 'NoneType' object has no attribute 'sendall'
-| 2025-01-20 13:27:06 | INFO     | PumpController       | GPIO cleanup complete
-| 2025-01-20 13:27:06 | INFO     | ActuatorController   | GPIO cleanup complete for actuator
-| 2025-01-20 13:27:06 | INFO     | Main                 | Hardware components cleaned up
-| 2025-01-20 13:27:47 | INFO     | Main                 | Application started
-| 2025-01-20 13:27:47 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:27:48 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:27:48 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:27:51 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:27:18 | INFO     | Main                 | Application started
-| 2025-01-20 13:27:18 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:27:19 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:27:20 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:28:48 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:28:51 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:28:51 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-20 13:28:54 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:28:54 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:28:54 | INFO     | CommandMapper        | Command deserialization successful
-| 2025-01-20 13:28:54 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
-| 2025-01-20 13:28:54 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
-| 2025-01-20 13:28:57 | INFO     | ActuatorController   | Actuator moving up
-| 2025-01-20 13:28:59 | INFO     | Main                 | Application is shutting down
-| 2025-01-20 13:28:59 | INFO     | WebSocketHandler     | WebSocket client stopped
-| 2025-01-20 13:28:59 | INFO     | PositionHandler      | GPIO cleanup complete
-| 2025-01-20 13:28:59 | INFO     | PumpController       | GPIO cleanup complete
-| 2025-01-20 13:28:59 | INFO     | ActuatorController   | GPIO cleanup complete for actuator
-| 2025-01-20 13:28:59 | INFO     | Main                 | Hardware components cleaned up
-| 2025-01-20 13:30:02 | INFO     | Main                 | Application started
-| 2025-01-20 13:30:02 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:30:03 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:30:03 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:30:06 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:30:07 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:30:07 | INFO     | PositionHandler      | Cart is at home position
-| 2025-01-20 13:30:07 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:30:16 | INFO     | Main                 | Application is shutting down
-| 2025-01-20 13:30:16 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-20 13:30:33 | INFO     | Main                 | Application started
-| 2025-01-20 13:30:33 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:30:34 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:30:34 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:30:37 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:30:38 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:30:38 | INFO     | PositionHandler      | Cart is at home position
-| 2025-01-20 13:30:38 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:30:39 | INFO     | Main                 | Application is shutting down
-| 2025-01-20 13:30:39 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-20 13:30:39 | INFO     | PositionHandler      | GPIO cleanup complete
-| 2025-01-20 13:30:39 | INFO     | PumpController       | GPIO cleanup complete
-| 2025-01-20 13:30:39 | INFO     | ActuatorController   | GPIO cleanup complete for actuator
-| 2025-01-20 13:30:39 | INFO     | Main                 | Hardware components cleaned up
-| 2025-01-20 13:30:42 | INFO     | Main                 | Application started
-| 2025-01-20 13:30:42 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:30:43 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:30:43 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:30:46 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:30:47 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:30:47 | INFO     | PositionHandler      | Cart is at home position
-| 2025-01-20 13:30:47 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:30:47 | INFO     | Main                 | Application is shutting down
-| 2025-01-20 13:30:47 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-20 13:30:47 | INFO     | PositionHandler      | GPIO cleanup complete
-| 2025-01-20 13:30:47 | INFO     | PumpController       | GPIO cleanup complete
-| 2025-01-20 13:30:47 | INFO     | ActuatorController   | GPIO cleanup complete for actuator
-| 2025-01-20 13:30:47 | INFO     | Main                 | Hardware components cleaned up
-| 2025-01-20 13:30:49 | INFO     | Main                 | Application started
-| 2025-01-20 13:30:49 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:30:50 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:30:51 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:30:53 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:30:54 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:30:54 | INFO     | PositionHandler      | Cart is at home position
-| 2025-01-20 13:30:54 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:54:37 | INFO     | Main                 | Application started
-| 2025-01-20 13:54:37 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 13:54:39 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 13:54:39 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 13:54:42 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:54:46 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:54:46 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-20 13:54:51 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:54:51 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 13:54:51 | INFO     | CommandMapper        | Command deserialization successful
-| 2025-01-20 13:54:52 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
-| 2025-01-20 13:54:52 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
-| 2025-01-20 13:54:52 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:54:56 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:54:56 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:54:56 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:54:57 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:55:00 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:55:00 | INFO     | MotorController      | Limit switch 2 triggered. Motor stopped.
-| 2025-01-20 13:55:06 | INFO     | ActuatorController   | Actuator moving up
-| 2025-01-20 13:55:16 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 13:55:20 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:55:20 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 13:55:24 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:55:24 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:55:24 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:55:24 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 13:55:28 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 13:55:29 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-20 14:14:57 | INFO     | Main                 | Application started
-| 2025-01-20 14:14:57 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-20 14:14:59 | INFO     | Main                 | Hardware components initialized
-| 2025-01-20 14:14:59 | INFO     | WebSocketHandler     | Connected to WebSocket server
-| 2025-01-20 14:15:02 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 14:15:03 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 14:15:03 | INFO     | PositionHandler      | Cart is at home position
-| 2025-01-20 14:15:03 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 14:15:05 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 14:15:05 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":60,"slot_number":3},"ingredient_2":{"quantity_ml":30,"slot_number":4}}
-| 2025-01-20 14:15:05 | INFO     | CommandMapper        | Command deserialization successful
-| 2025-01-20 14:15:05 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=60, slot_number=3)
-| 2025-01-20 14:15:05 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=30, slot_number=4)
-| 2025-01-20 14:15:06 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 14:15:06 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 14:15:10 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 14:15:10 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 14:15:10 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 14:15:10 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 14:15:14 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 14:15:14 | INFO     | MotorController      | Limit switch 2 triggered. Motor stopped.
-| 2025-01-20 14:15:20 | INFO     | ActuatorController   | Actuator moving up
-| 2025-01-20 14:15:30 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-20 14:15:34 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 14:15:34 | INFO     | PositionHandler      | Limit switch 2 pressed
-| 2025-01-20 14:15:38 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 14:15:38 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 14:15:38 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 14:15:38 | INFO     | PositionHandler      | Limit switch 1 pressed
-| 2025-01-20 14:15:42 | INFO     | PositionHandler      | Limit switch 0 pressed
-| 2025-01-20 14:15:42 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
-| 2025-01-20 14:30:03 | INFO     | Main                 | Application is shutting down
-| 2025-01-20 14:30:03 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-20 14:30:03 | INFO     | WebSocketHandler     | WebSocket client stopped
-| 2025-01-21 08:49:00 | INFO     | Main                 | Application started
-| 2025-01-21 08:49:00 | INFO     | Main                 | {'x-api-key': None, 'Hardware-Auth-Key': None, 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-21 08:50:37 | INFO     | Main                 | Application started
-| 2025-01-21 08:50:37 | INFO     | Main                 | {'x-api-key': None, 'Hardware-Auth-Key': None, 'Identifier': '2c:cf:67:9d:dd:bb'}
-| 2025-01-21 08:50:38 | INFO     | Main                 | Hardware components initialized
-| 2025-01-21 08:50:38 | INFO     | ActuatorController   | Actuator moving down
-| 2025-01-21 08:50:40 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:40 GMT', 'server': 'Google Frontend', 'x-cloud-trace-context': '7a9bda2f0e0bd64d2fe2ec3d7e74fa7f/10426047223017800034;o=1', 'traceparent': '00-7a9bda2f0e0bd64d2fe2ec3d7e74fa7f-90b0c2b5b36c8162-01', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:40 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:41 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:41 GMT', 'server': 'Google Frontend', 'x-cloud-trace-context': 'd4ce0717f45539b5e4f88aa5fe2e01e3/3256568676758191712', 'traceparent': '00-d4ce0717f45539b5e4f88aa5fe2e01e3-2d31a7f51cd5fe60-00', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:41 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:41 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:41 GMT', 'server': 'Google Frontend', 'x-cloud-trace-context': '7f7f88dec1463c04d8704d7c4b81da0f/1780757470843998079', 'traceparent': '00-7f7f88dec1463c04d8704d7c4b81da0f-18b6857c20c78f7f-00', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:41 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:42 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:42 GMT', 'server': 'Google Frontend', 'traceparent': '00-fe47712629748efe68101fd70b01e160-6a2d7098bbb0aa3a-00', 'x-cloud-trace-context': 'fe47712629748efe68101fd70b01e160/7650895143258597946', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:42 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:42 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:42 GMT', 'server': 'Google Frontend', 'x-cloud-trace-context': '9a15ee077c0070ce8610514124ab2b96/5299311663132278335', 'traceparent': '00-9a15ee077c0070ce8610514124ab2b96-498aefe173157e3f-00', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:42 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:43 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:43 GMT', 'server': 'Google Frontend', 'x-cloud-trace-context': 'f2256eca9c2d8f08b599c5bef141635f/5679207570571463611', 'traceparent': '00-f2256eca9c2d8f08b599c5bef141635f-4ed09932199f0bbb-00', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:43 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:43 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:43 GMT', 'server': 'Google Frontend', 'x-cloud-trace-context': '5124e3e9b70b6e448ec7c4dfb3e2d490/5007882019247255744', 'traceparent': '00-5124e3e9b70b6e448ec7c4dfb3e2d490-457f9229e24c70c0-00', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:43 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:44 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:44 GMT', 'server': 'Google Frontend', 'traceparent': '00-37f90b950a85dd0ec7b88ea158a1693d-a7f4bfd71e0b5bf9-00', 'x-cloud-trace-context': '37f90b950a85dd0ec7b88ea158a1693d/12102509029294300153', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:44 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:44 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:44 GMT', 'server': 'Google Frontend', 'x-cloud-trace-context': 'b671cd08fdbdfb5129fcca89f79e485d/2138681642021223036', 'traceparent': '00-b671cd08fdbdfb5129fcca89f79e485d-1dae1f9f4852fa7c-00', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:44 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:45 | ERROR    | WebSocketHandler     | WebSocket error: Handshake status 401 Unauthorized -+-+- {'x-content-type-options': 'nosniff', 'date': 'Tue, 21 Jan 2025 07:50:45 GMT', 'server': 'Google Frontend', 'x-cloud-trace-context': '8ab2af0705d2f8f7f22d20db883dfb35/17791861540670003146', 'traceparent': '00-8ab2af0705d2f8f7f22d20db883dfb35-f6e963ce5091d7ca-00', 'content-length': '0', 'content-type': 'text/html; charset=UTF-8', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', 'connection': 'close'} -+-+- b''
-| 2025-01-21 08:50:45 | INFO     | WebSocketHandler     | Connection closed: None None
-| 2025-01-21 08:50:45 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-21 13:22:29 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=40, slot_number=4)
+| 2025-01-21 13:22:33 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 13:22:33 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 13:22:34 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 13:22:34 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=360, slot_number=6)
+| 2025-01-21 13:22:34 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=40, slot_number=4)
+| 2025-01-21 13:22:40 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 13:22:40 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 13:22:40 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 13:22:40 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=360, slot_number=6)
+| 2025-01-21 13:22:40 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=40, slot_number=4)
+| 2025-01-21 13:22:57 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-21 13:22:57 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-21 13:25:40 | INFO     | Main                 | Application started
+| 2025-01-21 13:25:40 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-21 13:25:42 | INFO     | Main                 | Hardware components initialized
+| 2025-01-21 13:25:42 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 13:25:42 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:47 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:51 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:25:55 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:25:55 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-21 13:26:05 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-21 13:26:05 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-21 13:29:11 | INFO     | Main                 | Application started
+| 2025-01-21 13:29:11 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-21 13:29:12 | INFO     | Main                 | Hardware components initialized
+| 2025-01-21 13:29:12 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 13:29:12 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-21 13:29:13 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:29:13 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-21 13:29:13 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:29:16 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 13:29:16 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 13:29:16 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 13:29:16 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=360, slot_number=6)
+| 2025-01-21 13:29:16 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=40, slot_number=4)
+| 2025-01-21 13:29:17 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=40, slot_number=4), Ingredient(quantity_ml=360, slot_number=6)]
+| 2025-01-21 13:29:17 | INFO     | Main                 | Alcoholic drink: Slot 4
+| 2025-01-21 13:29:17 | INFO     | MotorController      | Moving to slot 4 with acceleration
+| 2025-01-21 13:29:17 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:29:19 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:29:19 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:29:21 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:29:21 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:29:23 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 13:29:23 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 13:29:25 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 13:29:25 | INFO     | MotorController      | Limit switch 4 triggered. Motor stopped.
+| 2025-01-21 13:29:25 | INFO     | MotorController      | Moved to slot 4
+| 2025-01-21 13:29:27 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 13:29:27 | INFO     | Main                 | Reached slot 4
+| 2025-01-21 13:29:28 | INFO     | Main                 | Pouring from slot 4
+| 2025-01-21 13:29:30 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 13:29:40 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 13:29:44 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-21 13:29:44 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 13:29:44 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 13:29:44 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 13:29:48 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 13:29:48 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 13:29:48 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 13:29:48 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 13:29:52 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:29:52 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:29:52 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:29:52 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 13:29:56 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:29:56 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:29:56 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:29:56 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 13:30:01 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:30:01 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-21 13:30:01 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:30:01 | INFO     | Main                 | Activating pump 0
+| 2025-01-21 13:30:06 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 13:30:07 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:30:16 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 13:30:22 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:31:32 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":180,"slot_number":7}}
+| 2025-01-21 13:31:32 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":180,"slot_number":7}}
+| 2025-01-21 13:31:32 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 13:31:32 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=180, slot_number=7)
+| 2025-01-21 13:31:32 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=180, slot_number=7)]
+| 2025-01-21 13:31:32 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-21 13:31:32 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:31:33 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:31:33 | INFO     | Main                 | Activating pump 1
+| 2025-01-21 13:31:38 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 13:31:38 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:31:43 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 13:31:49 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:32:21 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-21 13:32:21 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-21 13:32:21 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 13:32:21 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-21 13:32:21 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7)]
+| 2025-01-21 13:32:21 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-21 13:32:21 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:32:21 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:32:22 | INFO     | Main                 | Activating pump 1
+| 2025-01-21 13:32:27 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 13:32:27 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:32:37 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 13:32:43 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:32:49 | INFO     | Main                 | Application is shutting down
+| 2025-01-21 13:32:49 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-21 13:32:49 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-21 13:32:49 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-21 13:36:23 | INFO     | Main                 | Application started
+| 2025-01-21 13:36:23 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-21 13:36:24 | INFO     | Main                 | Hardware components initialized
+| 2025-01-21 13:36:24 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 13:36:25 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-21 13:36:25 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:36:25 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-21 13:36:25 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:36:30 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-21 13:36:30 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-21 13:36:30 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 13:36:30 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=10)
+| 2025-01-21 13:36:31 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=10)]
+| 2025-01-21 13:36:31 | INFO     | Main                 | Non-alcoholic drink: Slot 10
+| 2025-01-21 13:36:31 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:36:31 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:36:31 | INFO     | Main                 | Activating pump 4
+| 2025-01-21 13:36:37 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 13:36:37 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:36:47 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 13:36:53 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 13:37:24 | INFO     | Main                 | Application is shutting down
+| 2025-01-21 13:37:24 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-21 13:37:24 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-21 13:37:24 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-21 14:11:27 | INFO     | Main                 | Application started
+| 2025-01-21 14:11:27 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-21 14:11:29 | INFO     | Main                 | Hardware components initialized
+| 2025-01-21 14:11:29 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 14:11:29 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-21 14:11:30 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:11:30 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-21 14:11:30 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:12:04 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 14:12:04 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 14:12:04 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 14:12:04 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=360, slot_number=6)
+| 2025-01-21 14:12:04 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=40, slot_number=4)
+| 2025-01-21 14:12:04 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=40, slot_number=4), Ingredient(quantity_ml=360, slot_number=6)]
+| 2025-01-21 14:12:04 | INFO     | Main                 | Alcoholic drink: Slot 4
+| 2025-01-21 14:12:04 | INFO     | MotorController      | Moving to slot 4 with acceleration
+| 2025-01-21 14:12:04 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:12:07 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:12:07 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:12:09 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:12:09 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:12:11 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:12:11 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:12:13 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:12:13 | INFO     | MotorController      | Limit switch 4 triggered. Motor stopped.
+| 2025-01-21 14:12:13 | INFO     | MotorController      | Moved to slot 4
+| 2025-01-21 14:12:15 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:12:15 | INFO     | Main                 | Reached slot 4
+| 2025-01-21 14:12:15 | INFO     | Main                 | Pouring from slot 4
+| 2025-01-21 14:12:18 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 14:12:28 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 14:12:31 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-21 14:12:31 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:12:32 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:12:32 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:12:35 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:12:35 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:12:36 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:12:36 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:12:40 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:12:40 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:12:40 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:12:40 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:12:44 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:12:44 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:12:44 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:12:48 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:12:48 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-21 14:12:49 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:12:49 | INFO     | Main                 | Activating pump 0
+| 2025-01-21 14:12:54 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 14:12:54 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:13:03 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 14:13:10 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:41:30 | ERROR    | WebSocketHandler     | WebSocket error: Connection to remote host was lost.
+| 2025-01-21 14:41:31 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-21 14:41:32 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-21 14:55:48 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-21 14:55:48 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-21 14:55:49 | INFO     | Main                 | Application started
+| 2025-01-21 14:55:49 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-21 14:55:51 | INFO     | Main                 | Hardware components initialized
+| 2025-01-21 14:55:51 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 14:55:51 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-21 14:55:52 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:55:52 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-21 14:55:52 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:56:45 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 14:56:45 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":360,"slot_number":6},"ingredient_2":{"quantity_ml":40,"slot_number":4}}
+| 2025-01-21 14:56:45 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 14:56:45 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=360, slot_number=6)
+| 2025-01-21 14:56:45 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=40, slot_number=4)
+| 2025-01-21 14:56:45 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=40, slot_number=4), Ingredient(quantity_ml=360, slot_number=6)]
+| 2025-01-21 14:56:46 | INFO     | Main                 | Alcoholic drink: Slot 4
+| 2025-01-21 14:56:46 | INFO     | MotorController      | Moving to slot 4 with acceleration
+| 2025-01-21 14:56:46 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:56:48 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:56:48 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:56:50 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:56:50 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:56:52 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:56:52 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:56:54 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:56:54 | INFO     | MotorController      | Limit switch 4 triggered. Motor stopped.
+| 2025-01-21 14:56:54 | INFO     | MotorController      | Moved to slot 4
+| 2025-01-21 14:56:56 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:56:57 | INFO     | Main                 | Reached slot 4
+| 2025-01-21 14:56:57 | INFO     | Main                 | Pouring from slot 4
+| 2025-01-21 14:56:59 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 14:57:10 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 14:57:13 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-21 14:57:13 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:57:13 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:57:13 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:57:13 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-21 14:57:17 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:57:17 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:57:17 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:57:17 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-21 14:57:21 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:57:21 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:57:21 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:57:21 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-21 14:57:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:57:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:57:25 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-21 14:57:30 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:57:30 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-21 14:57:30 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:57:30 | INFO     | Main                 | Activating pump 0
+| 2025-01-21 14:57:36 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 14:57:36 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:57:45 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 14:57:51 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 14:59:27 | INFO     | Main                 | Application is shutting down
+| 2025-01-21 14:59:27 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-21 14:59:27 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-21 14:59:27 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-21 15:16:28 | INFO     | Main                 | Application started
+| 2025-01-21 15:16:28 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-21 15:16:30 | INFO     | Main                 | Hardware components initialized
+| 2025-01-21 15:16:30 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 15:16:30 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-21 15:16:31 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 15:45:48 | INFO     | PositionHandler      | GPIO cleanup complete
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 2025-01-21 15:19:03 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 15:19:12 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 15:19:18 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 15:20:07 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":200,"slot_number":6}}
+| 2025-01-21 15:20:07 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":200,"slot_number":6}}
+| 2025-01-21 15:20:07 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 15:20:07 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=200, slot_number=6)
+| 2025-01-21 15:20:07 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=200, slot_number=6)]
+| 2025-01-21 15:20:07 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-21 15:20:08 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 15:20:08 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 15:20:08 | INFO     | Main                 | Activating pump 0
+| 2025-01-21 15:20:13 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 15:20:14 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 15:20:19 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 15:20:25 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 15:45:48 | INFO     | Main                 | Application is shutting down
+| 2025-01-21 15:45:48 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-21 15:45:48 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-21 16:12:44 | INFO     | Main                 | Application started
+| 2025-01-21 16:12:44 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-21 16:12:45 | INFO     | Main                 | Hardware components initialized
+| 2025-01-21 16:12:45 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 16:12:45 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-21 16:12:46 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 16:12:46 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-21 16:12:46 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 16:13:04 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":200,"slot_number":6}}
+| 2025-01-21 16:13:04 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":200,"slot_number":6}}
+| 2025-01-21 16:13:04 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-21 16:13:04 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=200, slot_number=6)
+| 2025-01-21 16:13:04 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=200, slot_number=6)]
+| 2025-01-21 16:13:05 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-21 16:13:05 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 16:13:05 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 16:13:05 | INFO     | Main                 | Activating pump 0
+| 2025-01-21 16:13:11 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-21 16:13:11 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 16:13:16 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-21 16:13:22 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-21 16:13:44 | INFO     | Main                 | Application is shutting down
+| 2025-01-21 16:13:44 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-21 16:13:44 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-21 16:13:44 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-27 09:33:35 | INFO     | Main                 | Application started
+| 2025-01-27 09:33:35 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-27 09:33:36 | INFO     | Main                 | Hardware components initialized
+| 2025-01-27 09:33:36 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:33:37 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:33:37 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-27 09:33:37 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:33:38 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-27 09:34:16 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":10},"ingredient_2":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:34:17 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":10},"ingredient_2":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:34:17 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:34:17 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=10)
+| 2025-01-27 09:34:17 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-27 09:34:17 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7), Ingredient(quantity_ml=400, slot_number=10)]
+| 2025-01-27 09:34:17 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:34:17 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:34:17 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:34:18 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:34:23 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:34:23 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:34:33 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:34:39 | INFO     | Main                 | Non-alcoholic drink: Slot 10
+| 2025-01-27 09:34:40 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:34:40 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:34:40 | INFO     | Main                 | Activating pump 4
+| 2025-01-27 09:34:45 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:34:46 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:34:48 | INFO     | Main                 | Application is shutting down
+| 2025-01-27 09:34:48 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-27 09:34:48 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-27 09:34:48 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-27 09:36:09 | INFO     | Main                 | Application started
+| 2025-01-27 09:36:09 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-27 09:36:11 | INFO     | Main                 | Hardware components initialized
+| 2025-01-27 09:36:11 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:36:11 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-27 09:36:12 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:36:12 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-27 09:36:12 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:36:18 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:36:19 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:36:19 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:36:19 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-27 09:36:19 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7)]
+| 2025-01-27 09:36:19 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:36:19 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:36:19 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:36:20 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:36:25 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:36:25 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:36:35 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:36:41 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:37:02 | INFO     | Main                 | Application is shutting down
+| 2025-01-27 09:37:02 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-27 09:37:02 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-27 09:37:02 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-27 09:40:37 | INFO     | Main                 | Application started
+| 2025-01-27 09:40:37 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-27 09:40:39 | INFO     | Main                 | Hardware components initialized
+| 2025-01-27 09:40:39 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:40:39 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-27 09:40:40 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:40:40 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-27 09:40:40 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:41:51 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:41:51 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:41:51 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:41:51 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-27 09:41:52 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7)]
+| 2025-01-27 09:41:52 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:41:52 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:41:52 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:41:53 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:41:58 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:41:58 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:42:10 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:42:16 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:43:26 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:43:26 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:43:26 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:43:26 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 09:43:27 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 09:43:27 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:43:27 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:43:27 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:43:28 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:43:33 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:43:33 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:43:36 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:43:42 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:48:35 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:48:35 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:48:35 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:48:35 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 09:48:35 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 09:48:35 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:48:35 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:48:35 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:48:36 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:48:41 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:48:41 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:48:44 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:48:51 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:48:52 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:48:52 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:48:52 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:48:52 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 09:48:53 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 09:48:53 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:48:53 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:48:53 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:48:53 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:48:59 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:48:59 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:02 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:49:08 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:09 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:49:09 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:49:09 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:49:09 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 09:49:10 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 09:49:10 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:49:10 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:10 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:11 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:49:16 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:49:16 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:19 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:49:25 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:26 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:49:26 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 09:49:26 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:49:26 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 09:49:26 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 09:49:26 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:49:26 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:27 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:27 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:49:32 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:49:32 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:49:36 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:49:42 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:50:04 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:50:04 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:50:04 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:50:05 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-27 09:50:05 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7)]
+| 2025-01-27 09:50:05 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:50:05 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:50:05 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:50:06 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:50:11 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:50:11 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:50:23 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:50:29 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:51:30 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:51:30 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 09:51:30 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 09:51:30 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-27 09:51:30 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7)]
+| 2025-01-27 09:51:30 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 09:51:30 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:51:30 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:51:31 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 09:51:36 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 09:51:36 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:51:49 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 09:51:55 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 09:53:54 | INFO     | Main                 | Application is shutting down
+| 2025-01-27 09:53:54 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-27 09:53:54 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-27 09:53:54 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-27 10:12:41 | INFO     | Main                 | Application started
+| 2025-01-27 10:12:41 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-27 10:12:43 | INFO     | Main                 | Hardware components initialized
+| 2025-01-27 10:12:43 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:12:43 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-27 10:12:44 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:12:44 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-27 10:12:44 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:21 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 10:13:21 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 10:13:22 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:13:22 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 10:13:22 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 10:13:22 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 10:13:22 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:22 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:23 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 10:13:28 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:13:28 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:31 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:13:37 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:42 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 10:13:42 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 10:13:42 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:13:42 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 10:13:42 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 10:13:43 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 10:13:43 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:43 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:43 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 10:13:49 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:13:49 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:52 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:13:58 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:58 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 10:13:58 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 10:13:58 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:13:58 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 10:13:59 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 10:13:59 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 10:13:59 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:13:59 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:00 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 10:14:05 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:14:05 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:08 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:14:14 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:14 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 10:14:14 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":7}}
+| 2025-01-27 10:14:15 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:14:15 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=7)
+| 2025-01-27 10:14:15 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=7)]
+| 2025-01-27 10:14:15 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 10:14:15 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:15 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:16 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 10:14:21 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:14:21 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:24 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:14:30 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:55 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 10:14:55 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 10:14:55 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:14:55 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-27 10:14:55 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7)]
+| 2025-01-27 10:14:55 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 10:14:55 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:56 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:14:56 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 10:15:01 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:15:01 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:15:14 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:15:20 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:40:45 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-27 10:40:46 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-27 10:40:46 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:40:46 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=10)
+| 2025-01-27 10:40:46 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=10)]
+| 2025-01-27 10:40:46 | INFO     | Main                 | Non-alcoholic drink: Slot 10
+| 2025-01-27 10:40:46 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:40:46 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:40:47 | INFO     | Main                 | Activating pump 4
+| 2025-01-27 10:40:52 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:40:52 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:41:05 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:41:11 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:42:44 | ERROR    | WebSocketHandler     | WebSocket error: Connection to remote host was lost.
+| 2025-01-27 10:42:44 | INFO     | WebSocketHandler     | Connection closed: None None
+| 2025-01-27 10:42:46 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-27 10:44:09 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-27 10:44:09 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-27 10:44:09 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:44:10 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=10)
+| 2025-01-27 10:44:10 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=10)]
+| 2025-01-27 10:44:10 | INFO     | Main                 | Non-alcoholic drink: Slot 10
+| 2025-01-27 10:44:10 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:44:10 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:44:11 | INFO     | Main                 | Activating pump 4
+| 2025-01-27 10:44:16 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:44:16 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:44:28 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:44:34 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:45:08 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-27 10:45:08 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-27 10:45:08 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:45:08 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=10)
+| 2025-01-27 10:45:08 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=10)]
+| 2025-01-27 10:45:08 | INFO     | Main                 | Non-alcoholic drink: Slot 10
+| 2025-01-27 10:45:09 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:45:09 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:45:09 | INFO     | Main                 | Activating pump 4
+| 2025-01-27 10:45:14 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:45:15 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:45:27 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:45:33 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:49:57 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-27 10:49:57 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":10}}
+| 2025-01-27 10:49:57 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:49:57 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=10)
+| 2025-01-27 10:49:57 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=10)]
+| 2025-01-27 10:49:58 | INFO     | Main                 | Non-alcoholic drink: Slot 10
+| 2025-01-27 10:49:58 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:49:58 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:49:58 | INFO     | Main                 | Activating pump 4
+| 2025-01-27 10:50:02 | INFO     | Main                 | Application is shutting down
+| 2025-01-27 10:50:02 | INFO     | WebSocketHandler     | WebSocket client stopped
+| 2025-01-27 10:50:02 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-27 10:50:02 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-27 10:50:14 | INFO     | Main                 | Application started
+| 2025-01-27 10:50:14 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-27 10:50:16 | INFO     | Main                 | Hardware components initialized
+| 2025-01-27 10:50:16 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:50:16 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-27 10:50:17 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:50:17 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-27 10:50:17 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:50:19 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 10:50:19 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 10:50:20 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 10:50:20 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-27 10:50:20 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7)]
+| 2025-01-27 10:50:20 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 10:50:20 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:50:20 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:50:21 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 10:50:26 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 10:50:26 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 10:50:39 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 10:50:45 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:05:40 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 11:05:41 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":7}}
+| 2025-01-27 11:05:41 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 11:05:41 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=7)
+| 2025-01-27 11:05:41 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=7)]
+| 2025-01-27 11:05:41 | INFO     | Main                 | Non-alcoholic drink: Slot 7
+| 2025-01-27 11:05:41 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:05:41 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:05:42 | INFO     | Main                 | Activating pump 1
+| 2025-01-27 11:05:47 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:05:47 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:06:00 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:06:06 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:07:03 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":6}}
+| 2025-01-27 11:07:03 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":6}}
+| 2025-01-27 11:07:03 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 11:07:04 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=6)
+| 2025-01-27 11:07:04 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=6)]
+| 2025-01-27 11:07:04 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-27 11:07:04 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:07:04 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:07:05 | INFO     | Main                 | Activating pump 0
+| 2025-01-27 11:07:10 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:07:10 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:07:13 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:07:19 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:07:51 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":400,"slot_number":6}}
+| 2025-01-27 11:07:51 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":400,"slot_number":6}}
+| 2025-01-27 11:07:51 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 11:07:51 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=400, slot_number=6)
+| 2025-01-27 11:07:51 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=400, slot_number=6)]
+| 2025-01-27 11:07:51 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-27 11:07:51 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:07:51 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:07:52 | INFO     | Main                 | Activating pump 0
+| 2025-01-27 11:07:57 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:07:57 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:08:10 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:08:16 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:11:19 | INFO     | Main                 | Application is shutting down
+| 2025-01-27 11:11:19 | INFO     | WebSocketHandler     | WebSocket client stopped
+one
+| 2025-01-27 11:11:19 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-27 11:11:19 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-27 11:18:31 | INFO     | Main                 | Application started
+| 2025-01-27 11:18:31 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-27 11:18:33 | INFO     | Main                 | Hardware components initialized
+| 2025-01-27 11:18:33 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:18:33 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-27 11:18:34 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:18:34 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-27 11:18:34 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:19:35 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":320,"slot_number":6},"ingredient_2":{"quantity_ml":80,"slot_number":4}}
+| 2025-01-27 11:19:35 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":320,"slot_number":6},"ingredient_2":{"quantity_ml":80,"slot_number":4}}
+| 2025-01-27 11:19:35 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 11:19:35 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=320, slot_number=6)
+| 2025-01-27 11:19:35 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=80, slot_number=4)
+| 2025-01-27 11:19:36 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=80, slot_number=4), Ingredient(quantity_ml=320, slot_number=6)]
+| 2025-01-27 11:19:36 | INFO     | Main                 | Alcoholic drink: Slot 4
+| 2025-01-27 11:19:36 | INFO     | MotorController      | Moving to slot 4 with acceleration
+| 2025-01-27 11:19:36 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:19:38 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:19:38 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:19:40 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:19:40 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:19:42 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:19:43 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:19:44 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:19:44 | INFO     | MotorController      | Limit switch 4 triggered. Motor stopped.
+| 2025-01-27 11:19:45 | INFO     | MotorController      | Moved to slot 4
+| 2025-01-27 11:19:47 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:19:47 | INFO     | Main                 | Reached slot 4
+| 2025-01-27 11:19:47 | INFO     | Main                 | Pouring from slot 4
+| 2025-01-27 11:19:50 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:20:00 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:20:03 | INFO     | Main                 | Pouring from slot 4
+| 2025-01-27 11:20:06 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:20:16 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:20:19 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-27 11:20:19 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:20:19 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:20:20 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:20:20 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:20:23 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:20:23 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:20:24 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:20:27 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:20:28 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:20:28 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:20:31 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:20:32 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:20:32 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:20:36 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:20:36 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-27 11:20:37 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:20:37 | INFO     | Main                 | Activating pump 0
+| 2025-01-27 11:20:42 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:20:42 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:20:52 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:20:58 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:22:37 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":80,"slot_number":4}}
+| 2025-01-27 11:22:37 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":80,"slot_number":4}}
+| 2025-01-27 11:22:37 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 11:22:37 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=80, slot_number=4)
+| 2025-01-27 11:22:37 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=80, slot_number=4)]
+| 2025-01-27 11:22:37 | INFO     | Main                 | Alcoholic drink: Slot 4
+| 2025-01-27 11:22:38 | INFO     | MotorController      | Moving to slot 4 with acceleration
+| 2025-01-27 11:22:38 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:22:40 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:22:40 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:22:42 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:22:42 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:22:44 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:22:44 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:22:46 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:22:46 | INFO     | MotorController      | Limit switch 4 triggered. Motor stopped.
+| 2025-01-27 11:22:46 | INFO     | MotorController      | Moved to slot 4
+| 2025-01-27 11:22:48 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:22:49 | INFO     | Main                 | Reached slot 4
+| 2025-01-27 11:22:49 | INFO     | Main                 | Pouring from slot 4
+| 2025-01-27 11:22:51 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:23:02 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:23:05 | INFO     | Main                 | Pouring from slot 4
+| 2025-01-27 11:23:08 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:23:18 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:23:21 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:23:21 | INFO     | Main                 | Moving to slot 0
+| 2025-01-27 11:23:22 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:23:22 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:23:24 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:23:24 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:23:26 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:23:26 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:23:28 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:23:28 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:23:30 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:23:30 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-27 11:24:52 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":100,"slot_number":6}}
+| 2025-01-27 11:24:52 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":100,"slot_number":6}}
+| 2025-01-27 11:24:52 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 11:24:52 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=100, slot_number=6)
+| 2025-01-27 11:24:52 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=100, slot_number=6)]
+| 2025-01-27 11:24:52 | INFO     | Main                 | Non-alcoholic drink: Slot 6
+| 2025-01-27 11:24:52 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:24:53 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:24:53 | INFO     | Main                 | Activating pump 0
+| 2025-01-27 11:24:58 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:24:58 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:25:02 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:25:08 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:26:32 | INFO     | PositionHandler      | GPIO cleanup complete
+| 2025-01-27 11:26:32 | INFO     | PumpController       | GPIO cleanup complete
+| 2025-01-27 11:29:25 | INFO     | Main                 | Application started
+| 2025-01-27 11:29:25 | INFO     | Main                 | {'x-api-key': 'b0ec1aa3-98bd-434d-b6b6-f72b99383859', 'Hardware-Auth-Key': '2b3b1b1b-7a38-48c4-b24b-fb9e75045821', 'Identifier': 'e4:5f:01:86:ea:11'}
+| 2025-01-27 11:29:26 | INFO     | Main                 | Hardware components initialized
+| 2025-01-27 11:29:26 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:29:27 | INFO     | WebSocketHandler     | Connected to WebSocket server
+| 2025-01-27 11:29:27 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:29:27 | INFO     | PositionHandler      | Cart is at home position
+| 2025-01-27 11:29:27 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:29:33 | INFO     | WebSocketHandler     | Received WebSocket message: {"ingredient_1":{"quantity_ml":81,"slot_number":2},"ingredient_2":{"quantity_ml":81,"slot_number":1},"ingredient_3":{"quantity_ml":81,"slot_number":3},"ingredient_4":{"quantity_ml":81,"slot_number":5}}
+| 2025-01-27 11:29:33 | INFO     | Main                 | Processing message: {"ingredient_1":{"quantity_ml":81,"slot_number":2},"ingredient_2":{"quantity_ml":81,"slot_number":1},"ingredient_3":{"quantity_ml":81,"slot_number":3},"ingredient_4":{"quantity_ml":81,"slot_number":5}}
+| 2025-01-27 11:29:33 | INFO     | CommandMapper        | Command deserialization successful
+| 2025-01-27 11:29:33 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=81, slot_number=2)
+| 2025-01-27 11:29:34 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=81, slot_number=1)
+| 2025-01-27 11:29:34 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=81, slot_number=3)
+| 2025-01-27 11:29:34 | DEBUG    | CommandMapper        | Processed Ingredient: Ingredient(quantity_ml=81, slot_number=5)
+| 2025-01-27 11:29:34 | INFO     | Main                 | Commands processed: [Ingredient(quantity_ml=81, slot_number=1), Ingredient(quantity_ml=81, slot_number=2), Ingredient(quantity_ml=81, slot_number=3), Ingredient(quantity_ml=81, slot_number=5)]
+| 2025-01-27 11:29:34 | INFO     | Main                 | Alcoholic drink: Slot 1
+| 2025-01-27 11:29:34 | INFO     | MotorController      | Moving to slot 1 with acceleration
+| 2025-01-27 11:29:34 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:29:34 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:29:37 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:29:37 | INFO     | MotorController      | Limit switch 1 triggered. Motor stopped.
+| 2025-01-27 11:29:37 | INFO     | MotorController      | Moved to slot 1
+| 2025-01-27 11:29:39 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:29:39 | INFO     | Main                 | Reached slot 1
+| 2025-01-27 11:29:39 | INFO     | Main                 | Pouring from slot 1
+| 2025-01-27 11:29:42 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:29:48 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:29:52 | INFO     | Main                 | Pouring from slot 1
+| 2025-01-27 11:29:54 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:30:00 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:30:04 | INFO     | Main                 | Pouring from slot 1
+| 2025-01-27 11:30:06 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:30:13 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:30:16 | INFO     | Main                 | Alcoholic drink: Slot 2
+| 2025-01-27 11:30:16 | INFO     | MotorController      | Moving to slot 2 with acceleration
+| 2025-01-27 11:30:16 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:30:18 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:30:18 | INFO     | MotorController      | Limit switch 2 triggered. Motor stopped.
+| 2025-01-27 11:30:18 | INFO     | MotorController      | Moved to slot 2
+| 2025-01-27 11:30:20 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:30:20 | INFO     | Main                 | Reached slot 2
+| 2025-01-27 11:30:20 | INFO     | Main                 | Pouring from slot 2
+| 2025-01-27 11:30:23 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:30:29 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:30:32 | INFO     | Main                 | Pouring from slot 2
+| 2025-01-27 11:30:35 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:30:41 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:30:44 | INFO     | Main                 | Pouring from slot 2
+| 2025-01-27 11:30:47 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:30:53 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:30:57 | INFO     | Main                 | Alcoholic drink: Slot 3
+| 2025-01-27 11:30:57 | INFO     | MotorController      | Moving to slot 3 with acceleration
+| 2025-01-27 11:30:57 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:30:59 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:30:59 | INFO     | MotorController      | Limit switch 3 triggered. Motor stopped.
+| 2025-01-27 11:30:59 | INFO     | MotorController      | Moved to slot 3
+| 2025-01-27 11:31:01 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:31:01 | INFO     | Main                 | Reached slot 3
+| 2025-01-27 11:31:01 | INFO     | Main                 | Pouring from slot 3
+| 2025-01-27 11:31:04 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:31:10 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:31:13 | INFO     | Main                 | Pouring from slot 3
+| 2025-01-27 11:31:16 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:31:22 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:31:26 | INFO     | Main                 | Pouring from slot 3
+| 2025-01-27 11:31:28 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:31:34 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:31:38 | INFO     | Main                 | Alcoholic drink: Slot 5
+| 2025-01-27 11:31:38 | INFO     | MotorController      | Moving to slot 5 with acceleration
+| 2025-01-27 11:31:38 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:31:40 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:31:40 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:31:42 | INFO     | PositionHandler      | Limit switch 5 pressed
+| 2025-01-27 11:31:42 | INFO     | MotorController      | Limit switch 5 triggered. Motor stopped.
+| 2025-01-27 11:31:42 | INFO     | MotorController      | Moved to slot 5
+| 2025-01-27 11:31:44 | INFO     | PositionHandler      | Limit switch 5 pressed
+| 2025-01-27 11:31:44 | INFO     | Main                 | Reached slot 5
+| 2025-01-27 11:31:44 | INFO     | Main                 | Pouring from slot 5
+| 2025-01-27 11:31:47 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:31:53 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:31:56 | INFO     | Main                 | Pouring from slot 5
+| 2025-01-27 11:31:59 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:32:05 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:32:08 | INFO     | Main                 | Pouring from slot 5
+| 2025-01-27 11:32:11 | INFO     | ActuatorController   | Actuator moving up
+| 2025-01-27 11:32:17 | INFO     | ActuatorController   | Actuator moving down
+| 2025-01-27 11:32:20 | INFO     | PositionHandler      | Limit switch 5 pressed
+| 2025-01-27 11:32:21 | INFO     | Main                 | Moving to slot 0
+| 2025-01-27 11:32:21 | INFO     | PositionHandler      | Limit switch 5 pressed
+| 2025-01-27 11:32:21 | INFO     | PositionHandler      | Limit switch 5 pressed
+| 2025-01-27 11:32:23 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:32:23 | INFO     | PositionHandler      | Limit switch 4 pressed
+| 2025-01-27 11:32:25 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:32:25 | INFO     | PositionHandler      | Limit switch 3 pressed
+| 2025-01-27 11:32:27 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:32:27 | INFO     | PositionHandler      | Limit switch 2 pressed
+| 2025-01-27 11:32:29 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:32:29 | INFO     | PositionHandler      | Limit switch 1 pressed
+| 2025-01-27 11:32:32 | INFO     | PositionHandler      | Limit switch 0 pressed
+| 2025-01-27 11:32:32 | INFO     | MotorController      | Limit switch 0 triggered. Motor stopped.
+| 2025-01-27 11:36:31 | INFO     | Main                 | Application is shutting down
+| 2025-01-27 11:36:31 | INFO     | WebSocketHandler     | WebSocket client stopped
+one
