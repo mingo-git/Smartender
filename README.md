@@ -1,18 +1,21 @@
 # Smartender
 
-## Deployment:
+## Deployment
 
-### 1. Image bauen:
+### 1. Image bauen
+
 ```bash
-docker build -t gcr.io/gothic-sequence-443115-v5/smartender:latest .               
+docker build -t gcr.io/gothic-sequence-443115-v5/smartender:latest .
 ```
 
-### 2. Image pushen:
+### 2. Image pushen
+
 ```bash
 docker push gcr.io/gothic-sequence-443115-v5/smartender:latest
 ```
 
-### 3. Befehl um das neuste Image zu deployen:
+### 3. Befehl um das neuste Image zu deployen
+
 ```bash
 gcloud run services update smartender --image gcr.io/gothic-sequence-443115-v5/smartender:latest --region europe-west3
 ```
