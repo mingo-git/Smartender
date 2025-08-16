@@ -4,6 +4,7 @@ import 'package:smartender_flutter_app/components/settings_tile.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/account_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/bottle_slot_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/create_drink_screen.dart';
+import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/maintenance_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/manage_drinks_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/manage_ingredients_screen.dart';
 import 'package:smartender_flutter_app/screens/homesceens/settingsscreens/manage_roles_screen.dart';
@@ -59,6 +60,11 @@ class SettingsScreen extends StatelessWidget {
               title: "Manage Ingredients",
               icon: Icons.liquor,
               onTap: () => _navigateToScreen(context, const ManageIngredientsScreen()),
+            ),
+            SettingsTile(
+              title: "Maintenance",
+              icon: Icons.build,
+              onTap: () => _navigateToScreen(context, const MaintenanceScreen()),
             ),
             SettingsTile(
               title: "Theme",
