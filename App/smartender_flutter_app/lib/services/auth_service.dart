@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:smartender_flutter_app/services/fetch_data_service.dart';
 import '../config/constants.dart';
 
 class AuthService {
@@ -50,8 +51,8 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>> signIn(String emailOrUsername, String password) async {
+    final fetchData = FetchdData();
     final url = Uri.parse('$_baseUrl$_serviceUrl/login');
-
     try {
       final response = await http.post(
         url,
@@ -59,10 +60,12 @@ class AuthService {
         body: json.encode({'username': emailOrUsername, 'password': password}),
       );
 
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final token = data['token'];
         await saveToken(token);
+        await fetchData.fetchAllNow();
         return {'success': true};
       } else if (response.statusCode == 401) {
         return {'success': false, 'error': 'Invalid username or password.'};
@@ -88,8 +91,9 @@ class AuthService {
     await _storage.delete(key: 'jwt_token');
   }
 
-  //TODO: Test if the right token is transimitted (the Id_token)
+
   Future<Map<String, dynamic>> signInWithGoogle() async {
+    final fetchData = FetchdData();
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
@@ -110,6 +114,7 @@ class AuthService {
         final data = json.decode(response.body);
         final token = data['token'];
         await saveToken(token);
+        await fetchData.fetchAllNow();
         return {'success': true};
       } else {
         return {'success': false, 'error': 'Server error. Please try again.'};
