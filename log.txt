@@ -1,0 +1,2 @@
+| 2025-01-18 11:00:19 | INFO     | WeightSensor         | Taring weight sensor
+| 2025-01-18 11:02:45 | INFO     | WeightSensor         | Taring weight sensor

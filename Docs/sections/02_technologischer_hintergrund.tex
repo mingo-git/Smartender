@@ -1,0 +1,62 @@
+\subsection{IoT und Smart-Home-Systeme}
+Im Rahmen dieses Projekts definieren wir das Internet of Things (IoT) als eine Hardwareanwendung, 
+die über eine Internetverbindung steuerbar ist. Der Cocktailautomat lässt sich durch eine mobile 
+App aus der Ferne bedienen, wobei besonders der Cloud-Aspekt und die Integration der Steuerung über 
+das Internet hervorzuheben sind. Die Wahl eines standardisierten IoT-Protokolls wie MQTT, Zigbee 
+oder BLE wurde bewusst vermieden. Stattdessen wird die Kommunikation ausschließlich über das 
+HTTP-Protokoll abgewickelt, was eine einfache Implementierung und Wartung ermöglicht.
+
+\subsection{Hardware}
+Für die Hardwareplattform fiel die Wahl auf den Raspberry Pi Zero 2 W. Der Pi wurde aufgrund seiner 
+einfachen Programmierbarkeit und der Verfügbarkeit relevanter Python-Bibliotheken ausgewählt. 
+Zunächst war auch eine Lösung zur WLAN-Konfiguration des Raspberry Pi über die App angedacht, konnte 
+jedoch aufgrund technischer Schwierigkeiten nicht im zeitlichen Rahmen der Arbeit realisiert werden. 
+Der Automat nutzt einen Steppermotor, einen Linearmotor, sechs Membranpumpen, zwei Mikroendschalter, 
+eine Waage sowie ein 16x2 LCD-Display.
+
+\subsection{Backend und Cloud-Technologien}
+Das Backend des Systems basiert auf Google Cloud Run, da es einfach aufzusetzen ist und zu Beginn 
+ein kostenloses Guthaben von 300 US-Dollar bietet. Cloud Run ermöglicht die schnelle Bereitstellung 
+von Containern, was die Skalierbarkeit und Wartbarkeit des Systems vereinfacht. Die 
+Containerisierung des Backends sorgt für eine saubere Trennung der Anwendungslogik und die einfache 
+Verwaltung der Software. Cloud SQL wurde als Datenbanklösung gewählt, da es eine hochverfügbare und 
+ausfallsichere Lösung bietet und sich gut in die Google Cloud-Umgebung integriert. Als 
+Programmiersprache wurde Go verwendet, ergänzt durch Bibliotheken wie \texttt{Mux}, um HTTP-Routen 
+zu verwalten.
+
+\subsection{Datenbank und API}
+Für das Backend wurde eine relationale Datenbanklösung mit PostgreSQL genutzt, die aufgrund der 
+guten Vorkenntnisse im Team und der Zuverlässigkeit der Technologie ausgewählt wurde. Die 
+Tabellenmodelle für Cocktails und Zutaten wurden so entwickelt, dass eine effiziente und flexible 
+Speicherung von Cocktailrezepten und Benutzerinformationen möglich ist. Als API-Technologie wurde 
+eine REST-ähnliche Architektur gewählt, bei der statische Endpunkte definiert wurden, um Anfragen 
+zu verarbeiten.
+
+\subsection{Mobile App-Entwicklung}
+Die mobile App wurde mit dem Framework \texttt{Flutter} entwickelt, da es die Möglichkeit bietet, 
+für verschiedene Plattformen (iOS und Android) gleichzeitig zu entwickeln. Dies spart 
+Entwicklungszeit und stellt sicher, dass die App auf mehreren Geräten konsistent funktioniert. 
+Das Design der App orientiert sich an modernen ästhetischen Prinzipien, mit dem Ziel, eine 
+benutzerfreundliche und ansprechende Oberfläche zu schaffen.
+
+\subsection{Sicherheitsaspekte}
+Sicherheitsmechanismen wurden sowohl im Backend als auch in der App implementiert. Wichtige 
+API-Endpunkte sind durch API-Schlüssel abgesichert, wobei für die Kommunikation zwischen der App 
+und der Hardware unterschiedliche Schlüssel verwendet werden. Zudem werden Endpunkte, die auf 
+benutzerspezifische Daten zugreifen, mit JSON Web Tokens (JWT) geschützt, um sicherzustellen, 
+dass nur autorisierte Benutzer auf ihre eigenen Daten zugreifen können. Die Kommunikation zwischen 
+den Komponenten erfolgt über HTTPS, was eine sichere Übertragung der Daten gewährleistet.
+
+\subsection{Weitere Technologien und Tools}
+Für das Projekt wurde intensiv Docker und Docker Compose eingesetzt, um eine konsistente Umgebung 
+für die Entwicklung und das Deployment zu schaffen. Dadurch wird sichergestellt, dass die Anwendung 
+sowohl lokal als auch in der Cloud identisch läuft, was die Entwicklung und Wartung des Systems 
+erheblich vereinfacht.
+
+% \subsection{Zusammenfassung} % TODO: FIND A BETTER TITLE
+
+% Insgesamt zeigt dieses Projekt, wie moderne Cloud- und IoT-Technologien in einem smarten System 
+% kombiniert werden können, um eine benutzerfreundliche und skalierbare Lösung zu schaffen. Trotz der 
+% Herausforderungen bei der Implementierung von WLAN-Konfigurationsfunktionen und der Integration 
+% komplexer IoT-Protokolle konnte ein funktionierendes System entwickelt werden, das durch einfache 
+% HTTP-Kommunikation zwischen den Komponenten und einer stabilen Cloud-Infrastruktur unterstützt wird.
