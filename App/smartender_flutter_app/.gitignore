@@ -23,13 +23,17 @@ migrate_working_dir/
 
 # Flutter/Dart/Pub related
 **/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
 
 # Symbolication related
 app.*.symbols
@@ -42,14 +46,58 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# key for OAuth
-./android/app/smartender-keystore.jks
+# iOS & macOS
+**/ios/Pods/
+**/ios/Podfile.lock
+**/ios/.symlinks/
+**/ios/Flutter/AppFrameworkInfo.plist
+**/ios/Flutter/Debug.xcconfig
+**/ios/Flutter/Release.xcconfig
+**/ios/Runner.xcodeproj/project.pbxproj
+**/ios/Runner.xcodeproj/xcshareddata/
+**/ios/Runner.xcworkspace/
+**/ios/Podfile
 
+**/macos/Pods/
+**/macos/Podfile.lock
+**/macos/.symlinks/
+**/macos/Flutter/Flutter-Debug.xcconfig
+**/macos/Flutter/Flutter-Release.xcconfig
+**/macos/Runner.xcodeproj/project.pbxproj
+**/macos/Runner.xcodeproj/xcshareddata/
+**/macos/Runner.xcworkspace/
+**/macos/Podfile
+**/macos/Runner/AppDelegate.swift
 
-# env - File
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Environment files
 .env
+.env.local
+.env.*.local
 
-# release Build
-./android/app/key.jks
-./android/key.properties
+# Dependencies lock file (optional - some prefer to keep it)
+pubspec.lock
 
+# CAD Files and other project files
+**/*.3dm
+**/*.dwg
+**/*.step
+**/*.stp
+**/CAD-Files/
+
+# Temporary and cache files
+.tmp/
+.cache/
+.dart_tool/
+.packages
+build/
+
+# IDE
+.vscode/
+.fleet/
+
+# Exceptions to above rules.
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+!/dev/ci/**/Gemfile.lock
