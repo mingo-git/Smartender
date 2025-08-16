@@ -18,3 +18,5 @@ build/
 
 # Ignore Python cache
 **/__pycache__*
+# build artifacts
+App/android/*.apk
