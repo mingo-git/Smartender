@@ -34,15 +34,15 @@ func CreateTables() string {
 
 	CREATE TABLE IF NOT EXISTS drinks (
 		drink_id SERIAL PRIMARY KEY,
-		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,  -- Each drink belongs to a hardware
+		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE NOT NULL,  -- Each drink belongs to a hardware
 		drink_name VARCHAR(100) NOT NULL,
-		is_alcoholic BOOLEAN DEFAULT TRUE
+		is_alcoholic BOOLEAN DEFAULT TRUE NOT NULL
 	);
 
 	CREATE TABLE IF NOT EXISTS user_hardware (
 		user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
 		hardware_id INT REFERENCES hardware(hardware_id) ON DELETE CASCADE,
-		role VARCHAR(50) DEFAULT 'user',  -- User role for the hardware
+		role VARCHAR(50) DEFAULT 'user' NOT NULL,  -- User role for the hardware
 		PRIMARY KEY (user_id, hardware_id)
 	);
 
@@ -104,7 +104,7 @@ func PopulateDatabase() string {
 	
 	InSERT INTO hardware (hardware_name, mac_address) VALUES
 		('Smartender von Jonas', '00:00:00:00:00:01'),
-		('Smartender von Fachschaft', '00:00:00:00:00:02'),
+		('Smartender von Fachschaft', '2c:cf:67:9d:dd:bb'),
 		('Smartender von Philipp', '00:00:00:00:00:03');
 	
 	INSERT INTO drinks (hardware_id, drink_name, is_alcoholic) VALUES
@@ -130,7 +130,13 @@ func PopulateDatabase() string {
 		(2, 2, 1),
 		(2, 3, 3),
 		(2, 4, 4),
-		(2, 5, NULL);
+		(2, 5, NULL),
+		(2, 6, NULL),
+		(2, 7, NULL),
+		(2, 8, NULL),
+		(2, 9, NULL),
+		(2, 10, NULL),
+		(2, 11, NULL);
 
 	INSERT INTO recipes (hardware_id, recipe_name, picture_id) VALUES
 		(2, 'Vodka Martini', 1),

@@ -24,7 +24,7 @@ func InitSlotsForHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	for i := 1; i <= int(slotAmount); i++ {
 		_, err := db.Exec(query.InitSlotsForHardware(), 1, i)
 		if err != nil {
-			log.Printf("Error inserting new slot: %v", err)
+			log.Default().Printf("Error inserting new slot: %v", err)
 			http.Error(w, "Could not create slot", http.StatusInternalServerError)
 			return
 		}
@@ -44,14 +44,14 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 	// Check, if the user is authorized to access the hardware
 	rows, err := db.Query(query.CheckHardwareForUser(), hardware_id, r.Context().Value("user_id"))
 	if err != nil {
-		log.Printf("Error querying hardware for user: %v", err)
+		log.Default().Printf("Error querying hardware for user: %v", err)
 		http.Error(w, "Could not check hardware for user", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
 	if !rows.Next() {
-		log.Printf("Hardware does not belong to user")
+		log.Default().Printf("Hardware does not belong to user")
 		http.Error(w, "Hardware does not belong to user", http.StatusUnauthorized)
 		return
 	}
@@ -59,7 +59,7 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 	var slotSchemaList []models.SlotSchema
 	rows, err = db.Query(query.GetAllSlotsForSelectedHardware(), hardware_id)
 	if err != nil {
-		log.Printf("Error selecting all slots: %v", err)
+		log.Default().Printf("Error selecting all slots: %v", err)
 		http.Error(w, "Could not get slots", http.StatusInternalServerError)
 		return
 	}
@@ -68,7 +68,7 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 	for rows.Next() {
 		var slot models.SlotSchema
 		if err := rows.Scan(&slot.HardwareID, &slot.SlotNumber, &slot.DrinkID); err != nil {
-			log.Printf("Error scanning slot: %v", err)
+			log.Default().Printf("Error scanning slot: %v", err)
 			http.Error(w, "Could not get slots", http.StatusInternalServerError)
 			return
 		}
@@ -86,7 +86,7 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 		// Prüfen, ob drink_id vorhanden ist
 		if !drink_id.Valid {
 			slotResponseList = append(slotResponseList, models.Slot{HardwareID: schema.HardwareID, SlotNumber: schema.SlotNumber, Drink: nil})
-			log.Printf("No drink assigned to slot: %v", schema.SlotNumber)
+			log.Default().Printf("No drink assigned to slot: %v", schema.SlotNumber)
 			continue
 		}
 
@@ -96,11 +96,11 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 		row := db.QueryRow(query.GetDrinkByID(), drink_id.Int64, hardware_id)
 		if err := row.Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic); err != nil {
 			if err == sql.ErrNoRows {
-				log.Printf("No drink found for drink_id: %v", drink_id.Int64)
+				log.Default().Printf("No drink found for drink_id: %v", drink_id.Int64)
 				log.Default().Printf("Error: %v", err)
 				continue
 			}
-			log.Printf("Error scanning drink: %v", err)
+			log.Default().Printf("Error scanning drink: %v", err)
 			http.Error(w, "Could not get drink", http.StatusInternalServerError)
 			return
 		}
@@ -122,14 +122,14 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 	// Check, if the user is authorized to access the hardware
 	rows, err := db.Query(query.CheckHardwareForUser(), hardware_id, r.Context().Value("user_id"))
 	if err != nil {
-		log.Printf("Error querying hardware for user: %v", err)
+		log.Default().Printf("Error querying hardware for user: %v", err)
 		http.Error(w, "Could not check hardware for user", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
 	if !rows.Next() {
-		log.Printf("Hardware does not belong to user")
+		log.Default().Printf("Hardware does not belong to user")
 		http.Error(w, "Hardware does not belong to user", http.StatusUnauthorized)
 		return
 	}
@@ -137,7 +137,7 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 	// Peek into the body to check if it's empty
 	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Printf("Error reading body: %v", err)
+		log.Default().Printf("Error reading body: %v", err)
 		http.Error(w, "Could not read request body", http.StatusInternalServerError)
 		return
 	}
@@ -146,7 +146,7 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 		// If body is empty, clear the slot
 		_, err := db.Exec(query.ClearSlotForHardwareAndID(), hardware_id, slotNumber)
 		if err != nil {
-			log.Printf("Error clearing slot: %v", err)
+			log.Default().Printf("Error clearing slot: %v", err)
 			http.Error(w, "Could not clear slot", http.StatusInternalServerError)
 			return
 		}
@@ -155,13 +155,13 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 		var slot models.SlotUpdate
 		err := json.Unmarshal(bodyBytes, &slot)
 		if err != nil {
-			log.Printf("Error decoding slot: %v", err)
+			log.Default().Printf("Error decoding slot: %v", err)
 			http.Error(w, "Could not decode slot", http.StatusBadRequest)
 			return
 		}
 		_, err = db.Exec(query.SetSlotForHardwareAndID(), slot.DrinkID, hardware_id, slotNumber)
 		if err != nil {
-			log.Printf("Error setting slot: %v", err)
+			log.Default().Printf("Error setting slot: %v", err)
 			http.Error(w, "Could not set slot", http.StatusInternalServerError)
 			return
 		}

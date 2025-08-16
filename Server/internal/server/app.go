@@ -55,6 +55,6 @@ func (a *App) Run() {
 	if port == "" {
 		port = "8080" // default port if not specified
 	}
-	log.Printf("Server starting on Port %s", port)
+	log.Default().Printf("Server starting on Port %s", port)
 	log.Fatal(http.ListenAndServe(":"+port, a.Router))
 }

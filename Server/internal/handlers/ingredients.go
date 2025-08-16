@@ -35,7 +35,7 @@ func CreateIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Insert new ingredient into the database
 	err = db.QueryRow(query.CreateIngredient(), newIngredient.RecipeID, newIngredient.DrinkID, newIngredient.Quantity_ml).Scan(&newIngredient.RecipeID)
 	if err != nil {
-		log.Printf("Error inserting new ingredient: %v", err)
+		log.Default().Printf("Error inserting new ingredient: %v", err)
 		http.Error(w, "Could not create ingredient", http.StatusInternalServerError)
 		return
 	}
@@ -61,7 +61,7 @@ func UpdateIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Update ingredient in the database
 	result, err := db.Exec(query.UpdateIngredient(), recipeID, drinkID, updatedIngredient.Quantity_ml)
 	if err != nil {
-		log.Printf("Error updating ingredient: %v", err)
+		log.Default().Printf("Error updating ingredient: %v", err)
 		http.Error(w, "Could not update ingredient", http.StatusInternalServerError)
 		return
 	}
@@ -86,7 +86,7 @@ func DeleteIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Delete ingredient from the database
 	result, err := db.Exec(query.DeleteIngredient(), recipeID, drinkID)
 	if err != nil {
-		log.Printf("Error deleting ingredient: %v", err)
+		log.Default().Printf("Error deleting ingredient: %v", err)
 		http.Error(w, "Could not delete ingredient", http.StatusInternalServerError)
 		return
 	}

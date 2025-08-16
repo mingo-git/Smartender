@@ -149,7 +149,9 @@ func (a *App) initializeRoutes() {
 
 	// REGISTER DEVICE: ------------------------------------------------------------------------------  REGISTER DEVICE
 	// TODO: WebSocket
-	smartenderRouter.HandleFunc("/socket", handlers.Socket).Methods("GET")
+	smartenderRouter.HandleFunc("/socket", func(w http.ResponseWriter, r *http.Request){
+		handlers.Socket(a.DB, w, r)
+		}).Methods("GET")
 	usersRouter.HandleFunc("/action", func(w http.ResponseWriter, r *http.Request) {
 		handlers.SendCommandToHardware(a.DB, w, r)
 	}).Methods("POST")

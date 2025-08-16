@@ -37,3 +37,7 @@ func GetHardwareForUserByID() string {
 				GROUP BY
 					h.hardware_id, h.hardware_name, h.mac_address, uh.user_id;`
 }
+
+func GetHardwareForMAC_Adress() string {
+	return `SELECT hardware_id FROM hardware WHERE mac_address = $1`
+}

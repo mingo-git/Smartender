@@ -10,7 +10,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 // GenerateJWT erstellt ein JWT für den angegebenen Benutzer
@@ -23,11 +22,11 @@ func GenerateJWT(userID string) (string, error) {
 	signedToken, err := token.SignedString(jwtSecret)
 
 	if err != nil {
-		log.Printf("Error generating token: %v", err)
+		log.Default().Printf("Error generating token: %v", err)
 		return "", err
 	}
 
-	log.Printf("Generated token: %s", signedToken)  // Debugging the token
+	log.Default().Printf("Generated token: %s", signedToken) // Debugging the token
 	return signedToken, nil
 }
 
@@ -43,7 +42,7 @@ func ValidateJWT(tokenString string) (int, error) {
 	})
 
 	if err != nil {
-		log.Printf("Error parsing token: %v", err)
+		log.Default().Printf("Error parsing token: %v", err)
 		return 0, fmt.Errorf("invalid token: %v", err)
 	}
 
@@ -52,7 +51,7 @@ func ValidateJWT(tokenString string) (int, error) {
 		if userIDStr, ok := claims["user_id"].(string); ok {
 			userID, err := strconv.Atoi(userIDStr)
 			if err != nil {
-				log.Printf("Error converting user_id to int: %v", err)
+				log.Default().Printf("Error converting user_id to int: %v", err)
 				return 0, fmt.Errorf("user_id format invalid")
 			}
 			return userID, nil
@@ -64,7 +63,7 @@ func ValidateJWT(tokenString string) (int, error) {
 			return userID, nil
 		}
 
-		log.Printf("Error: user_id format is invalid")
+		log.Default().Printf("Error: user_id format is invalid")
 		return 0, fmt.Errorf("user_id format invalid")
 	}
 
