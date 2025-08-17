@@ -58,13 +58,11 @@ var frontendClientManager = &ClientManager{
 	broadcast:  make(chan []byte),
 }
 
-// WebSocket Upgrader für Frontend (andere Konfiguration als für Hardware)
+// WebSocket Upgrader für Frontend
 var frontendUpgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
-		// Für Entwicklung: Erlaube alle Origins
-		// In Produktion: Spezifische Origins prüfen
 		origin := r.Header.Get("Origin")
 		log.Printf("🌐 WebSocket Origin: %s", origin)
 		return true // Für Development - in Production einschränken
@@ -138,14 +136,12 @@ func (manager *ClientManager) run() {
 // Frontend WebSocket Handler
 func FrontendWebSocket(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📱 [WS] Frontend WebSocket Verbindungsversuch um %s", time.Now().Format("15:04:05"))
-	log.Default().Printf("📱 [WS] Headers: %v", r.Header)
 
 	// JWT aus Query Parameter oder Header extrahieren
 	token := r.URL.Query().Get("token")
 	if token == "" {
 		token = r.Header.Get("Authorization")
 		if token != "" {
-			// "Bearer " prefix entfernen
 			if len(token) > 7 && token[:7] == "Bearer " {
 				token = token[7:]
 			}
@@ -201,7 +197,6 @@ func (c *FrontendClient) readPump(db *sql.DB) {
 		c.Conn.Close()
 	}()
 
-	// Timeout-Konfiguration
 	c.Conn.SetReadLimit(512)
 	c.Conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 	c.Conn.SetPongHandler(func(string) error {
@@ -224,7 +219,6 @@ func (c *FrontendClient) readPump(db *sql.DB) {
 
 		c.LastActivity = time.Now()
 
-		// Nachricht verarbeiten
 		var message WebSocketMessage
 		if err := json.Unmarshal(messageBytes, &message); err != nil {
 			log.Printf("❌ [WS] Ungültiges Message Format von User %d: %v", c.UserID, err)
@@ -233,12 +227,10 @@ func (c *FrontendClient) readPump(db *sql.DB) {
 
 		log.Printf("📨 [WS] Nachricht erhalten von User %d: %s", c.UserID, message.Type)
 
-		// Handle verschiedene Message-Typen
 		switch message.Type {
 		case MessageTypePing:
-			// Pong zurücksenden
 			pongMsg := WebSocketMessage{
-				Type:      MessageTypePong,
+				Type: MessageTypePong,
 				Data: map[string]interface{}{
 					"server_time": time.Now().Format(time.RFC3339),
 					"user_id":     c.UserID,
@@ -258,7 +250,6 @@ func (c *FrontendClient) readPump(db *sql.DB) {
 
 		case MessageTypeClientConnected:
 			log.Printf("👋 [WS] Client Connected Message von User %d", c.UserID)
-			// Optional: Bestätigung senden oder Client-Info verarbeiten
 
 		default:
 			log.Printf("❓ [WS] Unbekannter Message Type von User %d: %s", c.UserID, message.Type)
@@ -291,7 +282,6 @@ func (c *FrontendClient) writePump() {
 			}
 			w.Write(message)
 
-			// Mehrere Nachrichten in einem Write zusammenfassen
 			n := len(c.Send)
 			for i := 0; i < n; i++ {
 				w.Write([]byte{'\n'})
@@ -314,16 +304,15 @@ func (c *FrontendClient) writePump() {
 	}
 }
 
-// Broadcast-Funktionen für verschiedene Datentypen
+// Broadcast-Funktionen
 
-// Broadcast Drink Update an alle verbundenen Clients
 func BroadcastDrinkUpdate(drinkID int, hardwareID int, action string) {
 	message := WebSocketMessage{
 		Type: MessageTypeDrinkUpdate,
 		Data: map[string]interface{}{
 			"drink_id":    drinkID,
 			"hardware_id": hardwareID,
-			"action":      action, // "created", "updated", "deleted"
+			"action":      action,
 		},
 		Timestamp: time.Now(),
 	}
@@ -336,7 +325,6 @@ func BroadcastDrinkUpdate(drinkID int, hardwareID int, action string) {
 	}
 }
 
-// Broadcast Recipe Update
 func BroadcastRecipeUpdate(recipeID int, hardwareID int, action string) {
 	message := WebSocketMessage{
 		Type: MessageTypeRecipeUpdate,
@@ -356,7 +344,6 @@ func BroadcastRecipeUpdate(recipeID int, hardwareID int, action string) {
 	}
 }
 
-// Broadcast Slot Update
 func BroadcastSlotUpdate(slotNumber int, hardwareID int, drinkID *int) {
 	message := WebSocketMessage{
 		Type: MessageTypeSlotUpdate,
@@ -376,14 +363,13 @@ func BroadcastSlotUpdate(slotNumber int, hardwareID int, drinkID *int) {
 	}
 }
 
-// Broadcast Favorite Update
 func BroadcastFavoriteUpdate(userID int, recipeID int, action string) {
 	message := WebSocketMessage{
 		Type: MessageTypeFavoriteUpdate,
 		Data: map[string]interface{}{
 			"user_id":   userID,
 			"recipe_id": recipeID,
-			"action":    action, // "added", "removed"
+			"action":    action,
 		},
 		Timestamp: time.Now(),
 	}
@@ -396,38 +382,6 @@ func BroadcastFavoriteUpdate(userID int, recipeID int, action string) {
 	}
 }
 
-// Broadcast an spezifischen User
-func BroadcastToUser(userID int, messageType string, data interface{}) {
-	frontendClientManager.mutex.RLock()
-	client, exists := frontendClientManager.clients[userID]
-	frontendClientManager.mutex.RUnlock()
-
-	if !exists {
-		log.Printf("❌ [WS] User %d nicht verbunden für Broadcast %s", userID, messageType)
-		return
-	}
-
-	message := WebSocketMessage{
-		Type:      messageType,
-		Data:      data,
-		Timestamp: time.Now(),
-	}
-
-	if messageBytes, err := json.Marshal(message); err == nil {
-		select {
-		case client.Send <- messageBytes:
-			log.Printf("📤 [WS] Nachricht an User %d gesendet: %s", userID, messageType)
-		default:
-			// Client Channel ist voll, Client entfernen
-			log.Printf("⚠️ [WS] Client Channel voll für User %d, entferne Client", userID)
-			frontendClientManager.unregister <- client
-		}
-	} else {
-		log.Printf("❌ [WS] Fehler beim Broadcast an User %d: %v", userID, err)
-	}
-}
-
-// Hilfsfunktion um zu prüfen ob ein User online ist
 func IsUserOnline(userID int) bool {
 	frontendClientManager.mutex.RLock()
 	defer frontendClientManager.mutex.RUnlock()
@@ -435,14 +389,12 @@ func IsUserOnline(userID int) bool {
 	return exists
 }
 
-// Anzahl der verbundenen Clients
 func GetConnectedClientsCount() int {
 	frontendClientManager.mutex.RLock()
 	defer frontendClientManager.mutex.RUnlock()
 	return len(frontendClientManager.clients)
 }
 
-// Detaillierte Client-Informationen für Debugging
 func GetConnectedClientsInfo() []map[string]interface{} {
 	frontendClientManager.mutex.RLock()
 	defer frontendClientManager.mutex.RUnlock()
@@ -450,22 +402,19 @@ func GetConnectedClientsInfo() []map[string]interface{} {
 	var clients []map[string]interface{}
 	for userID, client := range frontendClientManager.clients {
 		clients = append(clients, map[string]interface{}{
-			"user_id":       userID,
-			"last_activity": client.LastActivity.Format(time.RFC3339),
-			"connected_since": client.LastActivity.Format(time.RFC3339),
+			"user_id":         userID,
+			"last_activity":   client.LastActivity.Format(time.RFC3339),
 			"send_queue_size": len(client.Send),
 		})
 	}
 	return clients
 }
 
-// WebSocket Status Handler (für Debugging)
 func GetWebSocketStatus(w http.ResponseWriter, r *http.Request) {
 	status := map[string]interface{}{
 		"connected_clients": GetConnectedClientsCount(),
 		"clients_info":      GetConnectedClientsInfo(),
 		"timestamp":         time.Now().Format(time.RFC3339),
-		"server_uptime":     time.Since(time.Now().Add(-time.Hour)).String(), // Placeholder
 		"websocket_config": map[string]interface{}{
 			"read_buffer_size":  1024,
 			"write_buffer_size": 1024,

@@ -41,6 +41,9 @@ func CreateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	newDrink.HardwareID = hardwareIDInt
 
+	// *** NEU: WebSocket Broadcast für Drink-Update ***
+	BroadcastDrinkUpdate(newDrink.DrinkID, hardwareIDInt, "created")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
 	json.NewEncoder(w).Encode(newDrink)
@@ -138,6 +141,11 @@ func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// *** NEU: WebSocket Broadcast für Drink-Update ***
+	drinkIDInt, _ := strconv.Atoi(drinkID)
+	hardwareIDInt, _ := strconv.Atoi(hardwareID)
+	BroadcastDrinkUpdate(drinkIDInt, hardwareIDInt, "updated")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent) // 204 No Content
 }
@@ -162,6 +170,11 @@ func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Drink not found", http.StatusNotFound)
 		return
 	}
+
+	// *** NEU: WebSocket Broadcast für Drink-Update ***
+	drinkIDInt, _ := strconv.Atoi(drinkID)
+	hardwareIDInt, _ := strconv.Atoi(hardwareID)
+	BroadcastDrinkUpdate(drinkIDInt, hardwareIDInt, "deleted")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

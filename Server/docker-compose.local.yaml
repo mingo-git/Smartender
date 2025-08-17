@@ -1,0 +1,89 @@
+version: '3.8'
+
+# =============================================================================
+# Smartender Backend V2 - WebSocket Upgrade
+# =============================================================================
+
+services:
+  # =============================================================================
+  # SMARTENDER BACKEND V2 (mit WebSocket Support)
+  # =============================================================================
+  smartender-app:
+    build: .
+    container_name: smartender-backend-v2
+    ports:
+      - "17051:17051"  # Smartender Port
+    env_file:
+      - .env
+    environment:
+      - APP_PORT=17051
+      - DB_HOST=smartender-db-v2
+      - DB_PORT=5432
+      - POSTGRES_USER=${APP_DB_USERNAME}
+      - POSTGRES_PASSWORD=${APP_DB_PASSWORD}
+      - POSTGRES_DB=${APP_DB_NAME}
+    depends_on:
+      smartender-db-v2:
+        condition: service_healthy
+    volumes:
+      - ./:/app  # Für Development Hot Reload
+    networks:
+      - smartender-v2-network
+    restart: unless-stopped
+    labels:
+      - "smartender.service=backend-websocket"
+      - "smartender.version=2.0"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:17051/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =============================================================================
+  # POSTGRESQL DATENBANK V2
+  # =============================================================================
+  smartender-db-v2:
+    image: postgres:13-alpine
+    container_name: smartender-postgres-v2
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${APP_DB_USERNAME}
+      - POSTGRES_PASSWORD=${APP_DB_PASSWORD}
+      - POSTGRES_DB=${APP_DB_NAME}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    ports:
+      - "5433:5432"  # External Port 5433 (da 5432 möglicherweise belegt)
+    volumes:
+      - smartender_v2_postgres_data:/var/lib/postgresql/data
+    networks:
+      - smartender-v2-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${APP_DB_USERNAME} -d ${APP_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    labels:
+      - "smartender.service=database-v2"
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  smartender-v2-network:
+    driver: bridge
+    name: smartender-v2-net
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  smartender_v2_postgres_data:
+    name: smartender_v2_db_data
+    driver: local

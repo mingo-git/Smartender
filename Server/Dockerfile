@@ -1,6 +1,6 @@
 # =============================================================================
-# Smartender Backend V2 - WebSocket Upgrade
-# Existing Infrastructure (Port 17051)
+# Smartender Backend V2 - Multi-Stage Docker Build
+# WebSocket-enabled Real-time Backend - Port 17051
 # =============================================================================
 
 # =============================================================================
@@ -17,8 +17,7 @@ LABEL description="Smartender Backend with WebSocket support - Port 17051"
 RUN apk add --no-cache \
     git \
     ca-certificates \
-    tzdata \
-    openssh-client
+    tzdata
 
 # Set working directory
 WORKDIR /app
@@ -38,16 +37,12 @@ ENV CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
 
-# Build the application with optimization and version info
+# Build the application with optimization
 RUN go build \
-    -ldflags="-w -s -X main.version=2.0-websocket -X main.buildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ) -X main.port=17051" \
+    -ldflags="-w -s -X main.version=2.0-websocket -X main.buildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     -a -installsuffix cgo \
     -o smartender-backend \
     main.go
-
-# Verify binary
-RUN ls -la smartender-backend && \
-    ./smartender-backend --version 2>/dev/null || echo "Binary built successfully"
 
 # =============================================================================
 # Stage 2: Runtime
@@ -60,7 +55,6 @@ RUN apk add --no-cache \
     tzdata \
     bash \
     curl \
-    postgresql-client \
     && rm -rf /var/cache/apk/*
 
 # Create non-root user for security
@@ -75,9 +69,6 @@ COPY --from=builder /app/smartender-backend /app/smartender-backend
 
 # Make binary executable
 RUN chmod +x /app/smartender-backend
-
-# Copy configuration files
-COPY --from=builder /app/.env.example /app/.env.example
 
 # Create directories for logs and data
 RUN mkdir -p /app/logs /app/data && \
@@ -99,24 +90,8 @@ ENV APP_PORT=17051 \
     TZ=Europe/Berlin \
     LOG_LEVEL=info
 
-# Create startup script for better logging
-USER root
-RUN echo '#!/bin/bash' > /app/start.sh && \
-    echo 'echo "🚀 Starting Smartender Backend V2 on port ${APP_PORT:-17051}"' >> /app/start.sh && \
-    echo 'echo "🐳 Container: $(hostname)"' >> /app/start.sh && \
-    echo 'echo "📅 Started at: $(date)"' >> /app/start.sh && \
-    echo 'echo "🔧 Environment: ${ENVIROMENT:-dev}"' >> /app/start.sh && \
-    echo 'echo "📡 WebSocket endpoint: ws://localhost:${APP_PORT:-17051}/api/ws"' >> /app/start.sh && \
-    echo 'echo "🏥 Health check: http://localhost:${APP_PORT:-17051}/status"' >> /app/start.sh && \
-    echo 'echo "===========================================" ' >> /app/start.sh && \
-    echo 'exec /app/smartender-backend "$@"' >> /app/start.sh && \
-    chmod +x /app/start.sh && \
-    chown smartender:smartender /app/start.sh
-
-USER smartender
-
 # Start command
-CMD ["/app/start.sh"]
+CMD ["/app/smartender-backend"]
 
 # =============================================================================
 # Build Arguments (for CI/CD)
@@ -124,13 +99,12 @@ CMD ["/app/start.sh"]
 ARG BUILD_VERSION="2.0-websocket"
 ARG BUILD_DATE
 ARG VCS_REF
-ARG SMARTENDER_PORT="17051"
 
 # Labels for container management
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.version=$BUILD_VERSION \
       org.label-schema.schema-version="1.0" \
-      smartender.port=$SMARTENDER_PORT \
+      smartender.port=17051 \
       smartender.websocket="enabled" \
       smartender.upgrade="from-v1"

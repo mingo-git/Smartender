@@ -13,6 +13,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// In deiner bestehenden internal/handlers/recipes.go Datei:
+// Füge die WebSocket-Broadcasts zu den entsprechenden Funktionen hinzu:
+
 func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Default().Printf("📬 [POST] /recipes at %s", time.Now())
 
@@ -39,6 +42,9 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	newRecipe.HardwareID = hardwareIDInt
+
+	// *** NEU: WebSocket Broadcast hinzufügen ***
+	BroadcastRecipeUpdate(newRecipe.ID, hardwareIDInt, "created")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
@@ -279,6 +285,11 @@ func UpdateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// *** NEU: WebSocket Broadcast hinzufügen ***
+	recipeIDInt, _ := strconv.Atoi(recipeID)
+	hardwareIDInt, _ := strconv.Atoi(hardwareID)
+	BroadcastRecipeUpdate(recipeIDInt, hardwareIDInt, "updated")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent) // 204 No Content
 }
@@ -303,6 +314,11 @@ func DeleteRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Recipe not found", http.StatusNotFound)
 		return
 	}
+
+	// *** NEU: WebSocket Broadcast hinzufügen ***
+	recipeIDInt, _ := strconv.Atoi(id)
+	hardwareIDInt, _ := strconv.Atoi(hardwareID)
+	BroadcastRecipeUpdate(recipeIDInt, hardwareIDInt, "deleted")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

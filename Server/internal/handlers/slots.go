@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -142,6 +143,10 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// *** NEU: WebSocket Broadcast Variablen vorbereiten ***
+	slotNumberInt, _ := strconv.Atoi(slotNumber)
+	hardwareIDInt, _ := strconv.Atoi(hardware_id)
+
 	if len(bodyBytes) == 0 {
 		// If body is empty, clear the slot
 		_, err := db.Exec(query.ClearSlotForHardwareAndID(), hardware_id, slotNumber)
@@ -150,6 +155,10 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 			http.Error(w, "Could not clear slot", http.StatusInternalServerError)
 			return
 		}
+
+		// *** NEU: WebSocket Broadcast für Slot Clear ***
+		BroadcastSlotUpdate(slotNumberInt, hardwareIDInt, nil)
+
 	} else {
 		// If body is not empty, decode it and update the slot
 		var slot models.SlotUpdate
@@ -165,6 +174,9 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 			http.Error(w, "Could not set slot", http.StatusInternalServerError)
 			return
 		}
+
+		// *** NEU: WebSocket Broadcast für Slot Update ***
+		BroadcastSlotUpdate(slotNumberInt, hardwareIDInt, slot.DrinkID)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
