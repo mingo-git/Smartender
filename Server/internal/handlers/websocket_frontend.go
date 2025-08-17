@@ -3,12 +3,10 @@ package handlers
 
 import (
 	auth "app/internal/auth"
-	"context"
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 
