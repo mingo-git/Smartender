@@ -3,6 +3,8 @@ package handlers
 
 import (
 	auth "app/internal/auth"
+	models "app/internal/models"
+	query "app/internal/query"
 	"database/sql"
 	"encoding/json"
 	"log"
@@ -90,7 +92,7 @@ func (manager *ClientManager) run() {
 				Data: map[string]interface{}{
 					"message":    "Willkommen bei Smartender V2",
 					"user_id":    client.UserID,
-					"features":   []string{"real_time_updates", "ping_pong", "auto_reconnect"},
+					"features":   []string{"real_time_updates", "ping_pong", "auto_reconnect", "full_data_sync"},
 					"version":    "2.0",
 					"server_time": time.Now().Format(time.RFC3339),
 				},
@@ -302,16 +304,49 @@ func (c *FrontendClient) writePump() {
 	}
 }
 
-// Broadcast-Funktionen
+// ==============================================================================================
+// ERWEITERTE BROADCAST-FUNKTIONEN MIT KOMPLETTEN DATEN
+// ==============================================================================================
 
-func BroadcastDrinkUpdate(drinkID int, hardwareID int, action string) {
+// BroadcastDrinkUpdate sendet komplette Drink-Daten via WebSocket
+func BroadcastDrinkUpdate(db *sql.DB, drinkID int, hardwareID int, action string) {
+	var drink *models.Drink = nil
+	
+	// Bei DELETE-Aktionen senden wir nur die IDs
+	if action != "deleted" {
+		// Hole komplette Drink-Daten aus der Datenbank
+		var drinkData models.Drink
+		err := db.QueryRow(query.GetDrinkByID(), drinkID, hardwareID).Scan(
+			&drinkData.DrinkID, 
+			&drinkData.HardwareID, 
+			&drinkData.Name, 
+			&drinkData.Alcoholic,
+		)
+		if err != nil {
+			log.Printf("❌ [WS] Fehler beim Laden der Drink-Daten (ID: %d): %v", drinkID, err)
+			// Fallback: sende nur IDs
+		} else {
+			drink = &drinkData
+			log.Printf("✅ [WS] Drink-Daten geladen für ID %d: %s", drinkID, drink.Name)
+		}
+	}
+	
+	// Erstelle WebSocket Message
+	messageData := map[string]interface{}{
+		"action": action,
+	}
+	
+	if drink != nil {
+		messageData["drink"] = drink
+	} else {
+		// Fallback für DELETE oder wenn Datenbankabfrage fehlschlägt
+		messageData["drink_id"] = drinkID
+		messageData["hardware_id"] = hardwareID
+	}
+	
 	message := WebSocketMessage{
 		Type: MessageTypeDrinkUpdate,
-		Data: map[string]interface{}{
-			"drink_id":    drinkID,
-			"hardware_id": hardwareID,
-			"action":      action,
-		},
+		Data: messageData,
 		Timestamp: time.Now(),
 	}
 
@@ -323,14 +358,85 @@ func BroadcastDrinkUpdate(drinkID int, hardwareID int, action string) {
 	}
 }
 
-func BroadcastRecipeUpdate(recipeID int, hardwareID int, action string) {
+// BroadcastRecipeUpdate sendet komplette Recipe-Daten via WebSocket
+func BroadcastRecipeUpdate(db *sql.DB, recipeID int, hardwareID int, action string) {
+	var recipe *models.Recipe_Response = nil
+	
+	// Bei DELETE-Aktionen senden wir nur die IDs
+	if action != "deleted" {
+		// Hole komplette Recipe-Daten aus der Datenbank
+		var recipeData models.Recipe
+		var drinkIDsJSON []byte
+		err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(
+			&recipeData.ID, 
+			&recipeData.HardwareID, 
+			&recipeData.Name, 
+			&recipeData.Picture, 
+			&drinkIDsJSON,
+		)
+		if err != nil {
+			log.Printf("❌ [WS] Fehler beim Laden der Recipe-Daten (ID: %d): %v", recipeID, err)
+		} else {
+			// Hole Ingredients für das Recipe
+			var ingredientsAll []models.IngredientResponse
+			rows, err := db.Query(query.GetIngredientsForRecipe(), recipeData.ID)
+			if err != nil {
+				log.Printf("❌ [WS] Fehler beim Laden der Ingredients für Recipe %d: %v", recipeID, err)
+			} else {
+				defer rows.Close()
+				
+				for rows.Next() {
+					var ingredient models.Ingredient
+					if err := rows.Scan(&ingredient.RecipeID, &ingredient.DrinkID, &ingredient.Quantity_ml); err != nil {
+						log.Printf("❌ [WS] Fehler beim Scannen des Ingredients: %v", err)
+						continue
+					}
+
+					// Hole Drink-Details für das Ingredient
+					var drink models.Drink
+					if err := db.QueryRow(query.GetDrinkByID(), ingredient.DrinkID, recipeData.HardwareID).Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic); err != nil {
+						log.Printf("❌ [WS] Fehler beim Laden der Drink-Details für Ingredient: %v", err)
+						continue
+					}
+
+					ingredientsAll = append(ingredientsAll, models.IngredientResponse{
+						Quantity_ml: ingredient.Quantity_ml,
+						Drink:       drink,
+					})
+				}
+				
+				if len(ingredientsAll) == 0 {
+					ingredientsAll = []models.IngredientResponse{}
+				}
+			}
+			
+			recipe = &models.Recipe_Response{
+				ID:          recipeData.ID,
+				HardwareID:  recipeData.HardwareID,
+				Name:        recipeData.Name,
+				Picture:     recipeData.Picture,
+				Ingredients: ingredientsAll,
+			}
+			log.Printf("✅ [WS] Recipe-Daten geladen für ID %d: %s", recipeID, recipe.Name)
+		}
+	}
+	
+	// Erstelle WebSocket Message
+	messageData := map[string]interface{}{
+		"action": action,
+	}
+	
+	if recipe != nil {
+		messageData["recipe"] = recipe
+	} else {
+		// Fallback für DELETE oder wenn Datenbankabfrage fehlschlägt
+		messageData["recipe_id"] = recipeID
+		messageData["hardware_id"] = hardwareID
+	}
+	
 	message := WebSocketMessage{
 		Type: MessageTypeRecipeUpdate,
-		Data: map[string]interface{}{
-			"recipe_id":   recipeID,
-			"hardware_id": hardwareID,
-			"action":      action,
-		},
+		Data: messageData,
 		Timestamp: time.Now(),
 	}
 
@@ -342,33 +448,106 @@ func BroadcastRecipeUpdate(recipeID int, hardwareID int, action string) {
 	}
 }
 
-func BroadcastSlotUpdate(slotNumber int, hardwareID int, drinkID *int) {
+// BroadcastSlotUpdate sendet komplette Slot-Daten via WebSocket
+func BroadcastSlotUpdate(db *sql.DB, slotNumber int, hardwareID int, drinkID *int) {
+	var slot models.Slot
+	slot.HardwareID = hardwareID
+	slot.SlotNumber = slotNumber
+	
+	// Wenn drinkID gesetzt ist, lade die kompletten Drink-Daten
+	if drinkID != nil && *drinkID > 0 {
+		var drink models.Drink
+		err := db.QueryRow(query.GetDrinkByID(), *drinkID, hardwareID).Scan(
+			&drink.DrinkID, 
+			&drink.HardwareID, 
+			&drink.Name, 
+			&drink.Alcoholic,
+		)
+		if err != nil {
+			log.Printf("❌ [WS] Fehler beim Laden der Drink-Daten für Slot %d: %v", slotNumber, err)
+			slot.Drink = nil
+		} else {
+			slot.Drink = &drink
+			log.Printf("✅ [WS] Slot-Daten geladen: Slot %d hat Drink %s", slotNumber, drink.Name)
+		}
+	} else {
+		// Slot ist leer
+		slot.Drink = nil
+		log.Printf("✅ [WS] Slot %d wurde geleert", slotNumber)
+	}
+	
+	// Bestimme die Action basierend auf dem drinkID-Wert
+	action := "cleared"
+	if drinkID != nil && *drinkID > 0 {
+		action = "updated"
+	}
+	
 	message := WebSocketMessage{
 		Type: MessageTypeSlotUpdate,
 		Data: map[string]interface{}{
-			"slot_number": slotNumber,
-			"hardware_id": hardwareID,
-			"drink_id":    drinkID,
+			"action": action,
+			"slot":   slot,
 		},
 		Timestamp: time.Now(),
 	}
 
 	if messageBytes, err := json.Marshal(message); err == nil {
-		log.Printf("📢 [WS] Broadcasting Slot Update: Slot %d, Hardware %d, Drink %v", slotNumber, hardwareID, drinkID)
+		log.Printf("📢 [WS] Broadcasting Slot Update: %s (Slot: %d, Hardware: %d)", action, slotNumber, hardwareID)
 		frontendClientManager.broadcast <- messageBytes
 	} else {
 		log.Printf("❌ [WS] Fehler beim Broadcast Slot Update: %v", err)
 	}
 }
 
-func BroadcastFavoriteUpdate(userID int, recipeID int, action string) {
+// BroadcastFavoriteUpdate sendet Favorite-Updates via WebSocket
+func BroadcastFavoriteUpdate(db *sql.DB, userID int, recipeID int, action string) {
+	var recipe *models.Recipe_Response = nil
+	
+	// Bei CREATE-Aktionen senden wir die kompletten Recipe-Daten
+	if action == "created" {
+		// Hole Hardware-ID für das Recipe
+		var hardwareID int
+		err := db.QueryRow("SELECT hardware_id FROM recipes WHERE recipe_id = $1", recipeID).Scan(&hardwareID)
+		if err != nil {
+			log.Printf("❌ [WS] Fehler beim Laden der Hardware-ID für Recipe %d: %v", recipeID, err)
+		} else {
+			// Verwende die bestehende Recipe-Loading-Logik
+			var recipeData models.Recipe
+			var drinkIDsJSON []byte
+			err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(
+				&recipeData.ID, 
+				&recipeData.HardwareID, 
+				&recipeData.Name, 
+				&recipeData.Picture, 
+				&drinkIDsJSON,
+			)
+			if err == nil {
+				// Hole Ingredients (vereinfachte Version)
+				ingredientsAll := []models.IngredientResponse{}
+				recipe = &models.Recipe_Response{
+					ID:          recipeData.ID,
+					HardwareID:  recipeData.HardwareID,
+					Name:        recipeData.Name,
+					Picture:     recipeData.Picture,
+					Ingredients: ingredientsAll,
+				}
+			}
+		}
+	}
+	
+	messageData := map[string]interface{}{
+		"action":    action,
+		"user_id":   userID,
+		"recipe_id": recipeID,
+	}
+	
+	if recipe != nil {
+		messageData["recipe"] = recipe
+	}
+	
 	message := WebSocketMessage{
 		Type: MessageTypeFavoriteUpdate,
-		Data: map[string]interface{}{
-			"user_id":   userID,
-			"recipe_id": recipeID,
-			"action":    action,
-		},
+		Data: messageData,
 		Timestamp: time.Now(),
 	}
 
@@ -379,6 +558,77 @@ func BroadcastFavoriteUpdate(userID int, recipeID int, action string) {
 		log.Printf("❌ [WS] Fehler beim Broadcast Favorite Update: %v", err)
 	}
 }
+
+// BroadcastIngredientUpdate sendet Ingredient-Updates via WebSocket
+func BroadcastIngredientUpdate(db *sql.DB, recipeID int, drinkID int, action string) {
+	var ingredient *models.IngredientResponse = nil
+	
+	// Bei CREATE und UPDATE-Aktionen senden wir die kompletten Ingredient-Daten
+	if action != "deleted" {
+		// Hole Hardware-ID für das Recipe
+		var hardwareID int
+		err := db.QueryRow("SELECT hardware_id FROM recipes WHERE recipe_id = $1", recipeID).Scan(&hardwareID)
+		if err != nil {
+			log.Printf("❌ [WS] Fehler beim Laden der Hardware-ID für Recipe %d: %v", recipeID, err)
+		} else {
+			// Hole Ingredient-Daten
+			var ingredientData models.Ingredient
+			err := db.QueryRow("SELECT recipe_id, drink_id, quantity_ml FROM recipe_ingredients WHERE recipe_id = $1 AND drink_id = $2", recipeID, drinkID).Scan(
+				&ingredientData.RecipeID, 
+				&ingredientData.DrinkID, 
+				&ingredientData.Quantity_ml,
+			)
+			if err != nil {
+				log.Printf("❌ [WS] Fehler beim Laden der Ingredient-Daten: %v", err)
+			} else {
+				// Hole Drink-Details
+				var drink models.Drink
+				err := db.QueryRow(query.GetDrinkByID(), drinkID, hardwareID).Scan(
+					&drink.DrinkID, 
+					&drink.HardwareID, 
+					&drink.Name, 
+					&drink.Alcoholic,
+				)
+				if err != nil {
+					log.Printf("❌ [WS] Fehler beim Laden der Drink-Details für Ingredient: %v", err)
+				} else {
+					ingredient = &models.IngredientResponse{
+						Quantity_ml: ingredientData.Quantity_ml,
+						Drink:       drink,
+					}
+					log.Printf("✅ [WS] Ingredient-Daten geladen: Recipe %d, Drink %s", recipeID, drink.Name)
+				}
+			}
+		}
+	}
+	
+	messageData := map[string]interface{}{
+		"action":    action,
+		"recipe_id": recipeID,
+		"drink_id":  drinkID,
+	}
+	
+	if ingredient != nil {
+		messageData["ingredient"] = ingredient
+	}
+	
+	message := WebSocketMessage{
+		Type: MessageTypeIngredientUpdate,
+		Data: messageData,
+		Timestamp: time.Now(),
+	}
+
+	if messageBytes, err := json.Marshal(message); err == nil {
+		log.Printf("📢 [WS] Broadcasting Ingredient Update: %s (Recipe: %d, Drink: %d)", action, recipeID, drinkID)
+		frontendClientManager.broadcast <- messageBytes
+	} else {
+		log.Printf("❌ [WS] Fehler beim Broadcast Ingredient Update: %v", err)
+	}
+}
+
+// ==============================================================================================
+// STATUS- UND UTILITY-FUNKTIONEN (unverändert)
+// ==============================================================================================
 
 func IsUserOnline(userID int) bool {
 	frontendClientManager.mutex.RLock()
@@ -418,6 +668,13 @@ func GetWebSocketStatus(w http.ResponseWriter, r *http.Request) {
 			"write_buffer_size": 1024,
 			"ping_interval":     "54s",
 			"read_timeout":      "60s",
+		},
+		"features": []string{
+			"real_time_updates",
+			"full_data_sync",
+			"ping_pong",
+			"auto_reconnect",
+			"complete_entity_data",
 		},
 	}
 

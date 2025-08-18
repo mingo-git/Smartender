@@ -33,6 +33,8 @@ func InitSlotsForHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
+	
+	log.Default().Printf("✅ [SLOT] %d Slots für Hardware 1 initialisiert", slotAmount)
 }
 
 // GetAllSlotsForSelectedHardware selects all slots from the slots table
@@ -52,7 +54,7 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 	defer rows.Close()
 
 	if !rows.Next() {
-		log.Default().Printf("Hardware does not belong to user")
+		log.Default().Printf("Hardware does not belong to user: Hardware %s, User %v", hardware_id, r.Context().Value("user_id"))
 		http.Error(w, "Hardware does not belong to user", http.StatusUnauthorized)
 		return
 	}
@@ -111,6 +113,8 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(slotResponseList)
+	
+	log.Default().Printf("✅ [SLOT] %d Slots geladen für Hardware %s", len(slotResponseList), hardware_id)
 }
 
 func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -130,7 +134,7 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 	defer rows.Close()
 
 	if !rows.Next() {
-		log.Default().Printf("Hardware does not belong to user")
+		log.Default().Printf("Hardware does not belong to user: Hardware %s, User %v", hardware_id, r.Context().Value("user_id"))
 		http.Error(w, "Hardware does not belong to user", http.StatusUnauthorized)
 		return
 	}
@@ -143,9 +147,9 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// *** NEU: WebSocket Broadcast Variablen vorbereiten ***
-	slotNumberInt, _ := strconv.Atoi(slotNumber)
-	hardwareIDInt, _ := strconv.Atoi(hardware_id)
+	// *** ERWEITERT: WebSocket Broadcast Variablen vorbereiten ***
+	slotNumberInt, slotConvErr := strconv.Atoi(slotNumber)
+	hardwareIDInt, hwConvErr := strconv.Atoi(hardware_id)
 
 	if len(bodyBytes) == 0 {
 		// If body is empty, clear the slot
@@ -156,8 +160,14 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		// *** NEU: WebSocket Broadcast für Slot Clear ***
-		BroadcastSlotUpdate(slotNumberInt, hardwareIDInt, nil)
+		// *** ERWEITERT: WebSocket Broadcast für Slot Clear mit kompletten Daten ***
+		if slotConvErr == nil && hwConvErr == nil {
+			BroadcastSlotUpdate(db, slotNumberInt, hardwareIDInt, nil)
+		} else {
+			log.Default().Printf("Warning: Could not broadcast slot clear due to ID conversion error")
+		}
+
+		log.Default().Printf("✅ [SLOT] Slot geleert: Slot %s, Hardware %s", slotNumber, hardware_id)
 
 	} else {
 		// If body is not empty, decode it and update the slot
@@ -168,6 +178,7 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 			http.Error(w, "Could not decode slot", http.StatusBadRequest)
 			return
 		}
+		
 		_, err = db.Exec(query.SetSlotForHardwareAndID(), slot.DrinkID, hardware_id, slotNumber)
 		if err != nil {
 			log.Default().Printf("Error setting slot: %v", err)
@@ -175,8 +186,19 @@ func SetSlotForHardwareAndID(db *sql.DB, w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		// *** NEU: WebSocket Broadcast für Slot Update ***
-		BroadcastSlotUpdate(slotNumberInt, hardwareIDInt, slot.DrinkID)
+		// *** ERWEITERT: WebSocket Broadcast für Slot Update mit kompletten Daten ***
+		if slotConvErr == nil && hwConvErr == nil {
+			BroadcastSlotUpdate(db, slotNumberInt, hardwareIDInt, slot.DrinkID)
+		} else {
+			log.Default().Printf("Warning: Could not broadcast slot update due to ID conversion error")
+		}
+
+		// Log mit Drink-Details
+		if slot.DrinkID != nil {
+			log.Default().Printf("✅ [SLOT] Slot belegt: Slot %s, Hardware %s, Drink ID %d", slotNumber, hardware_id, *slot.DrinkID)
+		} else {
+			log.Default().Printf("✅ [SLOT] Slot aktualisiert: Slot %s, Hardware %s, Drink ID nil", slotNumber, hardware_id)
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

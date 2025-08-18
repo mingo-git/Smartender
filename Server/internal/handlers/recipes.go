@@ -36,6 +36,7 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not create recipe", http.StatusInternalServerError)
 		return
 	}
+	
 	hardwareIDInt, err := strconv.Atoi(hardwareID)
 	if err != nil {
 		http.Error(w, "Invalid hardware ID", http.StatusBadRequest)
@@ -43,12 +44,14 @@ func CreateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	newRecipe.HardwareID = hardwareIDInt
 
-	// *** NEU: WebSocket Broadcast hinzufügen ***
-	BroadcastRecipeUpdate(newRecipe.ID, hardwareIDInt, "created")
+	// *** ERWEITERT: WebSocket Broadcast mit kompletten Daten ***
+	BroadcastRecipeUpdate(db, newRecipe.ID, hardwareIDInt, "created")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
 	json.NewEncoder(w).Encode(newRecipe)
+	
+	log.Default().Printf("✅ [RECIPE] Neues Rezept erstellt: ID %d, Name '%s', Hardware %d", newRecipe.ID, newRecipe.Name, hardwareIDInt)
 }
 
 func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -62,6 +65,10 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	mappedRecipes["unavailable"] = []models.Recipe_Response{}
 
 	drinkIDsInSlot := getSlots(db, w, hardwareID)
+	if drinkIDsInSlot == nil {
+		// Error bereits in getSlots behandelt
+		return
+	}
 
 	// Get all recipe ids for the hardware
 	rows, err := db.Query(query.GetAllRecipesForHardware(), hardwareID)
@@ -158,12 +165,14 @@ func GetAllRecipes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		} else {
 			mappedRecipes["unavailable"] = append(mappedRecipes["unavailable"], recipeResponse)
 		}
-
 	}
 
 	// Send JSON response
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(mappedRecipes)
+	
+	log.Default().Printf("✅ [RECIPE] Rezepte geladen für Hardware %s: %d verfügbar, %d nicht verfügbar", 
+		hardwareID, len(mappedRecipes["available"]), len(mappedRecipes["unavailable"]))
 }
 
 func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -175,6 +184,10 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	hardwareID := vars["hardware_id"]
 
 	drinkIDsInSlot := getSlots(db, w, hardwareID)
+	if drinkIDsInSlot == nil {
+		// Error bereits in getSlots behandelt
+		return
+	}
 
 	mappedRecipes := map[string][]models.Recipe_Response{}
 	mappedRecipes["available"] = []models.Recipe_Response{}
@@ -185,6 +198,7 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	var drinkIDsJSON []byte
 	if err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(&recipe.ID, &recipe.HardwareID, &recipe.Name, &recipe.Picture, &drinkIDsJSON); err != nil {
 		if err == sql.ErrNoRows {
+			log.Default().Printf("Recipe not found: ID %s, Hardware %s", recipeID, hardwareID)
 			http.Error(w, "Recipe not found", http.StatusNotFound)
 			return
 		}
@@ -255,6 +269,8 @@ func GetRecipeByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// JSON-Antwort senden
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(mappedRecipes)
+	
+	log.Default().Printf("✅ [RECIPE] Einzelnes Rezept geladen: ID %s, Name '%s'", recipeID, recipe.Name)
 }
 
 func UpdateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -281,17 +297,30 @@ func UpdateRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
+		log.Default().Printf("Recipe not found for update: ID %s, Hardware %s", recipeID, hardwareID)
 		http.Error(w, "Recipe not found", http.StatusNotFound)
 		return
 	}
 
-	// *** NEU: WebSocket Broadcast hinzufügen ***
-	recipeIDInt, _ := strconv.Atoi(recipeID)
-	hardwareIDInt, _ := strconv.Atoi(hardwareID)
-	BroadcastRecipeUpdate(recipeIDInt, hardwareIDInt, "updated")
+	// *** ERWEITERT: WebSocket Broadcast mit kompletten Daten ***
+	recipeIDInt, err := strconv.Atoi(recipeID)
+	if err != nil {
+		log.Default().Printf("Error converting recipe ID to int: %v", err)
+		// Fallback: sende Update ohne WebSocket
+	} else {
+		hardwareIDInt, err := strconv.Atoi(hardwareID)
+		if err != nil {
+			log.Default().Printf("Error converting hardware ID to int: %v", err)
+			// Fallback: sende Update ohne WebSocket
+		} else {
+			BroadcastRecipeUpdate(db, recipeIDInt, hardwareIDInt, "updated")
+		}
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent) // 204 No Content
+	
+	log.Default().Printf("✅ [RECIPE] Rezept aktualisiert: ID %s, Name '%s', Hardware %s", recipeID, updatedRecipe.Name, hardwareID)
 }
 
 func DeleteRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -300,6 +329,10 @@ func DeleteRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["recipe_id"]
 	hardwareID := vars["hardware_id"]
+
+	// Konvertiere IDs für WebSocket-Broadcast (vor dem Löschen)
+	recipeIDInt, recipeIDErr := strconv.Atoi(id)
+	hardwareIDInt, hardwareIDErr := strconv.Atoi(hardwareID)
 
 	// Delete recipe from the database
 	result, err := db.Exec(query.DeleteRecipeForHardware(), id, hardwareID)
@@ -311,20 +344,25 @@ func DeleteRecipe(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
+		log.Default().Printf("Recipe not found for deletion: ID %s, Hardware %s", id, hardwareID)
 		http.Error(w, "Recipe not found", http.StatusNotFound)
 		return
 	}
 
-	// *** NEU: WebSocket Broadcast hinzufügen ***
-	recipeIDInt, _ := strconv.Atoi(id)
-	hardwareIDInt, _ := strconv.Atoi(hardwareID)
-	BroadcastRecipeUpdate(recipeIDInt, hardwareIDInt, "deleted")
+	// *** ERWEITERT: WebSocket Broadcast für gelöschtes Rezept ***
+	if recipeIDErr == nil && hardwareIDErr == nil {
+		BroadcastRecipeUpdate(db, recipeIDInt, hardwareIDInt, "deleted")
+	} else {
+		log.Default().Printf("Warning: Could not broadcast recipe deletion due to ID conversion error")
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Successfully deleted recipe",
 	})
+	
+	log.Default().Printf("✅ [RECIPE] Rezept gelöscht: ID %s, Hardware %s", id, hardwareID)
 }
 
 // Function to check if all drink_ids from the first array are in the second array
@@ -367,5 +405,7 @@ func getSlots(db *sql.DB, w http.ResponseWriter, hardwareID string) []int {
 			result = append(result, int(slot.DrinkID.Int64))
 		}
 	}
+	
+	log.Default().Printf("✅ [RECIPE] Slots geladen für Hardware %s: %d gefüllte Slots", hardwareID, len(result))
 	return result
 }

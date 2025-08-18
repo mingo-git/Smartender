@@ -41,12 +41,14 @@ func CreateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	newDrink.HardwareID = hardwareIDInt
 
-	// *** NEU: WebSocket Broadcast für Drink-Update ***
-	BroadcastDrinkUpdate(newDrink.DrinkID, hardwareIDInt, "created")
+	// *** ERWEITERT: WebSocket Broadcast mit kompletten Daten ***
+	BroadcastDrinkUpdate(db, newDrink.DrinkID, hardwareIDInt, "created")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
 	json.NewEncoder(w).Encode(newDrink)
+	
+	log.Default().Printf("✅ [DRINK] Neues Getränk erstellt: ID %d, Name '%s', Hardware %d", newDrink.DrinkID, newDrink.Name, hardwareIDInt)
 }
 
 func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -90,6 +92,8 @@ func GetAllDrinks(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	// Encode die Liste der Drinks als JSON und sende sie als Antwort
 	json.NewEncoder(w).Encode(drinks)
+	
+	log.Default().Printf("✅ [DRINK] %d Getränke geladen für Hardware %s", len(drinks), hardwareID)
 }
 
 func GetSingleDrinkForHardwareByDrinkID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -103,6 +107,11 @@ func GetSingleDrinkForHardwareByDrinkID(db *sql.DB, w http.ResponseWriter, r *ht
 
 	err := db.QueryRow(query.GetDrinkByID(), drinkID, hardwareID).Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Default().Printf("Drink not found: ID %s, Hardware %s", drinkID, hardwareID)
+			http.Error(w, "Drink not found", http.StatusNotFound)
+			return
+		}
 		log.Default().Printf("Error getting drink: %v", err)
 		http.Error(w, "Could not get drink", http.StatusInternalServerError)
 		return
@@ -111,6 +120,8 @@ func GetSingleDrinkForHardwareByDrinkID(db *sql.DB, w http.ResponseWriter, r *ht
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(drink)
+	
+	log.Default().Printf("✅ [DRINK] Getränk geladen: ID %d, Name '%s'", drink.DrinkID, drink.Name)
 }
 
 func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -137,17 +148,30 @@ func UpdateDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
+		log.Default().Printf("Drink not found for update: ID %s, Hardware %s", drinkID, hardwareID)
 		http.Error(w, "Drink not found", http.StatusNotFound)
 		return
 	}
 
-	// *** NEU: WebSocket Broadcast für Drink-Update ***
-	drinkIDInt, _ := strconv.Atoi(drinkID)
-	hardwareIDInt, _ := strconv.Atoi(hardwareID)
-	BroadcastDrinkUpdate(drinkIDInt, hardwareIDInt, "updated")
+	// *** ERWEITERT: WebSocket Broadcast mit kompletten Daten ***
+	drinkIDInt, err := strconv.Atoi(drinkID)
+	if err != nil {
+		log.Default().Printf("Error converting drink ID to int: %v", err)
+		// Fallback: sende Update ohne WebSocket
+	} else {
+		hardwareIDInt, err := strconv.Atoi(hardwareID)
+		if err != nil {
+			log.Default().Printf("Error converting hardware ID to int: %v", err)
+			// Fallback: sende Update ohne WebSocket
+		} else {
+			BroadcastDrinkUpdate(db, drinkIDInt, hardwareIDInt, "updated")
+		}
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent) // 204 No Content
+	
+	log.Default().Printf("✅ [DRINK] Getränk aktualisiert: ID %s, Name '%s', Hardware %s", drinkID, updatedDrink.Name, hardwareID)
 }
 
 func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -156,6 +180,10 @@ func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	drinkID := vars["drink_id"]
 	hardwareID := vars["hardware_id"]
+
+	// Konvertiere IDs für WebSocket-Broadcast (vor dem Löschen)
+	drinkIDInt, drinkIDErr := strconv.Atoi(drinkID)
+	hardwareIDInt, hardwareIDErr := strconv.Atoi(hardwareID)
 
 	// Delete drink from the database
 	result, err := db.Exec(query.DeleteDrink(), drinkID, hardwareID)
@@ -167,18 +195,23 @@ func DeleteDrink(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
+		log.Default().Printf("Drink not found for deletion: ID %s, Hardware %s", drinkID, hardwareID)
 		http.Error(w, "Drink not found", http.StatusNotFound)
 		return
 	}
 
-	// *** NEU: WebSocket Broadcast für Drink-Update ***
-	drinkIDInt, _ := strconv.Atoi(drinkID)
-	hardwareIDInt, _ := strconv.Atoi(hardwareID)
-	BroadcastDrinkUpdate(drinkIDInt, hardwareIDInt, "deleted")
+	// *** ERWEITERT: WebSocket Broadcast für gelöschtes Getränk ***
+	if drinkIDErr == nil && hardwareIDErr == nil {
+		BroadcastDrinkUpdate(db, drinkIDInt, hardwareIDInt, "deleted")
+	} else {
+		log.Default().Printf("Warning: Could not broadcast drink deletion due to ID conversion error")
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Successfully deleted drink",
 	})
+	
+	log.Default().Printf("✅ [DRINK] Getränk gelöscht: ID %s, Hardware %s", drinkID, hardwareID)
 }

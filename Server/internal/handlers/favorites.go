@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -31,6 +32,7 @@ func CreateFavorite(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !hasHardware {
+		log.Default().Printf("User does not have required hardware: User %v, Recipe %s", userID, recipeID)
 		http.Error(w, "User does not have the required hardware for this recipe", http.StatusForbidden)
 		return
 	}
@@ -43,8 +45,23 @@ func CreateFavorite(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// *** ERWEITERT: WebSocket Broadcast mit kompletten Daten ***
+	recipeIDInt, recipeConvErr := strconv.Atoi(recipeID)
+	userIDInt, userIDOk := userID.(int)
+	
+	if recipeConvErr == nil && userIDOk {
+		BroadcastFavoriteUpdate(db, userIDInt, recipeIDInt, "created")
+	} else {
+		log.Default().Printf("Warning: Could not broadcast favorite creation due to ID conversion error (Recipe: %s, User: %v)", recipeID, userID)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Successfully created favorite",
+	})
+	
+	log.Default().Printf("✅ [FAVORITE] Favorit erstellt: User %v, Recipe %s", userID, recipeID)
 }
 
 func DeleteFavorite(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -55,16 +72,40 @@ func DeleteFavorite(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	recipeID := vars["recipe_id"]
 
+	// Konvertiere IDs für WebSocket-Broadcast (vor dem Löschen)
+	recipeIDInt, recipeConvErr := strconv.Atoi(recipeID)
+	userIDInt, userIDOk := userID.(int)
+
 	// Delete favorite from the database
-	_, err := db.Exec(query.DeleteFavorite(), userID, recipeID)
+	result, err := db.Exec(query.DeleteFavorite(), userID, recipeID)
 	if err != nil {
 		log.Default().Printf("Error deleting favorite: %v", err)
 		http.Error(w, "Could not delete favorite", http.StatusInternalServerError)
 		return
 	}
 
+	// Check if any rows were affected (if favorite existed)
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		log.Default().Printf("Favorite not found for deletion: User %v, Recipe %s", userID, recipeID)
+		http.Error(w, "Favorite not found", http.StatusNotFound)
+		return
+	}
+
+	// *** ERWEITERT: WebSocket Broadcast für gelöschten Favoriten ***
+	if recipeConvErr == nil && userIDOk {
+		BroadcastFavoriteUpdate(db, userIDInt, recipeIDInt, "deleted")
+	} else {
+		log.Default().Printf("Warning: Could not broadcast favorite deletion due to ID conversion error (Recipe: %s, User: %v)", recipeID, userID)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK) // 200 OK
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Successfully deleted favorite",
+	})
+	
+	log.Default().Printf("✅ [FAVORITE] Favorit gelöscht: User %v, Recipe %s", userID, recipeID)
 }
 
 func GetAllFavoritesForUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -102,7 +143,14 @@ func GetAllFavoritesForUser(db *sql.DB, w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	json.NewEncoder(w).Encode(favorites)
+	// Ensure we return an empty array instead of null if no favorites found
+	if favorites == nil {
+		favorites = []int{}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK) // 200 OK
+	json.NewEncoder(w).Encode(favorites)
+	
+	log.Default().Printf("✅ [FAVORITE] %d Favoriten geladen für User %v", len(favorites), userID)
 }
