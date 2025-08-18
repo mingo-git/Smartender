@@ -14,6 +14,8 @@ import 'package:smartender_flutter_app/services/fetch_data_service.dart';
 import 'package:smartender_flutter_app/services/order_drink_service.dart';
 import 'package:smartender_flutter_app/services/recipe_service.dart';
 import 'package:smartender_flutter_app/services/slot_service.dart';
+import 'package:smartender_flutter_app/services/websocket_service.dart';
+import 'package:smartender_flutter_app/services/maintenance_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,11 +44,15 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final FetchdData fetchdData;
+  late final WebSocketService webSocketService;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    // Initialize WebSocket Service
+    webSocketService = WebSocketService();
 
     // Initialisiere FetchdData
     final recipeService = RecipeService();
@@ -58,46 +64,149 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     fetchdData.addService(drinkService);
     fetchdData.addService(slotService);
 
-    // Starte Polling mit einem Intervall
-    fetchdData.startPolling(interval: const Duration(seconds: 60));
-
-    // Daten beim Start der App laden
+    // Initialize the app
     _initializeApp();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+
+    // Cleanup WebSocket and polling
+    webSocketService.disconnect();
+    fetchdData.stopPolling();
+
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // Daten aktualisieren, wenn die App wieder in den Vordergrund kommt
-      _onResume();
+    switch (state) {
+      case AppLifecycleState.resumed:
+      // App wieder in den Vordergrund - WebSocket reconnect und Daten aktualisieren
+        _onResume();
+        break;
+      case AppLifecycleState.paused:
+      // App in den Hintergrund - WebSocket kann verbunden bleiben für Background-Updates
+        _onPause();
+        break;
+      case AppLifecycleState.detached:
+      // App wird beendet - Cleanup
+        _onDetached();
+        break;
+      case AppLifecycleState.inactive:
+      // App inaktiv (z.B. während Telefonat)
+        break;
+      case AppLifecycleState.hidden:
+      // App versteckt
+        break;
     }
   }
 
   Future<void> _initializeApp() async {
-    await fetchdData.fetchAllNow();
+    try {
+      print("🚀 Initializing Smartender App...");
+
+      // 1. Initialize WebSocket Service
+      await webSocketService.initialize();
+      print("✅ WebSocket Service initialized");
+
+      // 2. Configure adaptive polling
+      fetchdData.setWebSocketEnabled(true);
+      fetchdData.setAdaptivePolling(true);
+      fetchdData.configurePollingIntervals(
+        baseInterval: const Duration(seconds: 60),  // Normal polling when WebSocket connected
+        fastInterval: const Duration(seconds: 15),  // Fast polling when WebSocket disconnected
+      );
+      print("✅ Adaptive polling configured");
+
+      // 3. Start polling with intelligent strategy
+      fetchdData.startPolling();
+      print("✅ Intelligent polling started");
+
+      // 4. If logged in, connect WebSocket and fetch initial data
+      if (widget.isLoggedIn) {
+        await _connectWebSocketAndFetchData();
+      }
+
+      print("🎉 App initialization completed");
+
+    } catch (e) {
+      print("❌ Error during app initialization: $e");
+
+      // Fallback: Start basic polling even if WebSocket fails
+      fetchdData.startPolling(interval: const Duration(seconds: 30));
+    }
+  }
+
+  Future<void> _connectWebSocketAndFetchData() async {
+    try {
+      // Connect WebSocket for real-time updates
+      await webSocketService.connect();
+      print("✅ WebSocket connected for real-time updates");
+
+      // Initial data fetch
+      await fetchdData.fetchAllNow();
+      print("✅ Initial data fetched");
+
+    } catch (e) {
+      print("⚠️ WebSocket connection failed, falling back to HTTP polling: $e");
+
+      // Even if WebSocket fails, we can still work with HTTP polling
+      await fetchdData.fetchAllNow();
+    }
   }
 
   Future<void> _onResume() async {
-    await fetchdData.fetchAllNow();
+    print("📱 App resumed - checking connections...");
+
+    try {
+      // Try to reconnect WebSocket if needed
+      if (!webSocketService.isConnected) {
+        await webSocketService.connect();
+      }
+
+      // Fetch latest data
+      await fetchdData.fetchAllNow();
+
+      print("✅ App resume completed");
+    } catch (e) {
+      print("⚠️ Error during app resume: $e");
+    }
+  }
+
+  void _onPause() {
+    print("📱 App paused - WebSocket remains connected for background updates");
+    // WebSocket bleibt verbunden für Background-Updates
+    // Polling continues at reduced frequency
+  }
+
+  void _onDetached() {
+    print("📱 App detached - cleaning up connections...");
+    webSocketService.disconnect();
+    fetchdData.stopPolling();
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // Existing providers
         ChangeNotifierProvider(create: (context) => CocktailCard()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+
+        // Core services with WebSocket integration
         ChangeNotifierProvider(create: (_) => RecipeService()),
         ChangeNotifierProvider(create: (_) => DrinkService()),
         ChangeNotifierProvider(create: (_) => SlotService()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+
+        // WebSocket and networking services
+        ChangeNotifierProvider.value(value: webSocketService),
         ChangeNotifierProvider.value(value: fetchdData),
+
+        // Utility services
         Provider(create: (_) => OrderDrinkService()),
+        ChangeNotifierProvider(create: (_) => MaintenanceService()),
       ],
       child: Builder(
         builder: (context) {
@@ -114,9 +223,80 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               '/login': (context) => LoginScreen(),
             },
             initialRoute: widget.isLoggedIn ? '/home' : '/login',
+
+            // Global navigation observer for WebSocket management
+            navigatorObservers: [
+              _SmartenderNavigatorObserver(webSocketService, fetchdData),
+            ],
           );
         },
       ),
     );
   }
+}
+
+/// Custom NavigatorObserver to manage WebSocket connections during navigation
+class _SmartenderNavigatorObserver extends NavigatorObserver {
+  final WebSocketService _webSocketService;
+  final FetchdData _fetchData;
+
+  _SmartenderNavigatorObserver(this._webSocketService, this._fetchData);
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    _handleRouteChange(route);
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    if (newRoute != null) {
+      _handleRouteChange(newRoute);
+    }
+  }
+
+  void _handleRouteChange(Route<dynamic> route) {
+    final routeName = route.settings.name;
+
+    print("📍 Navigated to: $routeName");
+
+    // Connect WebSocket when navigating to home (after login)
+    if (routeName == '/home' && !_webSocketService.isConnected) {
+      print("🔌 Connecting WebSocket after login...");
+      _webSocketService.connect().then((_) {
+        // Fetch fresh data after WebSocket connection
+        _fetchData.fetchAllNow();
+      }).catchError((e) {
+        print("⚠️ WebSocket connection failed after login: $e");
+        // Continue with HTTP polling
+        _fetchData.fetchAllNow();
+      });
+    }
+
+    // Disconnect WebSocket when logging out
+    if (routeName == '/login') {
+      print("🔌 Disconnecting WebSocket after logout...");
+      _webSocketService.disconnect();
+    }
+  }
+}
+
+/// Extension to provide easy access to system status throughout the app
+extension SmartenderAppContext on BuildContext {
+
+  /// Get current WebSocket connection status
+  String get webSocketStatus => read<WebSocketService>().connectionStatusText;
+
+  /// Check if real-time updates are available
+  bool get isRealTimeEnabled => read<WebSocketService>().isConnected;
+
+  /// Get system status for debugging
+  Map<String, dynamic> get systemStatus => read<FetchdData>().getSystemStatus();
+
+  /// Force refresh all data
+  Future<void> forceRefreshData() => read<FetchdData>().forceRefresh();
+
+  /// Force reconnect WebSocket
+  Future<void> reconnectWebSocket() => read<WebSocketService>().forceReconnect();
 }
