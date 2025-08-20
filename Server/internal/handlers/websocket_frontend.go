@@ -58,14 +58,38 @@ var frontendClientManager = &ClientManager{
 	broadcast:  make(chan []byte),
 }
 
-// WebSocket Upgrader für Frontend
+// In Server/internal/handlers/websocket_frontend.go - Sichere CORS-Policy
 var frontendUpgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
 		origin := r.Header.Get("Origin")
 		log.Printf("🌐 WebSocket Origin: %s", origin)
-		return true // Für Development - in Production einschränken
+		
+		// 🔒 SICHERHEIT: Nur erlaubte Origins in Production
+		env := os.Getenv("ENVIRONMENT")
+		if env == "prod" || env == "production" {
+			allowedOrigins := []string{
+				"https://smartender.lextron.dev",
+				// Fügen Sie Ihre erlaubten Domains hinzu
+			}
+			
+			for _, allowedOrigin := range allowedOrigins {
+				if origin == allowedOrigin {
+					return true
+				}
+			}
+			
+			log.Printf("❌ WebSocket Origin nicht erlaubt: %s", origin)
+			return false
+		}
+		
+		// In Development: erlaube localhost
+		if strings.Contains(origin, "localhost") || strings.Contains(origin, "127.0.0.1") {
+			return true
+		}
+		
+		return false
 	},
 }
 
