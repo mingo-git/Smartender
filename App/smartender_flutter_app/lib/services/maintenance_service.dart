@@ -1,61 +1,57 @@
-import 'package:http/http.dart' as http;
+// lib/services/maintenance_service.dart
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../config/constants.dart';
+
+import 'api_client.dart';
 import '../provider/theme_provider.dart';
-import 'auth_service.dart';
 
 class MaintenanceService extends ChangeNotifier {
-  final String _maintenanceUrl = "/user/maintenance";
+  final ApiClient _api = ApiClient();
 
+  /// Generische Maintenance-Operation (HTTP über ApiClient).
+  /// Übergib NUR die maintenance-spezifischen Felder, KEIN `hardware_id` (setzt ApiClient selbst).
   Future<bool> performMaintenance({
     required String maintenanceType,
     int? slotNumber,
   }) async {
-    final Map<String, dynamic> requestBody = {
-      "hardware_id": 2,
-      "maintenance_type": maintenanceType,
+    final payload = <String, dynamic>{
+      'maintenance_type': maintenanceType,
+      if (slotNumber != null) 'slot_number': slotNumber,
     };
-    if (slotNumber != null) {
-      requestBody["slot_number"] = slotNumber;
-    }
-    return await sendMaintenanceCommand(requestBody);
+    return await sendMaintenanceCommand(payload);
   }
 
-  /// NEW: generic command sender with arbitrary payload (keeps endpoint and headers the same)
+  /// Generischer Command-Sender mit beliebigem Payload.
+  /// `hardware_id` wird automatisch vom ApiClient gesetzt – falls vorhanden, wird es entfernt.
   Future<bool> sendMaintenanceCommand(Map<String, dynamic> requestBody) async {
-    final AuthService authService = AuthService();
-    final String? token = await authService.getToken();
-
-    if (token == null) {
-      debugPrint("No token available. Cannot perform maintenance.");
-      return false;
-    }
-
-    final url = Uri.parse(baseUrl + _maintenanceUrl);
-
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode(requestBody),
-      );
+      final payload = Map<String, dynamic>.from(requestBody);
+      payload.remove('hardware_id'); // ApiClient setzt hardware_id selbst
 
-      var statusCode = response.statusCode;
+      final response = await _api.performMaintenance(payload);
+      final statusCode = response.statusCode;
+
       debugPrint("MAINTENANCE STATUS CODE: $statusCode");
       debugPrint("MAINTENANCE RESPONSE: ${response.body}");
 
       if (statusCode == 200 || statusCode == 201) {
         return true;
       } else {
-        String errorMessage = _getErrorMessage(statusCode);
-        debugPrint("Maintenance operation failed: $statusCode - $errorMessage");
-        _showErrorMessage(errorMessage);
+        String message = _friendlyMessageForStatus(statusCode);
+        try {
+          if (response.body.isNotEmpty) {
+            final decoded = json.decode(response.body);
+            if (decoded is Map && decoded['message'] is String) {
+              message = decoded['message'];
+            }
+          }
+        } catch (_) {
+          // ignore decode errors -> fallback message
+        }
+        debugPrint("Maintenance operation failed: $statusCode - $message");
+        _showErrorMessage(message);
         return false;
       }
     } catch (e) {
@@ -65,39 +61,116 @@ class MaintenanceService extends ChangeNotifier {
     }
   }
 
-  // NEW: light settings
+  // ────────────────────────────────────────────────────────────────────────────
+  // Komfort-Methoden (nutzen spezialisierte ApiClient-Calls)
+  // ────────────────────────────────────────────────────────────────────────────
+
   Future<bool> setLightMode(String mode) async {
-    final body = {
-      "hardware_id": 2,
-      "maintenance_type": "light_mode",
-      "light_mode": mode, // e.g. Off, Solid, Pulse, Party
-    };
-    return await sendMaintenanceCommand(body);
+    try {
+      final res = await _api.setLightMode(mode);
+      return _handleResponse(res, defaultError: "Lichtmodus konnte nicht gesetzt werden");
+    } catch (e) {
+      debugPrint("setLightMode error: $e");
+      _showErrorMessage("Verbindungsfehler aufgetreten");
+      return false;
+    }
   }
 
-  // NEW: manual motor control (X/Z axes)
   Future<bool> moveAxes({required double x, required double z}) async {
-    // clamp to [-100, 100]
-    final clamp = (double v) => v.clamp(-100.0, 100.0);
-    final body = {
-      "hardware_id": 2,
-      "maintenance_type": "manual_move",
-      "x": clamp(x),
-      "z": clamp(z),
-    };
-    return await sendMaintenanceCommand(body);
+    try {
+      // ApiClient clamped bereits, wir clampen hier zusätzlich zur Sicherheit
+      final cx = x.clamp(-100.0, 100.0);
+      final cz = z.clamp(-100.0, 100.0);
+      final res = await _api.moveAxes(x: cx, z: cz);
+      return _handleResponse(res, defaultError: "Bewegung konnte nicht ausgeführt werden");
+    } catch (e) {
+      debugPrint("moveAxes error: $e");
+      _showErrorMessage("Verbindungsfehler aufgetreten");
+      return false;
+    }
   }
 
-  String _getErrorMessage(int statusCode) {
+  Future<bool> flushAllPumps() async {
+    try {
+      final res = await _api.flushAllPumps();
+      return _handleResponse(res, defaultError: "Spülvorgang (alle) fehlgeschlagen");
+    } catch (e) {
+      debugPrint("flushAllPumps error: $e");
+      _showErrorMessage("Verbindungsfehler aufgetreten");
+      return false;
+    }
+  }
+
+  Future<bool> flushSlot(int slotNumber) async {
+    try {
+      final res = await _api.flushSlot(slotNumber);
+      return _handleResponse(res, defaultError: "Spülvorgang (Slot $slotNumber) fehlgeschlagen");
+    } catch (e) {
+      debugPrint("flushSlot error: $e");
+      _showErrorMessage("Verbindungsfehler aufgetreten");
+      return false;
+    }
+  }
+
+  Future<bool> testConnection() async {
+    try {
+      final res = await _api.performMaintenance({'maintenance_type': 'test_connection'});
+      return _handleResponse(res, defaultError: "Verbindungstest fehlgeschlagen");
+    } catch (e) {
+      debugPrint("testConnection error: $e");
+      _showErrorMessage("Verbindungsfehler aufgetreten");
+      return false;
+    }
+  }
+
+  Future<bool> emergencyStop() async {
+    try {
+      final res = await _api.emergencyStop();
+      return _handleResponse(res, defaultError: "Emergency Stop fehlgeschlagen");
+    } catch (e) {
+      debugPrint("emergencyStop error: $e");
+      _showErrorMessage("Verbindungsfehler aufgetreten");
+      return false;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  // Helpers
+  // ────────────────────────────────────────────────────────────────────────────
+
+  bool _handleResponse(response, {required String defaultError}) {
+    final statusCode = response.statusCode;
+    if (statusCode == 200 || statusCode == 201) return true;
+
+    String message = _friendlyMessageForStatus(statusCode);
+    try {
+      if (response.body is String && (response.body as String).isNotEmpty) {
+        final decoded = json.decode(response.body as String);
+        if (decoded is Map && decoded['message'] is String) {
+          message = decoded['message'];
+        }
+      }
+    } catch (_) {
+      // ignore decode errors -> fallback message
+      if (message == "Wartungsvorgang fehlgeschlagen (Code: $statusCode)") {
+        message = defaultError;
+      }
+    }
+
+    _showErrorMessage(message);
+    return false;
+  }
+
+  String _friendlyMessageForStatus(int statusCode) {
     switch (statusCode) {
-      case 404:
-        return "Smartender konnte nicht erreicht werden";
       case 400:
         return "Ungültige Wartungsparameter";
       case 401:
         return "Nicht autorisiert";
       case 403:
         return "Keine Berechtigung für diese Hardware";
+      case 404:
+        return "Smartender konnte nicht erreicht werden";
       case 500:
         return "Server-Fehler";
       default:
@@ -108,24 +181,15 @@ class MaintenanceService extends ChangeNotifier {
   void _showErrorMessage(String message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final context = WidgetsBinding.instance.focusManager.primaryFocus?.context;
-      if (context != null) {
-        final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message, style: TextStyle(color: theme.primaryColor)),
-            backgroundColor: theme.falseColor,
-            duration: const Duration(seconds: 4),
-          ),
-        );
-      }
+      if (context == null) return;
+      final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message, style: TextStyle(color: theme.primaryColor)),
+          backgroundColor: theme.falseColor,
+          duration: const Duration(seconds: 4),
+        ),
+      );
     });
-  }
-
-  Future<bool> testConnection() async {
-    return await performMaintenance(maintenanceType: "test_connection");
-  }
-
-  Future<bool> emergencyStop() async {
-    return await performMaintenance(maintenanceType: "emergency_stop");
   }
 }

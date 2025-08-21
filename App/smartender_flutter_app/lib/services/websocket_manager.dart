@@ -141,7 +141,7 @@ class WebSocketManager extends ChangeNotifier {
       // Schritt 3: Query Parameter hinzufügen
       final queryParams = {
         'token': token,
-        'X_API_KEY': apiKey,
+        'X-API-KEY': apiKey,
       };
 
       // Schritt 4: URI mit expliziter Konstruktion (KEIN Uri.parse!)
