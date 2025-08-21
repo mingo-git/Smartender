@@ -1,134 +1,62 @@
-version: '3.8'
-
-# =============================================================================
-# Smartender Backend V2 - WebSocket Upgrade
-# Nutzt bestehende Infrastruktur (Port 17051)
-# =============================================================================
-
 services:
-  # =============================================================================
-  # OPTION 1: Bestehende Datenbank wiederverwenden (EMPFOHLEN)
-  # =============================================================================
   smartender-app:
-    build: .
-    container_name: smartender-backend-v2
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartender-backend-prod
     ports:
-      - "17051:17051"  # Bestehender Smartender Port
+      - "17051:17051"
     env_file:
       - .env
     environment:
+      - ENVIRONMENT=prod
       - APP_PORT=17051
-      # Verbindung zu bestehender DB
-      - DB_HOST=172.20.0.3  # IP deiner bestehenden smartender-db
-      - DB_PORT=5432
-      - POSTGRES_USER=${APP_DB_USERNAME}
-      - POSTGRES_PASSWORD=${APP_DB_PASSWORD}
-      - POSTGRES_DB=${APP_DB_NAME}
+    depends_on:
+      smartender-db:
+        condition: service_healthy
     volumes:
-      - ./:/app  # Für Development Hot Reload
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - smartender-network
     restart: unless-stopped
-    external_links:
-      - smartender-db:postgres  # Link zu bestehender DB
-    labels:
-      - "smartender.service=backend-websocket"
-      - "smartender.version=2.0"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:17051/status"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-# =============================================================================
-# ALTERNATIVE: Neue Datenbank für Testing/Backup
-# =============================================================================
-# Falls du eine separate DB für Tests möchtest, uncomment folgendes:
-
-#  smartender-db-backup:
-#    image: postgres:13-alpine
-#    container_name: smartender-postgres-backup
-#    env_file:
-#      - .env
-#    environment:
-#      - POSTGRES_USER=${APP_DB_USERNAME}
-#      - POSTGRES_PASSWORD=${APP_DB_PASSWORD}
-#      - POSTGRES_DB=${APP_DB_NAME}
-#    ports:
-#      - "5433:5432"  # Alternatives Port für Backup-DB
-#    volumes:
-#      - smartender_backup_data:/var/lib/postgresql/data
-#    networks:
-#      - smartender-network
-#    healthcheck:
-#      test: ["CMD-SHELL", "pg_isready -U ${APP_DB_USERNAME}"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-
-# =============================================================================
-# DEVELOPMENT OVERRIDE
-# =============================================================================
-# Für lokale Entwicklung mit Go (nur DB in Docker):
-  smartender-db-dev:
-    image: postgres:13-alpine
-    container_name: smartender-postgres-dev
-    env_file:
-      - .env
+  smartender-db:
+    image: postgres:15-alpine
+    container_name: smartender-postgres-prod
     environment:
-      - POSTGRES_USER=${APP_DB_USERNAME}
-      - POSTGRES_PASSWORD=${APP_DB_PASSWORD}
-      - POSTGRES_DB=${APP_DB_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     ports:
-      - "5432:5432"  # Für lokale Go-Entwicklung
+      - "5432:5432"
     volumes:
-      - smartender_dev_data:/var/lib/postgresql/data
-      - ./init-scripts:/docker-entrypoint-initdb.d
+      - smartender_postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
     networks:
       - smartender-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${APP_DB_USERNAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles:
-      - dev  # Nur für Development starten
+      start_period: 30s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-# =============================================================================
-# NETWORKS
-# =============================================================================
 networks:
   smartender-network:
-    external: true
-    name: server_default  # Dein bestehendes Docker-Netzwerk
+    driver: bridge
 
-# Falls das Netzwerk nicht existiert, alternative Konfiguration:
-#  smartender-network:
-#    driver: bridge
-#    name: smartender-net
-
-# =============================================================================
-# VOLUMES
-# =============================================================================
 volumes:
-  smartender_backup_data:
-    name: smartender_backup_db
+  smartender_postgres_data:
     driver: local
-  smartender_dev_data:
-    name: smartender_dev_db  
-    driver: local
-
-# =============================================================================
-# SERVICES PROFILES
-# =============================================================================
-# Verschiedene Setups:
-# 
-# Production/Bestehende DB:
-# docker-compose -f docker-compose.local.yaml up smartender-app
-#
-# Development (Go lokal):
-# docker-compose -f docker-compose.local.yaml --profile dev up smartender-db-dev
-#
-# Mit Backup-DB:
-# docker-compose -f docker-compose.local.yaml up smartender-app smartender-db-backup
