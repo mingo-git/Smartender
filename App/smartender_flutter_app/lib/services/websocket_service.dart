@@ -141,7 +141,9 @@ class WebSocketService extends ChangeNotifier {
     }
   }
 
-  /// Internal connection logic
+// lib/services/websocket_service.dart
+// Ersetze nur die _connect() Methode mit diesem Debug-Code:
+
   Future<void> _connect() async {
     try {
       _updateStatus(WebSocketConnectionStatus.connecting);
@@ -151,15 +153,50 @@ class WebSocketService extends ChangeNotifier {
         throw Exception("No authentication token available");
       }
 
-      final wsUrl = '${_config.wsUrl}?token=$token';
-      print("Connecting to WebSocket: $wsUrl");
+      // ✅ VERFOLGE JEDEN SCHRITT DER URL-KONSTRUKTION:
+      print("🔍 === URL DATAFLOW DEBUG ===");
+
+      // Schritt 1: Was kommt aus constants.dart?
+      print("🔍 Step 1 - baseUrl from constants: '$baseUrl'");
+      print("🔍 Step 1a - baseUrl type: ${baseUrl.runtimeType}");
+      print("🔍 Step 1b - baseUrl.contains(':0'): ${baseUrl.contains(':0')}");
+
+      // Schritt 2: Was steht in der Config?
+      print("🔍 Step 2 - _config.baseUrl: '${_config.baseUrl}'");
+      print("🔍 Step 2a - _config.wsPath: '${_config.wsPath}'");
+
+      // Schritt 3: Was gibt _config.wsUrl zurück?
+      final configWsUrl = _config.wsUrl;
+      print("🔍 Step 3 - _config.wsUrl: '$configWsUrl'");
+      print("🔍 Step 3a - configWsUrl.contains(':0'): ${configWsUrl.contains(':0')}");
+
+      // Schritt 4: Token hinzufügen
+      final wsUrlWithToken = '${configWsUrl}?token=$token';
+      print("🔍 Step 4 - wsUrl with token: '$wsUrlWithToken'");
+      print("🔍 Step 4a - wsUrlWithToken.contains(':0'): ${wsUrlWithToken.contains(':0')}");
+
+      // Schritt 5: Uri.parse() testen
+      final parsedUri = Uri.parse(wsUrlWithToken);
+      print("🔍 Step 5 - Uri.parse() result:");
+      print("🔍 Step 5a - parsedUri.toString(): '${parsedUri.toString()}'");
+      print("🔍 Step 5b - parsedUri.scheme: '${parsedUri.scheme}'");
+      print("🔍 Step 5c - parsedUri.host: '${parsedUri.host}'");
+      print("🔍 Step 5d - parsedUri.port: ${parsedUri.port}");
+      print("🔍 Step 5e - parsedUri.path: '${parsedUri.path}'");
+      print("🔍 Step 5f - parsedUri.query: '${parsedUri.query}'");
+
+      // Schritt 6: WebSocketChannel.connect() aufrufen
+      print("🔍 Step 6 - Calling WebSocketChannel.connect()");
+      print("🔍 === END URL DATAFLOW DEBUG ===");
+
+      print("Connecting to WebSocket: $wsUrlWithToken");
 
       _channel = WebSocketChannel.connect(
-        Uri.parse(wsUrl),
+        parsedUri,  // ← Verwende die bereits geparste URI
         protocols: ['smartender-v1'],
       );
 
-      // Set connection timeout
+      // Ab hier ist der Code unverändert...
       final connectionCompleter = Completer<void>();
       Timer(_config.connectionTimeout, () {
         if (!connectionCompleter.isCompleted) {
@@ -167,7 +204,6 @@ class WebSocketService extends ChangeNotifier {
         }
       });
 
-      // Listen for messages
       _messageSubscription = _channel!.stream.listen(
             (message) {
           if (!connectionCompleter.isCompleted) {
@@ -188,12 +224,9 @@ class WebSocketService extends ChangeNotifier {
         },
       );
 
-      // Wait for connection or timeout
       await connectionCompleter.future;
-
       _updateStatus(WebSocketConnectionStatus.connected);
       _startPingTimer();
-
       print("WebSocket connected successfully");
 
     } catch (e) {

@@ -248,6 +248,9 @@ class WebSocketStatusInfo {
   }
 }
 
+// lib/models/websocket/websocket_message.dart
+// Ersetze nur die wsUrl getter Methode in WebSocketConfig:
+
 /// WebSocket Configuration
 class WebSocketConfig {
   final String baseUrl;
@@ -266,5 +269,23 @@ class WebSocketConfig {
     this.connectionTimeout = const Duration(seconds: 10),
   });
 
-  String get wsUrl => baseUrl.replaceFirst('http', 'ws').replaceAll(':17051', '') + wsPath;
+  // ✅ DEBUG VERSION der wsUrl Methode:
+  String get wsUrl {
+    print("🔍 === WebSocketConfig.wsUrl DEBUG ===");
+    print("🔍 Input baseUrl: '$baseUrl'");
+    print("🔍 Input wsPath: '$wsPath'");
+
+    // Original-Logik mit Debug:
+    final step1 = baseUrl.replaceFirst('http', 'ws');
+    print("🔍 After replaceFirst('http', 'ws'): '$step1'");
+
+    final step2 = step1 + wsPath;
+    print("🔍 After adding wsPath: '$step2'");
+
+    print("🔍 Final wsUrl result: '$step2'");
+    print("🔍 Result contains ':0': ${step2.contains(':0')}");
+    print("🔍 === END WebSocketConfig.wsUrl DEBUG ===");
+
+    return step2;
+  }
 }
