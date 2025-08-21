@@ -266,5 +266,5 @@ class WebSocketConfig {
     this.connectionTimeout = const Duration(seconds: 10),
   });
 
-  String get wsUrl => baseUrl.replaceFirst('http', 'ws') + wsPath;
+  String get wsUrl => baseUrl.replaceFirst('http', 'ws').replaceAll(':17051', '') + wsPath;
 }
