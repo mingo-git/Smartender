@@ -15,39 +15,35 @@ import (
 	_ "github.com/lib/pq" // register "postgres" driver
 )
 
-// holt den ersten gesetzten Wert aus einer Liste möglicher ENV-Keys
-func first(keys ...string) string {
-	for _, k := range keys {
-		if v, ok := os.LookupEnv(k); ok && strings.TrimSpace(v) != "" {
-			return v
-		}
-	}
-	return ""
-}
-
 func buildDevDSN() (string, error) {
 	// URL-Varianten zuerst akzeptieren
-	if url := first("DATABASE_URL", "POSTGRES_URL"); url != "" {
+	if url := os.Getenv("DATABASE_URL"); url != "" {
+		return url, nil
+	}
+	if url := os.Getenv("POSTGRES_URL"); url != "" {
 		return url, nil
 	}
 
-	host := first("APP_DB_HOST", "DB_HOST", "POSTGRES_HOST", "PGHOST")
+	// Standard Environment Variablen (vereinfacht)
+	host := os.Getenv("DB_HOST")
 	if host == "" {
-		host = "smartender-db-v2"
+		host = "smartender-db-v2" // Fallback für lokale Entwicklung
 	}
-	port := first("APP_DB_PORT", "DB_PORT", "POSTGRES_PORT", "PGPORT")
+
+	port := os.Getenv("DB_PORT")
 	if port == "" {
 		port = "5432"
 	}
-	user := first("APP_DB_USER", "APP_DB_USERNAME", "DB_USER", "DB_USERNAME", "POSTGRES_USER", "PGUSER")
-	pass := first("APP_DB_PASSWORD", "DB_PASSWORD", "POSTGRES_PASSWORD", "PGPASSWORD")
-	name := first("APP_DB_DATABASE", "APP_DB_NAME", "DB_NAME", "POSTGRES_DB", "PGDATABASE")
+
+	user := os.Getenv("DB_USER")
+	pass := os.Getenv("DB_PASS")
+	name := os.Getenv("DB_NAME")
 
 	if user == "" || pass == "" || name == "" {
-		return "", fmt.Errorf("No database configuration found")
+		return "", fmt.Errorf("Missing required database configuration: DB_USER, DB_PASS, DB_NAME")
 	}
 
-	// klassische lib/pq-DSN; sslmode=disable für lokale Container
+	// PostgreSQL DSN
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		user, pass, host, port, name,
 	), nil
@@ -59,8 +55,8 @@ func GetDatabaseConnectionString() (*sql.DB, error) {
 		log.Printf("godotenv: .env nicht geladen (ok in Docker): %v", err)
 	}
 
-	// Rechtschreibfehler abfangen: ENVIRONMENT hat Vorrang, ENVIROMENT als Fallback
-	env := first("ENVIRONMENT", "ENVIROMENT")
+	// Environment Check
+	env := os.Getenv("ENVIRONMENT")
 	if env == "" {
 		env = "dev"
 	}

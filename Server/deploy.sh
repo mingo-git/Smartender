@@ -13,7 +13,7 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}🚀 Smartender Backend V2 - Production Deployment${NC}"
+echo -e "${GREEN}🚀 Smartender Backend V2 - Deployment${NC}"
 echo "=============================================="
 
 # Check if .env exists

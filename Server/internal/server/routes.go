@@ -7,14 +7,18 @@ import (
 
 func (a *App) initializeRoutes() {
 
-	// =============================================================================================== API KEY
-	// Ensure that all routes are protected by the API key
+	// =============================================================================================== 
+	// Status-Endpunkt OHNE API-Key (für Health Checks)
+	// ===============================================================================================
+	a.Router.HandleFunc("/status", handlers.GetStatus).Methods("GET")
+
+	// =============================================================================================== 
+	// API KEY MIDDLEWARE - gilt für alle folgenden Routen
+	// ===============================================================================================
 	root := a.Router
 	root.Use(handlers.APIKeyMiddleware)
 	root.HandleFunc("/", handlers.GetRoot).Methods("GET")
-	
-	// Status-Endpunkt ohne API-Key (für Health Checks)
-	root.HandleFunc("/status", handlers.GetStatus).Methods("GET")
+
 	// ===============================================================================================
 
 	// Smartender (Raspberry Pi) --------------------------------------------------------------------- HARDWARE
