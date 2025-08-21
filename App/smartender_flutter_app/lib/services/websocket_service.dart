@@ -141,9 +141,7 @@ class WebSocketService extends ChangeNotifier {
     }
   }
 
-// lib/services/websocket_service.dart
-// Ersetze nur die _connect() Methode mit diesem Debug-Code:
-
+  /// 🔧 KORRIGIERTE VERBINDUNGSMETHODE - Jetzt mit API-Key
   Future<void> _connect() async {
     try {
       _updateStatus(WebSocketConnectionStatus.connecting);
@@ -153,50 +151,33 @@ class WebSocketService extends ChangeNotifier {
         throw Exception("No authentication token available");
       }
 
-      // ✅ VERFOLGE JEDEN SCHRITT DER URL-KONSTRUKTION:
-      print("🔍 === URL DATAFLOW DEBUG ===");
+      print("🔍 === CORRECTED URL CONSTRUCTION ===");
 
-      // Schritt 1: Was kommt aus constants.dart?
-      print("🔍 Step 1 - baseUrl from constants: '$baseUrl'");
-      print("🔍 Step 1a - baseUrl type: ${baseUrl.runtimeType}");
-      print("🔍 Step 1b - baseUrl.contains(':0'): ${baseUrl.contains(':0')}");
+      // Schritt 1: Basis WebSocket URL konstruieren
+      final baseWsUrl = _config.wsUrl;
+      print("🔍 Step 1 - Base WebSocket URL: '$baseWsUrl'");
 
-      // Schritt 2: Was steht in der Config?
-      print("🔍 Step 2 - _config.baseUrl: '${_config.baseUrl}'");
-      print("🔍 Step 2a - _config.wsPath: '${_config.wsPath}'");
+      // Schritt 2: URL-Parameter hinzufügen (Token UND API-Key)
+      final uri = Uri.parse(baseWsUrl).replace(queryParameters: {
+        'token': token,
+        'X_API_KEY': apiKey,  // 🔧 API-Key hinzugefügt!
+      });
 
-      // Schritt 3: Was gibt _config.wsUrl zurück?
-      final configWsUrl = _config.wsUrl;
-      print("🔍 Step 3 - _config.wsUrl: '$configWsUrl'");
-      print("🔍 Step 3a - configWsUrl.contains(':0'): ${configWsUrl.contains(':0')}");
+      print("🔍 Step 2 - Complete WebSocket URL: '${uri.toString()}'");
+      print("🔍 Step 3 - URI scheme: '${uri.scheme}'");
+      print("🔍 Step 4 - URI host: '${uri.host}'");
+      print("🔍 Step 5 - URI port: ${uri.port}");
+      print("🔍 Step 6 - URI query: '${uri.query}'");
+      print("🔍 === END CORRECTED URL CONSTRUCTION ===");
 
-      // Schritt 4: Token hinzufügen
-      final wsUrlWithToken = '${configWsUrl}?token=$token';
-      print("🔍 Step 4 - wsUrl with token: '$wsUrlWithToken'");
-      print("🔍 Step 4a - wsUrlWithToken.contains(':0'): ${wsUrlWithToken.contains(':0')}");
-
-      // Schritt 5: Uri.parse() testen
-      final parsedUri = Uri.parse(wsUrlWithToken);
-      print("🔍 Step 5 - Uri.parse() result:");
-      print("🔍 Step 5a - parsedUri.toString(): '${parsedUri.toString()}'");
-      print("🔍 Step 5b - parsedUri.scheme: '${parsedUri.scheme}'");
-      print("🔍 Step 5c - parsedUri.host: '${parsedUri.host}'");
-      print("🔍 Step 5d - parsedUri.port: ${parsedUri.port}");
-      print("🔍 Step 5e - parsedUri.path: '${parsedUri.path}'");
-      print("🔍 Step 5f - parsedUri.query: '${parsedUri.query}'");
-
-      // Schritt 6: WebSocketChannel.connect() aufrufen
-      print("🔍 Step 6 - Calling WebSocketChannel.connect()");
-      print("🔍 === END URL DATAFLOW DEBUG ===");
-
-      print("Connecting to WebSocket: $wsUrlWithToken");
+      print("Connecting to WebSocket: ${uri.toString()}");
 
       _channel = WebSocketChannel.connect(
-        parsedUri,  // ← Verwende die bereits geparste URI
+        uri,  // 🔧 Vollständige URI mit Token UND API-Key
         protocols: ['smartender-v1'],
       );
 
-      // Ab hier ist der Code unverändert...
+      // Connection timeout handling
       final connectionCompleter = Completer<void>();
       Timer(_config.connectionTimeout, () {
         if (!connectionCompleter.isCompleted) {
@@ -227,10 +208,10 @@ class WebSocketService extends ChangeNotifier {
       await connectionCompleter.future;
       _updateStatus(WebSocketConnectionStatus.connected);
       _startPingTimer();
-      print("WebSocket connected successfully");
+      print("✅ WebSocket connected successfully with API key!");
 
     } catch (e) {
-      print("WebSocket connection failed: $e");
+      print("❌ WebSocket connection failed: $e");
       _updateStatus(
         WebSocketConnectionStatus.error,
         errorMessage: e.toString(),

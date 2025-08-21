@@ -1,4 +1,4 @@
-// lib/main.dart
+// lib/main.dart - MIT HTTP API DEBUGGING
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +45,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final FetchdData fetchdData;
   late final WebSocketService webSocketService;
+  late final RecipeService recipeService; // 🔧 Hinzugefügt für Debug-Zugriff
 
   @override
   void initState() {
@@ -55,7 +56,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     webSocketService = WebSocketService();
 
     // Initialisiere FetchdData
-    final recipeService = RecipeService();
+    recipeService = RecipeService(); // 🔧 Als Klassenfeld gespeichert
     final drinkService = DrinkService();
     final slotService = SlotService();
 
@@ -107,11 +108,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     try {
       print("🚀 Initializing Smartender App...");
 
-      // 1. Initialize WebSocket Service
+      // 🔧 1. DEBUG HTTP APIs FIRST (vor allem anderen!)
+      if (widget.isLoggedIn) {
+        print("🔍 Starting HTTP API debugging...");
+        await recipeService.debugHttpConnection();
+        print("🔍 HTTP API debugging completed");
+      }
+
+      // 2. Initialize WebSocket Service
       await webSocketService.initialize();
       print("✅ WebSocket Service initialized");
 
-      // 2. Configure adaptive polling
+      // 3. Configure adaptive polling
       fetchdData.setWebSocketEnabled(true);
       fetchdData.setAdaptivePolling(true);
       fetchdData.configurePollingIntervals(
@@ -120,11 +128,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       );
       print("✅ Adaptive polling configured");
 
-      // 3. Start polling with intelligent strategy
+      // 4. Start polling with intelligent strategy
       fetchdData.startPolling();
       print("✅ Intelligent polling started");
 
-      // 4. If logged in, connect WebSocket and fetch initial data
+      // 5. If logged in, connect WebSocket and fetch initial data
       if (widget.isLoggedIn) {
         await _connectWebSocketAndFetchData();
       }
@@ -141,16 +149,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> _connectWebSocketAndFetchData() async {
     try {
+      // 🔧 ERSTMAL NUR HTTP APIs testen (WebSocket auskommentiert)
+      print("🔧 Skipping WebSocket for now - testing HTTP APIs only...");
+
       // Connect WebSocket for real-time updates
-      await webSocketService.connect();
-      print("✅ WebSocket connected for real-time updates");
+      // await webSocketService.connect(); // 🔧 TEMPORÄR AUSKOMMENTIERT
+      // print("✅ WebSocket connected for real-time updates");
 
       // Initial data fetch
       await fetchdData.fetchAllNow();
       print("✅ Initial data fetched");
 
     } catch (e) {
-      print("⚠️ WebSocket connection failed, falling back to HTTP polling: $e");
+      print("⚠️ Error during data fetch: $e");
 
       // Even if WebSocket fails, we can still work with HTTP polling
       await fetchdData.fetchAllNow();
@@ -163,7 +174,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     try {
       // Try to reconnect WebSocket if needed
       if (!webSocketService.isConnected) {
-        await webSocketService.connect();
+        // await webSocketService.connect(); // 🔧 TEMPORÄR AUSKOMMENTIERT
       }
 
       // Fetch latest data
@@ -196,7 +207,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
         // Core services with WebSocket integration
-        ChangeNotifierProvider(create: (_) => RecipeService()),
+        ChangeNotifierProvider.value(value: recipeService), // 🔧 Verwende die gleiche Instanz
         ChangeNotifierProvider(create: (_) => DrinkService()),
         ChangeNotifierProvider(create: (_) => SlotService()),
 
@@ -261,7 +272,9 @@ class _SmartenderNavigatorObserver extends NavigatorObserver {
 
     print("📍 Navigated to: $routeName");
 
+    // 🔧 TEMPORÄR AUSKOMMENTIERT - erst HTTP APIs lösen
     // Connect WebSocket when navigating to home (after login)
+    /*
     if (routeName == '/home' && !_webSocketService.isConnected) {
       print("🔌 Connecting WebSocket after login...");
       _webSocketService.connect().then((_) {
@@ -273,6 +286,7 @@ class _SmartenderNavigatorObserver extends NavigatorObserver {
         _fetchData.fetchAllNow();
       });
     }
+    */
 
     // Disconnect WebSocket when logging out
     if (routeName == '/login') {

@@ -1018,4 +1018,51 @@ class RecipeService extends ChangeNotifier implements FetchableService {
     );
     super.dispose();
   }
+
+  // Temporäre Debug-Methode - Füge das in recipe_service.dart hinzu
+
+  /// 🔧 DEBUG: Test HTTP connection
+  Future<void> debugHttpConnection() async {
+    final AuthService authService = AuthService();
+    final String? token = await authService.getToken();
+
+    print("🔍 === HTTP API DEBUG ===");
+    print("🔍 BASE_URL: '$baseUrl'");
+    print("🔍 API_KEY: '$apiKey'");
+    print("🔍 Token exists: ${token != null}");
+    print("🔍 Token (first 50 chars): ${token?.substring(0, 50)}...");
+
+    // Test verschiedene Endpoints
+    final testUrls = [
+      "/user/hardware/2/recipes",
+      "/user/hardware/2/drinks",
+      "/user/hardware/2/slots",
+      "/user/hardware/2", // Parent endpoint
+      "/user", // Even higher level
+    ];
+
+    for (final path in testUrls) {
+      final url = Uri.parse(baseUrl + path);
+      print("🔍 Testing: $url");
+
+      try {
+        final response = await http.get(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'Authorization': 'Bearer $token',
+          },
+        );
+
+        print("🔍 Response [$path]: ${response.statusCode}");
+        if (response.statusCode != 200) {
+          print("🔍 Response body: ${response.body}");
+        }
+      } catch (e) {
+        print("🔍 Error [$path]: $e");
+      }
+    }
+    print("🔍 === END HTTP API DEBUG ===");
+  }
 }
