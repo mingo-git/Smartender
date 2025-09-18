@@ -25,7 +25,7 @@ def main():
     logger.log("INFO", "Application started", "Main")
 
     # Initialize WebSocketHandler
-    url = "wss://smartender-432708816033.europe-west3.run.app/smartender/socket"
+    url = "wss://smartender.lextron.dev/smartender/socket"
     # Load environment variables from .env file
     load_dotenv()
     
