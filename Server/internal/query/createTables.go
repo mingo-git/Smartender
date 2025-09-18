@@ -104,7 +104,7 @@ func PopulateDatabase() string {
 	
 	InSERT INTO hardware (hardware_name, mac_address) VALUES
 		('Smartender von Jonas', '00:00:00:00:00:01'),
-		('Smartender von Fachschaft', '00:1A:2B:3C:4D:5E'),
+		('Smartender von Fachschaft', '2c:cf:67:9d:dd:bb'),
 		('Smartender von Philipp', '00:00:00:00:00:03');
 	
 	INSERT INTO drinks (hardware_id, drink_name, is_alcoholic) VALUES
@@ -130,7 +130,13 @@ func PopulateDatabase() string {
 		(2, 2, 1),
 		(2, 3, 3),
 		(2, 4, 4),
-		(2, 5, NULL);
+		(2, 5, NULL),
+		(2, 6, NULL),
+		(2, 7, NULL),
+		(2, 8, NULL),
+		(2, 9, NULL),
+		(2, 10, NULL),
+		(2, 11, NULL);
 
 	INSERT INTO recipes (hardware_id, recipe_name, picture_id) VALUES
 		(2, 'Vodka Martini', 1),

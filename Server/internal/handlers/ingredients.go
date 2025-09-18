@@ -25,6 +25,7 @@ func CreateIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
+	
 	recipeIDInt, err := strconv.Atoi(recipeID)
 	if err != nil {
 		http.Error(w, "Invalid recipe ID", http.StatusBadRequest)
@@ -40,8 +41,15 @@ func CreateIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// *** ERWEITERT: WebSocket Broadcast mit kompletten Daten ***
+	BroadcastIngredientUpdate(db, newIngredient.RecipeID, newIngredient.DrinkID, "created")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
+	json.NewEncoder(w).Encode(newIngredient)
+	
+	log.Default().Printf("✅ [INGREDIENT] Neue Zutat erstellt: Recipe %d, Drink %d, Menge %d ml", 
+		newIngredient.RecipeID, newIngredient.DrinkID, newIngredient.Quantity_ml)
 }
 
 func UpdateIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -68,12 +76,26 @@ func UpdateIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
+		log.Default().Printf("Ingredient not found for update: Recipe %s, Drink %s", recipeID, drinkID)
 		http.Error(w, "Ingredient not found", http.StatusNotFound)
 		return
 	}
 
+	// *** ERWEITERT: WebSocket Broadcast mit kompletten Daten ***
+	recipeIDInt, recipeConvErr := strconv.Atoi(recipeID)
+	drinkIDInt, drinkConvErr := strconv.Atoi(drinkID)
+	
+	if recipeConvErr == nil && drinkConvErr == nil {
+		BroadcastIngredientUpdate(db, recipeIDInt, drinkIDInt, "updated")
+	} else {
+		log.Default().Printf("Warning: Could not broadcast ingredient update due to ID conversion error (Recipe: %s, Drink: %s)", recipeID, drinkID)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent) // 204 No Content
+	
+	log.Default().Printf("✅ [INGREDIENT] Zutat aktualisiert: Recipe %s, Drink %s, Neue Menge %d ml", 
+		recipeID, drinkID, updatedIngredient.Quantity_ml)
 }
 
 func DeleteIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -82,6 +104,10 @@ func DeleteIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	recipeID := vars["recipe_id"]
 	drinkID := vars["drink_id"]
+
+	// Konvertiere IDs für WebSocket-Broadcast (vor dem Löschen)
+	recipeIDInt, recipeConvErr := strconv.Atoi(recipeID)
+	drinkIDInt, drinkConvErr := strconv.Atoi(drinkID)
 
 	// Delete ingredient from the database
 	result, err := db.Exec(query.DeleteIngredient(), recipeID, drinkID)
@@ -93,8 +119,16 @@ func DeleteIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
+		log.Default().Printf("Ingredient not found for deletion: Recipe %s, Drink %s", recipeID, drinkID)
 		http.Error(w, "Ingredient not found", http.StatusNotFound)
 		return
+	}
+
+	// *** ERWEITERT: WebSocket Broadcast für gelöschte Zutat ***
+	if recipeConvErr == nil && drinkConvErr == nil {
+		BroadcastIngredientUpdate(db, recipeIDInt, drinkIDInt, "deleted")
+	} else {
+		log.Default().Printf("Warning: Could not broadcast ingredient deletion due to ID conversion error (Recipe: %s, Drink: %s)", recipeID, drinkID)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -102,4 +136,6 @@ func DeleteIngredient(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Successfully deleted ingredient",
 	})
+	
+	log.Default().Printf("✅ [INGREDIENT] Zutat gelöscht: Recipe %s, Drink %s", recipeID, drinkID)
 }

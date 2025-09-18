@@ -86,3 +86,7 @@ func CocktailProtokollMapper(db *sql.DB, hardware_id int, recipe_id string, r *h
 
 	return string(jsonData), nil
 }
+
+func Add(a, b int) int {
+	return a + b
+}

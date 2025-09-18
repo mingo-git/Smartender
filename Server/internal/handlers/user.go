@@ -107,6 +107,7 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Successfully logged in",
 		"token":   token,
+		"userID":  storedUser.UserID,
 	})
 }
 

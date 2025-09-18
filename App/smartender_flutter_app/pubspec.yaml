@@ -3,12 +3,10 @@ description: "Smartender = Smart Bartender - Flutter"
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-
 version: 1.0.0+1
 
 environment:
   sdk: ^3.5.3
-
 
 dependencies:
   flutter_dotenv: ^5.0.2
@@ -18,27 +16,38 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   jwt_decoder: ^2.0.1
   google_nav_bar: ^5.0.6
+  flutter_svg: ^2.0.0
+  shared_preferences: ^2.3.3
+  flutter_typeahead: ^5.2.0
+  flutter_launcher_icons: ^0.13.1
   provider:
+  # 🆕 WebSocket Dependencies
+  web_socket_channel: ^2.4.5
+  connectivity_plus: ^5.0.2
   flutter:
     sdk: flutter
 
-
-
   cupertino_icons: ^1.0.8
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/images/smartender_logo.png"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
   flutter_lints: ^4.0.0
 
-
 flutter:
-  assets:
-    - lib/images/
-    - .env
-
   uses-material-design: true
+  assets:
+    - .env
+    - lib/images/
+    - lib/images/cocktails/
 
-
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: lib/font/Roboto-Regular.ttf

@@ -18,6 +18,6 @@ build/
 
 # Ignore Python cache
 **/__pycache__*
-
-# Ignore MacOS specific files
-.DS_Store
+# build artifacts
+App/android/*.apk
+CAD-Files/
