@@ -2,17 +2,16 @@
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../config/constants.dart';
+
 import '../models/websocket/websocket_message.dart';
-import 'auth_service.dart';
 import 'fetchable_service.dart';
 import 'websocket_service.dart';
+import 'api_client.dart';
 
 class SlotService extends ChangeNotifier implements FetchableService {
-  final String _allSlotsUrl = "/user/hardware/2/slots";
   final WebSocketService _webSocketService = WebSocketService();
+  final ApiClient _api = ApiClient();
 
   // Flag to prevent loops when updating from WebSocket
   bool _isUpdatingFromWebSocket = false;
@@ -59,7 +58,6 @@ class SlotService extends ChangeNotifier implements FetchableService {
       // Important: Notify other services that slot availability has changed
       // This affects "missing" flags in recipes
       await _notifySlotChangeToOtherServices();
-
     } catch (e) {
       print("SlotService: Error handling slot update: $e");
       _isUpdatingFromWebSocket = false;
@@ -136,62 +134,29 @@ class SlotService extends ChangeNotifier implements FetchableService {
   /// This is important because slot changes affect "missing" ingredient flags in recipes
   Future<void> _notifySlotChangeToOtherServices() async {
     try {
-      // We could implement a proper event bus here, but for simplicity,
-      // we'll let the other services know through their own fetch mechanisms
       print("SlotService: Slot configuration changed - other services should refresh ingredient availability");
-
-      // In a more sophisticated implementation, you might:
-      // 1. Use an event bus to notify RecipeService
-      // 2. Or directly trigger RecipeService.updateIngredientAvailability()
-      // 3. Or use a global state management solution
-
-      // For now, we rely on the periodic fetch or manual refresh
+      // Tipp: Event-Bus/State-Management nutzen, um RecipeService zu benachrichtigen.
     } catch (e) {
       print("SlotService: Error notifying other services: $e");
     }
   }
 
+  // ────────────────────────────────────────────────────────────────────────────
+  // WebSocket-First: Keine HTTP-Fetches mehr in diesem Service
+  // ────────────────────────────────────────────────────────────────────────────
   @override
   Future<void> fetchAndSaveData() async {
-    // Skip HTTP fetch if we just updated from WebSocket
     if (_isUpdatingFromWebSocket) {
-      print("SlotService: Skipping HTTP fetch - just updated from WebSocket");
+      print("SlotService: Skipping fetch (just updated from WebSocket).");
       return;
     }
-
-    final AuthService authService = AuthService();
-    final String? token = await authService.getToken();
-
-    if (token == null) {
-      print("No token available. Skipping fetch.");
-      return;
-    }
-
-    final url = Uri.parse(baseUrl + _allSlotsUrl);
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final slots = json.decode(response.body) as List<dynamic>;
-
-        await _saveSlotsLocally(slots);
-        print("SLOTS fetched and saved locally via HTTP. Count: ${slots.length}");
-        notifyListeners();
-      } else {
-        print("Failed to fetch SLOTS: ${response.statusCode}, Response: ${response.body}");
-      }
-    } catch (e) {
-      print("Error fetching SLOTS: $e");
-    }
+    // Absichtlich leer – Initial Load / HTTP-Fallback übernimmt FetchDataService.
+    print("SlotService: WebSocket-first – HTTP fetch disabled (no-op).");
   }
 
+  // ────────────────────────────────────────────────────────────────────────────
+  // Lokaler Cache
+  // ────────────────────────────────────────────────────────────────────────────
   Future<void> _saveSlotsLocally(List<dynamic> slots) async {
     final prefs = await SharedPreferences.getInstance();
     final slotsJson = json.encode(slots);
@@ -202,52 +167,28 @@ class SlotService extends ChangeNotifier implements FetchableService {
     final prefs = await SharedPreferences.getInstance();
     final slotsJson = prefs.getString('slots');
     if (slotsJson != null) {
-      final slotsList = json.decode(slotsJson) as List<dynamic>;
-      final slots = slotsList.map((slot) {
-        return Map<String, dynamic>.from(slot);
-      }).toList();
-
-      return slots;
+      try {
+        final slotsList = json.decode(slotsJson) as List<dynamic>;
+        final slots = slotsList.map((slot) => Map<String, dynamic>.from(slot)).toList();
+        return slots;
+      } catch (_) {
+        // Fallback bei korrupten Daten
+      }
     }
-    print("No SLOTS found in SharedPreferences.");
-    return [];
+    return <Map<String, dynamic>>[];
   }
 
-  /// Update a slot with a new drink
+  // ────────────────────────────────────────────────────────────────────────────
+  // Aktionen (HTTP) – nur über ApiClient
+  // ────────────────────────────────────────────────────────────────────────────
+
+  /// Update a slot with a new drink (HTTP Aktion)
   Future<bool> updateSlot(int slotNumber, int? drinkId) async {
-    final AuthService authService = AuthService();
-    final String? token = await authService.getToken();
-
-    if (token == null) {
-      print("No token available. Cannot update slot.");
-      return false;
-    }
-
-    final url = Uri.parse("$baseUrl$_allSlotsUrl/$slotNumber");
-
-    final headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'Authorization': 'Bearer $token',
-    };
-
-    final body = drinkId != null ? json.encode({"drink_id": drinkId}) : null;
-
     try {
-      final response = await http.put(
-        url,
-        headers: headers,
-        body: body, // Kein Body für "Clear"
-      );
-
-      if (response.statusCode == 204) {
+      final response = await _api.updateSlot(slotNumber, drinkId);
+      if (response.statusCode == 200 || response.statusCode == 204) {
         print("SLOT $slotNumber updated successfully.");
-        // Note: Don't call fetchAndSaveData() here - WebSocket will handle the update
-        if (!_webSocketService.isConnected) {
-          // Fallback: Only fetch if WebSocket is not connected
-          await fetchAndSaveData();
-        }
-        notifyListeners();
+        // Keine lokale Aktualisierung hier – WebSocket liefert die Änderungen.
         return true;
       } else {
         print("Failed to update SLOT: ${response.statusCode}, Response: ${response.body}");
@@ -289,13 +230,11 @@ class SlotService extends ChangeNotifier implements FetchableService {
   Future<Map<String, dynamic>?> getSlotForDrink(int drinkId) async {
     try {
       final slots = await fetchSlotsFromLocal();
-
       for (var slot in slots) {
         if (slot['drink'] != null && slot['drink']['drink_id'] == drinkId) {
           return slot;
         }
       }
-
       return null;
     } catch (e) {
       print("SlotService: Error getting slot for drink $drinkId: $e");
@@ -361,11 +300,9 @@ class SlotService extends ChangeNotifier implements FetchableService {
   /// Get WebSocket connection status
   String get connectionStatus => _webSocketService.connectionStatusText;
 
-  /// Force refresh slot data (useful for manual refresh)
+  /// Force refresh slot data (keine HTTP-Anfrage hier)
   Future<void> forceRefresh() async {
-    print("SlotService: Force refreshing slot data...");
-    _isUpdatingFromWebSocket = false; // Allow HTTP fetch
-    await fetchAndSaveData();
+    print("SlotService: Force refresh requested – WebSocket-first, no HTTP fetch here (handled by FetchDataService).");
   }
 
   @override

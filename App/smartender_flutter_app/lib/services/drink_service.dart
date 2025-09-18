@@ -1,16 +1,17 @@
+// lib/services/drink_service.dart
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../config/constants.dart';
+
 import '../models/websocket/websocket_message.dart';
-import 'auth_service.dart';
 import 'fetchable_service.dart';
 import 'websocket_service.dart';
+import 'api_client.dart';
 
 class DrinkService extends ChangeNotifier implements FetchableService {
-  final String _allDrinksUrl = "/user/hardware/2/drinks";
   final WebSocketService _webSocketService = WebSocketService();
+  final ApiClient _api = ApiClient();
 
   // Flag to prevent loops when updating from WebSocket
   bool _isUpdatingFromWebSocket = false;
@@ -53,7 +54,6 @@ class DrinkService extends ChangeNotifier implements FetchableService {
 
       _isUpdatingFromWebSocket = false;
       notifyListeners();
-
     } catch (e) {
       print("DrinkService: Error handling drink update: $e");
       _isUpdatingFromWebSocket = false;
@@ -124,65 +124,22 @@ class DrinkService extends ChangeNotifier implements FetchableService {
     }
   }
 
+  // ────────────────────────────────────────────────────────────────────────────
+  // WebSocket-First: Keine HTTP-Fetches mehr in diesem Service
+  // ────────────────────────────────────────────────────────────────────────────
   @override
   Future<void> fetchAndSaveData() async {
-    // Skip HTTP fetch if we just updated from WebSocket
     if (_isUpdatingFromWebSocket) {
-      print("DrinkService: Skipping HTTP fetch - just updated from WebSocket");
+      print("DrinkService: Skipping fetch (just updated from WebSocket).");
       return;
     }
-
-    final AuthService authService = AuthService();
-    final String? token = await authService.getToken();
-
-    if (token == null) {
-      print("No token available. Skipping fetch.");
-      return;
-    }
-
-    final url = Uri.parse(baseUrl + _allDrinksUrl);
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        if (response.body.isEmpty) {
-          await _saveDrinksLocally([]);
-          print("No drinks returned by the server. Saved empty list locally.");
-          return;
-        }
-
-        List<dynamic> drinks;
-        try {
-          final decoded = json.decode(utf8.decode(response.bodyBytes));
-          if (decoded is List) {
-            drinks = decoded;
-          } else {
-            drinks = [];
-            print("Response did not return a list, using empty list.");
-          }
-        } catch (e) {
-          drinks = [];
-          print("Error decoding response: $e. Using empty list.");
-        }
-
-        await _saveDrinksLocally(drinks);
-        print("DRINKS fetched and saved locally via HTTP. Count: ${drinks.length}");
-        notifyListeners();
-      } else {
-        print("Failed to fetch DRINKS: ${response.statusCode}, Response: ${response.body}");
-      }
-    } catch (e) {
-      print("Error fetching DRINKS: $e");
-    }
+    // Absichtlich leer – Initial Load / HTTP-Fallback übernimmt FetchDataService.
+    print("DrinkService: WebSocket-first – HTTP fetch disabled (no-op).");
   }
 
+  // ────────────────────────────────────────────────────────────────────────────
+  // Lokaler Cache
+  // ────────────────────────────────────────────────────────────────────────────
   Future<void> _saveDrinksLocally(List<dynamic> drinks) async {
     final prefs = await SharedPreferences.getInstance();
     final drinksJson = json.encode(drinks);
@@ -193,132 +150,63 @@ class DrinkService extends ChangeNotifier implements FetchableService {
     final prefs = await SharedPreferences.getInstance();
     final drinksJson = prefs.getString('drinks');
     if (drinksJson != null) {
-      final drinks = List<Map<String, dynamic>>.from(json.decode(drinksJson));
-      return drinks;
+      try {
+        final drinks = List<Map<String, dynamic>>.from(json.decode(drinksJson));
+        return drinks;
+      } catch (_) {
+        // Fallback bei korrupten Daten
+      }
     }
-    print("No DRINKS found in SharedPreferences.");
-    return [];
+    return <Map<String, dynamic>>[];
   }
 
-  /// Hinzufügen eines neuen Drinks (POST)
+  // ────────────────────────────────────────────────────────────────────────────
+  // Aktionen (HTTP) – nur über ApiClient
+  // ────────────────────────────────────────────────────────────────────────────
+
+  /// Hinzufügen eines neuen Drinks (HTTP Aktion)
   Future<bool> addDrink(String drinkName, bool isAlcoholic) async {
-    final AuthService authService = AuthService();
-    final String? token = await authService.getToken();
-
-    if (token == null) {
-      print("Kein Token verfügbar. Kann Drink nicht hinzufügen.");
-      return false;
-    }
-
-    final url = Uri.parse(baseUrl + _allDrinksUrl);
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode({
-          "drink_name": drinkName,
-          "is_alcoholic": isAlcoholic,
-        }),
-      );
-
+      final response = await _api.createDrink(drinkName, isAlcoholic);
       if (response.statusCode == 201) {
+        // WebSocket liefert den finalen Stand; optional Logging
         print("Drink erfolgreich hinzugefügt: $drinkName");
-        // Note: Don't call fetchAndSaveData() here - WebSocket will handle the update
-        if (!_webSocketService.isConnected) {
-          // Fallback: Only fetch if WebSocket is not connected
-          await fetchAndSaveData();
-        }
         return true;
-      } else {
-        print("Fehler beim Hinzufügen des Drinks: ${response.statusCode}");
-        return false;
       }
+      print("Fehler beim Hinzufügen des Drinks: ${response.statusCode} ${response.body}");
+      return false;
     } catch (e) {
       print("Fehler beim Hinzufügen des Drinks: $e");
       return false;
     }
   }
 
-  /// Aktualisieren eines bestehenden Drinks (PUT)
+  /// Aktualisieren eines bestehenden Drinks (HTTP Aktion)
   Future<bool> updateDrink(int drinkId, String drinkName, bool isAlcoholic) async {
-    final AuthService authService = AuthService();
-    final String? token = await authService.getToken();
-
-    if (token == null) {
-      print("Kein Token verfügbar. Kann Drink nicht aktualisieren.");
-      return false;
-    }
-
-    final url = Uri.parse("$baseUrl$_allDrinksUrl/$drinkId");
     try {
-      final response = await http.put(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode({
-          "drink_name": drinkName,
-          "is_alcoholic": isAlcoholic,
-        }),
-      );
-
-      if (response.statusCode == 204) {
+      final response = await _api.updateDrink(drinkId, drinkName, isAlcoholic);
+      if (response.statusCode == 200 || response.statusCode == 204) {
         print("Drink erfolgreich aktualisiert: $drinkName (ID: $drinkId)");
-        // Note: Don't call fetchAndSaveData() here - WebSocket will handle the update
-        if (!_webSocketService.isConnected) {
-          // Fallback: Only fetch if WebSocket is not connected
-          await fetchAndSaveData();
-        }
         return true;
-      } else {
-        print("Fehler beim Aktualisieren des Drinks: ${response.statusCode}");
-        return false;
       }
+      print("Fehler beim Aktualisieren des Drinks: ${response.statusCode} ${response.body}");
+      return false;
     } catch (e) {
       print("Fehler beim Aktualisieren des Drinks: $e");
       return false;
     }
   }
 
-  /// Löschen eines Drinks (DELETE)
+  /// Löschen eines Drinks (HTTP Aktion)
   Future<bool> deleteDrink(int drinkId) async {
-    final AuthService authService = AuthService();
-    final String? token = await authService.getToken();
-
-    if (token == null) {
-      print("Kein Token verfügbar. Kann Drink nicht löschen.");
-      return false;
-    }
-
-    final url = Uri.parse("$baseUrl$_allDrinksUrl/$drinkId");
     try {
-      final response = await http.delete(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'Authorization': 'Bearer $token',
-        },
-      );
-
+      final response = await _api.deleteDrink(drinkId);
       if (response.statusCode == 200 || response.statusCode == 204) {
         print("Drink erfolgreich gelöscht (ID: $drinkId)");
-        // Note: Don't call fetchAndSaveData() here - WebSocket will handle the update
-        if (!_webSocketService.isConnected) {
-          // Fallback: Only fetch if WebSocket is not connected
-          await fetchAndSaveData();
-        }
         return true;
-      } else {
-        print("Fehler beim Löschen des Drinks: ${response.statusCode}");
-        return false;
       }
+      print("Fehler beim Löschen des Drinks: ${response.statusCode} ${response.body}");
+      return false;
     } catch (e) {
       print("Fehler beim Löschen des Drinks: $e");
       return false;

@@ -4,6 +4,22 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+/**
+ * Release-Signing optional aus android/key.properties laden.
+ * Beispiel-Inhalt:
+ *   storeFile=smartender-keystore.jks
+ *   storePassword=DEIN_STORE_PASSWORT
+ *   keyAlias=smartender
+ *   keyPassword=DEIN_KEY_PASSWORT
+ *
+ * Hinweis: storeFile ist relativ zum Modulverzeichnis (android/app).
+ */
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.example.smartender_flutter_app"
     compileSdk = flutter.compileSdkVersion
@@ -26,44 +42,31 @@ android {
         versionName = flutter.versionName
     }
 
-    // Lade die Keystore-Eigenschaften aus der key.properties-Datei
-    def keystorePropertiesFile = rootProject.file('key.properties')
-    def keystoreProperties = [:]
-
-    if (keystorePropertiesFile.exists()) {
-        keystorePropertiesFile.withReader { reader ->
-            reader.eachLine { line ->
-                def (key, value) = line.split('=')
-                keystoreProperties[key.trim()] = value.trim()
+    signingConfigs {
+        release {
+            // Nur setzen, wenn key.properties vorhanden/gefüllt ist
+            if (keystoreProperties.getProperty('storeFile')) {
+                storeFile file(keystoreProperties.getProperty('storeFile'))
+                storePassword keystoreProperties.getProperty('storePassword')
+                keyAlias keystoreProperties.getProperty('keyAlias')
+                keyPassword keystoreProperties.getProperty('keyPassword')
             }
         }
     }
 
-    signingConfigs {
-/*        release {
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-        }*/
-
-        debug {
-            storeFile file("C:\\Users\\jonas\\Desktop\\Smartender\\App\\smartender_flutter_app\\android\\app\\smartender-keystore.jks")
-            storePassword "smartender-2024"
-            keyAlias "androiddebugkey"
-            keyPassword "smartender-2024"
-        }
-    }
-
     buildTypes {
-/*        release {
-            signingConfig signingConfigs.release
-            minifyEnabled true
+        release {
+            // Nur signieren, wenn oben eine gültige Release-Config geladen wurde
+            if (keystoreProperties.getProperty('storeFile')) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }*/
+        }
 
         debug {
-            signingConfig signingConfigs.debug
+            // Standard-Debug-Keystore von Android verwenden (keine Custom-Pfade!)
             minifyEnabled false
         }
     }

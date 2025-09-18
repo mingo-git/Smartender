@@ -248,6 +248,7 @@ class WebSocketStatusInfo {
   }
 }
 
+
 /// WebSocket Configuration
 class WebSocketConfig {
   final String baseUrl;
@@ -266,5 +267,9 @@ class WebSocketConfig {
     this.connectionTimeout = const Duration(seconds: 10),
   });
 
-  String get wsUrl => baseUrl.replaceFirst('http', 'ws') + wsPath;
+  /// 🔧 KORRIGIERTE wsUrl Methode - entfernt die Debug-Logs
+  String get wsUrl {
+    // Einfache, saubere URL-Konstruktion ohne Debug
+    return baseUrl.replaceFirst('http', 'ws') + wsPath;
+  }
 }

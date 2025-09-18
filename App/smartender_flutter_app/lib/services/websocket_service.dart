@@ -2,52 +2,102 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+
+// Basis-Typ für Channel
+import 'package:web_socket_channel/web_socket_channel.dart';
+// IO-spezifischer Channel für Header-Support (nur Mobile/Desktop)
+import 'package:web_socket_channel/io.dart' as io;
+
 import '../models/websocket/websocket_message.dart';
 import '../config/constants.dart';
 import 'auth_service.dart';
 
 typedef WebSocketMessageHandler = void Function(WebSocketMessage message);
 
+enum WebSocketConnectionStatus {
+  disconnected,
+  connecting,
+  connected,
+  reconnecting,
+  error,
+}
+
+class WebSocketStatusInfo {
+  final WebSocketConnectionStatus status;
+  final DateTime lastConnected;
+  final String? errorMessage;
+  final int reconnectAttempts;
+
+  WebSocketStatusInfo({
+    required this.status,
+    required this.lastConnected,
+    this.errorMessage,
+    this.reconnectAttempts = 0,
+  });
+
+  WebSocketStatusInfo copyWith({
+    WebSocketConnectionStatus? status,
+    DateTime? lastConnected,
+    String? errorMessage,
+    int? reconnectAttempts,
+  }) {
+    return WebSocketStatusInfo(
+      status: status ?? this.status,
+      lastConnected: lastConnected ?? this.lastConnected,
+      errorMessage: errorMessage,
+      reconnectAttempts: reconnectAttempts ?? this.reconnectAttempts,
+    );
+  }
+}
+
+class WebSocketConfig {
+  final String baseUrl;
+  final String wsPath;
+  final Duration reconnectDelay;
+  final int maxReconnectAttempts;
+  final Duration pingInterval;
+  final Duration connectionTimeout;
+
+  WebSocketConfig({
+    required this.baseUrl,
+    required this.wsPath,
+    required this.reconnectDelay,
+    required this.maxReconnectAttempts,
+    required this.pingInterval,
+    required this.connectionTimeout,
+  });
+}
+
 class WebSocketService extends ChangeNotifier {
-  // Singleton pattern
   static final WebSocketService _instance = WebSocketService._internal();
   factory WebSocketService() => _instance;
   WebSocketService._internal();
 
-  // WebSocket connection
   WebSocketChannel? _channel;
   StreamSubscription? _messageSubscription;
   StreamSubscription? _connectivitySubscription;
   Timer? _reconnectTimer;
   Timer? _pingTimer;
 
-  // Configuration
   late WebSocketConfig _config;
   final AuthService _authService = AuthService();
 
-  // Connection status
   WebSocketStatusInfo _statusInfo = WebSocketStatusInfo(
     status: WebSocketConnectionStatus.disconnected,
-    lastConnected: DateTime.now(),
+    lastConnected: DateTime.fromMillisecondsSinceEpoch(0),
   );
 
-  // Message handlers
   final Map<WebSocketMessageType, List<WebSocketMessageHandler>> _messageHandlers = {};
 
-  // Connectivity
   bool _isOnline = true;
   bool _isInitialized = false;
 
-  // Getters
   WebSocketStatusInfo get statusInfo => _statusInfo;
   bool get isConnected => _statusInfo.status == WebSocketConnectionStatus.connected;
   bool get isOnline => _isOnline;
 
-  /// Initialize WebSocket Service
   Future<void> initialize() async {
     if (_isInitialized) return;
 
@@ -57,13 +107,10 @@ class WebSocketService extends ChangeNotifier {
       reconnectDelay: const Duration(seconds: 5),
       maxReconnectAttempts: 10,
       pingInterval: const Duration(seconds: 30),
-      connectionTimeout: const Duration(seconds: 10),
+      connectionTimeout: const Duration(seconds: 15),
     );
 
-    // Monitor connectivity
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
-
-    // Check initial connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
     _isOnline = connectivityResult != ConnectivityResult.none;
 
@@ -71,26 +118,21 @@ class WebSocketService extends ChangeNotifier {
     print("WebSocket Service initialized");
   }
 
-  /// Start WebSocket connection
   Future<void> connect() async {
     if (!_isInitialized) {
       await initialize();
     }
-
     if (!_isOnline) {
       print("Cannot connect to WebSocket: No internet connection");
       return;
     }
-
     if (isConnected) {
       print("WebSocket already connected");
       return;
     }
-
     await _connect();
   }
 
-  /// Disconnect WebSocket
   Future<void> disconnect() async {
     print("Disconnecting WebSocket...");
 
@@ -109,13 +151,11 @@ class WebSocketService extends ChangeNotifier {
     print("WebSocket disconnected");
   }
 
-  /// Register message handler for specific message type
   void addMessageHandler(WebSocketMessageType type, WebSocketMessageHandler handler) {
     _messageHandlers.putIfAbsent(type, () => []).add(handler);
     print("Added message handler for type: ${type.value}");
   }
 
-  /// Remove message handler
   void removeMessageHandler(WebSocketMessageType type, WebSocketMessageHandler handler) {
     _messageHandlers[type]?.remove(handler);
     if (_messageHandlers[type]?.isEmpty == true) {
@@ -123,17 +163,15 @@ class WebSocketService extends ChangeNotifier {
     }
   }
 
-  /// Send message via WebSocket
   Future<bool> sendMessage(Map<String, dynamic> message) async {
     if (!isConnected) {
       print("Cannot send message: WebSocket not connected");
       return false;
     }
-
     try {
       final jsonMessage = json.encode(message);
       _channel?.sink.add(jsonMessage);
-      print("Sent WebSocket message: $jsonMessage");
+      print("Sent WebSocket message: ${message['type'] ?? 'unknown'}");
       return true;
     } catch (e) {
       print("Error sending WebSocket message: $e");
@@ -141,7 +179,9 @@ class WebSocketService extends ChangeNotifier {
     }
   }
 
-  /// Internal connection logic
+  // ────────────────────────────────────────────────────────────────────────────
+  // CONNECT (IO: Headers über IOWebSocketChannel.connect, Web: Query-Params)
+  // ────────────────────────────────────────────────────────────────────────────
   Future<void> _connect() async {
     try {
       _updateStatus(WebSocketConnectionStatus.connecting);
@@ -151,15 +191,54 @@ class WebSocketService extends ChangeNotifier {
         throw Exception("No authentication token available");
       }
 
-      final wsUrl = '${_config.wsUrl}?token=$token';
-      print("Connecting to WebSocket: $wsUrl");
+      final parsedBase = Uri.parse(_config.baseUrl);
+      final isHttps = parsedBase.scheme == 'https';
+      final scheme = isHttps ? 'wss' : 'ws';
 
-      _channel = WebSocketChannel.connect(
-        Uri.parse(wsUrl),
-        protocols: ['smartender-v1'],
+      int? port;
+      if (parsedBase.hasPort) {
+        final p = parsedBase.port;
+        if (p != 80 && p != 443) {
+          port = p; // niemals 0 setzen
+        }
+      }
+
+      final host = parsedBase.host.isNotEmpty
+          ? parsedBase.host
+          : _config.baseUrl
+          .replaceAll('https://', '')
+          .replaceAll('http://', '')
+          .split('/')[0];
+
+      final qp = <String, String>{
+        'token': token,
+        // Im Web sind Header nicht möglich → API-Key zusätzlich als Query
+        if (kIsWeb) 'X-API-KEY': apiKey,
+        if (kIsWeb) 'X_API_KEY': apiKey,
+      };
+
+      final uri = Uri(
+        scheme: scheme,
+        host: host,
+        port: port,
+        path: _config.wsPath,
+        queryParameters: qp,
       );
 
-      // Set connection timeout
+      print("🔍 === CORRECTED URL CONSTRUCTION (no :0) ===");
+      print("🔍 scheme: ${uri.scheme}");
+      print("🔍 host: ${uri.host}");
+      print("🔍 port(included?): ${uri.hasPort ? uri.port : 'none'}");
+      print("🔍 path: ${uri.path}");
+      print("🔍 query: ${uri.query}");
+      print("🔍 FINAL URI: $uri");
+      print("🔍 === END CORRECTED URL CONSTRUCTION ===");
+
+      final headers = <String, dynamic>{
+        'Authorization': 'Bearer $token',
+        'X-API-KEY': apiKey,
+      };
+
       final connectionCompleter = Completer<void>();
       Timer(_config.connectionTimeout, () {
         if (!connectionCompleter.isCompleted) {
@@ -167,7 +246,22 @@ class WebSocketService extends ChangeNotifier {
         }
       });
 
-      // Listen for messages
+      // WICHTIG: Nur auf IO (Android/iOS/Desktop) mit Headers verbinden
+      if (kIsWeb) {
+        // Web: keine Header möglich
+        _channel = WebSocketChannel.connect(
+          uri,
+          protocols: const ['smartender-v1'],
+        );
+      } else {
+        // Mobile/Desktop: Header werden unterstützt
+        _channel = io.IOWebSocketChannel.connect(
+          uri,
+          protocols: const ['smartender-v1'],
+          headers: headers,
+        );
+      }
+
       _messageSubscription = _channel!.stream.listen(
             (message) {
           if (!connectionCompleter.isCompleted) {
@@ -188,16 +282,14 @@ class WebSocketService extends ChangeNotifier {
         },
       );
 
-      // Wait for connection or timeout
       await connectionCompleter.future;
 
       _updateStatus(WebSocketConnectionStatus.connected);
       _startPingTimer();
-
-      print("WebSocket connected successfully");
+      print("✅ WebSocket connected successfully${kIsWeb ? ' (web, query auth)' : ' with headers!'}");
 
     } catch (e) {
-      print("WebSocket connection failed: $e");
+      print("❌ WebSocket connection failed: $e");
       _updateStatus(
         WebSocketConnectionStatus.error,
         errorMessage: e.toString(),
@@ -206,16 +298,14 @@ class WebSocketService extends ChangeNotifier {
     }
   }
 
-  /// Handle incoming WebSocket messages
   void _handleIncomingMessage(dynamic rawMessage) {
     try {
       final String messageString = rawMessage.toString();
-      print("Received WebSocket message: $messageString");
+      print("Received WebSocket message: ${messageString.length > 200 ? messageString.substring(0, 200) + '…' : messageString}");
 
       final Map<String, dynamic> messageJson = json.decode(messageString);
       final WebSocketMessage message = WebSocketMessage.fromJson(messageJson);
 
-      // Route message to registered handlers
       final handlers = _messageHandlers[message.type] ?? [];
       for (final handler in handlers) {
         try {
@@ -225,28 +315,23 @@ class WebSocketService extends ChangeNotifier {
         }
       }
 
-      // Special handling for ping/pong
       if (message.type.value == 'ping') {
         _sendPong();
       }
-
     } catch (e) {
       print("Error parsing WebSocket message: $e");
     }
   }
 
-  /// Handle connection errors
   void _handleConnectionError(dynamic error) {
     _updateStatus(
       WebSocketConnectionStatus.error,
       errorMessage: error.toString(),
     );
-
     _pingTimer?.cancel();
     _scheduleReconnect();
   }
 
-  /// Handle connection closed
   void _handleConnectionClosed() {
     _updateStatus(WebSocketConnectionStatus.disconnected);
     _pingTimer?.cancel();
@@ -256,7 +341,6 @@ class WebSocketService extends ChangeNotifier {
     }
   }
 
-  /// Schedule reconnection attempt
   void _scheduleReconnect() {
     if (_statusInfo.reconnectAttempts >= _config.maxReconnectAttempts) {
       print("Max reconnection attempts reached");
@@ -266,37 +350,24 @@ class WebSocketService extends ChangeNotifier {
       );
       return;
     }
+    if (_reconnectTimer?.isActive == true) return;
 
-    if (_reconnectTimer?.isActive == true) {
-      return;
-    }
+    final nextAttempt = _statusInfo.reconnectAttempts + 1;
+    _updateStatus(WebSocketConnectionStatus.reconnecting, reconnectAttempts: nextAttempt);
 
-    _updateStatus(WebSocketConnectionStatus.reconnecting);
-
-    final delay = Duration(
-      seconds: _config.reconnectDelay.inSeconds * (_statusInfo.reconnectAttempts + 1),
-    );
-
-    print("Scheduling reconnect in ${delay.inSeconds} seconds (attempt ${_statusInfo.reconnectAttempts + 1})");
+    final delay = Duration(seconds: _config.reconnectDelay.inSeconds * nextAttempt);
+    print("Scheduling reconnect in ${delay.inSeconds} seconds (attempt $nextAttempt)");
 
     _reconnectTimer = Timer(delay, () async {
-      _updateStatus(
-        WebSocketConnectionStatus.reconnecting,
-        reconnectAttempts: _statusInfo.reconnectAttempts + 1,
-      );
       await _connect();
     });
   }
 
-  /// Start ping timer to keep connection alive
   void _startPingTimer() {
     _pingTimer?.cancel();
-    _pingTimer = Timer.periodic(_config.pingInterval, (timer) {
-      _sendPing();
-    });
+    _pingTimer = Timer.periodic(_config.pingInterval, (_) => _sendPing());
   }
 
-  /// Send ping message
   void _sendPing() {
     sendMessage({
       'type': 'ping',
@@ -304,7 +375,6 @@ class WebSocketService extends ChangeNotifier {
     });
   }
 
-  /// Send pong response
   void _sendPong() {
     sendMessage({
       'type': 'pong',
@@ -312,7 +382,6 @@ class WebSocketService extends ChangeNotifier {
     });
   }
 
-  /// Handle connectivity changes
   void _onConnectivityChanged(ConnectivityResult result) {
     final wasOnline = _isOnline;
     _isOnline = result != ConnectivityResult.none;
@@ -320,17 +389,14 @@ class WebSocketService extends ChangeNotifier {
     print("Connectivity changed: $result, online: $_isOnline");
 
     if (_isOnline && !wasOnline) {
-      // Back online - try to reconnect
       print("Back online, attempting to reconnect...");
       connect();
     } else if (!_isOnline && wasOnline) {
-      // Gone offline - disconnect gracefully
       print("Gone offline, disconnecting...");
       disconnect();
     }
   }
 
-  /// Update connection status
   void _updateStatus(
       WebSocketConnectionStatus status, {
         String? errorMessage,
@@ -341,17 +407,15 @@ class WebSocketService extends ChangeNotifier {
     _statusInfo = _statusInfo.copyWith(
       status: status,
       errorMessage: errorMessage,
-      lastConnected: status == WebSocketConnectionStatus.connected ? now : null,
-      reconnectAttempts: reconnectAttempts ?? (
-          status == WebSocketConnectionStatus.connected ? 0 : _statusInfo.reconnectAttempts
-      ),
+      lastConnected: status == WebSocketConnectionStatus.connected ? now : _statusInfo.lastConnected,
+      reconnectAttempts: reconnectAttempts ??
+          (status == WebSocketConnectionStatus.connected ? 0 : _statusInfo.reconnectAttempts),
     );
 
     notifyListeners();
-    print("WebSocket status updated: ${status.name}");
+    print("WebSocket status updated: ${status.name}${errorMessage != null ? ' - $errorMessage' : ''}");
   }
 
-  /// Dispose service
   @override
   void dispose() {
     disconnect();
@@ -359,7 +423,6 @@ class WebSocketService extends ChangeNotifier {
     super.dispose();
   }
 
-  /// Force reconnect (useful for manual retry)
   Future<void> forceReconnect() async {
     print("Force reconnecting WebSocket...");
     await disconnect();
@@ -367,7 +430,6 @@ class WebSocketService extends ChangeNotifier {
     await connect();
   }
 
-  /// Get connection status as readable string
   String get connectionStatusText {
     switch (_statusInfo.status) {
       case WebSocketConnectionStatus.connected:
