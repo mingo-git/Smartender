@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"sync"
@@ -60,6 +61,94 @@ var frontendClientManager = &ClientManager{
 	broadcast:  make(chan []byte),
 }
 
+// -----------------------------------------------------------------------------
+// Origin-Check Utilities
+// -----------------------------------------------------------------------------
+
+// readAllowedOrigins liest ALLOWED_WS_ORIGINS (kommagetrennt) aus den Env Vars,
+// fallback auf die Produktiv-Domain, wenn nicht gesetzt.
+func readAllowedOrigins() []string {
+	raw := os.Getenv("ALLOWED_WS_ORIGINS")
+	if strings.TrimSpace(raw) == "" {
+		// Fallback: deine produktive Domain
+		return []string{"https://smartender.lextron.dev"}
+	}
+	parts := strings.Split(raw, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+// normalizeOrigin extrahiert scheme://host aus einem Origin-String.
+// Gibt zusätzlich host separat zurück. Bei Fehlern: leere Strings.
+func normalizeOrigin(origin string) (string, string) {
+	u, err := url.Parse(origin)
+	if err != nil || u.Host == "" {
+		return "", ""
+	}
+	base := u.Scheme + "://" + u.Host
+	return strings.ToLower(base), strings.ToLower(u.Host)
+}
+
+// matchAllowed prüft, ob die gegebene Origin einem Eintrag aus allowed entspricht.
+// Unterstützt Volltreffer (scheme+host) sowie Host-Vergleich und Wildcard-Hosts (*.domain.tld).
+func matchAllowed(origin string, allowed []string) bool {
+	// Origin in Bestandteile
+	originBase, originHost := normalizeOrigin(origin)
+	if originBase == "" && originHost == "" {
+		return false
+	}
+
+	for _, a := range allowed {
+		a = strings.TrimSpace(a)
+		if a == "" {
+			continue
+		}
+		// Wildcard?
+		if strings.HasPrefix(a, "*.") {
+			// *.example.com -> jedes foo.example.com
+			domain := strings.ToLower(strings.TrimPrefix(a, "*."))
+			if originHost != "" && strings.HasSuffix(originHost, "."+domain) {
+				return true
+			}
+			continue
+		}
+
+		// Explizit gesetzter Eintrag: versuchen, scheme://host zu vergleichen
+		aBase, aHost := normalizeOrigin(a)
+		// 1) Volltreffer (scheme+host)
+		if aBase != "" && originBase != "" && strings.EqualFold(originBase, aBase) {
+			return true
+		}
+		// 2) Host-Vergleich (scheme egal)
+		if aHost != "" && originHost != "" && strings.EqualFold(originHost, aHost) {
+			return true
+		}
+	}
+	return false
+}
+
+// allowEmptyOriginFlag: leere Origin (native Clients) zulassen?
+// Default: true (kann via ALLOW_EMPTY_WS_ORIGIN=false abgeschaltet werden)
+func allowEmptyOriginFlag() bool {
+	v := strings.ToLower(strings.TrimSpace(os.Getenv("ALLOW_EMPTY_WS_ORIGIN")))
+	if v == "" {
+		return true
+	}
+	return v == "1" || v == "true" || v == "yes" || v == "y"
+}
+
+// isProduction prüft Env
+func isProduction() bool {
+	env := strings.ToLower(strings.TrimSpace(os.Getenv("ENVIRONMENT")))
+	return env == "prod" || env == "production"
+}
+
 // In Server/internal/handlers/websocket_frontend.go - Sichere CORS-Policy
 var frontendUpgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -67,30 +156,37 @@ var frontendUpgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		origin := r.Header.Get("Origin")
 		log.Printf("🌐 WebSocket Origin: %s", origin)
-		
-		// 🔒 SICHERHEIT: Nur erlaubte Origins in Production
-		env := os.Getenv("ENVIRONMENT")
-		if env == "prod" || env == "production" {
-			allowedOrigins := []string{
-				"https://smartender.lextron.dev",
-				// Fügen Sie Ihre erlaubten Domains hinzu
+
+		allowed := readAllowedOrigins()
+		prod := isProduction()
+
+		// 1) Native/CLI-Clients: oft kein Origin-Header -> optional erlauben
+		if origin == "" {
+			if allowEmptyOriginFlag() {
+				log.Printf("✅ WS-Origin erlaubt: leer (native/CLI Client; ALLOW_EMPTY_WS_ORIGIN=true)")
+				return true
 			}
-			
-			for _, allowedOrigin := range allowedOrigins {
-				if origin == allowedOrigin {
-					return true
-				}
-			}
-			
-			log.Printf("❌ WebSocket Origin nicht erlaubt: %s", origin)
+			// wenn leer nicht erlaubt, prüfen wir nichts weiter
+			log.Printf("❌ WS-Origin abgelehnt: leer und ALLOW_EMPTY_WS_ORIGIN=false")
 			return false
 		}
-		
-		// In Development: erlaube localhost
-		if strings.Contains(origin, "localhost") || strings.Contains(origin, "127.0.0.1") {
+
+		// 2) Explizit erlaubte Origins (immer, egal ob dev/prod)
+		if matchAllowed(origin, allowed) {
+			log.Printf("✅ WS-Origin erlaubt: in ALLOWED_WS_ORIGINS")
 			return true
 		}
-		
+
+		// 3) Dev-Fallback: localhost/127.0.0.1 nur zulassen, wenn NICHT prod
+		if !prod {
+			_, host := normalizeOrigin(origin)
+			if strings.Contains(host, "localhost") || strings.HasPrefix(host, "127.0.0.1") {
+				log.Printf("✅ WS-Origin erlaubt (DEV-Fallback): %s", origin)
+				return true
+			}
+		}
+
+		log.Printf("❌ WebSocket Origin nicht erlaubt: %s", origin)
 		return false
 	},
 }
@@ -98,6 +194,8 @@ var frontendUpgrader = websocket.Upgrader{
 // Initialisiere den Client Manager
 func init() {
 	log.Printf("🚀 Initialisiere Frontend WebSocket Client Manager...")
+	log.Printf("🔧 ENVIRONMENT=%s | ALLOW_EMPTY_WS_ORIGIN=%v | ALLOWED_WS_ORIGINS=%v",
+		os.Getenv("ENVIRONMENT"), allowEmptyOriginFlag(), readAllowedOrigins())
 	go frontendClientManager.run()
 }
 
@@ -111,15 +209,15 @@ func (manager *ClientManager) run() {
 			manager.clients[client.UserID] = client
 			manager.mutex.Unlock()
 			log.Printf("✅ Frontend Client registriert für User %d (Total: %d)", client.UserID, len(manager.clients))
-			
+
 			// Sende Welcome Message
 			welcomeMsg := WebSocketMessage{
 				Type: MessageTypeWelcome,
 				Data: map[string]interface{}{
-					"message":    "Willkommen bei Smartender V2",
-					"user_id":    client.UserID,
-					"features":   []string{"real_time_updates", "ping_pong", "auto_reconnect", "full_data_sync"},
-					"version":    "2.0",
+					"message":     "Willkommen bei Smartender V2",
+					"user_id":     client.UserID,
+					"features":    []string{"real_time_updates", "ping_pong", "auto_reconnect", "full_data_sync"},
+					"version":     "2.0",
 					"server_time": time.Now().Format(time.RFC3339),
 				},
 				Timestamp: time.Now(),
@@ -337,15 +435,15 @@ func (c *FrontendClient) writePump() {
 // BroadcastDrinkUpdate sendet komplette Drink-Daten via WebSocket
 func BroadcastDrinkUpdate(db *sql.DB, drinkID int, hardwareID int, action string) {
 	var drink *models.Drink = nil
-	
+
 	// Bei DELETE-Aktionen senden wir nur die IDs
 	if action != "deleted" {
 		// Hole komplette Drink-Daten aus der Datenbank
 		var drinkData models.Drink
 		err := db.QueryRow(query.GetDrinkByID(), drinkID, hardwareID).Scan(
-			&drinkData.DrinkID, 
-			&drinkData.HardwareID, 
-			&drinkData.Name, 
+			&drinkData.DrinkID,
+			&drinkData.HardwareID,
+			&drinkData.Name,
 			&drinkData.Alcoholic,
 		)
 		if err != nil {
@@ -356,12 +454,12 @@ func BroadcastDrinkUpdate(db *sql.DB, drinkID int, hardwareID int, action string
 			log.Printf("✅ [WS] Drink-Daten geladen für ID %d: %s", drinkID, drink.Name)
 		}
 	}
-	
+
 	// Erstelle WebSocket Message
 	messageData := map[string]interface{}{
 		"action": action,
 	}
-	
+
 	if drink != nil {
 		messageData["drink"] = drink
 	} else {
@@ -369,10 +467,10 @@ func BroadcastDrinkUpdate(db *sql.DB, drinkID int, hardwareID int, action string
 		messageData["drink_id"] = drinkID
 		messageData["hardware_id"] = hardwareID
 	}
-	
+
 	message := WebSocketMessage{
-		Type: MessageTypeDrinkUpdate,
-		Data: messageData,
+		Type:      MessageTypeDrinkUpdate,
+		Data:      messageData,
 		Timestamp: time.Now(),
 	}
 
@@ -387,17 +485,17 @@ func BroadcastDrinkUpdate(db *sql.DB, drinkID int, hardwareID int, action string
 // BroadcastRecipeUpdate sendet komplette Recipe-Daten via WebSocket
 func BroadcastRecipeUpdate(db *sql.DB, recipeID int, hardwareID int, action string) {
 	var recipe *models.Recipe_Response = nil
-	
+
 	// Bei DELETE-Aktionen senden wir nur die IDs
 	if action != "deleted" {
 		// Hole komplette Recipe-Daten aus der Datenbank
 		var recipeData models.Recipe
 		var drinkIDsJSON []byte
 		err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(
-			&recipeData.ID, 
-			&recipeData.HardwareID, 
-			&recipeData.Name, 
-			&recipeData.Picture, 
+			&recipeData.ID,
+			&recipeData.HardwareID,
+			&recipeData.Name,
+			&recipeData.Picture,
 			&drinkIDsJSON,
 		)
 		if err != nil {
@@ -410,7 +508,7 @@ func BroadcastRecipeUpdate(db *sql.DB, recipeID int, hardwareID int, action stri
 				log.Printf("❌ [WS] Fehler beim Laden der Ingredients für Recipe %d: %v", recipeID, err)
 			} else {
 				defer rows.Close()
-				
+
 				for rows.Next() {
 					var ingredient models.Ingredient
 					if err := rows.Scan(&ingredient.RecipeID, &ingredient.DrinkID, &ingredient.Quantity_ml); err != nil {
@@ -430,12 +528,12 @@ func BroadcastRecipeUpdate(db *sql.DB, recipeID int, hardwareID int, action stri
 						Drink:       drink,
 					})
 				}
-				
+
 				if len(ingredientsAll) == 0 {
 					ingredientsAll = []models.IngredientResponse{}
 				}
 			}
-			
+
 			recipe = &models.Recipe_Response{
 				ID:          recipeData.ID,
 				HardwareID:  recipeData.HardwareID,
@@ -446,12 +544,12 @@ func BroadcastRecipeUpdate(db *sql.DB, recipeID int, hardwareID int, action stri
 			log.Printf("✅ [WS] Recipe-Daten geladen für ID %d: %s", recipeID, recipe.Name)
 		}
 	}
-	
+
 	// Erstelle WebSocket Message
 	messageData := map[string]interface{}{
 		"action": action,
 	}
-	
+
 	if recipe != nil {
 		messageData["recipe"] = recipe
 	} else {
@@ -459,10 +557,10 @@ func BroadcastRecipeUpdate(db *sql.DB, recipeID int, hardwareID int, action stri
 		messageData["recipe_id"] = recipeID
 		messageData["hardware_id"] = hardwareID
 	}
-	
+
 	message := WebSocketMessage{
-		Type: MessageTypeRecipeUpdate,
-		Data: messageData,
+		Type:      MessageTypeRecipeUpdate,
+		Data:      messageData,
 		Timestamp: time.Now(),
 	}
 
@@ -479,14 +577,14 @@ func BroadcastSlotUpdate(db *sql.DB, slotNumber int, hardwareID int, drinkID *in
 	var slot models.Slot
 	slot.HardwareID = hardwareID
 	slot.SlotNumber = slotNumber
-	
+
 	// Wenn drinkID gesetzt ist, lade die kompletten Drink-Daten
 	if drinkID != nil && *drinkID > 0 {
 		var drink models.Drink
 		err := db.QueryRow(query.GetDrinkByID(), *drinkID, hardwareID).Scan(
-			&drink.DrinkID, 
-			&drink.HardwareID, 
-			&drink.Name, 
+			&drink.DrinkID,
+			&drink.HardwareID,
+			&drink.Name,
 			&drink.Alcoholic,
 		)
 		if err != nil {
@@ -501,13 +599,13 @@ func BroadcastSlotUpdate(db *sql.DB, slotNumber int, hardwareID int, drinkID *in
 		slot.Drink = nil
 		log.Printf("✅ [WS] Slot %d wurde geleert", slotNumber)
 	}
-	
+
 	// Bestimme die Action basierend auf dem drinkID-Wert
 	action := "cleared"
 	if drinkID != nil && *drinkID > 0 {
 		action = "updated"
 	}
-	
+
 	message := WebSocketMessage{
 		Type: MessageTypeSlotUpdate,
 		Data: map[string]interface{}{
@@ -528,7 +626,7 @@ func BroadcastSlotUpdate(db *sql.DB, slotNumber int, hardwareID int, drinkID *in
 // BroadcastFavoriteUpdate sendet Favorite-Updates via WebSocket
 func BroadcastFavoriteUpdate(db *sql.DB, userID int, recipeID int, action string) {
 	var recipe *models.Recipe_Response = nil
-	
+
 	// Bei CREATE-Aktionen senden wir die kompletten Recipe-Daten
 	if action == "created" {
 		// Hole Hardware-ID für das Recipe
@@ -541,10 +639,10 @@ func BroadcastFavoriteUpdate(db *sql.DB, userID int, recipeID int, action string
 			var recipeData models.Recipe
 			var drinkIDsJSON []byte
 			err := db.QueryRow(query.GetRecipeByID(), recipeID, hardwareID).Scan(
-				&recipeData.ID, 
-				&recipeData.HardwareID, 
-				&recipeData.Name, 
-				&recipeData.Picture, 
+				&recipeData.ID,
+				&recipeData.HardwareID,
+				&recipeData.Name,
+				&recipeData.Picture,
 				&drinkIDsJSON,
 			)
 			if err == nil {
@@ -560,20 +658,20 @@ func BroadcastFavoriteUpdate(db *sql.DB, userID int, recipeID int, action string
 			}
 		}
 	}
-	
+
 	messageData := map[string]interface{}{
 		"action":    action,
 		"user_id":   userID,
 		"recipe_id": recipeID,
 	}
-	
+
 	if recipe != nil {
 		messageData["recipe"] = recipe
 	}
-	
+
 	message := WebSocketMessage{
-		Type: MessageTypeFavoriteUpdate,
-		Data: messageData,
+		Type:      MessageTypeFavoriteUpdate,
+		Data:      messageData,
 		Timestamp: time.Now(),
 	}
 
@@ -588,7 +686,7 @@ func BroadcastFavoriteUpdate(db *sql.DB, userID int, recipeID int, action string
 // BroadcastIngredientUpdate sendet Ingredient-Updates via WebSocket
 func BroadcastIngredientUpdate(db *sql.DB, recipeID int, drinkID int, action string) {
 	var ingredient *models.IngredientResponse = nil
-	
+
 	// Bei CREATE und UPDATE-Aktionen senden wir die kompletten Ingredient-Daten
 	if action != "deleted" {
 		// Hole Hardware-ID für das Recipe
@@ -600,8 +698,8 @@ func BroadcastIngredientUpdate(db *sql.DB, recipeID int, drinkID int, action str
 			// Hole Ingredient-Daten
 			var ingredientData models.Ingredient
 			err := db.QueryRow("SELECT recipe_id, drink_id, quantity_ml FROM recipe_ingredients WHERE recipe_id = $1 AND drink_id = $2", recipeID, drinkID).Scan(
-				&ingredientData.RecipeID, 
-				&ingredientData.DrinkID, 
+				&ingredientData.RecipeID,
+				&ingredientData.DrinkID,
 				&ingredientData.Quantity_ml,
 			)
 			if err != nil {
@@ -610,9 +708,9 @@ func BroadcastIngredientUpdate(db *sql.DB, recipeID int, drinkID int, action str
 				// Hole Drink-Details
 				var drink models.Drink
 				err := db.QueryRow(query.GetDrinkByID(), drinkID, hardwareID).Scan(
-					&drink.DrinkID, 
-					&drink.HardwareID, 
-					&drink.Name, 
+					&drink.DrinkID,
+					&drink.HardwareID,
+					&drink.Name,
 					&drink.Alcoholic,
 				)
 				if err != nil {
@@ -627,20 +725,20 @@ func BroadcastIngredientUpdate(db *sql.DB, recipeID int, drinkID int, action str
 			}
 		}
 	}
-	
+
 	messageData := map[string]interface{}{
 		"action":    action,
 		"recipe_id": recipeID,
 		"drink_id":  drinkID,
 	}
-	
+
 	if ingredient != nil {
 		messageData["ingredient"] = ingredient
 	}
-	
+
 	message := WebSocketMessage{
-		Type: MessageTypeIngredientUpdate,
-		Data: messageData,
+		Type:      MessageTypeIngredientUpdate,
+		Data:      messageData,
 		Timestamp: time.Now(),
 	}
 
@@ -672,7 +770,7 @@ func GetConnectedClientsCount() int {
 func GetConnectedClientsInfo() []map[string]interface{} {
 	frontendClientManager.mutex.RLock()
 	defer frontendClientManager.mutex.RUnlock()
-	
+
 	var clients []map[string]interface{}
 	for userID, client := range frontendClientManager.clients {
 		clients = append(clients, map[string]interface{}{
