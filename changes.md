@@ -93,3 +93,16 @@ Offene Punkte/Nächstes:
   - Ausführlichere Logs rund um Homing (Check, Start, Ende, Fehlerbehandlung).
 - `Hardware/Rasp/application/modules/motor_controller.py`
   - Prüft `pigpio`-Verbindung und loggt Fehler, wenn `pigpiod` nicht läuft.
+
+## 2025-09-19 – Autostart (Hardware) für Entwicklung deaktiviert
+
+- Systemd-Service `myapp.service` identifiziert als Autostart der Hardware.
+- Für Entwicklung deaktiviert/gestoppt:
+  - `sudo systemctl disable myapp`
+  - `sudo systemctl stop myapp`
+- Geplantes Re-Enable (später):
+  - `sudo systemctl enable myapp && sudo systemctl start myapp`
+- Empfohlene Service-Konfiguration (prüfen/anpassen vor Re-Enable):
+  - `WorkingDirectory=/home/admin/Smartender/Hardware/Rasp/application`
+  - `EnvironmentFile=/home/admin/Smartender/Hardware/Rasp/application/.env`
+  - `ExecStart=/home/admin/myenv/bin/python3 /home/admin/Smartender/Hardware/Rasp/application/main.py`

@@ -17,11 +17,14 @@ import time
 import json
 from dotenv import load_dotenv
 import os
+import sys
+import traceback
 import uuid
 import math
 # --------------------------------------------------------------------------------------------------
 
 def main():
+    print("[HW] Starting Smartender hardware...", flush=True)
     logger = Logger()
     logger.log("INFO", "Application started", "Main")
     try:
@@ -32,6 +35,7 @@ def main():
 
     # Initialize WebSocketHandler
     url = os.getenv("SMARTENDER_WS_URL", "wss://smartender.lextron.dev/smartender/socket")
+    print(f"[HW] WS URL: {url}", flush=True)
     # Load environment variables from .env file
     load_dotenv()
     
@@ -50,12 +54,14 @@ def main():
     }
 
     logger.log("INFO", headers, "Main")
+    print(f"[HW] Headers prepared: {headers}", flush=True)
 
     websocket_handler = WebSocketHandler(url, headers)
     # Initialize CommandMapper
     command_mapper = CommandMapper()
 
     # Initialize Hardware Components
+    print("[HW] Initializing hardware components...", flush=True)
     position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
     motor_controller = MotorController(dir_pin=16, pull_pin=12)
@@ -86,6 +92,7 @@ def main():
     #  - [ ] led_controller
 
     logger.log("INFO", "Hardware components initialized", "Main")
+    print("[HW] Hardware components initialized", flush=True)
 
     # Subscribe to WebSocket messages
     websocket_handler.message_subject.subscribe(
@@ -98,25 +105,32 @@ def main():
 
     # Start WebSocket handler
     websocket_handler.start()
+    print("[HW] WebSocket handler started (background thread)", flush=True)
     #actuator_controller._move_down(3)
     #led_controller.progress_bar()
     #time.sleep(2)
 
     logger.log("INFO", "Initial actuator move down (1s)", "Main")
+    print("[HW] Actuator: move down 1s", flush=True)
     actuator_controller._move_down(1)
 
     # Move stepper motor to position 0
     logger.log("INFO", "Checking home position (slot 0)", "Main")
+    print("[HW] Checking home position (slot 0)", flush=True)
     if not position_handler.is_home_position():
         logger.log("INFO", "Not at home; nudging and homing", "Main")
         try:
+            print("[HW] Nudge 500 steps dir=0 @2kHz", flush=True)
             motor_controller.rotate_stepper_pigpio(500, 0, 2000)
             motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
             logger.log("INFO", "Homing complete (slot 0)", "Main")
+            print("[HW] Homing complete (slot 0)", flush=True)
         except Exception as e:
             logger.log("ERROR", f"Homing error: {e}", "Main")
+            print(f"[HW] Homing error: {e}", flush=True)
     else:
         logger.log("INFO", "Already at home position", "Main")
+        print("[HW] Already at home position", flush=True)
 
 
     try:
@@ -264,7 +278,19 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("[HW] Interrupted by user", flush=True)
+        raise
+    except Exception as e:
+        tb = traceback.format_exc()
+        try:
+            Logger().log("FATAL", f"Unhandled exception: {e}\n{tb}", "Main")
+        except Exception:
+            pass
+        print(f"[HW] FATAL: {e}\n{tb}", file=sys.stderr, flush=True)
+        raise
 
 
 def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger):
