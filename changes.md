@@ -51,7 +51,7 @@ Offene Punkte/Nächstes:
  - Verworfen zugunsten eines vereinfachten Default-Setups (keine getrennten dev/prod Files).
 
 ### Logging-Verbesserungen (Server)
-- `Server/internal/handlers/maintenance.go`: Ausführlichere Logs für `/maintenance`:
+  - `Server/internal/handlers/maintenance.go`: Ausführlichere Logs für `/maintenance`:
   - user_id, hardware_id, maintenance_type
   - Bei `pump_hold`: index und action
 - Vollständiges gesendetes Payload und Hinweis, wenn Hardware nicht verbunden ist
@@ -163,3 +163,14 @@ Akzeptanz – erreicht:
   - `Server/internal/handlers/slots.go`: Einzelzeilen pro Drink/Slot entfernt; ein kompaktes Mapping in einer Zeile (`🍹 [SLOTS MAP] ...`).
 - Hardware Flush (Hold-to-Flush) repariert und sichtbar gemacht:
   - `Hardware/Rasp/application/main.py`: `process_maintenance` vor Aufruf definiert; zusätzlicher Log `Pump hold: idx=… action=…`.
+
+### 2025-09-19 – BTS7960 Testskript + Verdrahtung
+- Neues Testskript für Linearaktuator via BTS7960:
+  - Datei: `Hardware/Rasp/application/tests/test_bts7960_actuator.py`
+  - Funktionen: EN- und PWM-Pins initialisieren, OUT/IN kurz ansteuern, Rampentest, sauberes Stoppen.
+  - Standard-Pins (BCM): `R_EN=23`, `L_EN=24`, `R_PWM=18`, `L_PWM=25`, `PWM_FREQ=1kHz`.
+- Verdrahtung (Kurzanleitung):
+  - RPi: `5V → VCC` (Logik), `GND → GND` (gemeinsame Masse), Steuerleitungen wie oben.
+  - Netzteil 12V → BTS7960 Leistungseingang (VIN+/VIN-), Aktuator an OUT+/OUT-.
+  - Nur eine PWM-Seite aktiv: OUT = `R_PWM>0 & L_PWM=0`; IN = `L_PWM>0 & R_PWM=0`; beide EN=HIGH beim Fahren, sonst LOW.
+- Aufruf: `sudo -E /home/admin/myenv/bin/python3 Hardware/Rasp/application/tests/test_bts7960_actuator.py`
