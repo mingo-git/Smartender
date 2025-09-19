@@ -5,7 +5,7 @@ from modules.motor_controller import MotorController
 from modules.position_handler import PositionHandler
 from modules.pump_controller import PumpController
 from modules.weight_sensor import WeightSensor
-from modules.actuator_controller import ActuatorController
+from modules.actuator_controller_bts7960 import ActuatorControllerBTS7960
 from modules.led_controller import LEDController
 # --------------------------------------------------------------------------------------------------
 from modules.utils.logger import Logger
@@ -67,10 +67,13 @@ def main():
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
     motor_controller = MotorController(dir_pin=16, pull_pin=12)
     pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26], weight_sensor=weight_sensor, position_handler=position_handler)
-    actuator_controller = ActuatorController(
-        in_pins={"in3": 7, "in4": 1},
+    # Actuator via BTS7960 driver (replaces relay-based controller)
+    actuator_controller = ActuatorControllerBTS7960(
+        pins={"r_en": 23, "l_en": 24, "r_pwm": 18, "l_pwm": 25},
         weight_sensor=weight_sensor,
         position_handler=position_handler,
+        pwm_freq_hz=1000,
+        invert=False,  # set True if your OUT/IN orientation is reversed
     )
     #led_controller = LEDController(LV1_pin=18)
 

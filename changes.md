@@ -176,3 +176,11 @@ Akzeptanz – erreicht:
   - Nur eine PWM-Seite aktiv: OUT = `R_PWM>0 & L_PWM=0`; IN = `L_PWM>0 & R_PWM=0`; beide EN=HIGH beim Fahren, sonst LOW.
 - Aufruf: `sudo -E /home/admin/myenv/bin/python3 Hardware/Rasp/application/tests/test_bts7960_actuator.py`
   - Anpassung: Hub-Reihenfolge gedreht (erst IN/einfahren, dann OUT/ausfahren), um beobachtetes Verhalten zu spiegeln.
+
+### 2025-09-19 – Linearaktuator: Relais → BTS7960 (Integration)
+- Neuer Controller: `ActuatorControllerBTS7960` mit R_EN/L_EN und R_PWM/L_PWM (RPi.GPIO-PWM, 1kHz, Duty 100%).
+- Main umgestellt auf BTS7960:
+  - Datei: `Hardware/Rasp/application/main.py` – verwendet `ActuatorControllerBTS7960` mit Pins `r_en=23`, `l_en=24`, `r_pwm=18`, `l_pwm=25`.
+  - Kompatible API (`_move_up/_move_down/_emergency_stop`) beibehalten.
+- Klasse:
+  - Datei: `Hardware/Rasp/application/modules/actuator_controller_bts7960.py` – sicherer Betrieb (nur eine Richtung aktiv, EN beidseitig), Cleanup & Stop.
