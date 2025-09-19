@@ -133,6 +133,11 @@ Akzeptanz – erreicht:
   - Header: `x-api-key`, `Hardware-Auth-Key`, `Identifier=AA:BB:CC:DD:EE:FF`
   - Trace disabled (weniger Lograuschen)
 
+### 2025-09-19 – Re-Enable .env gesteuerte WS-URL (Hardware)
+- Wunsch: Option über `.env` wieder aktivieren, damit Deployments per Umgebungsvariable steuerbar bleiben.
+- Umsetzung: In `Hardware/Rasp/application/main.py` wird `.env` früh geladen und `SMARTENDER_WS_URL` genutzt – mit Fallback auf `wss://smartender.lextron.dev/smartender/socket`.
+- Wirkung: Prod bleibt unverändert lauffähig; Test-/Staging-Umgebungen können die URL per `.env` übersteuern.
+
 ## 2025-09-19 – Autostart (Hardware) für Entwicklung deaktiviert
 
 - Systemd-Service `myapp.service` identifiziert als Autostart der Hardware.
