@@ -4,7 +4,8 @@ from rpi_ws281x import PixelStrip, Color
 
 class LEDController:
     def __init__(self, LV1_pin=18, led_count=41, brightness=128):
-        print("LED Controller initialized")
+        # Basic init log
+        print("LED Controller initializing…")
 
         # ----------------------
         #   KONFIGURATION
@@ -32,6 +33,7 @@ class LEDController:
         )
 
         self.strip.begin()
+        print(f"LED Controller ready (pin={self.LED_PIN}, count={self.LED_COUNT}, brightness={self.LED_BRIGHTNESS}, channel={self.LED_CHANNEL})")
         self._strobe_thread = None
         self._strobe_stop = threading.Event()
 
