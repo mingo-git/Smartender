@@ -13,6 +13,7 @@ import 'package:web_socket_channel/io.dart' as io;
 import '../models/websocket/websocket_message.dart';
 import '../config/constants.dart';
 import 'auth_service.dart';
+import 'api_client.dart';
 
 typedef WebSocketMessageHandler = void Function(WebSocketMessage message);
 
@@ -80,9 +81,11 @@ class WebSocketService extends ChangeNotifier {
   StreamSubscription? _connectivitySubscription;
   Timer? _reconnectTimer;
   Timer? _pingTimer;
+  Timer? _statusTimer;
 
   late WebSocketConfig _config;
   final AuthService _authService = AuthService();
+  final ApiClient _apiClient = ApiClient();
 
   WebSocketStatusInfo _statusInfo = WebSocketStatusInfo(
     status: WebSocketConnectionStatus.disconnected,
@@ -97,6 +100,8 @@ class WebSocketService extends ChangeNotifier {
   WebSocketStatusInfo get statusInfo => _statusInfo;
   bool get isConnected => _statusInfo.status == WebSocketConnectionStatus.connected;
   bool get isOnline => _isOnline;
+  bool _hardwareConnected = false;
+  bool get hardwareConnected => _hardwareConnected;
 
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -116,6 +121,10 @@ class WebSocketService extends ChangeNotifier {
 
     _isInitialized = true;
     print("WebSocket Service initialized");
+
+    // Start periodic backend status polling to detect hardware connection
+    _statusTimer?.cancel();
+    _statusTimer = Timer.periodic(const Duration(seconds: 10), (_) => _pollBackendStatus());
   }
 
   Future<void> connect() async {
@@ -149,6 +158,8 @@ class WebSocketService extends ChangeNotifier {
     _channel = null;
     _updateStatus(WebSocketConnectionStatus.disconnected);
     print("WebSocket disconnected");
+
+    // keep status timer running to reflect backend availability
   }
 
   void addMessageHandler(WebSocketMessageType type, WebSocketMessageHandler handler) {
@@ -368,6 +379,27 @@ class WebSocketService extends ChangeNotifier {
     _pingTimer = Timer.periodic(_config.pingInterval, (_) => _sendPing());
   }
 
+  Future<void> _pollBackendStatus() async {
+    try {
+      final res = await _apiClient.get('/user/ws/status');
+      if (res.statusCode == 200) {
+        final map = json.decode(res.body) as Map<String, dynamic>;
+        bool hw = false;
+        if (map.containsKey('hardware_connected')) {
+          hw = map['hardware_connected'] == true;
+        } else if (map.containsKey('hardware_connected_count')) {
+          hw = (map['hardware_connected_count'] as num) > 0;
+        }
+        if (_hardwareConnected != hw) {
+          _hardwareConnected = hw;
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      // ignore: keep quiet to avoid spamming logs
+    }
+  }
+
   void _sendPing() {
     sendMessage({
       'type': 'ping',
@@ -420,6 +452,7 @@ class WebSocketService extends ChangeNotifier {
   void dispose() {
     disconnect();
     _connectivitySubscription?.cancel();
+    _statusTimer?.cancel();
     super.dispose();
   }
 

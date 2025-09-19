@@ -19,6 +19,7 @@ import 'package:smartender_flutter_app/services/slot_service.dart';
 import 'package:smartender_flutter_app/services/websocket_service.dart';
 import 'package:smartender_flutter_app/services/maintenance_service.dart';
 import 'components/connection_dot.dart';
+import 'components/connection_badge.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -210,15 +211,25 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               _SmartenderNavigatorObserver(webSocketService, fetchdData),
             ],
             builder: (context, child) {
-              // Global small status dot (top-right) for WS connection
+              // Global status badges (top-right): Server (S) and Hardware (H)
               return Stack(
                 children: [
                   if (child != null) child,
-                  // top-right indicator
                   Positioned(
                     top: MediaQuery.of(context).padding.top + 8,
                     right: 8,
-                    child: const _ConnectionDotPadded(),
+                    child: Consumer<WebSocketService>(
+                      builder: (ctx, ws, _) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ConnectionBadge(label: 'S', ok: ws.isConnected),
+                            const SizedBox(width: 8),
+                            ConnectionBadge(label: 'H', ok: ws.hardwareConnected),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ],
               );

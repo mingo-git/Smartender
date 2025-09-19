@@ -783,16 +783,20 @@ func GetConnectedClientsInfo() []map[string]interface{} {
 }
 
 func GetWebSocketStatus(w http.ResponseWriter, r *http.Request) {
-	status := map[string]interface{}{
-		"connected_clients": GetConnectedClientsCount(),
-		"clients_info":      GetConnectedClientsInfo(),
-		"timestamp":         time.Now().Format(time.RFC3339),
-		"websocket_config": map[string]interface{}{
-			"read_buffer_size":  1024,
-			"write_buffer_size": 1024,
-			"ping_interval":     "54s",
-			"read_timeout":      "60s",
-		},
+    // hardwareConnections is defined in socket.go (same package)
+    hwCount := len(hardwareConnections)
+    status := map[string]interface{}{
+        "connected_clients": GetConnectedClientsCount(),
+        "clients_info":      GetConnectedClientsInfo(),
+        "hardware_connected": hwCount > 0,
+        "hardware_connected_count": hwCount,
+        "timestamp":         time.Now().Format(time.RFC3339),
+        "websocket_config": map[string]interface{}{
+            "read_buffer_size":  1024,
+            "write_buffer_size": 1024,
+            "ping_interval":     "54s",
+            "read_timeout":      "60s",
+        },
 		"features": []string{
 			"real_time_updates",
 			"full_data_sync",
