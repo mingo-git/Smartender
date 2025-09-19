@@ -184,3 +184,8 @@ Akzeptanz – erreicht:
   - Kompatible API (`_move_up/_move_down/_emergency_stop`) beibehalten.
 - Klasse:
   - Datei: `Hardware/Rasp/application/modules/actuator_controller_bts7960.py` – sicherer Betrieb (nur eine Richtung aktiv, EN beidseitig), Cleanup & Stop.
+### 2025-09-19 – Order-Fix: Hardware-ID vereinheitlicht + Guard
+- App HTTP-Fallback (FetchDataService) nutzte `hardware/2` – vereinheitlicht auf `hardware/1`, passend zum Single-Device-Mode.
+  - Datei: `App/smartender_flutter_app/lib/services/fetch_data_service.dart` (Slots/Drinks/Recipes/Favorites URLs angepasst)
+- Backend: Leere Mapping-Ergebnisse beim Ordern führen nun zu 400 (mit Log-Hinweis), statt ein leeres `{}` an die Hardware zu senden.
+  - Datei: `Server/internal/handlers/socket.go` – Guard für leeres Mapping und Success-Log beim Senden hinzugefügt.

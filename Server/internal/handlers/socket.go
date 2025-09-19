@@ -110,25 +110,33 @@ func SendCommandToHardware(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	recipeIdInt := strconv.Itoa(*command)
 
-	result, protocolMapperError := utils.CocktailProtokollMapper(db, *hardwareID, recipeIdInt, r)
+    result, protocolMapperError := utils.CocktailProtokollMapper(db, *hardwareID, recipeIdInt, r)
 
-	if protocolMapperError != nil {
-		if protocolMapperError.Error() == "failed to get hardware from Database" {
-			http.Error(w, "Not authorized for this hardware", http.StatusUnauthorized)
-			return
-		}
-		log.Default().Println("Failed to map recipe to protocol:", protocolMapperError)
-		http.Error(w, "Failed to map recipe to protocol", http.StatusInternalServerError)
-		return
-	}
+    if protocolMapperError != nil {
+        if protocolMapperError.Error() == "failed to get hardware from Database" {
+            http.Error(w, "Not authorized for this hardware", http.StatusUnauthorized)
+            return
+        }
+        log.Default().Println("Failed to map recipe to protocol:", protocolMapperError)
+        http.Error(w, "Failed to map recipe to protocol", http.StatusInternalServerError)
+        return
+    }
 
-	err = conn.WriteMessage(websocket.TextMessage, []byte(result))
+    // Guard: empty mapping → no ingredients mapped for this hardware
+    if len(result) <= 2 { // "{}"
+        log.Default().Printf("⚠️  Empty protocol mapping for hardware %d, recipe %s (likely no slots assigned)", *hardwareID, recipeIdInt)
+        http.Error(w, "No mapped ingredients for this hardware", http.StatusBadRequest)
+        return
+    }
 
-	if err != nil {
-		log.Default().Println("Failed to send command:", err)
-		http.Error(w, "Failed to send command", http.StatusInternalServerError)
-		return
-	}
+    err = conn.WriteMessage(websocket.TextMessage, []byte(result))
 
-	w.Write([]byte("Command sent successfully"))
+    if err != nil {
+        log.Default().Println("Failed to send command:", err)
+        http.Error(w, "Failed to send command", http.StatusInternalServerError)
+        return
+    }
+
+    log.Default().Printf("✅ Command sent to hardware %d: %s", *hardwareID, result)
+    w.Write([]byte("Command sent successfully"))
 }

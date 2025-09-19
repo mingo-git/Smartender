@@ -266,7 +266,7 @@ class FetchdData extends ChangeNotifier {
     }
 
     // Fix 404: /api-Präfix ergänzen
-    final url = Uri.parse("$baseUrl/api/user/hardware/2/slots");
+    final url = Uri.parse("$baseUrl/api/user/hardware/1/slots");
     try {
       final res = await http.get(url, headers: headers);
       if (res.statusCode == 200) {
@@ -293,7 +293,7 @@ class FetchdData extends ChangeNotifier {
     }
 
     // Fix 404: /api-Präfix ergänzen
-    final url = Uri.parse("$baseUrl/api/user/hardware/2/drinks");
+    final url = Uri.parse("$baseUrl/api/user/hardware/1/drinks");
     try {
       final res = await http.get(url, headers: headers);
       if (res.statusCode == 200) {
@@ -320,8 +320,8 @@ class FetchdData extends ChangeNotifier {
     }
 
     // Fix 404: /api-Präfix ergänzen
-    final recipesUrl = Uri.parse("$baseUrl/api/user/hardware/2/recipes");
-    final favoritesUrl = Uri.parse("$baseUrl/api/user/hardware/2/favorites");
+    final recipesUrl = Uri.parse("$baseUrl/api/user/hardware/1/recipes");
+    final favoritesUrl = Uri.parse("$baseUrl/api/user/hardware/1/favorites");
 
     Map<String, dynamic> decoded = {'available': <dynamic>[], 'unavailable': <dynamic>[]};
     List<int> favoriteIds = [];
