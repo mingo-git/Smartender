@@ -3,13 +3,19 @@ import threading
 import json
 import time
 
-# WebSocket URL
-url = "wss://smartender-432708816033.europe-west3.run.app/smartender/socket"
+"""
+Legacy WebSocket listener used for quick manual testing on the Pi.
+Hardcoded to production socket and headers to avoid misconfiguration.
+"""
+
+# WebSocket URL (hardcoded)
+url = "wss://smartender.lextron.dev/smartender/socket"
 
 # Headers required for connection
 headers = {
-    "x-api-key": "b0ec1aa3-98bd-434d-b6b6-f72b99383859",
-    "Hardware-Auth-Key": "TODO: Add Hardware-Auth-Key",
+    "x-api-key": "Smartender_Production_API_2024_WvRymGczKVTVqsJqdrHtcbrWTZoEwfY6n3QRKTd3wNcdyTPTvLRMaWLM5eSQHGMe",
+    "Hardware-Auth-Key": "Hardware_Production_WebSocket_2024_TigGNGbvwrrSpNzRontCyTcVarMmHSd2BZm5sBbtyBbyUV6HNUpoc444aF9sSxRU",
+    "Identifier": "AA:BB:CC:DD:EE:FF",
 }
 
 # Define the on_message function to handle received messages
@@ -30,7 +36,8 @@ def on_open(ws):
 
 # Create and run the WebSocket connection
 if __name__ == "__main__":
-    websocket.enableTrace(True)  # Enable debugging messages
+    # Keep trace disabled to reduce noise; enable by setting to True when debugging
+    websocket.enableTrace(False)
     ws = websocket.WebSocketApp(
         url,
         header=headers,

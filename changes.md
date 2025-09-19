@@ -126,6 +126,13 @@ Akzeptanz – erreicht:
   - Datei: `Hardware/Rasp/application/main.py` – `url = "wss://smartender.lextron.dev/smartender/socket"` hartcodiert; Logausgabe angepasst.
 - Hinweis: Sobald Cloud‑Run stabil erreichbar ist, `SMARTENDER_WS_URL` wieder aus `.env` lesen (Change hier rückbaubar).
 
+#### Nachtrag: Legacy Listener korrigiert
+- `Hardware/Rasp/websocket_listener.py` verwendete noch die alte Cloud‑Run‑URL und falsche Header.
+- Aktualisiert auf harte Produktionswerte:
+  - URL: `wss://smartender.lextron.dev/smartender/socket`
+  - Header: `x-api-key`, `Hardware-Auth-Key`, `Identifier=AA:BB:CC:DD:EE:FF`
+  - Trace disabled (weniger Lograuschen)
+
 ## 2025-09-19 – Autostart (Hardware) für Entwicklung deaktiviert
 
 - Systemd-Service `myapp.service` identifiziert als Autostart der Hardware.
