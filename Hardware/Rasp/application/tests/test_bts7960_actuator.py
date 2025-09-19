@@ -42,7 +42,8 @@ PIN_L_PWM = 25
 
 # PWM parameters
 PWM_FREQ_HZ = 1000  # 1 kHz is fine for DC motors; adjust as needed
-DEFAULT_DUTY = 100  # percent
+DEFAULT_DUTY = 100  # percent (full speed)
+FULL_TRAVEL_S = 6.0  # seconds to reach end stop (adjust to your actuator)
 
 
 def setup():
@@ -123,26 +124,18 @@ def main():
     print("[BTS7960] Setup…")
     r_pwm, l_pwm, r_started, l_started = setup()
     try:
-        print("[BTS7960] Test sequence starting (OUT 1.0s → pause → IN 1.0s)…")
-        r_started, l_started = drive(r_pwm, l_pwm, r_started, l_started, direction="out", duty=DEFAULT_DUTY, duration_s=1.0)
-        time.sleep(0.5)
-        r_started, l_started = drive(r_pwm, l_pwm, r_started, l_started, direction="in", duty=DEFAULT_DUTY, duration_s=1.0)
-
-        print("[BTS7960] Ramp test (OUT 0→80%→0)…")
-        enable_driver(True)
-        if not r_started:
-            r_pwm.start(0)
-            r_started = True
-        for d in range(0, 81, 10):
-            r_pwm.ChangeDutyCycle(d)
-            time.sleep(0.15)
-        for d in range(80, -1, -20):
-            r_pwm.ChangeDutyCycle(d)
-            time.sleep(0.1)
-        r_pwm.ChangeDutyCycle(0)
-        enable_driver(False)
-
-        print("[BTS7960] Done.")
+        print(f"[BTS7960] Full-stroke test at {DEFAULT_DUTY}% duty")
+        print(f"[BTS7960] OUT for {FULL_TRAVEL_S:.2f}s → pause → IN for {FULL_TRAVEL_S:.2f}s")
+        r_started, l_started = drive(
+            r_pwm, l_pwm, r_started, l_started,
+            direction="out", duty=DEFAULT_DUTY, duration_s=FULL_TRAVEL_S,
+        )
+        time.sleep(0.7)
+        r_started, l_started = drive(
+            r_pwm, l_pwm, r_started, l_started,
+            direction="in", duty=DEFAULT_DUTY, duration_s=FULL_TRAVEL_S,
+        )
+        print("[BTS7960] Full-stroke test finished.")
     except KeyboardInterrupt:
         print("[BTS7960] Interrupted – stopping…")
     except Exception as e:
@@ -166,4 +159,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

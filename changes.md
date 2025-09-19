@@ -167,8 +167,9 @@ Akzeptanz – erreicht:
 ### 2025-09-19 – BTS7960 Testskript + Verdrahtung
 - Neues Testskript für Linearaktuator via BTS7960:
   - Datei: `Hardware/Rasp/application/tests/test_bts7960_actuator.py`
-  - Funktionen: EN- und PWM-Pins initialisieren, OUT/IN kurz ansteuern, Rampentest, sauberes Stoppen.
+  - Funktionen: EN- und PWM-Pins initialisieren, Vollhub OUT→IN bei 100% Duty, sauberes Stoppen.
   - Standard-Pins (BCM): `R_EN=23`, `L_EN=24`, `R_PWM=18`, `L_PWM=25`, `PWM_FREQ=1kHz`.
+  - Parameter: `FULL_TRAVEL_S` (Standard 6.0s) bestimmt die Vollhubdauer je Richtung.
 - Verdrahtung (Kurzanleitung):
   - RPi: `5V → VCC` (Logik), `GND → GND` (gemeinsame Masse), Steuerleitungen wie oben.
   - Netzteil 12V → BTS7960 Leistungseingang (VIN+/VIN-), Aktuator an OUT+/OUT-.
