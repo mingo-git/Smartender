@@ -13,7 +13,8 @@ class LEDController:
         self.LED_COUNT      = int(led_count)      # Anzahl deiner LEDs
         self.LED_PIN        = LV1_pin      # GPIO (BCM) für DATA
         self.LED_FREQ_HZ    = 800000  # Frequenz
-        self.LED_DMA        = 10      # DMA-Kanal
+        # Use a DMA channel unlikely to conflict with pigpio (e.g., 5)
+        self.LED_DMA        = 5       # DMA channel
         self.LED_INVERT     = False   
         self.LED_BRIGHTNESS = int(brightness)     # (0-255)
         # Wähle PWM-Channel passend zum Pin: 0 → GPIO12/18, 1 → GPIO13/19
