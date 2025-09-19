@@ -24,6 +24,7 @@ class WeightSensor:
         self.hx = HX711(dt_pin, sck_pin)
         self.scaling_factor = scaling_factor
         self.weight_samples = []
+        self.offset = 0  # raw offset established during tare
 
     def subscribe(self):
         """
@@ -33,66 +34,34 @@ class WeightSensor:
         return self.message_subject.subscribe()
 
     def tare(self):
-        """Set the tare (zero) value for the scale (best-effort across libs)."""
+        """Set the tare (zero) value for the scale; refresh raw offset."""
         self.logger.log("INFO", "Taring weight sensor", "WeightSensor")
-        # Try multiple common APIs across hx711 variants
-        try:
-            # Some libs
-            self.hx.tare()
-            return
-        except Exception:
-            pass
-        try:
-            # Some variants use zero()
-            self.hx.zero()
-            return
-        except Exception:
-            pass
-        try:
-            # Fallback
-            self.hx.reset()
-        except Exception:
-            pass
+        # Reset/zero device if supported
+        for fn in ("tare", "zero", "reset"):
+            try:
+                getattr(self.hx, fn)()
+                break
+            except Exception:
+                continue
+        # Establish raw offset from mean of several readings
+        samples = []
+        for _ in range(10):
+            raw = self.read_raw()
+            if raw is not None:
+                samples.append(raw)
+        self.offset = int(statistics.median(samples)) if samples else 0
 
     # TODO: raise error if value is None/ over a certain threshold
     def read_weight(self):
         """Read and return the current weight (grams)."""
-        value = None
-        grams_mode = False  # True if library returns grams directly
-
-        # Try several common accessors in order of preference
-        try:
-            # Many libs provide mean weight already converted using internal ref unit
-            value = self.hx.get_weight_mean(10)
-            grams_mode = True
-        except Exception:
-            try:
-                value = self.hx.get_weight(5)
-                grams_mode = True
-            except Exception:
-                # Try raw means
-                raw = None
-                try:
-                    raw = self.hx.get_raw_data_mean()
-                except Exception:
-                    try:
-                        raw = self.hx.get_last_raw_data()
-                    except Exception:
-                        raw = None
-                if raw is not None:
-                    value = raw
-                    grams_mode = False
-
-        if value is None:
+        raw = self.read_raw()
+        if raw is None:
             self.logger.log("ERROR", "Scale could not be reached", "Weight Sensor")
             return None
 
         try:
-            if grams_mode:
-                weight = float(value)
-            else:
-                # Convert raw counts to grams using scaling factor
-                weight = float(value) / float(self.scaling_factor)
+            # Convert raw counts to grams using scaling factor and offset
+            weight = (float(raw) - float(self.offset)) / float(self.scaling_factor)
         except Exception:
             weight = None
 
