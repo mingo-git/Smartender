@@ -24,9 +24,14 @@ import math
 def main():
     logger = Logger()
     logger.log("INFO", "Application started", "Main")
+    try:
+        with open("boot_marker.txt", "a") as f:
+            f.write(f"Boot at {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+    except Exception as e:
+        logger.log("WARNING", f"Could not write boot_marker: {e}", "Main")
 
     # Initialize WebSocketHandler
-    url = "wss://smartender.lextron.dev/smartender/socket"
+    url = os.getenv("SMARTENDER_WS_URL", "wss://smartender.lextron.dev/smartender/socket")
     # Load environment variables from .env file
     load_dotenv()
     
@@ -97,12 +102,21 @@ def main():
     #led_controller.progress_bar()
     #time.sleep(2)
 
+    logger.log("INFO", "Initial actuator move down (1s)", "Main")
     actuator_controller._move_down(1)
 
     # Move stepper motor to position 0
+    logger.log("INFO", "Checking home position (slot 0)", "Main")
     if not position_handler.is_home_position():
-        motor_controller.rotate_stepper_pigpio(500, 0, 2000)
-        motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+        logger.log("INFO", "Not at home; nudging and homing", "Main")
+        try:
+            motor_controller.rotate_stepper_pigpio(500, 0, 2000)
+            motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+            logger.log("INFO", "Homing complete (slot 0)", "Main")
+        except Exception as e:
+            logger.log("ERROR", f"Homing error: {e}", "Main")
+    else:
+        logger.log("INFO", "Already at home position", "Main")
 
 
     try:

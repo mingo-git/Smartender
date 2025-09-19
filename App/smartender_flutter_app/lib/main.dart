@@ -18,6 +18,7 @@ import 'package:smartender_flutter_app/services/recipe_service.dart';
 import 'package:smartender_flutter_app/services/slot_service.dart';
 import 'package:smartender_flutter_app/services/websocket_service.dart';
 import 'package:smartender_flutter_app/services/maintenance_service.dart';
+import 'components/connection_dot.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -208,6 +209,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             navigatorObservers: [
               _SmartenderNavigatorObserver(webSocketService, fetchdData),
             ],
+            builder: (context, child) {
+              // Global small status dot (top-right) for WS connection
+              return Stack(
+                children: [
+                  if (child != null) child,
+                  // top-right indicator
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 8,
+                    right: 8,
+                    child: const _ConnectionDotPadded(),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
@@ -275,4 +290,32 @@ extension SmartenderAppContext on BuildContext {
 
   /// Force reconnect WebSocket
   Future<void> reconnectWebSocket() => read<WebSocketService>().forceReconnect();
+}
+
+// Small wrapper to provide a subtle tap-target spacing if needed later
+class _ConnectionDotPadded extends StatelessWidget {
+  const _ConnectionDotPadded();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(2.0),
+      child: SizedBox(
+        width: 14,
+        height: 14,
+        child: Center(child: _ConnectionDotInternal()),
+      ),
+    );
+  }
+}
+
+class _ConnectionDotInternal extends StatelessWidget {
+  const _ConnectionDotInternal();
+
+  @override
+  Widget build(BuildContext context) {
+    // Use the shared component; keep an internal alias for minimal deps in main.dart
+    // ignore: prefer_const_constructors
+    return ConnectionDot();
+  }
 }

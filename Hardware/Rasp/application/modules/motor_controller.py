@@ -21,6 +21,11 @@ class MotorController:
         self.pi = pigpio.pi()
         self.pi.set_mode(self.pull_pin, pigpio.OUTPUT)
         self.pi.set_mode(self.dir_pin, pigpio.OUTPUT)
+        try:
+            if not self.pi.connected:
+                self.logger.log("ERROR", "pigpio not connected. Please ensure pigpiod is running.", "MotorController")
+        except Exception as e:
+            self.logger.log("ERROR", f"pigpio connection check failed: {e}", "MotorController")
 
     def subscribe(self):
         """

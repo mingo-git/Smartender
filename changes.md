@@ -75,7 +75,21 @@ Offene Punkte/Nächstes:
 - `Server/docker-compose.yml` ist das Standard-Compose (keine dev/prod Variants).
 - `ENVIRONMENT=prod` bleibt Standard; fällt automatisch auf lokale Postgres-DSN zurück, wenn `INSTANCE_CONNECTION_NAME` fehlt (siehe `internal/config/config.go`).
 - Skripte hinzugefügt:
-  - `Server/start.sh` – Build & Up (detached)
+- `Server/start.sh` – Build & Up (detached)
   - `Server/stop.sh` – Down
   - `Server/restart.sh` – Down + Up mit Build
-  - `Server/logs.sh` – Folgt Backend-Logs (`smartender-app`)
+- `Server/logs.sh` – Folgt Backend-Logs (`smartender-app`)
+
+## 2025-09-19 – App: Server-Verbindungsstatus (grüner/roter Punkt)
+
+- Neuer Component: `lib/components/connection_dot.dart` – zeigt kleinen Punkt je nach WebSocket-Status (grün=verbunden, rot=getrennt/Fehler).
+- Global in `MaterialApp.builder` eingeblendet (Top-Right), sodass es auf allen Screens sichtbar ist.
+
+## 2025-09-19 – Hardware Start & Debug Verbesserungen
+
+- `Hardware/Rasp/application/main.py`
+  - WebSocket-URL konfigurierbar via Env `SMARTENDER_WS_URL` (Fallback: prod-URL).
+  - Boot-Marker `boot_marker.txt` wird bei Start geschrieben (hilft, Programmausführung zu prüfen).
+  - Ausführlichere Logs rund um Homing (Check, Start, Ende, Fehlerbehandlung).
+- `Hardware/Rasp/application/modules/motor_controller.py`
+  - Prüft `pigpio`-Verbindung und loggt Fehler, wenn `pigpiod` nicht läuft.
