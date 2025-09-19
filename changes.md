@@ -99,6 +99,13 @@ Offene Punkte/Nächstes:
 Akzeptanz – erreicht:
 - Statuskreise sind klar erkennbar, Buchstaben zentriert, optisch am „Smartender“-Schriftzug ausgerichtet.
 
+### 2025-09-19 – App Maintenance-UI: Pumpen-Tiles mit Ingredient
+- Tiles im Bereich „Flush single slot (Hold)“ zeigen jetzt die zugeordnete Zutat (Ingredient) pro Pumpe an, statt „Zum Spülen halten“.
+- Beschriftung vereinheitlicht: „Pump 1..6“ (nicht „Pumpe …“).
+- Umsetzung: liest Slot-Daten lokal (WebSocket-first) und mappt Pumpen 1..6 → Slots 6..11; zeigt `drink.name`/`drink_name` oder „Empty“.
+- Dateien:
+  - `App/smartender_flutter_app/lib/screens/homesceens/settingsscreens/maintenance_screen.dart` (Import `SlotService`, FutureBuilder je Tile, Textanpassungen)
+
 ## 2025-09-19 – Hardware Start & Debug Verbesserungen
 
 - `Hardware/Rasp/application/main.py`

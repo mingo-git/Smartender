@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/provider/theme_provider.dart';
 import 'package:smartender_flutter_app/services/maintenance_service.dart';
+import 'package:smartender_flutter_app/services/slot_service.dart';
 
 class MaintenanceScreen extends StatefulWidget {
   const MaintenanceScreen({Key? key}) : super(key: key);
@@ -378,6 +379,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
   Widget _buildHoldToFlushGrid() {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final maintenanceService = Provider.of<MaintenanceService>(context, listen: false);
+    final slotService = Provider.of<SlotService>(context, listen: false);
 
     Widget buildTile(int pumpNumber) {
       final pumpIndex = pumpNumber - 1; // 0..5
@@ -385,6 +387,26 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
       final color = isActive
           ? theme.trueColor.withOpacity(0.18)
           : theme.primaryColor;
+
+      // Map pump 1..6 to slots 6..11
+      final int slotNumber = 5 + pumpNumber;
+      Future<String> ingredientFuture() async {
+        try {
+          final slots = await slotService.fetchSlotsFromLocal();
+          final slot = slots.firstWhere(
+            (s) => (s['slot_number'] as int?) == slotNumber,
+            orElse: () => {},
+          );
+          final drink = slot['drink'];
+          final name = (drink != null)
+              ? (drink['name'] ?? drink['drink_name'] ?? '')
+              : '';
+          if (name is String && name.trim().isNotEmpty) return name;
+          return 'Empty';
+        } catch (_) {
+          return 'Empty';
+        }
+      }
 
       return GestureDetector(
         onTapDown: (_) async {
@@ -412,16 +434,30 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
               Icon(Icons.water, color: theme.tertiaryColor, size: 32),
               const SizedBox(height: 8),
               Text(
-                'Pumpe $pumpNumber',
+                'Pump $pumpNumber',
                 style: TextStyle(
                   color: theme.tertiaryColor,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                isActive ? 'Halten zum Spülen…' : 'Zum Spülen halten',
-                style: TextStyle(color: theme.tertiaryColor.withOpacity(0.75), fontSize: 12),
+              FutureBuilder<String>(
+                future: ingredientFuture(),
+                builder: (ctx, snap) {
+                  final text = (snap.connectionState == ConnectionState.waiting)
+                      ? '…'
+                      : (snap.data ?? 'Empty');
+                  return Text(
+                    text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: theme.tertiaryColor.withOpacity(0.85),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  );
+                },
               ),
             ],
           ),
