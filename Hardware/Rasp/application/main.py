@@ -75,7 +75,17 @@ def main():
         pwm_freq_hz=1000,
         invert=False,  # set True if your OUT/IN orientation is reversed
     )
-    #led_controller = LEDController(LV1_pin=18)
+    # LED Controller (optional; beware of pin conflicts with BTS7960 on GPIO18)
+    led_enabled = os.getenv("LED_ENABLE", "false").lower() in ("1", "true", "yes", "y")
+    led_controller = None
+    if led_enabled:
+        try:
+            led_pin = int(os.getenv("LED_PIN", "18"))
+            led_count = int(os.getenv("LED_COUNT", "41"))
+            led_brightness = int(os.getenv("LED_BRIGHTNESS", "128"))
+            led_controller = LEDController(LV1_pin=led_pin, led_count=led_count, brightness=led_brightness)
+        except Exception as e:
+            logger.log("ERROR", f"LED init failed: {e}", "Main")
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
@@ -101,7 +111,7 @@ def main():
     # Subscribe to WebSocket messages
     websocket_handler.message_subject.subscribe(
         on_next=lambda message: process_message(
-            message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, weight_sensor, logger
+            message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, weight_sensor, logger, led_controller
         ),
         on_error=lambda e: logger.log("ERROR", f"WebSocket stream error: {e}", "Main"),
         on_completed=lambda: logger.log("INFO", "WebSocket stream completed", "Main"),
@@ -111,7 +121,6 @@ def main():
     websocket_handler.start()
     print("[HW] WebSocket handler started (background thread)", flush=True)
     #actuator_controller._move_down(3)
-    #led_controller.progress_bar()
     #time.sleep(2)
 
     logger.log("INFO", "Initial actuator move down (1s)", "Main")
@@ -155,7 +164,7 @@ def main():
         logger.log("INFO", "Hardware components cleaned up", "Main")
 
 
-def process_message(message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, weight_sensor, logger):
+def process_message(message, command_mapper, motor_controller, pump_controller, actuator_controller, position_handler, weight_sensor, logger, led_controller=None):
     """
     Process a single WebSocket message.
 
@@ -183,6 +192,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                 actuator_controller=actuator_controller,
                 position_handler=position_handler,
                 logger=logger,
+                led_controller=led_controller,
             )
             return
     except Exception as e:
@@ -209,7 +219,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         #time.sleep(1000)
 
         logger.log("INFO", f"Commands processed: {sorted_commands}", "Main")
-        for command in sorted_commands:
+        for idx, command in enumerate(sorted_commands):
             try:
                 # pump_controller.activate_pump(5, 3)  # Placeholder logic
                 # Determine if the drink is alcoholic or non-alcoholic
@@ -230,15 +240,20 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     logger.log("INFO", f"Reached slot {command.slot_number}", "Main")
 
-                    
-                    pump_amount = math.ceil(command.quantity_ml/40)          
-                    
+                    pump_amount = math.ceil(command.quantity_ml/40)
+                    # Progress visualization (if LEDs enabled)
+                    if led_controller:
+                        total_steps = max(1, pump_amount)
+                        led_controller.set_progress(0.0)
+
                     for i in range(pump_amount):
                         # Pour using the actuator
                         logger.log("INFO", f"Pouring from slot {command.slot_number}", "Main")
                         actuator_controller._move_up(2.7)
                         time.sleep(6)
                         actuator_controller._move_down(3)
+                        if led_controller:
+                            led_controller.set_progress((i + 1) / float(pump_amount))
 
                 elif 6 <= command.slot_number <= 11:  # Non-alcoholic
                     logger.log("INFO", f"Non-alcoholic drink: Slot {command.slot_number}", "Main")
@@ -258,6 +273,8 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     actuator_controller._move_up(5)
                     pump_controller.activate_pump(pump_index, command.quantity_ml/32.5)
                     actuator_controller._move_down(6)
+                    if led_controller:
+                        led_controller.set_progress(1.0)
                 else:
                     logger.log("ERROR", "Invalid slot number", "Main")
                     break
@@ -281,7 +298,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
             logger.log("ERROR", "No Commands received", "Main")
 
 
-def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger):
+def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger, led_controller=None):
     """
     Handle maintenance commands sent from the backend.
 
@@ -361,8 +378,51 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                 logger.log("ERROR", f"Pump maintenance error: {e}", "Maintenance")
                 return
 
+        # Light control
+        if mtype == "light":
+            if not led_controller:
+                logger.log("WARN", "LED controller not enabled", "Maintenance")
+                return
+            mode = maintenance.get("mode") or maintenance.get("light_mode") or "solid"
+            color = maintenance.get("color") or "#FFFFFF"
+            brightness = maintenance.get("brightness")
+            speed_hz = maintenance.get("speed_hz") or 8.0
+
+            # parse color strings like #RRGGBB
+            def parse_hex(c):
+                try:
+                    c = str(c).lstrip('#')
+                    if len(c) == 6:
+                        return int(c[0:2], 16), int(c[2:4], 16), int(c[4:6], 16)
+                except Exception:
+                    pass
+                return 255, 255, 255
+
+            r, g, b = parse_hex(color)
+            if isinstance(brightness, (int, float)):
+                try:
+                    led_controller.set_brightness(int(brightness))
+                except Exception:
+                    pass
+
+            if mode.lower() in ("off", "none"):
+                led_controller.stop_strobe()
+                led_controller.set_off()
+            elif mode.lower() in ("solid", "color"):
+                led_controller.stop_strobe()
+                led_controller.set_color(r, g, b)
+            elif mode.lower() in ("strobe", "disco"):
+                led_controller.start_strobe(r, g, b, float(speed_hz))
+            elif mode.lower() in ("progress",):
+                # progress mode is handled by main pour loops via set_progress
+                led_controller.stop_strobe()
+                led_controller.set_progress(0.0)
+            else:
+                logger.log("WARN", f"Unknown light mode: {mode}", "Maintenance")
+            return
+
         # Known but not yet implemented on hardware side
-        if mtype in ("light", "flush_all", "flush_slot", "pump"):
+        if mtype in ("flush_all", "flush_slot"):
             logger.log("INFO", f"Maintenance '{mtype}' received (no-op on hardware)", "Maintenance")
             return
 

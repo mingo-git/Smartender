@@ -72,10 +72,13 @@ func PerformMaintenance(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     case "emergency_stop":
         maintenance["type"] = "emergency_stop"
     case "light_mode":
-        // forward as generic light command; hardware can ignore until implemented
+        // forward as generic light command; include optional params
         if mode, ok := body["light_mode"].(string); ok {
             maintenance["mode"] = mode
         }
+        if col, ok := body["color"].(string); ok { maintenance["color"] = col }
+        if b, ok := body["brightness"].(float64); ok { maintenance["brightness"] = int(b) }
+        if s, ok := body["speed_hz"].(float64); ok { maintenance["speed_hz"] = s }
         maintenance["type"] = "light"
     case "flush_all":
         maintenance["type"] = "flush_all"

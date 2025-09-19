@@ -243,8 +243,10 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final maintenanceService = Provider.of<MaintenanceService>(context, listen: false);
 
-    final modes = <String>["Off", "Solid", "Pulse", "Party"];
-    String selected = modes.first;
+    int r = 0, g = 255, b = 0;
+    double brightness = 128;
+    double speedHz = 8.0;
+    bool isOn = true;
 
     await showDialog(
       context: context,
@@ -252,45 +254,74 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
         return StatefulBuilder(builder: (context, setStateLocal) {
           return AlertDialog(
             backgroundColor: theme.backgroundColor,
-            title: Text("Light settings", style: TextStyle(color: theme.tertiaryColor)),
-            content: DropdownButtonFormField<String>(
-              value: selected,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: theme.primaryColor,
-                border: OutlineInputBorder(
-                  borderRadius: defaultBorderRadius,
-                  borderSide: BorderSide(color: theme.tertiaryColor),
+            titlePadding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
+            title: Row(
+              children: [
+                Expanded(child: Text("Light settings", style: TextStyle(color: theme.tertiaryColor, fontWeight: FontWeight.bold))),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.close, color: theme.tertiaryColor),
+                  tooltip: 'Close',
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: defaultBorderRadius,
-                  borderSide: BorderSide(color: theme.tertiaryColor),
-                ),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Master On/Off toggle
+                  SwitchListTile(
+                    value: isOn,
+                    onChanged: (val) async {
+                      setStateLocal(() => isOn = val);
+                      if (!val) {
+                        final ok = await maintenanceService.turnOffLights();
+                        if (ok) setState(() => _statusMessage = "✅ Lights off");
+                      } else {
+                        final ok = await maintenanceService.setSolidColor(r: r, g: g, b: b, brightness: brightness.toInt());
+                        if (ok) setState(() => _statusMessage = "✅ Lights on");
+                      }
+                    },
+                    title: Text('Lights', style: TextStyle(color: theme.tertiaryColor, fontWeight: FontWeight.w600)),
+                    activeColor: theme.tertiaryColor,
+                    inactiveThumbColor: theme.tertiaryColor.withOpacity(0.6),
+                    inactiveTrackColor: theme.tertiaryColor.withOpacity(0.3),
+                  ),
+                  // Preview box
+                  Container(
+                    height: 36,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, r, g, b),
+                      borderRadius: defaultBorderRadius,
+                      border: Border.all(color: theme.tertiaryColor),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _rgbSlider(theme: theme, label: 'R', value: r.toDouble(), onChanged: (v){ setStateLocal(()=> r = v.toInt()); }),
+                  _rgbSlider(theme: theme, label: 'G', value: g.toDouble(), onChanged: (v){ setStateLocal(()=> g = v.toInt()); }),
+                  _rgbSlider(theme: theme, label: 'B', value: b.toDouble(), onChanged: (v){ setStateLocal(()=> b = v.toInt()); }),
+                  const SizedBox(height: 8),
+                  _doubleSlider(theme: theme, label: 'Brightness', value: brightness, min: 0, max: 255, onChanged: (v){ setStateLocal(()=> brightness = v); }),
+                  const SizedBox(height: 8),
+                  _doubleSlider(theme: theme, label: 'Strobe speed (Hz)', value: speedHz, min: 1, max: 20, onChanged: (v){ setStateLocal(()=> speedHz = v); }),
+                ],
               ),
-              dropdownColor: theme.backgroundColor,
-              style: TextStyle(color: theme.tertiaryColor),
-              items: modes
-                  .map((m) => DropdownMenuItem(
-                value: m,
-                child: Text(m, style: TextStyle(color: theme.tertiaryColor)),
-              ))
-                  .toList(),
-              onChanged: (val) => setStateLocal(() => selected = val ?? selected),
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("Close", style: TextStyle(color: theme.tertiaryColor)),
+                onPressed: () async {
+                  final ok = await maintenanceService.turnOffLights();
+                  if (mounted) Navigator.pop(context);
+                  if (ok) setState(() => _statusMessage = "✅ Lights off");
+                },
+                child: const Text("Off"),
               ),
               ElevatedButton(
                 onPressed: () async {
-                  final ok = await maintenanceService.setLightMode(selected);
+                  final ok = await maintenanceService.setSolidColor(r: r, g: g, b: b, brightness: brightness.toInt());
                   if (mounted) Navigator.pop(context);
-                  setState(() {
-                    _statusMessage = ok
-                        ? "✅ Light mode set to '$selected'"
-                        : "❌ Failed to set light mode";
-                  });
+                  if (ok) setState(() => _statusMessage = "✅ Solid color set");
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.primaryColor,
@@ -298,7 +329,29 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                   shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
                   side: BorderSide(color: theme.tertiaryColor),
                 ),
-                child: const Text("Apply"),
+                child: const Text("Apply color"),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final ok = await maintenanceService.startStrobe(r: r, g: g, b: b, brightness: brightness.toInt(), speedHz: speedHz);
+                  if (mounted) Navigator.pop(context);
+                  if (ok) setState(() => _statusMessage = "✅ Strobe started");
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.primaryColor,
+                  foregroundColor: theme.tertiaryColor,
+                  shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
+                  side: BorderSide(color: theme.tertiaryColor),
+                ),
+                child: const Text("Start strobe"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final ok = await maintenanceService.setLightMode('progress');
+                  if (mounted) Navigator.pop(context);
+                  if (ok) setState(() => _statusMessage = "✅ Progress mode");
+                },
+                child: const Text("Progress"),
               ),
             ],
           );
@@ -521,6 +574,53 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
               child: const Text("Center"),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _rgbSlider({required dynamic theme, required String label, required double value, required ValueChanged<double> onChanged}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: TextStyle(color: theme.tertiaryColor, fontWeight: FontWeight.w600)),
+            Text(value.toInt().toString(), style: TextStyle(color: theme.tertiaryColor)),
+          ],
+        ),
+        Slider(
+          value: value,
+          min: 0,
+          max: 255,
+          divisions: 255,
+          onChanged: onChanged,
+          activeColor: theme.tertiaryColor,
+          inactiveColor: theme.tertiaryColor.withOpacity(0.3),
+        ),
+      ],
+    );
+  }
+
+  Widget _doubleSlider({required dynamic theme, required String label, required double value, required double min, required double max, required ValueChanged<double> onChanged}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: TextStyle(color: theme.tertiaryColor, fontWeight: FontWeight.w600)),
+            Text(value.toStringAsFixed(1), style: TextStyle(color: theme.tertiaryColor)),
+          ],
+        ),
+        Slider(
+          value: value,
+          min: min,
+          max: max,
+          onChanged: onChanged,
+          activeColor: theme.tertiaryColor,
+          inactiveColor: theme.tertiaryColor.withOpacity(0.3),
         ),
       ],
     );

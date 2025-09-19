@@ -95,15 +95,32 @@ class MaintenanceService extends ChangeNotifier {
     }
   }
 
-  Future<bool> setLightMode(String mode) async {
+  Future<bool> setLightMode(String mode, {String? colorHex, int? brightness, double? speedHz}) async {
     try {
-      final res = await _api.setLightMode(mode);
+      final res = await _api.setLightMode(mode, colorHex: colorHex, brightness: brightness, speedHz: speedHz);
       return _handleResponse(res, defaultError: "Lichtmodus konnte nicht gesetzt werden");
     } catch (e) {
       debugPrint("setLightMode error: $e");
       _showErrorMessage("Verbindungsfehler aufgetreten");
       return false;
     }
+  }
+
+  Future<bool> setSolidColor({required int r, required int g, required int b, int? brightness}) async {
+    final hex = _rgbToHex(r, g, b);
+    return await setLightMode('solid', colorHex: hex, brightness: brightness);
+  }
+
+  Future<bool> startStrobe({required int r, required int g, required int b, int? brightness, double speedHz = 8.0}) async {
+    final hex = _rgbToHex(r, g, b);
+    return await setLightMode('strobe', colorHex: hex, brightness: brightness, speedHz: speedHz);
+  }
+
+  Future<bool> turnOffLights() async => await setLightMode('off');
+
+  String _rgbToHex(int r, int g, int b) {
+    String two(int v) => v.clamp(0, 255).toInt().toRadixString(16).padLeft(2, '0');
+    return '#'+two(r)+two(g)+two(b);
   }
 
   Future<bool> moveAxes({required double x, required double z}) async {

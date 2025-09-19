@@ -206,3 +206,15 @@ Akzeptanz – erreicht:
 - Nächste Schritte (wenn reaktiviert):
   - Referenzgewicht 200–500 g verwenden, `calibrate_hx711.py` ausführen, `scaling_factor` übernehmen.
   - Integration: zeitbasierte Dosierung schrittweise auf gewichtsbasiert umstellen (Safeties: Max-Gewicht, Timeout, Tare-Flow vor Start).
+### 2025-09-19 – LEDs: App-Steuerung + Hardware-Implementierung
+- App: Light Settings mit Farbwähler (RGB-Slider), Helligkeit, Strobe (Disco) und „Off“
+  - Datei: `App/smartender_flutter_app/lib/screens/homesceens/settingsscreens/maintenance_screen.dart` (Dialog neu aufgebaut)
+  - Service: `MaintenanceService` mit `setSolidColor`, `startStrobe`, `turnOffLights`
+  - ApiClient: `setLightMode(mode, colorHex?, brightness?, speedHz?)`
+- Backend: Maintenance-Weiterleitung erweitert (color/brightness/speed_hz)
+  - Datei: `Server/internal/handlers/maintenance.go`
+- Hardware: LEDController erweitert (solid/strobe/progress, brightness), optional aktivierbar über ENV
+  - Datei: `Hardware/Rasp/application/modules/led_controller.py` (non-blocking strobe, set_progress)
+  - Datei: `Hardware/Rasp/application/main.py` – LED_ENABLE, LED_PIN, LED_COUNT, LED_BRIGHTNESS; Maintenance `type=light` implementiert
+  - Progress-Bar: Bei alkoholischen Schritten wird der Fortschritt (Rot→Grün) live aktualisiert
+  - Hinweis: Standard-LED-Pin 18 kann mit BTS7960 kollidieren → LED_PIN per `.env` setzen
