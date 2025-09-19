@@ -194,3 +194,15 @@ Akzeptanz – erreicht:
 - Neues Testskript: `Hardware/Rasp/application/tests/test_hx711_scale.py`
   - Nullt (tare) die Waage und gibt 10 Messwerte aus.
   - Start: `sudo -E /home/admin/myenv/bin/python3 Hardware/Rasp/application/tests/test_hx711_scale.py`
+
+### 2025-09-19 – Waage (HX711) – vorerst deaktiviert, Erkenntnisse & ToDos
+- Beobachtung: Sehr geringe Rohwert-Änderung pro Gewicht (z. B. ~38 Counts bei 32 g, ~182 Counts bei 198 g) → deutet auf falschen Kanal/Gain oder Verdrahtung.
+- Code-Anpassungen (robuster):
+  - `WeightSensor` erzwingt Channel A / Gain 128 (sofern von Library unterstützt) und nutzt eigenen Offset (Tare) + Rohwerte.
+  - Kalibrier-Tool hinzugefügt: `Hardware/Rasp/application/tests/calibrate_hx711.py` → berechnet `scaling_factor` aus Referenzgewicht.
+- Verkabelung prüfen (ToDo):
+  - Wägezelle: `E+ (rot)`, `E- (schwarz)`, `A+ (grün)`, `A- (weiß)` an HX711 anschließen; A‑Kanal nutzen, nicht B.
+  - A+ ↔ A− ggf. tauschen (richtige Polarität), VCC=5V, gemeinsame Masse mit RPi.
+- Nächste Schritte (wenn reaktiviert):
+  - Referenzgewicht 200–500 g verwenden, `calibrate_hx711.py` ausführen, `scaling_factor` übernehmen.
+  - Integration: zeitbasierte Dosierung schrittweise auf gewichtsbasiert umstellen (Safeties: Max-Gewicht, Timeout, Tare-Flow vor Start).

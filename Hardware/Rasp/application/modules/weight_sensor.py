@@ -22,6 +22,19 @@ class WeightSensor:
         except Exception:
             pass
         self.hx = HX711(dt_pin, sck_pin)
+        # Try to enforce Channel A with gain 128 for maximum sensitivity
+        for method_name, args in (
+            ("set_gain", (128,)),
+            ("set_gain_A", (128,)),
+            ("select_channel", ("A",)),
+            ("select_channel_A_128", tuple()),
+        ):
+            try:
+                fn = getattr(self.hx, method_name)
+                fn(*args)
+                break
+            except Exception:
+                continue
         self.scaling_factor = scaling_factor
         self.weight_samples = []
         self.offset = 0  # raw offset established during tare
@@ -83,4 +96,10 @@ class WeightSensor:
             try:
                 return self.hx.get_last_raw_data()
             except Exception:
-                return None
+                try:
+                    return self.hx.get_value(5)
+                except Exception:
+                    try:
+                        return self.hx.read_long()
+                    except Exception:
+                        return None
