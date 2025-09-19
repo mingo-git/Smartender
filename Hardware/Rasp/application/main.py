@@ -66,7 +66,8 @@ def main():
     position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])
     weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
     motor_controller = MotorController(dir_pin=16, pull_pin=12)
-    pump_controller = PumpController(pump_pins=[0, 5, 6, 13, 19, 26], weight_sensor=weight_sensor, position_handler=position_handler)
+    # Free a PWM-capable pin for LEDs: move pump (index 3) from GPIO13 -> GPIO7
+    pump_controller = PumpController(pump_pins=[0, 5, 6, 7, 19, 26], weight_sensor=weight_sensor, position_handler=position_handler)
     # Actuator via BTS7960 driver (replaces relay-based controller)
     actuator_controller = ActuatorControllerBTS7960(
         pins={"r_en": 23, "l_en": 24, "r_pwm": 18, "l_pwm": 25},

@@ -15,7 +15,13 @@ class LEDController:
         self.LED_DMA        = 10      # DMA-Kanal
         self.LED_INVERT     = False   
         self.LED_BRIGHTNESS = int(brightness)     # (0-255)
-        self.LED_CHANNEL    = 0       # Meist 0, wenn du GPIO18 nutzt
+        # Wähle PWM-Channel passend zum Pin: 0 → GPIO12/18, 1 → GPIO13/19
+        if self.LED_PIN in (12, 18):
+            self.LED_CHANNEL = 0
+        elif self.LED_PIN in (13, 19):
+            self.LED_CHANNEL = 1
+        else:
+            self.LED_CHANNEL = 0  # Fallback; Library unterstützt i. d. R. nur 12/13/18/19
 
         # Erzeuge ein PixelStrip-Objekt
         self.strip = PixelStrip(

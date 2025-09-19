@@ -218,3 +218,4 @@ Akzeptanz – erreicht:
   - Datei: `Hardware/Rasp/application/main.py` – LED_ENABLE, LED_PIN, LED_COUNT, LED_BRIGHTNESS; Maintenance `type=light` implementiert
   - Progress-Bar: Bei alkoholischen Schritten wird der Fortschritt (Rot→Grün) live aktualisiert
   - Hinweis: Standard-LED-Pin 18 kann mit BTS7960 kollidieren → LED_PIN per `.env` setzen
+  - PWM-Pin freigeräumt: Pumpen-Pin GPIO13 → GPIO7 verschoben (Pumpenindex 3), damit LED_PIN=13 nutzbar ist
