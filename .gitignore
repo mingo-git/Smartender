@@ -21,3 +21,5 @@ build/
 # build artifacts
 App/android/*.apk
 CAD-Files/
+Hardware/Rasp/application/log.txt
+*.log
