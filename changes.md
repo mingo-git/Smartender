@@ -175,3 +175,4 @@ Akzeptanz – erreicht:
   - Netzteil 12V → BTS7960 Leistungseingang (VIN+/VIN-), Aktuator an OUT+/OUT-.
   - Nur eine PWM-Seite aktiv: OUT = `R_PWM>0 & L_PWM=0`; IN = `L_PWM>0 & R_PWM=0`; beide EN=HIGH beim Fahren, sonst LOW.
 - Aufruf: `sudo -E /home/admin/myenv/bin/python3 Hardware/Rasp/application/tests/test_bts7960_actuator.py`
+  - Anpassung: Hub-Reihenfolge gedreht (erst IN/einfahren, dann OUT/ausfahren), um beobachtetes Verhalten zu spiegeln.

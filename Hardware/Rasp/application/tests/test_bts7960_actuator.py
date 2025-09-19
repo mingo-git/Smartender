@@ -125,15 +125,16 @@ def main():
     r_pwm, l_pwm, r_started, l_started = setup()
     try:
         print(f"[BTS7960] Full-stroke test at {DEFAULT_DUTY}% duty")
-        print(f"[BTS7960] OUT for {FULL_TRAVEL_S:.2f}s → pause → IN for {FULL_TRAVEL_S:.2f}s")
+        print(f"[BTS7960] IN for {FULL_TRAVEL_S:.2f}s → pause → OUT for {FULL_TRAVEL_S:.2f}s")
+        # First move IN (retract), then OUT (extend) to match observed behavior
         r_started, l_started = drive(
             r_pwm, l_pwm, r_started, l_started,
-            direction="out", duty=DEFAULT_DUTY, duration_s=FULL_TRAVEL_S,
+            direction="in", duty=DEFAULT_DUTY, duration_s=FULL_TRAVEL_S,
         )
         time.sleep(0.7)
         r_started, l_started = drive(
             r_pwm, l_pwm, r_started, l_started,
-            direction="in", duty=DEFAULT_DUTY, duration_s=FULL_TRAVEL_S,
+            direction="out", duty=DEFAULT_DUTY, duration_s=FULL_TRAVEL_S,
         )
         print("[BTS7960] Full-stroke test finished.")
     except KeyboardInterrupt:
