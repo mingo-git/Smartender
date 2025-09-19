@@ -1,3 +1,4 @@
+import RPi.GPIO as GPIO
 from hx711 import HX711
 import statistics
 from modules.utils.logger import Logger
@@ -14,6 +15,12 @@ class WeightSensor:
         """
         self.logger = Logger()
         self.message_subject = Subject()
+        # Ensure GPIO mode is set (required by hx711 lib)
+        try:
+            GPIO.setwarnings(False)
+            GPIO.setmode(GPIO.BCM)
+        except Exception:
+            pass
         self.hx = HX711(dt_pin, sck_pin)
         self.scaling_factor = scaling_factor
         self.weight_samples = []
