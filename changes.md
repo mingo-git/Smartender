@@ -150,3 +150,9 @@ Akzeptanz – erreicht:
   - `WorkingDirectory=/home/admin/Smartender/Hardware/Rasp/application`
   - `EnvironmentFile=/home/admin/Smartender/Hardware/Rasp/application/.env`
   - `ExecStart=/home/admin/myenv/bin/python3 /home/admin/Smartender/Hardware/Rasp/application/main.py`
+
+### 2025-09-19 – Logging gestrafft (Server) & Flush-Fix (Hardware)
+- Server-Logs komprimiert für Slots/Drinks:
+  - `Server/internal/handlers/slots.go`: Einzelzeilen pro Drink/Slot entfernt; ein kompaktes Mapping in einer Zeile (`🍹 [SLOTS MAP] ...`).
+- Hardware Flush (Hold-to-Flush) repariert und sichtbar gemacht:
+  - `Hardware/Rasp/application/main.py`: `process_maintenance` vor Aufruf definiert; zusätzlicher Log `Pump hold: idx=… action=…`.

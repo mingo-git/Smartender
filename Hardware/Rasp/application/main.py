@@ -278,22 +278,6 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
             logger.log("ERROR", "No Commands received", "Main")
 
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("[HW] Interrupted by user", flush=True)
-        raise
-    except Exception as e:
-        tb = traceback.format_exc()
-        try:
-            Logger().log("FATAL", f"Unhandled exception: {e}\n{tb}", "Main")
-        except Exception:
-            pass
-        print(f"[HW] FATAL: {e}\n{tb}", file=sys.stderr, flush=True)
-        raise
-
-
 def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger):
     """
     Handle maintenance commands sent from the backend.
@@ -352,6 +336,7 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                 if not isinstance(idx, int):
                     logger.log("ERROR", f"Invalid pump index: {idx}", "Maintenance")
                     return
+                logger.log("INFO", f"Pump hold: idx={idx} action={action}", "Maintenance")
 
                 # Ensure home position for safety
                 if position_handler.get_position() != 0:
@@ -382,3 +367,19 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
         logger.log("WARN", f"Unknown maintenance type: {mtype}", "Maintenance")
     except Exception as e:
         logger.log("ERROR", f"Maintenance handling error: {e}", "Maintenance")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("[HW] Interrupted by user", flush=True)
+        raise
+    except Exception as e:
+        tb = traceback.format_exc()
+        try:
+            Logger().log("FATAL", f"Unhandled exception: {e}\n{tb}", "Main")
+        except Exception:
+            pass
+        print(f"[HW] FATAL: {e}\n{tb}", file=sys.stderr, flush=True)
+        raise

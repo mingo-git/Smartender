@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -59,7 +60,7 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 		return
 	}
 
-	var slotSchemaList []models.SlotSchema
+    var slotSchemaList []models.SlotSchema
 	rows, err = db.Query(query.GetAllSlotsForSelectedHardware(), hardware_id)
 	if err != nil {
 		log.Default().Printf("Error selecting all slots: %v", err)
@@ -78,9 +79,14 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 		slotSchemaList = append(slotSchemaList, slot)
 	}
 
-	log.Default().Printf("Slots: %v", slotSchemaList)
+    // Compact log of slot mapping will be printed after resolving drinks
 
 	var slotResponseList []models.Slot
+
+	// Prepare compact names array: index = slot_number-1, value = drink name or empty
+	maxSlot := 0
+	for _, s := range slotSchemaList { if int(s.SlotNumber) > maxSlot { maxSlot = int(s.SlotNumber) } }
+	names := make([]string, maxSlot)
 
 	for _, schema := range slotSchemaList {
 		drink_id := schema.DrinkID
@@ -89,26 +95,27 @@ func GetAllSlotsForSelectedHardware(db *sql.DB, w http.ResponseWriter, r *http.R
 		// Prüfen, ob drink_id vorhanden ist
 		if !drink_id.Valid {
 			slotResponseList = append(slotResponseList, models.Slot{HardwareID: schema.HardwareID, SlotNumber: schema.SlotNumber, Drink: nil})
-			log.Default().Printf("No drink assigned to slot: %v", schema.SlotNumber)
+			if int(schema.SlotNumber) <= len(names) { names[int(schema.SlotNumber)-1] = "" }
 			continue
 		}
-
-		log.Default().Printf("Drink ID: %v", drink_id.Int64)
-		log.Default().Printf("Hardware ID: %v", hardware_id)
 
 		row := db.QueryRow(query.GetDrinkByID(), drink_id.Int64, hardware_id)
 		if err := row.Scan(&drink.DrinkID, &drink.HardwareID, &drink.Name, &drink.Alcoholic); err != nil {
 			if err == sql.ErrNoRows {
-				log.Default().Printf("No drink found for drink_id: %v", drink_id.Int64)
-				log.Default().Printf("Error: %v", err)
+				log.Default().Printf("No drink found for drink_id: %v (slot %d)", drink_id.Int64, schema.SlotNumber)
 				continue
 			}
 			log.Default().Printf("Error scanning drink: %v", err)
 			http.Error(w, "Could not get drink", http.StatusInternalServerError)
 			return
 		}
-		log.Default().Printf("Drink: %v", drink)
+		if int(schema.SlotNumber) <= len(names) { names[int(schema.SlotNumber)-1] = drink.Name }
 		slotResponseList = append(slotResponseList, models.Slot{HardwareID: schema.HardwareID, SlotNumber: schema.SlotNumber, Drink: &drink})
+	}
+
+	// Compact, single-line mapping log: e.g., "Vodka, , Rum, , Tequila, , , , , ,"
+	if len(names) > 0 {
+		log.Default().Printf("🍹 [SLOTS MAP] %s", strings.Join(names, ", "))
 	}
 
 	w.Header().Set("Content-Type", "application/json")
