@@ -215,7 +215,7 @@ Akzeptanz – erreicht:
   - Datei: `Server/internal/handlers/maintenance.go`
 - Hardware: LEDController erweitert (solid/strobe/progress, brightness), optional aktivierbar über ENV
   - Datei: `Hardware/Rasp/application/modules/led_controller.py` (non-blocking strobe, set_progress)
-  - Datei: `Hardware/Rasp/application/main.py` – LED_ENABLE, LED_PIN, LED_COUNT, LED_BRIGHTNESS; Maintenance `type=light` implementiert
+  - Datei: `Hardware/Rasp/application/main.py` – nur `LED_ENABLE` aus `.env` (true/false). Pin/Count/Brightness sind hart codiert: GPIO13, 41 LEDs, Brightness 160. Maintenance `type=light` implementiert.
   - Progress-Bar: Bei alkoholischen Schritten wird der Fortschritt (Rot→Grün) live aktualisiert
   - Hinweis: Standard-LED-Pin 18 kann mit BTS7960 kollidieren → LED_PIN per `.env` setzen
   - PWM-Pin freigeräumt: Pumpen-Pin GPIO13 → GPIO7 verschoben (Pumpenindex 3), damit LED_PIN=13 nutzbar ist

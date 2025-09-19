@@ -76,15 +76,16 @@ def main():
         pwm_freq_hz=1000,
         invert=False,  # set True if your OUT/IN orientation is reversed
     )
-    # LED Controller (optional; beware of pin conflicts with BTS7960 on GPIO18)
+    # LED Controller (optional): only LED_ENABLE is read from .env; pin/count/brightness hardcoded
     led_enabled = os.getenv("LED_ENABLE", "false").lower() in ("1", "true", "yes", "y")
     led_controller = None
     if led_enabled:
         try:
-            led_pin = int(os.getenv("LED_PIN", "18"))
-            led_count = int(os.getenv("LED_COUNT", "41"))
-            led_brightness = int(os.getenv("LED_BRIGHTNESS", "128"))
-            led_controller = LEDController(LV1_pin=led_pin, led_count=led_count, brightness=led_brightness)
+            # Hardcoded defaults to avoid .env proliferation
+            LED_PIN = 13          # WS281x DIN on GPIO13 (PWM Channel 1)
+            LED_COUNT = 41        # number of LEDs
+            LED_BRIGHTNESS = 160  # 0..255
+            led_controller = LEDController(LV1_pin=LED_PIN, led_count=LED_COUNT, brightness=LED_BRIGHTNESS)
         except Exception as e:
             logger.log("ERROR", f"LED init failed: {e}", "Main")
 
@@ -373,7 +374,7 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                 elif action == "stop":
                     pump_controller.stop_pump(idx)
                 else:
-                    logger.log("WARN", f"Unknown pump action: {action}", "Maintenance")
+                    logger.log("WARNING", f"Unknown pump action: {action}", "Maintenance")
                 return
             except Exception as e:
                 logger.log("ERROR", f"Pump maintenance error: {e}", "Maintenance")
@@ -382,7 +383,7 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
         # Light control
         if mtype == "light":
             if not led_controller:
-                logger.log("WARN", "LED controller not enabled", "Maintenance")
+                logger.log("INFO", "LED controller not enabled (ignored)", "Maintenance")
                 return
             mode = maintenance.get("mode") or maintenance.get("light_mode") or "solid"
             color = maintenance.get("color") or "#FFFFFF"
@@ -419,7 +420,7 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                 led_controller.stop_strobe()
                 led_controller.set_progress(0.0)
             else:
-                logger.log("WARN", f"Unknown light mode: {mode}", "Maintenance")
+                logger.log("WARNING", f"Unknown light mode: {mode}", "Maintenance")
             return
 
         # Known but not yet implemented on hardware side
@@ -428,7 +429,7 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
             return
 
         # Unknown type: be defensive
-        logger.log("WARN", f"Unknown maintenance type: {mtype}", "Maintenance")
+        logger.log("WARNING", f"Unknown maintenance type: {mtype}", "Maintenance")
     except Exception as e:
         logger.log("ERROR", f"Maintenance handling error: {e}", "Maintenance")
 
