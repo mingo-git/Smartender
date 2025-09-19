@@ -41,7 +41,7 @@ class MotorController:
             time.sleep(steps / frequency)
             self.pi.hardware_PWM(self.pull_pin, 0, 0)  # Stop PWM
 
-    def rotate_until_limit(self, target_slot, position_handler, direction, frequency=2000):
+    def rotate_until_limit(self, target_slot, position_handler, direction, frequency=2300):
         """
         Rotate the stepper motor until the specified limit switch is triggered.
         :param target_slot: The target slot number (limit switch index).

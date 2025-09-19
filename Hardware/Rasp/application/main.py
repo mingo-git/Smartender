@@ -135,8 +135,8 @@ def main():
         logger.log("INFO", "Not at home; nudging and homing", "Main")
         try:
             print("[HW] Nudge 500 steps dir=0 @2kHz", flush=True)
-            motor_controller.rotate_stepper_pigpio(500, 0, 2000)
-            motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+            motor_controller.rotate_stepper_pigpio(500, 0, 2300)
+            motor_controller.rotate_until_limit(0, position_handler, 1, 1150)
             logger.log("INFO", "Homing complete (slot 0)", "Main")
             print("[HW] Homing complete (slot 0)", flush=True)
         except Exception as e:
@@ -261,7 +261,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
                     # Ensure belt is at the home position (limit switch 0)
                     if position_handler.get_position() != 0:
-                        motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+                        motor_controller.rotate_until_limit(0, position_handler, 1, 1150)
 
                     if position_handler.get_position() != 0:
                         logger.log("ERROR", "Failed to return to home position", "Main")
@@ -291,12 +291,9 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
 
             except Exception as e:
                 logger.log("ERROR", f"Error processing command: {e}", "Main")
-        if position_handler.get_position() != 0:
-            logger.log("INFO", "Returning to home (slot 0)", "Main")
-            # Remove unintended pre-move in opposite direction; go straight to home
-            motor_controller.rotate_until_limit(0, position_handler, 1)
-        else:
-            logger.log("ERROR", "No Commands received", "Main")
+        # Always attempt to return to home (slot 0) after processing
+        logger.log("INFO", "Returning to home (slot 0)", "Main")
+        motor_controller.rotate_until_limit(0, position_handler, 1)
 
 
 def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger, led_controller=None):
