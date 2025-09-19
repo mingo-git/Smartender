@@ -85,6 +85,20 @@ Offene Punkte/Nächstes:
 - Neuer Component: `lib/components/connection_dot.dart` – zeigt kleinen Punkt je nach WebSocket-Status (grün=verbunden, rot=getrennt/Fehler).
 - Global in `MaterialApp.builder` eingeblendet (Top-Right), sodass es auf allen Screens sichtbar ist.
 
+### 2025-09-19 – App UI Feinschliff Status-Badges (S/H)
+- Anpassung der globalen Statusanzeigen (rechts oben):
+  - Darstellung von Buchstaben im Kreis: „S“ (Server) und „H“ (Hardware) statt separatem Punkt+Label.
+  - Größenanpassungen:
+    - Erste Iteration: Reduktion auf ca. 40% der ursprünglichen Größe (Kreise ~4.8–5.6 px) – Feedback: zu klein.
+    - Final: Vergrößert auf ~16.8 px Durchmesser, Text zentriert im Kreis; vertikal exakt zum „Smartender“-Titel (30 px) ausgerichtet.
+- Dateien:
+  - `App/smartender_flutter_app/lib/components/connection_badge.dart` – Kreis mit Buchstabe („S“/„H“), Größenlogik, Theme‑Farben.
+  - `App/smartender_flutter_app/lib/main.dart` – exakte vertikale Ausrichtung relativ zur Titelzeile (Safe‑Area + Padding + (30 − Kreis)/2).
+  - `App/smartender_flutter_app/lib/components/connection_dot.dart` – interner Punkt initial verkleinert (40%); aktuell Badge‑Variante aktiv im Header.
+
+Akzeptanz – erreicht:
+- Statuskreise sind klar erkennbar, Buchstaben zentriert, optisch am „Smartender“-Schriftzug ausgerichtet.
+
 ## 2025-09-19 – Hardware Start & Debug Verbesserungen
 
 - `Hardware/Rasp/application/main.py`
@@ -93,6 +107,24 @@ Offene Punkte/Nächstes:
   - Ausführlichere Logs rund um Homing (Check, Start, Ende, Fehlerbehandlung).
 - `Hardware/Rasp/application/modules/motor_controller.py`
   - Prüft `pigpio`-Verbindung und loggt Fehler, wenn `pigpiod` nicht läuft.
+
+### 2025-09-19 – WebSocket Sofortlösung & Log-Reduktion
+- Ursache 404 (Cloud Run) umgangen: Pi verbindet sich jetzt zuverlässig mit `wss://smartender.lextron.dev/smartender/socket` über `.env`.
+- Änderung: `.env` wird in `main.py` vor dem Lesen der URL geladen, damit `SMARTENDER_WS_URL` sicher greift.
+  - Datei: `Hardware/Rasp/application/main.py` – `load_dotenv()` vor den `os.getenv()`‑Zugriff verschoben; WS‑URL geloggt.
+- Hardware‑Client Trace optional: `WEBSOCKET_TRACE=true` schaltet `websocket-client` Trace an; standardmäßig aus (ruhigere Logs).
+  - Datei: `Hardware/Rasp/application/modules/websocket_handler.py` – `websocket.enableTrace()` per Env steuerbar.
+- Frontend‑WebSocket Ping/Pong Logs reduziert (Keep‑Alive bleibt):
+  - Datei: `Server/internal/handlers/websocket_frontend.go` – „Pong erhalten“/„Ping gesendet“ nicht mehr gespammt; nur Fehler bleiben sichtbar.
+
+Akzeptanz – erreicht:
+- Hardware nutzt `.env`‑URL; weniger Lograuschen; Ping/Pong funktioniert weiter als Keep‑Alive ohne unnötige Ausgaben.
+
+### 2025-09-19 – WebSocket URL hart verdrahtet (Hardware)
+- Beobachtung: Trotz `.env` nutzte die Hardware teils eine falsche WS‑URL → Verbindungsversuche auf Cloud‑Run endeten mit 404.
+- Entscheidung: Bis das Cloud‑Routing stabil ist, wird die Hardware fest auf den funktionierenden Socket verdrahtet.
+  - Datei: `Hardware/Rasp/application/main.py` – `url = "wss://smartender.lextron.dev/smartender/socket"` hartcodiert; Logausgabe angepasst.
+- Hinweis: Sobald Cloud‑Run stabil erreichbar ist, `SMARTENDER_WS_URL` wieder aus `.env` lesen (Change hier rückbaubar).
 
 ## 2025-09-19 – Autostart (Hardware) für Entwicklung deaktiviert
 

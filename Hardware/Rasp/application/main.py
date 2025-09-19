@@ -36,9 +36,10 @@ def main():
     # Load environment variables from .env file EARLY
     load_dotenv()
 
-    # Initialize WebSocketHandler (use .env if present)
-    url = os.getenv("SMARTENDER_WS_URL", "wss://smartender.lextron.dev/smartender/socket")
-    print(f"[HW] WS URL: {url}", flush=True)
+    # Initialize WebSocketHandler (hardcoded for reliability)
+    # Note: Overriding any env to force production socket until Cloud Run route is stable
+    url = "wss://smartender.lextron.dev/smartender/socket"
+    print(f"[HW] WS URL (hardcoded): {url}", flush=True)
     
     # Allow overriding MAC for single-device mode via env STATIC_MAC
     static_mac = os.getenv("STATIC_MAC")
