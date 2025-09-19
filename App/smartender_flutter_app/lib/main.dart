@@ -216,7 +216,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 children: [
                   if (child != null) child,
                   Positioned(
-                    top: MediaQuery.of(context).padding.top + 8,
+                    // Vertikal an die "Smartender"-Schrift (30px) ausrichten:
+                    // Oberkante = Safe-Area + 5px Padding + (30 - KreisDurchmesser)/2
+                    top: () {
+                      const double titleFontSize = 30.0;
+                      const double circle = 16.8; // Größe der ConnectionBadge (siehe component)
+                      final safeTop = MediaQuery.of(context).padding.top;
+                      return safeTop + 5.0 + ((titleFontSize - circle) / 2.0);
+                    }(),
                     right: 8,
                     child: Consumer<WebSocketService>(
                       builder: (ctx, ws, _) {

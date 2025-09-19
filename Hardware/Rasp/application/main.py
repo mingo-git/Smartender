@@ -33,11 +33,12 @@ def main():
     except Exception as e:
         logger.log("WARNING", f"Could not write boot_marker: {e}", "Main")
 
-    # Initialize WebSocketHandler
+    # Load environment variables from .env file EARLY
+    load_dotenv()
+
+    # Initialize WebSocketHandler (use .env if present)
     url = os.getenv("SMARTENDER_WS_URL", "wss://smartender.lextron.dev/smartender/socket")
     print(f"[HW] WS URL: {url}", flush=True)
-    # Load environment variables from .env file
-    load_dotenv()
     
     # Allow overriding MAC for single-device mode via env STATIC_MAC
     static_mac = os.getenv("STATIC_MAC")

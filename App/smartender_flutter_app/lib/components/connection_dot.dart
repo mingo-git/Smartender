@@ -25,17 +25,20 @@ class ConnectionDot extends StatelessWidget {
         }
         final Color badColor = theme.falseColor;
 
+        // Vorher: 12 px → jetzt 40% davon
+        const double previousSize = 12.0;
+        final double size = previousSize * 0.4; // ≈ 4.8 px
+
         return Container(
-          width: 12,
-          height: 12,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             color: connected ? okColor : badColor,
             shape: BoxShape.circle,
-            border: Border.all(color: theme.tertiaryColor, width: 1),
+            border: Border.all(color: theme.tertiaryColor, width: 0.8),
           ),
         );
       },
     );
   }
 }
-

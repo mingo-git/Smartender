@@ -13,6 +13,7 @@ class ConnectionBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
 
+    // Farben aus Theme
     Color okColor;
     final dynamic t = theme.trueColor;
     if (t is Color) {
@@ -22,30 +23,30 @@ class ConnectionBadge extends StatelessWidget {
     }
     final Color badColor = theme.falseColor;
 
+    // Basisgröße: 14 px; aktuell 3x größer als die letzte (40%) Variante -> 14 * 1.2 ≈ 16.8 px
+    const double previousCircle = 14.0;
+    final double circle = previousCircle * 1.2; // ≈ 16.8 px
+    final double fontSize = circle * 0.65; // lesbarer Buchstabe im Kreis
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      width: circle,
+      height: circle,
       decoration: BoxDecoration(
-        color: ok ? okColor.withOpacity(0.2) : badColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ok ? okColor : badColor, width: 1.2),
+        color: ok ? okColor : badColor,
+        shape: BoxShape.circle,
+        border: Border.all(color: theme.tertiaryColor, width: 1.0),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 14,
-            height: 14,
-            decoration: BoxDecoration(
-              color: ok ? okColor : badColor,
-              shape: BoxShape.circle,
-              border: Border.all(color: theme.tertiaryColor, width: 1),
-            ),
-          ),
-          const SizedBox(width: 6),
-          Text(label, style: TextStyle(color: theme.tertiaryColor, fontWeight: FontWeight.w600)),
-        ],
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: theme.backgroundColor,
+          fontWeight: FontWeight.w700,
+          fontSize: fontSize,
+          height: 1.0,
+        ),
       ),
     );
   }
 }
-

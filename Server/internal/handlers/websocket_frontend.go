@@ -323,12 +323,12 @@ func (c *FrontendClient) readPump(db *sql.DB) {
 
 	c.Conn.SetReadLimit(512)
 	c.Conn.SetReadDeadline(time.Now().Add(60 * time.Second))
-	c.Conn.SetPongHandler(func(string) error {
-		log.Printf("🏓 [WS] Pong erhalten von User %d", c.UserID)
-		c.Conn.SetReadDeadline(time.Now().Add(60 * time.Second))
-		c.LastActivity = time.Now()
-		return nil
-	})
+    c.Conn.SetPongHandler(func(string) error {
+        // Keep-alive: extend read deadline silently on Pong
+        c.Conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+        c.LastActivity = time.Now()
+        return nil
+    })
 
 	for {
 		_, messageBytes, err := c.Conn.ReadMessage()
@@ -352,25 +352,24 @@ func (c *FrontendClient) readPump(db *sql.DB) {
 		log.Printf("📨 [WS] Nachricht erhalten von User %d: %s", c.UserID, message.Type)
 
 		switch message.Type {
-		case MessageTypePing:
-			pongMsg := WebSocketMessage{
-				Type: MessageTypePong,
-				Data: map[string]interface{}{
-					"server_time": time.Now().Format(time.RFC3339),
-					"user_id":     c.UserID,
-				},
-				Timestamp: time.Now(),
-			}
-			if msgBytes, err := json.Marshal(pongMsg); err == nil {
-				select {
-				case c.Send <- msgBytes:
-					log.Printf("🏓 [WS] Pong gesendet an User %d", c.UserID)
-				default:
-					log.Printf("❌ [WS] Pong konnte nicht gesendet werden an User %d", c.UserID)
-					close(c.Send)
-					return
-				}
-			}
+        case MessageTypePing:
+            pongMsg := WebSocketMessage{
+                Type: MessageTypePong,
+                Data: map[string]interface{}{
+                    "server_time": time.Now().Format(time.RFC3339),
+                    "user_id":     c.UserID,
+                },
+                Timestamp: time.Now(),
+            }
+            if msgBytes, err := json.Marshal(pongMsg); err == nil {
+                select {
+                case c.Send <- msgBytes:
+                    default:
+                        log.Printf("❌ [WS] Pong konnte nicht gesendet werden an User %d", c.UserID)
+                        close(c.Send)
+                        return
+                }
+            }
 
 		case MessageTypeClientConnected:
 			log.Printf("👋 [WS] Client Connected Message von User %d", c.UserID)
@@ -417,15 +416,14 @@ func (c *FrontendClient) writePump() {
 				return
 			}
 
-		case <-ticker.C:
-			c.Conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				log.Printf("❌ [WS] Ping senden fehlgeschlagen für User %d: %v", c.UserID, err)
-				return
-			}
-			log.Printf("🏓 [WS] Ping gesendet an User %d", c.UserID)
-		}
-	}
+        case <-ticker.C:
+            c.Conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
+            if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+                log.Printf("❌ [WS] Ping senden fehlgeschlagen für User %d: %v", c.UserID, err)
+                return
+            }
+        }
+    }
 }
 
 // ==============================================================================================

@@ -4,6 +4,7 @@ import json
 import time
 from rx.subject import Subject
 from modules.utils.logger import Logger
+import os
 
 
 class WebSocketHandler:
@@ -63,7 +64,9 @@ class WebSocketHandler:
         """
         Establish and maintain the WebSocket connection.
         """
-        websocket.enableTrace(True)
+        # Disable verbose websocket-client trace logs by default (can enable via WEBSOCKET_TRACE=true)
+        trace = str(os.getenv("WEBSOCKET_TRACE", "false")).lower() in ("1", "true", "yes", "y")
+        websocket.enableTrace(trace)
         self.ws = websocket.WebSocketApp(
             self.url,
             header=self.headers,
