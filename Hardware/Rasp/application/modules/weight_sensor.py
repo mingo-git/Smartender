@@ -58,13 +58,17 @@ class WeightSensor:
     def read_weight(self):
         """Read and return the current weight (grams)."""
         value = None
+        grams_mode = False  # True if library returns grams directly
+
         # Try several common accessors in order of preference
         try:
-            # Many libs provide mean weight (already averaged)
+            # Many libs provide mean weight already converted using internal ref unit
             value = self.hx.get_weight_mean(10)
+            grams_mode = True
         except Exception:
             try:
                 value = self.hx.get_weight(5)
+                grams_mode = True
             except Exception:
                 # Try raw means
                 raw = None
@@ -77,14 +81,18 @@ class WeightSensor:
                         raw = None
                 if raw is not None:
                     value = raw
+                    grams_mode = False
 
         if value is None:
             self.logger.log("ERROR", "Scale could not be reached", "Weight Sensor")
             return None
 
         try:
-            # Convert to grams using scaling factor
-            weight = float(value) / float(self.scaling_factor)
+            if grams_mode:
+                weight = float(value)
+            else:
+                # Convert raw counts to grams using scaling factor
+                weight = float(value) / float(self.scaling_factor)
         except Exception:
             weight = None
 
@@ -97,3 +105,13 @@ class WeightSensor:
         median = statistics.median(self.weight_samples)
         self.logger.log("INFO", f"Weight: {median}", "Weight Sensor")
         return median
+
+    def read_raw(self):
+        """Return a raw reading if supported (int), else None."""
+        try:
+            return self.hx.get_raw_data_mean()
+        except Exception:
+            try:
+                return self.hx.get_last_raw_data()
+            except Exception:
+                return None

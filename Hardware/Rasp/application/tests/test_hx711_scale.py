@@ -32,10 +32,15 @@ def main():
     sensor.tare()
     time.sleep(0.5)
 
-    print("[HX711] Readings (g):")
+    print("[HX711] Readings (g) + raw:")
     for i in range(10):
         w = sensor.read_weight()
-        print(f"  {i+1:02d}: {w}")
+        raw = None
+        try:
+            raw = sensor.read_raw()
+        except Exception:
+            raw = None
+        print(f"  {i+1:02d}: {w}\t(raw={raw})")
         time.sleep(0.5)
 
 
