@@ -14,6 +14,8 @@ class MaintenanceScreen extends StatefulWidget {
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
   bool _isProcessing = false;
   String _statusMessage = "";
+  final Set<int> _activePumps = <int>{}; // 0..5
+  static const bool _showFlushAll = false; // Feature-Flag Step 2
 
   // -------------------- Processing feedback --------------------
   void _showProcessingDialog(String operation) {
@@ -372,6 +374,86 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
     );
   }
 
+  // -------------------- Hold-to-Flush UI (2x3) --------------------
+  Widget _buildHoldToFlushGrid() {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    final maintenanceService = Provider.of<MaintenanceService>(context, listen: false);
+
+    Widget buildTile(int pumpNumber) {
+      final pumpIndex = pumpNumber - 1; // 0..5
+      final isActive = _activePumps.contains(pumpIndex);
+      final color = isActive
+          ? theme.trueColor.withOpacity(0.18)
+          : theme.primaryColor;
+
+      return GestureDetector(
+        onTapDown: (_) async {
+          setState(() => _activePumps.add(pumpIndex));
+          await maintenanceService.startPumpHold(pumpIndex);
+        },
+        onTapUp: (_) async {
+          await maintenanceService.stopPumpHold(pumpIndex);
+          setState(() => _activePumps.remove(pumpIndex));
+        },
+        onTapCancel: () async {
+          await maintenanceService.stopPumpHold(pumpIndex);
+          setState(() => _activePumps.remove(pumpIndex));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: defaultBorderRadius,
+            border: Border.all(color: isActive ? theme.trueColor : theme.tertiaryColor),
+          ),
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.water, color: theme.tertiaryColor, size: 32),
+              const SizedBox(height: 8),
+              Text(
+                'Pumpe $pumpNumber',
+                style: TextStyle(
+                  color: theme.tertiaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                isActive ? 'Halten zum Spülen…' : 'Zum Spülen halten',
+                style: TextStyle(color: theme.tertiaryColor.withOpacity(0.75), fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Flush single slot (Hold)',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: theme.tertiaryColor,
+          ),
+        ),
+        const SizedBox(height: 12),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.6,
+          children: List.generate(6, (i) => buildTile(i + 1)),
+        ),
+      ],
+    );
+  }
+
   Widget _buildAxisSlider({
     required dynamic theme,
     required String label,
@@ -534,43 +616,40 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
             ),
             const SizedBox(height: 16),
 
-            _buildMaintenanceButton(
-              title: "Flush complete system",
-              subtitle: "Flushes all pumps",
-              icon: Icons.water_drop,
-              onPressed: () async {
-                final confirmed = await _showConfirmPopup(
-                  title: "Flush complete system",
-                  large: true,
-                  description: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "This operation will flush all pumps.",
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(height: 10),
-                      Text("• The cart will move to the RIGHT to make space for a large container."),
-                      SizedBox(height: 6),
-                      Text("• Please place a container with at least 2 liters capacity under the outlet."),
-                      SizedBox(height: 6),
-                      Text("• Ensure the area is clear and do not interrupt the process."),
-                    ],
-                  ),
-                  confirmLabel: "Start flush",
-                );
-                if (confirmed == true) {
-                  _performMaintenance("flush_all");
-                }
-              },
-            ),
+            if (_showFlushAll)
+              _buildMaintenanceButton(
+                title: "Flush complete system",
+                subtitle: "Flushes all pumps",
+                icon: Icons.water_drop,
+                onPressed: () async {
+                  final confirmed = await _showConfirmPopup(
+                    title: "Flush complete system",
+                    large: true,
+                    description: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          "This operation will flush all pumps.",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(height: 10),
+                        Text("• The cart will move to the RIGHT to make space for a large container."),
+                        SizedBox(height: 6),
+                        Text("• Please place a container with at least 2 liters capacity under the outlet."),
+                        SizedBox(height: 6),
+                        Text("• Ensure the area is clear and do not interrupt the process."),
+                      ],
+                    ),
+                    confirmLabel: "Start flush",
+                  );
+                  if (confirmed == true) {
+                    _performMaintenance("flush_all");
+                  }
+                },
+              ),
 
-            _buildMaintenanceButton(
-              title: "Flush single slot",
-              subtitle: "Select a bottle to flush only its line",
-              icon: Icons.water,
-              onPressed: _showBottleSelectionDialog,
-            ),
+            // Hold-to-Flush (2x3 grid for pumps 1..6)
+            _buildHoldToFlushGrid(),
 
             const SizedBox(height: 24),
             Text(

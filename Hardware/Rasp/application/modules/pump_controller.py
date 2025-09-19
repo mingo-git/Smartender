@@ -52,6 +52,28 @@ class PumpController:
         time.sleep(amount)
         GPIO.output(self.pump_pins[pump_index], GPIO.LOW)
 
+    def start_pump(self, pump_index: int):
+        """Start a pump continuously (until `stop_pump` is called)."""
+        if self.position_handler.get_position() != 0:
+            self.logger.log("ERROR", "Pump can only be activated in position 0", "PumpController")
+            raise ValueError("Pump can only be activated in position 0")
+
+        if pump_index < 0 or pump_index >= len(self.pump_pins):
+            self.logger.log("ERROR", f"Invalid pump index: {pump_index}", "PumpController")
+            raise ValueError("Invalid pump index")
+
+        GPIO.output(self.pump_pins[pump_index], GPIO.HIGH)
+        self.logger.log("INFO", f"Pump {pump_index} started", "PumpController")
+
+    def stop_pump(self, pump_index: int):
+        """Stop a running pump."""
+        if pump_index < 0 or pump_index >= len(self.pump_pins):
+            self.logger.log("ERROR", f"Invalid pump index: {pump_index}", "PumpController")
+            raise ValueError("Invalid pump index")
+
+        GPIO.output(self.pump_pins[pump_index], GPIO.LOW)
+        self.logger.log("INFO", f"Pump {pump_index} stopped", "PumpController")
+
 
     def cleanup(self):
         """Clean up GPIO settings."""

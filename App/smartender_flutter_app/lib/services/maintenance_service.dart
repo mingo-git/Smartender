@@ -65,6 +65,36 @@ class MaintenanceService extends ChangeNotifier {
   // Komfort-Methoden (nutzen spezialisierte ApiClient-Calls)
   // ────────────────────────────────────────────────────────────────────────────
 
+  // Hold-to-Flush: Start/Stop Pumpe
+  Future<bool> startPumpHold(int pumpIndex) async {
+    try {
+      final res = await _api.performMaintenance({
+        'maintenance_type': 'pump_hold',
+        'pump_index': pumpIndex,
+        'action': 'start',
+      });
+      // Bei Hold-Events keine Snackbars spammen: nur Status evaluieren
+      return res.statusCode == 200 || res.statusCode == 201;
+    } catch (e) {
+      debugPrint('startPumpHold error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> stopPumpHold(int pumpIndex) async {
+    try {
+      final res = await _api.performMaintenance({
+        'maintenance_type': 'pump_hold',
+        'pump_index': pumpIndex,
+        'action': 'stop',
+      });
+      return res.statusCode == 200 || res.statusCode == 201;
+    } catch (e) {
+      debugPrint('stopPumpHold error: $e');
+      return false;
+    }
+  }
+
   Future<bool> setLightMode(String mode) async {
     try {
       final res = await _api.setLightMode(mode);

@@ -14,6 +14,7 @@ from modules.error_handler import ErrorHandler
 from rx import create
 from rx.subject import Subject
 import time
+import json
 from dotenv import load_dotenv
 import os
 import uuid
@@ -132,6 +133,26 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         logger (Logger): The Logger instance.
     """
     logger.log("INFO", f"Processing message: {message}", "Main")
+
+    # First try maintenance pipeline: expects a JSON with top-level key "maintenance"
+    try:
+        parsed = json.loads(message)
+        if isinstance(parsed, dict) and "maintenance" in parsed:
+            maintenance = parsed.get("maintenance", {}) or {}
+            process_maintenance(
+                maintenance=maintenance,
+                motor_controller=motor_controller,
+                pump_controller=pump_controller,
+                actuator_controller=actuator_controller,
+                position_handler=position_handler,
+                logger=logger,
+            )
+            return
+    except Exception as e:
+        # Not a maintenance message or invalid JSON; fall back to cocktail command mapping
+        logger.log("DEBUG", f"Maintenance parse skipped: {e}", "Main")
+
+    # Cocktail commands (legacy mapping)
     commands = command_mapper.map_command(message)
 
     if commands:
@@ -219,9 +240,99 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
             logger.log("INFO", "Moving to slot 0", "Main")
             motor_controller.rotate_stepper_pigpio(500, 0, 2000)
             motor_controller.rotate_until_limit(0, position_handler, 1)
-    else:
-        logger.log("ERROR", "No Commands received", "Main")
+        else:
+            logger.log("ERROR", "No Commands received", "Main")
 
 
 if __name__ == "__main__":
     main()
+
+
+def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger):
+    """
+    Handle maintenance commands sent from the backend.
+
+    Expected structure: { "type": "...", other fields }
+    Supported types (initial):
+      - manual_move: fields x (-100..100), z (-100..100)
+      - emergency_stop
+      - light, flush_* (ignored/logged for now)
+    """
+    try:
+        mtype = maintenance.get("type")
+        logger.log("INFO", f"Maintenance command type: {mtype}", "Maintenance")
+
+        if mtype == "manual_move":
+            # Horizontal axis (stepper)
+            x = maintenance.get("x")
+            if isinstance(x, (int, float)) and abs(x) > 1:
+                direction = 1 if x > 0 else 0
+                steps = int(max(0, min(1000, abs(x) * 10)))  # scale: 0..1000 steps
+                freq = 2000
+                logger.log("INFO", f"Manual X move: dir={direction} steps={steps} freq={freq}", "Maintenance")
+                if steps > 0:
+                    motor_controller.rotate_stepper_pigpio(steps, direction, freq)
+
+            # Vertical axis (linear actuator via driver)
+            z = maintenance.get("z")
+            if isinstance(z, (int, float)) and abs(z) > 1:
+                duration = 0.05 + (min(100.0, abs(float(z))) * 0.01)  # 0.05..1.05s
+                if z > 0:
+                    logger.log("INFO", f"Manual Z move: up {duration:.2f}s", "Maintenance")
+                    actuator_controller._move_up(duration)
+                else:
+                    logger.log("INFO", f"Manual Z move: down {duration:.2f}s", "Maintenance")
+                    actuator_controller._move_down(duration)
+
+            return
+
+        if mtype == "emergency_stop":
+            try:
+                # Stop PWM on stepper and stop actuator
+                motor_controller.pi.hardware_PWM(motor_controller.pull_pin, 0, 0)
+            except Exception:
+                pass
+            try:
+                actuator_controller._emergency_stop()
+            except Exception:
+                pass
+            logger.log("ALERT", "Emergency stop executed", "Maintenance")
+            return
+
+        if mtype == "pump":
+            try:
+                idx = maintenance.get("index")
+                action = maintenance.get("action")
+                if not isinstance(idx, int):
+                    logger.log("ERROR", f"Invalid pump index: {idx}", "Maintenance")
+                    return
+
+                # Ensure home position for safety
+                if position_handler.get_position() != 0:
+                    logger.log("INFO", "Moving to home before pump activation", "Maintenance")
+                    try:
+                        motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
+                    except Exception as e:
+                        logger.log("ERROR", f"Failed to move home: {e}", "Maintenance")
+                        return
+
+                if action == "start":
+                    pump_controller.start_pump(idx)
+                elif action == "stop":
+                    pump_controller.stop_pump(idx)
+                else:
+                    logger.log("WARN", f"Unknown pump action: {action}", "Maintenance")
+                return
+            except Exception as e:
+                logger.log("ERROR", f"Pump maintenance error: {e}", "Maintenance")
+                return
+
+        # Known but not yet implemented on hardware side
+        if mtype in ("light", "flush_all", "flush_slot", "pump"):
+            logger.log("INFO", f"Maintenance '{mtype}' received (no-op on hardware)", "Maintenance")
+            return
+
+        # Unknown type: be defensive
+        logger.log("WARN", f"Unknown maintenance type: {mtype}", "Maintenance")
+    except Exception as e:
+        logger.log("ERROR", f"Maintenance handling error: {e}", "Maintenance")

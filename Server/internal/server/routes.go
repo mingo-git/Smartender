@@ -60,6 +60,11 @@ func (a *App) initializeRoutes() {
 		handlers.GetWebSocketStatus(w, r)
 	}).Methods("GET")
 
+	// Maintenance Endpoint
+	usersRouter.HandleFunc("/maintenance", func(w http.ResponseWriter, r *http.Request) {
+		handlers.PerformMaintenance(a.DB, w, r)
+	}).Methods("POST")
+
 	// User Management
 	usersRouter.HandleFunc("/{user_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateUser(a.DB, w, r)
