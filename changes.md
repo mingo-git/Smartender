@@ -189,3 +189,8 @@ Akzeptanz – erreicht:
   - Datei: `App/smartender_flutter_app/lib/services/fetch_data_service.dart` (Slots/Drinks/Recipes/Favorites URLs angepasst)
 - Backend: Leere Mapping-Ergebnisse beim Ordern führen nun zu 400 (mit Log-Hinweis), statt ein leeres `{}` an die Hardware zu senden.
   - Datei: `Server/internal/handlers/socket.go` – Guard für leeres Mapping und Success-Log beim Senden hinzugefügt.
+### 2025-09-19 – Waage (HX711) – Pins & Testskript
+- Pins (BCM): `DT=20`, `SCK=21` (entspricht WeightSensor-Default im Code)
+- Neues Testskript: `Hardware/Rasp/application/tests/test_hx711_scale.py`
+  - Nullt (tare) die Waage und gibt 10 Messwerte aus.
+  - Start: `sudo -E /home/admin/myenv/bin/python3 Hardware/Rasp/application/tests/test_hx711_scale.py`

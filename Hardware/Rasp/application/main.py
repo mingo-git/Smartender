@@ -274,8 +274,8 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
             except Exception as e:
                 logger.log("ERROR", f"Error processing command: {e}", "Main")
         if position_handler.get_position() != 0:
-            logger.log("INFO", "Moving to slot 0", "Main")
-            motor_controller.rotate_stepper_pigpio(500, 0, 2000)
+            logger.log("INFO", "Returning to home (slot 0)", "Main")
+            # Remove unintended pre-move in opposite direction; go straight to home
             motor_controller.rotate_until_limit(0, position_handler, 1)
         else:
             logger.log("ERROR", "No Commands received", "Main")
