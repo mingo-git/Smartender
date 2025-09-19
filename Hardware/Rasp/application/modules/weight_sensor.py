@@ -33,20 +33,67 @@ class WeightSensor:
         return self.message_subject.subscribe()
 
     def tare(self):
-        """Set the tare (zero) value for the scale."""
+        """Set the tare (zero) value for the scale (best-effort across libs)."""
         self.logger.log("INFO", "Taring weight sensor", "WeightSensor")
-        self.hx.reset()
+        # Try multiple common APIs across hx711 variants
+        try:
+            # Some libs
+            self.hx.tare()
+            return
+        except Exception:
+            pass
+        try:
+            # Some variants use zero()
+            self.hx.zero()
+            return
+        except Exception:
+            pass
+        try:
+            # Fallback
+            self.hx.reset()
+        except Exception:
+            pass
 
     # TODO: raise error if value is None/ over a certain threshold
     def read_weight(self):
-        """Read and return the current weight."""
-        raw_data = self.hx.get_raw_data()
-        if raw_data is not None:
-            avg_data = sum(raw_data) / len(raw_data)
-            weight = avg_data / self.scaling_factor
-            self.weight_samples.append(weight)
-            self.weight_samples = self.weight_samples[-5:]  # Keep last 5 samples
-            self.logger.log("INFO", f"Weight: {statistics.median(self.weight_samples)}", "Weight Sensor")
-            return statistics.median(self.weight_samples)
-        self.logger.log("ERROR", "Scale could not be reached", "Weight Sensor")
-        return None
+        """Read and return the current weight (grams)."""
+        value = None
+        # Try several common accessors in order of preference
+        try:
+            # Many libs provide mean weight (already averaged)
+            value = self.hx.get_weight_mean(10)
+        except Exception:
+            try:
+                value = self.hx.get_weight(5)
+            except Exception:
+                # Try raw means
+                raw = None
+                try:
+                    raw = self.hx.get_raw_data_mean()
+                except Exception:
+                    try:
+                        raw = self.hx.get_last_raw_data()
+                    except Exception:
+                        raw = None
+                if raw is not None:
+                    value = raw
+
+        if value is None:
+            self.logger.log("ERROR", "Scale could not be reached", "Weight Sensor")
+            return None
+
+        try:
+            # Convert to grams using scaling factor
+            weight = float(value) / float(self.scaling_factor)
+        except Exception:
+            weight = None
+
+        if weight is None:
+            self.logger.log("ERROR", "Invalid weight reading", "Weight Sensor")
+            return None
+
+        self.weight_samples.append(weight)
+        self.weight_samples = self.weight_samples[-5:]  # Keep last 5 samples
+        median = statistics.median(self.weight_samples)
+        self.logger.log("INFO", f"Weight: {median}", "Weight Sensor")
+        return median
