@@ -30,8 +30,13 @@ def main():
     # Load environment variables from .env file
     load_dotenv()
     
-    mac = uuid.getnode()
-    mac_address = ':'.join(f'{(mac >> i) & 0xFF:02x}' for i in range(40, -1, -8))
+    # Allow overriding MAC for single-device mode via env STATIC_MAC
+    static_mac = os.getenv("STATIC_MAC")
+    if static_mac and isinstance(static_mac, str) and len(static_mac) >= 11:
+        mac_address = static_mac
+    else:
+        mac = uuid.getnode()
+        mac_address = ':'.join(f'{(mac >> i) & 0xFF:02x}' for i in range(40, -1, -8))
     
     headers = {
         "x-api-key": os.getenv("X_API_KEY"),

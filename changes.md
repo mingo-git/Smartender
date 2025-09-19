@@ -44,3 +44,38 @@ Offene Punkte/Nächstes:
 - LEDs und Waage bleiben unberührt bis der Piston/Driver stabil ist.
 - Optional: WebSocket-Status zurück zur App für aktives Pumpen-Feedback (derzeit lokales Press-Highlight).
 
+## 2025-09-19 – Docker Compose Dev-Override
+
+- Neues File: `Server/docker-compose.dev.yaml` (Compose-Override) setzt `ENVIRONMENT=dev` für `smartender-app`.
+- Start im Dev-Modus (inkl. DB) jetzt mit:
+ - Verworfen zugunsten eines vereinfachten Default-Setups (keine getrennten dev/prod Files).
+
+### Logging-Verbesserungen (Server)
+- `Server/internal/handlers/maintenance.go`: Ausführlichere Logs für `/maintenance`:
+  - user_id, hardware_id, maintenance_type
+  - Bei `pump_hold`: index und action
+- Vollständiges gesendetes Payload und Hinweis, wenn Hardware nicht verbunden ist
+
+## 2025-09-19 – Single-Device Mode (ohne hardware_id)
+
+- WebSocket Hardware: `Server/internal/handlers/socket.go` akzeptiert jede MAC und ordnet die Verbindung fest `hardware_id=1` zu.
+- Maintenance-Endpoint: `Server/internal/handlers/maintenance.go` macht `hardware_id` optional. Wenn nicht gesetzt, wird die erste aktive Hardware-Verbindung verwendet.
+- App: `ApiClient.performMaintenance(...)` sendet kein `hardware_id` mehr.
+- Sonstiges bleibt unverändert (Drinks/Slots weiterhin hardware_id-basiert).
+
+### Stabiler Gerätebezug (Fake MAC + feste Hardware-ID)
+- Dev-Seeding aktualisiert: `Server/internal/query/createTables.go`
+  - Hardware ID 1 erhält feste MAC `AA:BB:CC:DD:EE:FF` und Name "Smartender Single-Device".
+  - User 1 ist nun Admin für Hardware 1 (zusätzlich zu bestehenden Beispielen).
+- App: `_hardwareId = '1'` für Drinks/Slots/Rezepte.
+- Hardware-Client (`main.py`): unterstützt `STATIC_MAC` Env, um die gesendete MAC zu fixieren.
+
+## 2025-09-19 – Vereinfachtes Default-Compose & Start-Skripte
+
+- `Server/docker-compose.yml` ist das Standard-Compose (keine dev/prod Variants).
+- `ENVIRONMENT=prod` bleibt Standard; fällt automatisch auf lokale Postgres-DSN zurück, wenn `INSTANCE_CONNECTION_NAME` fehlt (siehe `internal/config/config.go`).
+- Skripte hinzugefügt:
+  - `Server/start.sh` – Build & Up (detached)
+  - `Server/stop.sh` – Down
+  - `Server/restart.sh` – Down + Up mit Build
+  - `Server/logs.sh` – Folgt Backend-Logs (`smartender-app`)

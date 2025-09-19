@@ -1,19 +1,18 @@
 package handlers
 
 import (
-	models "app/internal/models"
-	"app/internal/query"
-	"database/sql"
-	"encoding/json"
-	"log"
-	"net/http"
-	"os"
-	"strconv"
-	"time"
+    models "app/internal/models"
+    "database/sql"
+    "encoding/json"
+    "log"
+    "net/http"
+    "os"
+    "strconv"
+    "time"
 
-	utils "app/internal/utils"
+    utils "app/internal/utils"
 
-	"github.com/gorilla/websocket"
+    "github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
@@ -27,7 +26,7 @@ var upgrader = websocket.Upgrader{
 var hardwareConnections = make(map[int]*websocket.Conn) // Speichert Verbindungen nach Hardware-ID
 
 func Socket(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	log.Default().Printf("📬 [GET] /socket at %s", time.Now())
+    log.Default().Printf("📬 [GET] /socket at %s", time.Now())
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -36,27 +35,13 @@ func Socket(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	mac := r.Header.Get("Identifier")
-	log.Default().Printf("Identifier: %s", mac)
+    mac := r.Header.Get("Identifier")
+    log.Default().Printf("Identifier: %s", mac)
 
-	// hardwareID := "2" //identifier
-	var hardwareID int
-
-	error := db.QueryRow(query.GetHardwareForMAC_Adress(), mac).Scan(&hardwareID)
-	if error != nil {
-		log.Default().Println("Error reading from Database:", error)
-		http.Error(w, "Error reading from Database", http.StatusInternalServerError)
-		return
-	}
-
-	if hardwareID == 0 {
-		log.Default().Println("Hardware ID missing")
-		http.Error(w, "Hardware Identifier Missing", http.StatusBadRequest)
-		return
-	}
-
-	hardwareConnections[hardwareID] = conn // Verbindung speichern
-	log.Default().Printf("Hardware %d connected", hardwareID)
+    // Single-device mode: accept any MAC and map to a fixed hardware ID (1)
+    hardwareID := 1
+    hardwareConnections[hardwareID] = conn // Verbindung speichern
+    log.Default().Printf("Hardware %d connected (MAC: %s)", hardwareID, mac)
 
 	// Hält die Verbindung aktiv, liest Nachrichten (optional)
 	for {

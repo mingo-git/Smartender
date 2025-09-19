@@ -18,7 +18,7 @@ class ApiClient {
   /// 🔧 API-KONFIGURATION
   static const String _apiPrefix = '/api';
   static const String _userPath = '/user';
-  static const String _hardwareId = '2'; // Kann später dynamisch gemacht werden
+  static const String _hardwareId = '1'; // Single-Device Mode
 
   /// Generiere Standard-Headers für alle Requests
   Future<Map<String, String>> _getHeaders({bool includeAuth = true}) async {
@@ -205,10 +205,7 @@ class ApiClient {
 
   /// Allgemeine Maintenance-Aktion
   Future<http.Response> performMaintenance(Map<String, dynamic> maintenanceData) =>
-      post('/user/maintenance', body: {
-        "hardware_id": int.parse(_hardwareId),
-        ...maintenanceData,
-      });
+      post('/user/maintenance', body: maintenanceData);
 
   /// Spezifische Maintenance-Aktionen
   Future<http.Response> flushAllPumps() =>

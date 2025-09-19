@@ -20,27 +20,40 @@ func PerformMaintenance(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // read hardware_id
-    hwRaw, ok := body["hardware_id"]
-    if !ok {
-        http.Error(w, "Missing hardware_id", http.StatusBadRequest)
-        return
-    }
-
-    // hardware_id may come as float64 (from JSON numbers)
+    // Determine target hardware_id (optional in single-device mode)
+    // If not provided, pick the first available connection.
     var hardwareID int
-    switch v := hwRaw.(type) {
-    case float64:
-        hardwareID = int(v)
-    case int:
-        hardwareID = v
-    default:
-        http.Error(w, "Invalid hardware_id", http.StatusBadRequest)
-        return
+    if hwRaw, ok := body["hardware_id"]; ok {
+        switch v := hwRaw.(type) {
+        case float64:
+            hardwareID = int(v)
+        case int:
+            hardwareID = v
+        default:
+            http.Error(w, "Invalid hardware_id", http.StatusBadRequest)
+            return
+        }
+    } else {
+        // pick first connection
+        if len(hardwareConnections) == 0 {
+            http.Error(w, "Hardware not connected", http.StatusNotFound)
+            return
+        }
+        for id := range hardwareConnections {
+            hardwareID = id
+            break
+        }
     }
 
     // maintenance_type can be used to normalize payload; optional here
     maintType, _ := body["maintenance_type"].(string)
+
+    // optional user id from middleware
+    if uid := r.Context().Value("user_id"); uid != nil {
+        log.Default().Printf("👤 user_id=%v | hardware_id=%d | maintenance_type=%q", uid, hardwareID, maintType)
+    } else {
+        log.Default().Printf("👤 user_id=? | hardware_id=%d | maintenance_type=%q", hardwareID, maintType)
+    }
 
     // Build maintenance message for hardware.
     // Start with an inner object and map a few common cases; fall back to pass-through.
@@ -80,6 +93,7 @@ func PerformMaintenance(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         if act, ok := body["action"].(string); ok {
             maintenance["action"] = act
         }
+        log.Default().Printf("🪫 pump_hold idx=%v action=%v", maintenance["index"], maintenance["action"])
     default:
         // Forward unknown payload defensively
         // Copy everything except sensitive keys; still wrap into {maintenance: {...}}
@@ -105,18 +119,20 @@ func PerformMaintenance(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // Lookup active hardware connection
     conn, exists := hardwareConnections[hardwareID]
     if !exists {
+        log.Default().Printf("⚠️  Hardware %d not connected. Dropping maintenance: %s", hardwareID, string(payload))
         http.Error(w, "Hardware not connected", http.StatusNotFound)
         return
     }
 
+    log.Default().Printf("➡️  Sending maintenance to HW %d: %s", hardwareID, string(payload))
     if err := conn.WriteMessage(1 /*Text*/, payload); err != nil {
         log.Default().Println("Failed to send maintenance message:", err)
         http.Error(w, "Failed to send maintenance message", http.StatusInternalServerError)
         return
     }
+    log.Default().Printf("✅ Sent maintenance to HW %d", hardwareID)
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
     _ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
-

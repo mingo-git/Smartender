@@ -102,10 +102,10 @@ func PopulateDatabase() string {
         ('bigDickPhil', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser3@example.com')
 	ON CONFLICT (username) DO NOTHING; -- Avoid duplicates
 	
-	InSERT INTO hardware (hardware_name, mac_address) VALUES
-		('Smartender von Jonas', '00:00:00:00:00:01'),
-		('Smartender von Fachschaft', '2c:cf:67:9d:dd:bb'),
-		('Smartender von Philipp', '00:00:00:00:00:03');
+    InSERT INTO hardware (hardware_name, mac_address) VALUES
+        ('Smartender Single-Device', 'AA:BB:CC:DD:EE:FF'),
+        ('Smartender von Fachschaft', '2c:cf:67:9d:dd:bb'),
+        ('Smartender von Philipp', '00:00:00:00:00:03');
 	
 	INSERT INTO drinks (hardware_id, drink_name, is_alcoholic) VALUES
 		(2, 'Vodka', TRUE),
@@ -115,10 +115,11 @@ func PopulateDatabase() string {
 		(1, 'Whiskey', TRUE),
 		(1, 'Orange Juice', FALSE);
 
-	INSERT INTO user_hardware (user_id, hardware_id, role) VALUES
-		(2, 1, 'admin'),
-		(1, 2, 'admin'),
-		(4, 3, 'admin');
+    INSERT INTO user_hardware (user_id, hardware_id, role) VALUES
+        (1, 1, 'admin'),
+        (2, 1, 'admin'),
+        (1, 2, 'admin'),
+        (4, 3, 'admin');
 
 	INSERT INTO slots (hardware_id, slot_number, drink_id) VALUES
 		(1, 1, NULL),

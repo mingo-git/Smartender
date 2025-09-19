@@ -61,19 +61,39 @@ func GetDatabaseConnectionString() (*sql.DB, error) {
 		env = "dev"
 	}
 
-	switch strings.ToLower(env) {
-	case "prod", "production":
-		db, err := cloudsql.ConnectWithConnector()
-		if err != nil {
-			return nil, fmt.Errorf("Error connecting to Cloud SQL: %v", err)
-		}
-		return db, nil
+    switch strings.ToLower(env) {
+    case "prod", "production":
+        // If Cloud SQL connector variables are present, use connector,
+        // otherwise gracefully fall back to direct DSN (local Postgres in Docker).
+        if os.Getenv("INSTANCE_CONNECTION_NAME") != "" {
+            db, err := cloudsql.ConnectWithConnector()
+            if err != nil {
+                return nil, fmt.Errorf("Error connecting to Cloud SQL: %v", err)
+            }
+            return db, nil
+        }
+        // Fallback to DSN (same path as dev)
+        fallDSN, err := buildDevDSN()
+        if err != nil {
+            return nil, err
+        }
+        db, err := sql.Open("postgres", fallDSN)
+        if err != nil {
+            return nil, fmt.Errorf("Error opening database connection: %v", err)
+        }
+        ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+        defer cancel()
+        if err := db.PingContext(ctx); err != nil {
+            _ = db.Close()
+            return nil, fmt.Errorf("DB ping failed: %v", err)
+        }
+        return db, nil
 
-	default: // dev / staging / anything else
-		dsn, err := buildDevDSN()
-		if err != nil {
-			return nil, err
-		}
+    default: // dev / staging / anything else
+        dsn, err := buildDevDSN()
+        if err != nil {
+            return nil, err
+        }
 
 		db, err := sql.Open("postgres", dsn)
 		if err != nil {

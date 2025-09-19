@@ -1,4 +1,4 @@
-# Smartender – Umsetzungsplan für gewünschte Verbesserungen
+ddd# Smartender – Umsetzungsplan für gewünschte Verbesserungen
 
 Dieser Plan beschreibt die schrittweise Umsetzung der sieben genannten Punkte über App (Flutter), Backend (Go) und Hardware (Raspberry Pi). Für jeden Punkt sind konkrete Aufgaben, betroffene Dateien/Module sowie Akzeptanzkriterien enthalten. Wir arbeiten die Punkte in Phasen ab, sodass nach jedem Schritt ein lauffähiger, getesteter Zustand entsteht.
 
