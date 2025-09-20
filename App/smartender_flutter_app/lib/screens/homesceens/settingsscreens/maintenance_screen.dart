@@ -305,38 +305,41 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                     inactiveThumbColor: theme.tertiaryColor.withOpacity(0.6),
                     inactiveTrackColor: theme.tertiaryColor.withOpacity(0.3),
                   ),
-                  // Color palette grid (16 colors)
-                  GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: palette.length,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
-                      childAspectRatio: 1,
-                    ),
-                    itemBuilder: (ctx, index) {
-                      final c = palette[index];
-                      final isSel = c.value == selected.value;
-                      return InkWell(
-                        onTap: () async {
-                          setStateLocal(() => selected = c);
-                          if (isOn) {
-                            // Apply immediately
-                            await maintenanceService.setSolidColor(r: c.red, g: c.green, b: c.blue, brightness: brightness.toInt());
-                            setState(() => _statusMessage = "✅ Color applied");
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: c,
-                            borderRadius: defaultBorderRadius,
-                            border: Border.all(color: isSel ? theme.trueColor : theme.tertiaryColor, width: isSel ? 2 : 1),
+                  // Color palette grid (16 colors) with bounded height to satisfy dialog constraints
+                  SizedBox(
+                    height: 240, // 4 rows * ~56px + spacing
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: palette.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                        childAspectRatio: 1,
+                      ),
+                      itemBuilder: (ctx, index) {
+                        final c = palette[index];
+                        final isSel = c.value == selected.value;
+                        return InkWell(
+                          onTap: () async {
+                            setStateLocal(() => selected = c);
+                            if (isOn) {
+                              // Apply immediately
+                              await maintenanceService.setSolidColor(r: c.red, g: c.green, b: c.blue, brightness: brightness.toInt());
+                              setState(() => _statusMessage = "✅ Color applied");
+                            }
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: c,
+                              borderRadius: defaultBorderRadius,
+                              border: Border.all(color: isSel ? theme.trueColor : theme.tertiaryColor, width: isSel ? 2 : 1),
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(height: 8),
                   _doubleSlider(theme: theme, label: 'Brightness', value: brightness, min: 0, max: 255, onChanged: (v){ setStateLocal(()=> brightness = v); }),

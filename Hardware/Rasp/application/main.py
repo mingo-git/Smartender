@@ -155,11 +155,23 @@ def main():
         logger.log("INFO", "Application is shutting down", "Main")
         websocket_handler.stop()
     finally:
-        # Cleanup hardware components
-        motor_controller.cleanup()
-        position_handler.cleanup()
-        pump_controller.cleanup()
-        actuator_controller.cleanup()
+        # Cleanup hardware components (order matters for RPi.GPIO)
+        try:
+            actuator_controller.cleanup()
+        except Exception as e:
+            logger.log("ERROR", f"Actuator cleanup error: {e}", "Main")
+        try:
+            pump_controller.cleanup()
+        except Exception as e:
+            logger.log("ERROR", f"Pump cleanup error: {e}", "Main")
+        try:
+            position_handler.cleanup()
+        except Exception as e:
+            logger.log("ERROR", f"Position cleanup error: {e}", "Main")
+        try:
+            motor_controller.cleanup()
+        except Exception as e:
+            logger.log("ERROR", f"Motor cleanup error: {e}", "Main")
         #led_controller.cleanup()
         #weight_sensor.cleanup()
         logger.log("INFO", "Hardware components cleaned up", "Main")

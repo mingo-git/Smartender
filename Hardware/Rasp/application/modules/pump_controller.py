@@ -76,6 +76,12 @@ class PumpController:
 
 
     def cleanup(self):
-        """Clean up GPIO settings."""
-        GPIO.cleanup()
+        """Clean up only the pump GPIO pins."""
+        try:
+            GPIO.cleanup(self.pump_pins)
+        except Exception:
+            try:
+                GPIO.cleanup()
+            except Exception:
+                pass
         self.logger.log("INFO", "GPIO cleanup complete", "PumpController")

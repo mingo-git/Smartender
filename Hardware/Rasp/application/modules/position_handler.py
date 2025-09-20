@@ -45,6 +45,13 @@ class PositionHandler:
         return self.get_position() == 0
 
     def cleanup(self):
-        """Clean up GPIO settings."""
-        GPIO.cleanup()
+        """Clean up only the pins used by the position handler."""
+        try:
+            GPIO.cleanup(self.limit_switch_pins)
+        except Exception:
+            # Fall back to global cleanup as last resort
+            try:
+                GPIO.cleanup()
+            except Exception:
+                pass
         self.logger.log("INFO", "GPIO cleanup complete", "PositionHandler")
