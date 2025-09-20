@@ -95,9 +95,9 @@ class MaintenanceService extends ChangeNotifier {
     }
   }
 
-  Future<bool> setLightMode(String mode, {String? colorHex, int? brightness, double? speedHz}) async {
+  Future<bool> setLightMode(String mode, {String? colorHex, int? brightness}) async {
     try {
-      final res = await _api.setLightMode(mode, colorHex: colorHex, brightness: brightness, speedHz: speedHz);
+      final res = await _api.setLightMode(mode, colorHex: colorHex, brightness: brightness);
       return _handleResponse(res, defaultError: "Lichtmodus konnte nicht gesetzt werden");
     } catch (e) {
       debugPrint("setLightMode error: $e");
@@ -109,11 +109,6 @@ class MaintenanceService extends ChangeNotifier {
   Future<bool> setSolidColor({required int r, required int g, required int b, int? brightness}) async {
     final hex = _rgbToHex(r, g, b);
     return await setLightMode('solid', colorHex: hex, brightness: brightness);
-  }
-
-  Future<bool> startStrobe({required int r, required int g, required int b, int? brightness, double speedHz = 8.0}) async {
-    final hex = _rgbToHex(r, g, b);
-    return await setLightMode('strobe', colorHex: hex, brightness: brightness, speedHz: speedHz);
   }
 
   Future<bool> turnOffLights() async => await setLightMode('off');

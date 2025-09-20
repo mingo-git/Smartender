@@ -78,7 +78,6 @@ func PerformMaintenance(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         }
         if col, ok := body["color"].(string); ok { maintenance["color"] = col }
         if b, ok := body["brightness"].(float64); ok { maintenance["brightness"] = int(b) }
-        if s, ok := body["speed_hz"].(float64); ok { maintenance["speed_hz"] = s }
         maintenance["type"] = "light"
     case "flush_all":
         maintenance["type"] = "flush_all"

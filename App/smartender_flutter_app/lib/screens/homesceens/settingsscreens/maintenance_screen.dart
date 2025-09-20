@@ -243,10 +243,28 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final maintenanceService = Provider.of<MaintenanceService>(context, listen: false);
 
-    int r = 0, g = 255, b = 0;
     double brightness = 128;
-    double speedHz = 8.0;
     bool isOn = true;
+    // Predefined palette of 16 colors (as ARGB)
+    final List<Color> palette = [
+      const Color(0xFFFF0000), // Red
+      const Color(0xFFFFA500), // Orange
+      const Color(0xFFFFFF00), // Yellow
+      const Color(0xFF00FF00), // Green
+      const Color(0xFF00FFFF), // Cyan
+      const Color(0xFF0000FF), // Blue
+      const Color(0xFF4B0082), // Indigo
+      const Color(0xFF8B00FF), // Violet
+      const Color(0xFFFFFFFF), // White
+      const Color(0xFF808080), // Gray
+      const Color(0xFFFFC0CB), // Pink
+      const Color(0xFF00FF7F), // Spring Green
+      const Color(0xFFFF4500), // OrangeRed
+      const Color(0xFF1E90FF), // DodgerBlue
+      const Color(0xFFADFF2F), // GreenYellow
+      const Color(0xFF8B4513), // SaddleBrown
+    ];
+    Color selected = palette[3];
 
     await showDialog(
       context: context,
@@ -278,7 +296,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                         final ok = await maintenanceService.turnOffLights();
                         if (ok) setState(() => _statusMessage = "✅ Lights off");
                       } else {
-                        final ok = await maintenanceService.setSolidColor(r: r, g: g, b: b, brightness: brightness.toInt());
+                        final ok = await maintenanceService.setSolidColor(r: selected.red, g: selected.green, b: selected.blue, brightness: brightness.toInt());
                         if (ok) setState(() => _statusMessage = "✅ Lights on");
                       }
                     },
@@ -287,73 +305,45 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                     inactiveThumbColor: theme.tertiaryColor.withOpacity(0.6),
                     inactiveTrackColor: theme.tertiaryColor.withOpacity(0.3),
                   ),
-                  // Preview box
-                  Container(
-                    height: 36,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, r, g, b),
-                      borderRadius: defaultBorderRadius,
-                      border: Border.all(color: theme.tertiaryColor),
+                  // Color palette grid (16 colors)
+                  GridView.builder(
+                    shrinkWrap: true,
+                    itemCount: palette.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio: 1,
                     ),
+                    itemBuilder: (ctx, index) {
+                      final c = palette[index];
+                      final isSel = c.value == selected.value;
+                      return InkWell(
+                        onTap: () async {
+                          setStateLocal(() => selected = c);
+                          if (isOn) {
+                            // Apply immediately
+                            await maintenanceService.setSolidColor(r: c.red, g: c.green, b: c.blue, brightness: brightness.toInt());
+                            setState(() => _statusMessage = "✅ Color applied");
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: c,
+                            borderRadius: defaultBorderRadius,
+                            border: Border.all(color: isSel ? theme.trueColor : theme.tertiaryColor, width: isSel ? 2 : 1),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 12),
-                  _rgbSlider(theme: theme, label: 'R', value: r.toDouble(), onChanged: (v){ setStateLocal(()=> r = v.toInt()); }),
-                  _rgbSlider(theme: theme, label: 'G', value: g.toDouble(), onChanged: (v){ setStateLocal(()=> g = v.toInt()); }),
-                  _rgbSlider(theme: theme, label: 'B', value: b.toDouble(), onChanged: (v){ setStateLocal(()=> b = v.toInt()); }),
                   const SizedBox(height: 8),
                   _doubleSlider(theme: theme, label: 'Brightness', value: brightness, min: 0, max: 255, onChanged: (v){ setStateLocal(()=> brightness = v); }),
-                  const SizedBox(height: 8),
-                  _doubleSlider(theme: theme, label: 'Strobe speed (Hz)', value: speedHz, min: 1, max: 20, onChanged: (v){ setStateLocal(()=> speedHz = v); }),
                 ],
               ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  final ok = await maintenanceService.turnOffLights();
-                  if (mounted) Navigator.pop(context);
-                  if (ok) setState(() => _statusMessage = "✅ Lights off");
-                },
-                child: const Text("Off"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final ok = await maintenanceService.setSolidColor(r: r, g: g, b: b, brightness: brightness.toInt());
-                  if (mounted) Navigator.pop(context);
-                  if (ok) setState(() => _statusMessage = "✅ Solid color set");
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor,
-                  foregroundColor: theme.tertiaryColor,
-                  shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
-                  side: BorderSide(color: theme.tertiaryColor),
-                ),
-                child: const Text("Apply color"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final ok = await maintenanceService.startStrobe(r: r, g: g, b: b, brightness: brightness.toInt(), speedHz: speedHz);
-                  if (mounted) Navigator.pop(context);
-                  if (ok) setState(() => _statusMessage = "✅ Strobe started");
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor,
-                  foregroundColor: theme.tertiaryColor,
-                  shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
-                  side: BorderSide(color: theme.tertiaryColor),
-                ),
-                child: const Text("Start strobe"),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final ok = await maintenanceService.setLightMode('progress');
-                  if (mounted) Navigator.pop(context);
-                  if (ok) setState(() => _statusMessage = "✅ Progress mode");
-                },
-                child: const Text("Progress"),
-              ),
-            ],
+            actions: const [],
           );
         });
       },
@@ -807,12 +797,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
             ),
 
             // --- Keep: Manual motor control ---
-            _buildMaintenanceButton(
-              title: "Manual motor control",
-              subtitle: "Move X (left/right) and Z (up/down) axes",
-              icon: Icons.precision_manufacturing,
-              onPressed: _showManualMotorControlPopup,
-            ),
+            // Manual motor control disabled for now (to be reintroduced later)
 
             const SizedBox(height: 40),
 

@@ -225,3 +225,14 @@ Akzeptanz – erreicht:
   - Ramp-Up: ~0.4s in 12 Schritten von 0 → 100% Duty
   - Ramp-Down: ~0.3s in 10 Schritten von 100% → 0
   - Datei: `Hardware/Rasp/application/modules/actuator_controller_bts7960.py`
+- Hinweis: „Progress“-Lichtmodus vorerst entfernt (wird später sauber per Server/Hardware umgesetzt).
+  - App: Entfernt Progress-Button; Light-Dialog mit 16 Farb-Kacheln + sofortiger Anwendung, Helligkeitsregler bleibt.
+  - Server: `speed_hz`/Strobe-Parameter aus `light_mode` entfernt.
+  - Hardware: Strobe/Progress-Branches entfernt; unterstützt `off` und `solid/color` (+ brightness).
+
+### 2025-09-19 – App: UI-Bereinigung (Maintenance)
+- „Manual motor control“ vorerst ausgeblendet (kommt später wieder rein).
+- Light-Dialog modernisiert:
+  - Master-Toggle „Lights“ oben.
+  - 16 Standardfarben als Kacheln (sofortige Anwendung), Helligkeitsregler bleibt.
+  - Keine separaten Buttons (Off/Apply/Strobe/Progress) mehr.

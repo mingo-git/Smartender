@@ -242,10 +242,6 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     logger.log("INFO", f"Reached slot {command.slot_number}", "Main")
 
                     pump_amount = math.ceil(command.quantity_ml/40)
-                    # Progress visualization (if LEDs enabled)
-                    if led_controller:
-                        total_steps = max(1, pump_amount)
-                        led_controller.set_progress(0.0)
 
                     for i in range(pump_amount):
                         # Pour using the actuator
@@ -255,8 +251,6 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                         actuator_controller._move_down(3)
                         # Short settle to avoid PSU sag before any next motion
                         time.sleep(0.35)
-                        if led_controller:
-                            led_controller.set_progress((i + 1) / float(pump_amount))
 
                 elif 6 <= command.slot_number <= 11:  # Non-alcoholic
                     logger.log("INFO", f"Non-alcoholic drink: Slot {command.slot_number}", "Main")
@@ -277,8 +271,6 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     pump_controller.activate_pump(pump_index, command.quantity_ml/32.5)
                     actuator_controller._move_down(6)
                     time.sleep(0.35)
-                    if led_controller:
-                        led_controller.set_progress(1.0)
                 else:
                     logger.log("ERROR", "Invalid slot number", "Main")
                     break
@@ -421,12 +413,6 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
             elif mode.lower() in ("solid", "color"):
                 led_controller.stop_strobe()
                 led_controller.set_color(r, g, b)
-            elif mode.lower() in ("strobe", "disco"):
-                led_controller.start_strobe(r, g, b, float(speed_hz))
-            elif mode.lower() in ("progress",):
-                # progress mode is handled by main pour loops via set_progress
-                led_controller.stop_strobe()
-                led_controller.set_progress(0.0)
             else:
                 logger.log("WARNING", f"Unknown light mode: {mode}", "Maintenance")
             return

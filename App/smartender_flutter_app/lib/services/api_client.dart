@@ -221,14 +221,12 @@ class ApiClient {
     String mode, {
     String? colorHex,
     int? brightness,
-    double? speedHz,
   }) =>
       performMaintenance({
         "maintenance_type": "light_mode",
         "light_mode": mode,
         if (colorHex != null) "color": colorHex,
         if (brightness != null) "brightness": brightness,
-        if (speedHz != null) "speed_hz": speedHz,
       });
 
   Future<http.Response> moveAxes({required double x, required double z}) =>
