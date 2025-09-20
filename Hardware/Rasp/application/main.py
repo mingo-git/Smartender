@@ -76,17 +76,17 @@ def main():
         pwm_freq_hz=1000,
         invert=False,  # set True if your OUT/IN orientation is reversed
     )
-    # LED Controller hardcoded (no ENV). Start OFF; only App may enable later.
+    # LED Controller temporarily disabled for stability testing
     led_controller = None
-    try:
-        LED_PIN = 13          # WS281x DIN on GPIO13 (PWM Channel 1)
-        LED_COUNT = 41        # number of LEDs
-        LED_BRIGHTNESS = 160  # 0..255
-        led_controller = LEDController(LV1_pin=LED_PIN, led_count=LED_COUNT, brightness=LED_BRIGHTNESS)
-        # Ensure LEDs are OFF at boot
-        led_controller.set_off()
-    except Exception as e:
-        logger.log("ERROR", f"LED init failed: {e}", "Main")
+    # try:
+    #     LED_PIN = 13          # WS281x DIN on GPIO13 (PWM Channel 1)
+    #     LED_COUNT = 41        # number of LEDs
+    #     LED_BRIGHTNESS = 160  # 0..255
+    #     led_controller = LEDController(LV1_pin=LED_PIN, led_count=LED_COUNT, brightness=LED_BRIGHTNESS)
+    #     # Ensure LEDs are OFF at boot
+    #     led_controller.set_off()
+    # except Exception as e:
+    #     logger.log("ERROR", f"LED init failed: {e}", "Main")
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
