@@ -236,3 +236,20 @@ Akzeptanz – erreicht:
   - Master-Toggle „Lights“ oben.
   - 16 Standardfarben als Kacheln (sofortige Anwendung), Helligkeitsregler bleibt.
   - Keine separaten Buttons (Off/Apply/Strobe/Progress) mehr.
+
+## 2025-09-20 – App: Light-Brightness live (JIT) + Status-Banner entfernt
+- Light-Dialog: Helligkeitsregler sendet Änderungen sofort (debounced ~100ms) an den Server; Hardware reagiert in Echtzeit.
+  - Datei: `App/smartender_flutter_app/lib/screens/homesceens/settingsscreens/maintenance_screen.dart`
+  - Implementierung: Debounce beim `onChanged` des Sliders, Aufruf `MaintenanceService.setSolidColor(...)` mit aktueller Farbe + Helligkeit.
+- Statusmeldungen im Maintenance-Screen entfernt (inkl. „Color applied“ und alle Banner im selben Bereich).
+  - Obere Status-Container-Fläche entfernt; keine `_statusMessage`-Updates mehr bei Aktionen.
+
+## 2025-09-20 – Maintenance: Reinigungsposition (Slot 3) Toggle
+- Neuer Button im Maintenance-Screen: „Move cart for cleaning“ ↔ „Return cart to home“ (2 States).
+  - Erster Klick: sendet `{ maintenance_type: "go_to_slot", slot_number: 3 }` → Wagen fährt zu Position 3 (Platz für Eimer).
+  - Zweiter Klick: sendet `{ maintenance_type: "go_home" }` → Wagen fährt zurück nach Home (Position 0).
+  - Datei (App): `App/smartender_flutter_app/lib/screens/homesceens/settingsscreens/maintenance_screen.dart`
+- Hardware unterstützt neue Maintenance-Types:
+  - `go_to_slot`: fährt mit `MotorController.rotate_until_limit(target, ...)` zum Zielslot (Richtung anhand aktueller Position gewählt).
+  - `go_home`: fährt zurück zu Slot 0 (Home) mit sinnvoller Richtung.
+  - Datei (HW): `Hardware/Rasp/application/main.py` (`process_maintenance`) erweitert.

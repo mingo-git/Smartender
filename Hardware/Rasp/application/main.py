@@ -429,6 +429,35 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                 logger.log("WARNING", f"Unknown light mode: {mode}", "Maintenance")
             return
 
+        # Move cart to a specific slot (for cleaning or service)
+        if mtype == "go_to_slot":
+            try:
+                target = maintenance.get("slot_number")
+                if not isinstance(target, int):
+                    logger.log("ERROR", f"Invalid or missing slot_number: {target}", "Maintenance")
+                    return
+                cur = position_handler.get_position()
+                # Choose direction based on current vs target; default move right (dir=0)
+                direction = 0
+                if isinstance(cur, int):
+                    direction = 0 if target > cur else 1
+                logger.log("INFO", f"Going to slot {target} from {cur} dir={direction}", "Maintenance")
+                motor_controller.rotate_until_limit(target, position_handler, direction, 1150, timeout_s=10.0)
+            except Exception as e:
+                logger.log("ERROR", f"go_to_slot error: {e}", "Maintenance")
+            return
+
+        # Return cart to home (slot 0)
+        if mtype == "go_home":
+            try:
+                cur = position_handler.get_position()
+                direction = 1 if (isinstance(cur, int) and cur > 0) else 0
+                logger.log("INFO", f"Returning home from {cur} dir={direction}", "Maintenance")
+                motor_controller.rotate_until_limit(0, position_handler, direction, 1150, timeout_s=10.0)
+            except Exception as e:
+                logger.log("ERROR", f"go_home error: {e}", "Maintenance")
+            return
+
         # Known but not yet implemented on hardware side
         if mtype in ("flush_all", "flush_slot"):
             logger.log("INFO", f"Maintenance '{mtype}' received (no-op on hardware)", "Maintenance")

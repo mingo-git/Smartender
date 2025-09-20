@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:smartender_flutter_app/config/constants.dart';
 import 'package:smartender_flutter_app/provider/theme_provider.dart';
@@ -17,6 +18,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
   String _statusMessage = "";
   final Set<int> _activePumps = <int>{}; // 0..5
   static const bool _showFlushAll = false; // Feature-Flag Step 2
+  bool _cleaningPositionActive = false; // false=home/normal, true=at slot 3
 
   // -------------------- Processing feedback --------------------
   void _showProcessingDialog(String operation) {
@@ -81,19 +83,11 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
 
       setState(() {
         _isProcessing = false;
-        _statusMessage = success
-            ? "✅ $operation completed successfully"
-            : "❌ $operation failed";
-      });
-
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted) setState(() => _statusMessage = "");
       });
     } catch (e) {
       _hideProcessingDialog();
       setState(() {
         _isProcessing = false;
-        _statusMessage = "❌ Error: $e";
       });
     }
   }
@@ -245,6 +239,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
 
     double brightness = 128;
     bool isOn = true;
+    Timer? _brightnessDebounce;
     // Predefined palette of 16 colors (as ARGB)
     final List<Color> palette = [
       const Color(0xFFFF0000), // Red
@@ -270,6 +265,9 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setStateLocal) {
+          final screen = MediaQuery.of(context).size;
+          final maxH = screen.height * 0.6; // cap dialog content height to 60% of screen
+          final gridH = (screen.height * 0.32).clamp(160.0, 320.0);
           return AlertDialog(
             backgroundColor: theme.backgroundColor,
             titlePadding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
@@ -283,33 +281,32 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                 ),
               ],
             ),
-            content: SingleChildScrollView(
+            content: SizedBox(
+              width: 320,
+              height: maxH,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Master On/Off toggle
-                  SwitchListTile(
-                    value: isOn,
-                    onChanged: (val) async {
-                      setStateLocal(() => isOn = val);
-                      if (!val) {
-                        final ok = await maintenanceService.turnOffLights();
-                        if (ok) setState(() => _statusMessage = "✅ Lights off");
-                      } else {
-                        final ok = await maintenanceService.setSolidColor(r: selected.red, g: selected.green, b: selected.blue, brightness: brightness.toInt());
-                        if (ok) setState(() => _statusMessage = "✅ Lights on");
-                      }
-                    },
+                // Master On/Off toggle
+                SwitchListTile(
+                  value: isOn,
+                  onChanged: (val) async {
+                    setStateLocal(() => isOn = val);
+                    if (!val) {
+                      await maintenanceService.turnOffLights();
+                    } else {
+                      await maintenanceService.setSolidColor(r: selected.red, g: selected.green, b: selected.blue, brightness: brightness.toInt());
+                    }
+                  },
                     title: Text('Lights', style: TextStyle(color: theme.tertiaryColor, fontWeight: FontWeight.w600)),
                     activeColor: theme.tertiaryColor,
                     inactiveThumbColor: theme.tertiaryColor.withOpacity(0.6),
                     inactiveTrackColor: theme.tertiaryColor.withOpacity(0.3),
                   ),
-                  // Color palette grid (16 colors) with bounded height to satisfy dialog constraints
+                  // Color palette grid (16 colors) with fixed height
                   SizedBox(
-                    height: 240, // 4 rows * ~56px + spacing
+                    height: gridH,
                     child: GridView.builder(
-                      shrinkWrap: true,
                       itemCount: palette.length,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -325,9 +322,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                           onTap: () async {
                             setStateLocal(() => selected = c);
                             if (isOn) {
-                              // Apply immediately
                               await maintenanceService.setSolidColor(r: c.red, g: c.green, b: c.blue, brightness: brightness.toInt());
-                              setState(() => _statusMessage = "✅ Color applied");
                             }
                           },
                           child: Container(
@@ -342,7 +337,26 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  _doubleSlider(theme: theme, label: 'Brightness', value: brightness, min: 0, max: 255, onChanged: (v){ setStateLocal(()=> brightness = v); }),
+                  _doubleSlider(
+                    theme: theme,
+                    label: 'Brightness',
+                    value: brightness,
+                    min: 0,
+                    max: 255,
+                    onChanged: (v) {
+                      setStateLocal(() => brightness = v);
+                      if (!isOn) return;
+                      _brightnessDebounce?.cancel();
+                      _brightnessDebounce = Timer(const Duration(milliseconds: 100), () {
+                        maintenanceService.setSolidColor(
+                          r: selected.red,
+                          g: selected.green,
+                          b: selected.blue,
+                          brightness: brightness.toInt(),
+                        );
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
@@ -398,13 +412,8 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  final ok = await maintenanceService.moveAxes(x: x, z: z);
+                  await maintenanceService.moveAxes(x: x, z: z);
                   if (mounted) Navigator.pop(context);
-                  setState(() {
-                    _statusMessage = ok
-                        ? "✅ Movement command sent (x=$x, z=$z)"
-                        : "❌ Movement command failed";
-                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.primaryColor,
@@ -705,35 +714,6 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
           children: [
             const SizedBox(height: 20),
 
-            if (_statusMessage.isNotEmpty)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  color: _statusMessage.contains("✅")
-                      ? theme.trueColor.withOpacity(0.1)
-                      : theme.falseColor.withOpacity(0.1),
-                  borderRadius: defaultBorderRadius,
-                  border: Border.all(
-                    color: _statusMessage.contains("✅")
-                        ? theme.trueColor
-                        : theme.falseColor,
-                  ),
-                ),
-                child: Text(
-                  _statusMessage,
-                  style: TextStyle(
-                    color: _statusMessage.contains("✅")
-                        ? theme.trueColor
-                        : theme.falseColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-
             // ---- Flush options ----
             Text(
               "Flush options",
@@ -791,6 +771,16 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
             ),
             const SizedBox(height: 16),
 
+            // Move cart to cleaning position (slot 3) / Return to home
+            _buildMaintenanceButton(
+              title: _cleaningPositionActive ? "Return cart to home" : "Move cart for cleaning",
+              subtitle: _cleaningPositionActive
+                  ? "Moves back to position 0"
+                  : "Moves cart to position 3 to place bucket",
+              icon: Icons.cleaning_services,
+              onPressed: _toggleCleaningPosition,
+            ),
+
             // --- Keep: Light settings ---
             _buildMaintenanceButton(
               title: "Light settings",
@@ -800,6 +790,29 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
             ),
 
             // --- Keep: Manual motor control ---
+  // -------------------- Cleaning position toggle --------------------
+  Future<void> _toggleCleaningPosition() async {
+    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
+    final maintenanceService = Provider.of<MaintenanceService>(context, listen: false);
+
+    final goingToClean = !_cleaningPositionActive;
+    final dialogText = goingToClean ? 'Moving cart to cleaning position…' : 'Returning cart to home…';
+    _showProcessingDialog(dialogText);
+    try {
+      final ok = await maintenanceService.sendMaintenanceCommand(
+        goingToClean
+            ? { 'maintenance_type': 'go_to_slot', 'slot_number': 3 }
+            : { 'maintenance_type': 'go_home' },
+      );
+      _hideProcessingDialog();
+      if (ok) {
+        setState(() => _cleaningPositionActive = goingToClean);
+      }
+    } catch (_) {
+      _hideProcessingDialog();
+    }
+  }
+
             // Manual motor control disabled for now (to be reintroduced later)
 
             const SizedBox(height: 40),
