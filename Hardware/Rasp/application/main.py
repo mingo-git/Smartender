@@ -437,12 +437,21 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                     logger.log("ERROR", f"Invalid or missing slot_number: {target}", "Maintenance")
                     return
                 cur = position_handler.get_position()
-                # Choose direction based on current vs target; default move right (dir=0)
-                direction = 0
-                if isinstance(cur, int):
+                # If current position is unknown, choose sensible default: moving to slot>0 => go right (dir=0)
+                if not isinstance(cur, int):
+                    direction = 0
+                else:
+                    if cur == target:
+                        logger.log("INFO", f"Already at slot {target}", "Maintenance")
+                        return
                     direction = 0 if target > cur else 1
                 logger.log("INFO", f"Going to slot {target} from {cur} dir={direction}", "Maintenance")
-                motor_controller.rotate_until_limit(target, position_handler, direction, 1150, timeout_s=10.0)
+                # Use faster frequency (2300) like drink flow; allow generous timeout
+                motor_controller.rotate_until_limit(target, position_handler, direction, 2300, timeout_s=30.0)
+                time.sleep(0.05)
+                reached = position_handler.get_position()
+                if reached != target:
+                    logger.log("WARNING", f"Did not confirm slot {target} after move, current={reached}", "Maintenance")
             except Exception as e:
                 logger.log("ERROR", f"go_to_slot error: {e}", "Maintenance")
             return
@@ -451,9 +460,20 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
         if mtype == "go_home":
             try:
                 cur = position_handler.get_position()
-                direction = 1 if (isinstance(cur, int) and cur > 0) else 0
+                # If unknown, bias towards home by going left (dir=1)
+                if not isinstance(cur, int):
+                    direction = 1
+                else:
+                    if cur == 0:
+                        logger.log("INFO", "Already at home (slot 0)", "Maintenance")
+                        return
+                    direction = 1 if cur > 0 else 0
                 logger.log("INFO", f"Returning home from {cur} dir={direction}", "Maintenance")
-                motor_controller.rotate_until_limit(0, position_handler, direction, 1150, timeout_s=10.0)
+                motor_controller.rotate_until_limit(0, position_handler, direction, 2300, timeout_s=30.0)
+                time.sleep(0.05)
+                reached = position_handler.get_position()
+                if reached != 0:
+                    logger.log("WARNING", f"Did not confirm home after move, current={reached}", "Maintenance")
             except Exception as e:
                 logger.log("ERROR", f"go_home error: {e}", "Maintenance")
             return

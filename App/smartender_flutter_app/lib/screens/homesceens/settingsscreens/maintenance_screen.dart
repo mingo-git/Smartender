@@ -684,6 +684,28 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
     );
   }
 
+  // -------------------- Cleaning position toggle --------------------
+  Future<void> _toggleCleaningPosition() async {
+    final maintenanceService = Provider.of<MaintenanceService>(context, listen: false);
+
+    final goingToClean = !_cleaningPositionActive;
+    final dialogText = goingToClean ? 'Moving cart to cleaning position…' : 'Returning cart to home…';
+    _showProcessingDialog(dialogText);
+    try {
+      final ok = await maintenanceService.sendMaintenanceCommand(
+        goingToClean
+            ? { 'maintenance_type': 'go_to_slot', 'slot_number': 3 }
+            : { 'maintenance_type': 'go_home' },
+      );
+      _hideProcessingDialog();
+      if (ok) {
+        setState(() => _cleaningPositionActive = goingToClean);
+      }
+    } catch (_) {
+      _hideProcessingDialog();
+    }
+  }
+
   // -------------------- Build --------------------
   @override
   Widget build(BuildContext context) {
@@ -790,29 +812,6 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
             ),
 
             // --- Keep: Manual motor control ---
-  // -------------------- Cleaning position toggle --------------------
-  Future<void> _toggleCleaningPosition() async {
-    final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
-    final maintenanceService = Provider.of<MaintenanceService>(context, listen: false);
-
-    final goingToClean = !_cleaningPositionActive;
-    final dialogText = goingToClean ? 'Moving cart to cleaning position…' : 'Returning cart to home…';
-    _showProcessingDialog(dialogText);
-    try {
-      final ok = await maintenanceService.sendMaintenanceCommand(
-        goingToClean
-            ? { 'maintenance_type': 'go_to_slot', 'slot_number': 3 }
-            : { 'maintenance_type': 'go_home' },
-      );
-      _hideProcessingDialog();
-      if (ok) {
-        setState(() => _cleaningPositionActive = goingToClean);
-      }
-    } catch (_) {
-      _hideProcessingDialog();
-    }
-  }
-
             // Manual motor control disabled for now (to be reintroduced later)
 
             const SizedBox(height: 40),
