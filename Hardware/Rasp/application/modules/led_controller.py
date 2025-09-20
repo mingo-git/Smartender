@@ -35,6 +35,9 @@ class LEDController:
 
         self.strip.begin()
         print(f"LED Controller ready (pin={self.LED_PIN}, count={self.LED_COUNT}, brightness={self.LED_BRIGHTNESS}, channel={self.LED_CHANNEL})")
+        # Concurrency/suspension control to avoid conflicts during critical motions
+        self._suspend = False
+        self._lock = threading.Lock()
         self._strobe_thread = None
         self._strobe_stop = threading.Event()
 
@@ -46,26 +49,40 @@ class LEDController:
         self.set_off()
 
     def set_off(self):
-        for i in range(self.strip.numPixels()):
-            self.strip.setPixelColor(i, Color(0, 0, 0))
-        self.strip.show()
+        with self._lock:
+            if self._suspend:
+                return
+            for i in range(self.strip.numPixels()):
+                self.strip.setPixelColor(i, Color(0, 0, 0))
+            self.strip.show()
 
     def set_brightness(self, value: int):
-        self.LED_BRIGHTNESS = max(0, min(255, int(value)))
-        self.strip.setBrightness(self.LED_BRIGHTNESS)
-        self.strip.show()
+        with self._lock:
+            self.LED_BRIGHTNESS = max(0, min(255, int(value)))
+            self.strip.setBrightness(self.LED_BRIGHTNESS)
+            if self._suspend:
+                return
+            self.strip.show()
 
     def set_color(self, r: int, g: int, b: int):
-        r = max(0, min(255, int(r)))
-        g = max(0, min(255, int(g)))
-        b = max(0, min(255, int(b)))
-        for i in range(self.strip.numPixels()):
-            self.strip.setPixelColor(i, Color(r, g, b))
-        self.strip.show()
+        with self._lock:
+            if self._suspend:
+                return
+            r = max(0, min(255, int(r)))
+            g = max(0, min(255, int(g)))
+            b = max(0, min(255, int(b)))
+            for i in range(self.strip.numPixels()):
+                self.strip.setPixelColor(i, Color(r, g, b))
+            self.strip.show()
 
     def _strobe_loop(self, r: int, g: int, b: int, period_s: float):
         on = True
         while not self._strobe_stop.is_set():
+            if self._suspend:
+                # When suspended, keep LEDs off and wait
+                self.set_off()
+                time.sleep(period_s)
+                continue
             if on:
                 self.set_color(r, g, b)
             else:
@@ -74,11 +91,12 @@ class LEDController:
             time.sleep(period_s)
 
     def start_strobe(self, r: int, g: int, b: int, speed_hz: float = 8.0):
-        self.stop_strobe()
-        period = max(0.01, 1.0 / float(speed_hz))
-        self._strobe_stop.clear()
-        self._strobe_thread = threading.Thread(target=self._strobe_loop, args=(r, g, b, period), daemon=True)
-        self._strobe_thread.start()
+        with self._lock:
+            self.stop_strobe()
+            period = max(0.01, 1.0 / float(speed_hz))
+            self._strobe_stop.clear()
+            self._strobe_thread = threading.Thread(target=self._strobe_loop, args=(r, g, b, period), daemon=True)
+            self._strobe_thread.start()
 
     def stop_strobe(self):
         if self._strobe_thread and self._strobe_thread.is_alive():
@@ -94,10 +112,22 @@ class LEDController:
         p = max(0.0, min(1.0, float(progress)))
         total = self.strip.numPixels()
         green_pixels = int(round(p * total))
-        for i in range(total):
-            if i < green_pixels:
-                # Übergang: je weiter, desto grüner
-                self.strip.setPixelColor(i, Color(0, 255, 0))
-            else:
-                self.strip.setPixelColor(i, Color(255, 0, 0))
-        self.strip.show()
+        with self._lock:
+            if self._suspend:
+                return
+            for i in range(total):
+                if i < green_pixels:
+                    self.strip.setPixelColor(i, Color(0, 255, 0))
+                else:
+                    self.strip.setPixelColor(i, Color(255, 0, 0))
+            self.strip.show()
+
+    def suspend(self, enabled: bool):
+        """Temporarily suspend LED updates during critical motions."""
+        with self._lock:
+            self._suspend = bool(enabled)
+            if self._suspend:
+                try:
+                    self.set_off()
+                except Exception:
+                    pass

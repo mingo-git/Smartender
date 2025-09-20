@@ -231,7 +231,11 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
 
                     # Rotate the stepper motor and stop when the limit switch is pressed
+                    if led_controller:
+                        led_controller.suspend(True)
                     motor_controller.rotate_until_limit(command.slot_number, position_handler, 0)
+                    if led_controller:
+                        led_controller.suspend(False)
                     logger.log("INFO", f"Moved to slot {command.slot_number}", "MotorController")
                     time.sleep(2)
 
@@ -303,9 +307,14 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         homing_dir = 1 if (isinstance(cur_pos, int) and cur_pos > 0) else 0
         try:
             # Add timeout as safety (e.g., 8s)
+            if led_controller:
+                led_controller.suspend(True)
             motor_controller.rotate_until_limit(0, position_handler, homing_dir, timeout_s=8.0)
         except Exception as e:
             logger.log("ERROR", f"Homing failed: {e}", "Main")
+        finally:
+            if led_controller:
+                led_controller.suspend(False)
 
 
 def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger, led_controller=None):
