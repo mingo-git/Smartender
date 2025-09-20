@@ -54,9 +54,7 @@ class PumpController:
 
     def start_pump(self, pump_index: int):
         """Start a pump continuously (until `stop_pump` is called)."""
-        if self.position_handler.get_position() != 0:
-            self.logger.log("ERROR", "Pump can only be activated in position 0", "PumpController")
-            raise ValueError("Pump can only be activated in position 0")
+        # Allow manual pump hold from maintenance at any cart position
 
         if pump_index < 0 or pump_index >= len(self.pump_pins):
             self.logger.log("ERROR", f"Invalid pump index: {pump_index}", "PumpController")

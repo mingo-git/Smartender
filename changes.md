@@ -253,3 +253,8 @@ Akzeptanz – erreicht:
   - `go_to_slot`: fährt mit `MotorController.rotate_until_limit(target, ...)` zum Zielslot (Richtung anhand aktueller Position gewählt).
   - `go_home`: fährt zurück zu Slot 0 (Home) mit sinnvoller Richtung.
   - Datei (HW): `Hardware/Rasp/application/main.py` (`process_maintenance`) erweitert.
+
+## 2025-09-20 – Hold-to-Flush: Kein Auto-Home mehr vor Pumpenstart
+- Für manuelles Halten (Flush single slot) fährt der Wagen nicht mehr automatisch nach Home, damit der Eimer unter Position 3 Platz hat.
+  - Hardware: Entfernt Home-Erzwingung vor Pumpenstart im Maintenance-Handler (`process_maintenance`, Type `pump`).
+  - PumpController: `start_pump(...)` erlaubt Start an beliebiger Position; Sicherheit für automatische Dosierung (`activate_pump`) bleibt unverändert an Home gebunden.

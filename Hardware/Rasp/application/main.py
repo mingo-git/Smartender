@@ -372,15 +372,6 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                     return
                 logger.log("INFO", f"Pump hold: idx={idx} action={action}", "Maintenance")
 
-                # Ensure home position for safety
-                if position_handler.get_position() != 0:
-                    logger.log("INFO", "Moving to home before pump activation", "Maintenance")
-                    try:
-                        motor_controller.rotate_until_limit(0, position_handler, 1, 1000)
-                    except Exception as e:
-                        logger.log("ERROR", f"Failed to move home: {e}", "Maintenance")
-                        return
-
                 if action == "start":
                     pump_controller.start_pump(idx)
                 elif action == "stop":
