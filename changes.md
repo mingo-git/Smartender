@@ -220,3 +220,8 @@ Akzeptanz – erreicht:
   - Progress-Bar: Bei alkoholischen Schritten wird der Fortschritt (Rot→Grün) live aktualisiert
   - Hinweis: Standard-LED-Pin 18 kann mit BTS7960 kollidieren → LED_PIN per `.env` setzen
   - PWM-Pin freigeräumt: Pumpen-Pin GPIO13 → GPIO7 verschoben (Pumpenindex 3), damit LED_PIN=13 nutzbar ist
+### 2025-09-19 – BTS7960 Soft-Start & Soft-Stop
+- Sanfter Anlauf und Abbremsen zur Reduktion von Spannungsspitzen beim Aktuator:
+  - Ramp-Up: ~0.4s in 12 Schritten von 0 → 100% Duty
+  - Ramp-Down: ~0.3s in 10 Schritten von 100% → 0
+  - Datei: `Hardware/Rasp/application/modules/actuator_controller_bts7960.py`
