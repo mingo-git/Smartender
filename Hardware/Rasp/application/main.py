@@ -292,8 +292,14 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
             except Exception as e:
                 logger.log("ERROR", f"Error processing command: {e}", "Main")
         # Always attempt to return to home (slot 0) after processing
-        logger.log("INFO", "Returning to home (slot 0)", "Main")
-        motor_controller.rotate_until_limit(0, position_handler, 1)
+        cur_pos = position_handler.get_position()
+        logger.log("INFO", f"Returning to home (slot 0) from pos={cur_pos}", "Main")
+        # Choose direction dynamically: if we're right of 0 (pos>0) go left (dir=1), else go right (dir=0)
+        homing_dir = 1 if (isinstance(cur_pos, int) and cur_pos > 0) else 0
+        try:
+            motor_controller.rotate_until_limit(0, position_handler, homing_dir)
+        except Exception as e:
+            logger.log("ERROR", f"Homing failed: {e}", "Main")
 
 
 def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger, led_controller=None):
