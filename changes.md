@@ -213,10 +213,10 @@ Akzeptanz – erreicht:
   - ApiClient: `setLightMode(mode, colorHex?, brightness?, speedHz?)`
 - Backend: Maintenance-Weiterleitung erweitert (color/brightness/speed_hz)
   - Datei: `Server/internal/handlers/maintenance.go`
-- Hardware: LEDController erweitert (solid/strobe/progress, brightness), optional aktivierbar über ENV
-  - Datei: `Hardware/Rasp/application/modules/led_controller.py` (non-blocking strobe, set_progress)
-  - Datei: `Hardware/Rasp/application/main.py` – LEDs vollständig hart verdrahtet (kein `.env`).
-    - Pin=GPIO13, Count=41, Brightness=160. Beim Start werden LEDs explizit ausgeschaltet; Einschalten nur per App.
+  - Hardware: LEDController erweitert (solid/strobe/progress, brightness), PCM-basierte Ansteuerung
+  - Datei: `Hardware/Rasp/application/modules/led_controller.py` (non-blocking strobe, set_progress, DMA=5, Channel-Autowahl inkl. GPIO21/PCM)
+  - Datei: `Hardware/Rasp/application/main.py` – LEDs hart verdrahtet, jetzt auf GPIO21 (PCM). Startzustand OFF, App schaltet aktiv.
+  - HX711 Pins verlegt (Waage bleibt aus): DT=5, SCK=6, um Konflikte mit GPIO21 zu vermeiden.
   - Progress-Bar: Bei alkoholischen Schritten wird der Fortschritt (Rot→Grün) live aktualisiert
   - Hinweis: Standard-LED-Pin 18 kann mit BTS7960 kollidieren → LED_PIN per `.env` setzen
   - PWM-Pin freigeräumt: Pumpen-Pin GPIO13 → GPIO7 verschoben (Pumpenindex 3), damit LED_PIN=13 nutzbar ist

@@ -64,7 +64,8 @@ def main():
     # Initialize Hardware Components
     print("[HW] Initializing hardware components...", flush=True)
     position_handler = PositionHandler(limit_switch_pins=[4, 17, 27, 22, 10, 9])
-    weight_sensor = WeightSensor(dt_pin=20, sck_pin=21)
+    # Move HX711 pins away from GPIO21 (used for LEDs via PCM). Keep sensor idle for now.
+    weight_sensor = WeightSensor(dt_pin=5, sck_pin=6)
     motor_controller = MotorController(dir_pin=16, pull_pin=12)
     # Free a PWM-capable pin for LEDs: move pump (index 3) from GPIO13 -> GPIO7
     pump_controller = PumpController(pump_pins=[0, 5, 6, 7, 19, 26], weight_sensor=weight_sensor, position_handler=position_handler)
@@ -76,17 +77,16 @@ def main():
         pwm_freq_hz=1000,
         invert=False,  # set True if your OUT/IN orientation is reversed
     )
-    # LED Controller temporarily disabled for stability testing
+    # LED Controller re-enabled on PCM (GPIO21); LEDs remain OFF until App turns them on
     led_controller = None
-    # try:
-    #     LED_PIN = 13          # WS281x DIN on GPIO13 (PWM Channel 1)
-    #     LED_COUNT = 41        # number of LEDs
-    #     LED_BRIGHTNESS = 160  # 0..255
-    #     led_controller = LEDController(LV1_pin=LED_PIN, led_count=LED_COUNT, brightness=LED_BRIGHTNESS)
-    #     # Ensure LEDs are OFF at boot
-    #     led_controller.set_off()
-    # except Exception as e:
-    #     logger.log("ERROR", f"LED init failed: {e}", "Main")
+    try:
+        LED_PIN = 21          # WS281x DIN on GPIO21 (PCM)
+        LED_COUNT = 41        # number of LEDs
+        LED_BRIGHTNESS = 160  # 0..255
+        led_controller = LEDController(LV1_pin=LED_PIN, led_count=LED_COUNT, brightness=LED_BRIGHTNESS)
+        led_controller.set_off()
+    except Exception as e:
+        logger.log("ERROR", f"LED init failed: {e}", "Main")
 
     # Extract subscriptions to subjects from the hardware components
     motor_controller_subject = motor_controller.subscribe()
@@ -231,11 +231,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
 
                     # Rotate the stepper motor and stop when the limit switch is pressed
-                    if led_controller:
-                        led_controller.suspend(True)
                     motor_controller.rotate_until_limit(command.slot_number, position_handler, 0)
-                    if led_controller:
-                        led_controller.suspend(False)
                     logger.log("INFO", f"Moved to slot {command.slot_number}", "MotorController")
                     time.sleep(2)
 
@@ -307,14 +303,9 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         homing_dir = 1 if (isinstance(cur_pos, int) and cur_pos > 0) else 0
         try:
             # Add timeout as safety (e.g., 8s)
-            if led_controller:
-                led_controller.suspend(True)
             motor_controller.rotate_until_limit(0, position_handler, homing_dir, timeout_s=8.0)
         except Exception as e:
             logger.log("ERROR", f"Homing failed: {e}", "Main")
-        finally:
-            if led_controller:
-                led_controller.suspend(False)
 
 
 def process_maintenance(maintenance, motor_controller, pump_controller, actuator_controller, position_handler, logger, led_controller=None):
