@@ -380,12 +380,12 @@ class RecipeService extends ChangeNotifier implements FetchableService {
       }
 
       final created = json.decode(createRes.body);
-      final int recipeId = created['recipe_id'];
+      final int recipeId = (created['recipe_id'] as num).toInt();
       print("Recipe created with ID: $recipeId");
 
       for (final ing in ingredients) {
-        final drinkId = (ing['id'] ?? ing['drink_id']) as int;
-        final qty = (ing['quantity'] ?? ing['quantity_ml'] ?? 0) as int;
+        final drinkId = ((ing['id'] ?? ing['drink_id']) as num).toInt();
+        final qty = ((ing['quantity'] ?? ing['quantity_ml'] ?? 0) as num).toInt();
         final r = await _api.addIngredientToRecipe(recipeId, drinkId, qty);
         if (r.statusCode != 201) {
           print("Failed to add ingredient $drinkId: ${r.statusCode} ${r.body}");
@@ -416,17 +416,38 @@ class RecipeService extends ChangeNotifier implements FetchableService {
         return false;
       }
 
-      final originalById = {
-        for (var ing in originalIngredients) (ing["id"] ?? ing["drink_id"]): ing
+      final Map<int, Map<String, dynamic>> originalById = {
+        for (var ing in originalIngredients)
+          ((ing["id"] ?? ing["drink_id"]) as num).toInt(): ing
       };
-      final newById = {
-        for (var ing in newIngredients) (ing["id"] ?? ing["drink_id"]): ing
+      final Map<int, Map<String, dynamic>> newById = {
+        for (var ing in newIngredients)
+          ((ing["id"] ?? ing["drink_id"]) as num).toInt(): ing
       };
+
+      // Early exit: if no diffs in set of IDs and quantities, skip ingredient ops
+      bool identicalSets = true;
+      if (originalById.length != newById.length) {
+        identicalSets = false;
+      } else {
+        for (final id in originalById.keys) {
+          if (!newById.containsKey(id)) { identicalSets = false; break; }
+          final o = originalById[id];
+          final n = newById[id];
+          final oQty = ((o?["quantity"] ?? o?["quantity_ml"] ?? 0) as num).toInt();
+          final nQty = ((n?["quantity"] ?? n?["quantity_ml"] ?? 0) as num).toInt();
+          if (oQty != nQty) { identicalSets = false; break; }
+        }
+      }
+      if (identicalSets) {
+        // Nothing to change on ingredients (likely only picture/name updated)
+        return true;
+      }
 
       // Entfernen
       for (final oid in originalById.keys) {
         if (!newById.containsKey(oid)) {
-          final resp = await _api.removeIngredientFromRecipe(recipeId, oid as int);
+          final resp = await _api.removeIngredientFromRecipe(recipeId, oid);
           if (resp.statusCode != 200 && resp.statusCode != 204) {
             print("Failed to delete ingredient $oid: ${resp.statusCode} ${resp.body}");
             return false;
@@ -436,17 +457,17 @@ class RecipeService extends ChangeNotifier implements FetchableService {
 
       // Hinzufügen/Updaten
       for (final nid in newById.keys) {
-        final newQty = (newById[nid]?["quantity"] ?? newById[nid]?["quantity_ml"] ?? 0) as int;
+        final newQty = ((newById[nid]?["quantity"] ?? newById[nid]?["quantity_ml"] ?? 0) as num).toInt();
         if (!originalById.containsKey(nid)) {
-          final resp = await _api.addIngredientToRecipe(recipeId, nid as int, newQty);
+          final resp = await _api.addIngredientToRecipe(recipeId, nid, newQty);
           if (resp.statusCode != 201) {
             print("Failed to add ingredient $nid: ${resp.statusCode} ${resp.body}");
             return false;
           }
         } else {
-          final oldQty = (originalById[nid]?["quantity"] ?? originalById[nid]?["quantity_ml"] ?? 0) as int;
+          final oldQty = ((originalById[nid]?["quantity"] ?? originalById[nid]?["quantity_ml"] ?? 0) as num).toInt();
           if (oldQty != newQty) {
-            final resp = await _api.updateIngredientInRecipe(recipeId, nid as int, newQty);
+            final resp = await _api.updateIngredientInRecipe(recipeId, nid, newQty);
             if (resp.statusCode != 200 && resp.statusCode != 204) {
               print("Failed to update ingredient $nid: ${resp.statusCode} ${resp.body}");
               return false;

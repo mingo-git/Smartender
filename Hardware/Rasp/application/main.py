@@ -243,15 +243,12 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     logger.log("INFO", f"Moving to slot {command.slot_number} with acceleration", "MotorController")
 
                     # Rotate the stepper motor and stop when the limit switch is pressed
-                    motor_controller.rotate_until_limit(command.slot_number, position_handler, 0)
-                    logger.log("INFO", f"Moved to slot {command.slot_number}", "MotorController")
-                    time.sleep(2)
-
-                    if position_handler.get_position() != command.slot_number:
-                        logger.log("ERROR", "Failed to reach the correct slot", "Main")
+                    reached = motor_controller.rotate_until_limit(command.slot_number, position_handler, 0, 2300, timeout_s=10.0)
+                    if not reached:
+                        logger.log("ERROR", f"Failed to reach slot {command.slot_number} (timeout)", "Main")
                         break
-
                     logger.log("INFO", f"Reached slot {command.slot_number}", "Main")
+                    time.sleep(0.2)
 
                     pump_amount = math.ceil(command.quantity_ml/40)
 
@@ -303,11 +300,15 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         logger.log("INFO", f"Returning to home (slot 0) from pos={cur_pos}", "Main")
         # Extra settle window to ensure actuator driver fully off before stepper homing
         time.sleep(0.3)
-        # Choose direction dynamically: if we're right of 0 (pos>0) go left (dir=1), else go right (dir=0)
-        homing_dir = 1 if (isinstance(cur_pos, int) and cur_pos > 0) else 0
+        # Choose direction dynamically: if we're right of 0 (pos>0) go left (dir=1), else go right (dir=0);
+        # if position unknown, bias left towards home
+        if isinstance(cur_pos, int):
+            homing_dir = 1 if cur_pos > 0 else 0
+        else:
+            homing_dir = 1
         try:
             # Add timeout as safety (e.g., 8s)
-            motor_controller.rotate_until_limit(0, position_handler, homing_dir, timeout_s=8.0)
+            motor_controller.rotate_until_limit(0, position_handler, homing_dir, 2300, timeout_s=12.0)
         except Exception as e:
             logger.log("ERROR", f"Homing failed: {e}", "Main")
 
@@ -438,10 +439,12 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                     direction = 0 if target > cur else 1
                 logger.log("INFO", f"Going to slot {target} from {cur} dir={direction}", "Maintenance")
                 # Use faster frequency (2300) like drink flow; allow generous timeout
-                motor_controller.rotate_until_limit(target, position_handler, direction, 2300, timeout_s=30.0)
+                ok = motor_controller.rotate_until_limit(target, position_handler, direction, 2300, timeout_s=30.0)
                 time.sleep(0.05)
                 reached = position_handler.get_position()
-                if reached != target:
+                if not ok:
+                    logger.log("WARNING", f"Timeout moving to slot {target}", "Maintenance")
+                elif reached != target:
                     logger.log("WARNING", f"Did not confirm slot {target} after move, current={reached}", "Maintenance")
             except Exception as e:
                 logger.log("ERROR", f"go_to_slot error: {e}", "Maintenance")
@@ -460,10 +463,12 @@ def process_maintenance(maintenance, motor_controller, pump_controller, actuator
                         return
                     direction = 1 if cur > 0 else 0
                 logger.log("INFO", f"Returning home from {cur} dir={direction}", "Maintenance")
-                motor_controller.rotate_until_limit(0, position_handler, direction, 2300, timeout_s=30.0)
+                ok = motor_controller.rotate_until_limit(0, position_handler, direction, 2300, timeout_s=30.0)
                 time.sleep(0.05)
                 reached = position_handler.get_position()
-                if reached != 0:
+                if not ok:
+                    logger.log("WARNING", "Timeout moving to home (slot 0)", "Maintenance")
+                elif reached != 0:
                     logger.log("WARNING", f"Did not confirm home after move, current={reached}", "Maintenance")
             except Exception as e:
                 logger.log("ERROR", f"go_home error: {e}", "Maintenance")

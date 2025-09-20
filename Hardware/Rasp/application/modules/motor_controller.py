@@ -47,7 +47,9 @@ class MotorController:
         :param target_slot: The target slot number (limit switch index).
         :param position_handler: PositionHandler instance for limit switch states.
         :param frequency: Frequency of the pulse signal in Hz.
-        :param direction: Direction (1 for clockwise, 0 for counterclockwise).
+        :param direction: Direction (1 for left, 0 for right).
+        :param timeout_s: Optional timeout in seconds.
+        :return: True if the target limit switch was detected, False on timeout.
         """
         self.pi.write(self.dir_pin, direction)
         self.pi.hardware_PWM(self.pull_pin, frequency, 500000)  # 50% duty cycle
@@ -67,6 +69,7 @@ class MotorController:
                 self.logger.log("INFO", f"Limit switch {target_slot} triggered. Motor stopped.", "MotorController")
             else:
                 self.logger.log("WARNING", f"Timeout reaching limit switch {target_slot}. PWM stopped.", "MotorController")
+        return triggered
 
 
     def cleanup(self):
