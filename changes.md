@@ -258,3 +258,14 @@ Akzeptanz – erreicht:
 - Für manuelles Halten (Flush single slot) fährt der Wagen nicht mehr automatisch nach Home, damit der Eimer unter Position 3 Platz hat.
   - Hardware: Entfernt Home-Erzwingung vor Pumpenstart im Maintenance-Handler (`process_maintenance`, Type `pump`).
   - PumpController: `start_pump(...)` erlaubt Start an beliebiger Position; Sicherheit für automatische Dosierung (`activate_pump`) bleibt unverändert an Home gebunden.
+
+## 2025-09-20 – Stammdaten Seed: Drinks, Ingredients, Rezepte (Hardware 1)
+- Entfernt: Demo-Rezept „Whiskey O“.
+- Neue Drinks (Hardware 1): Vodka, Havana, Tequila, Asbach, Gin, Aperol, Orangensaft, Cola, Sprite, Pfanner Grüner, Energy Drink, Cranberry Saft, Eistee Pfirsich.
+- Neue Rezepte (Hardware 1, jeweils ~400 ml):
+  - Cuba Libre (Havana 100 ml + Cola 300 ml)
+  - Vodka E (Vodka 100 ml + Energy Drink 300 ml)
+  - Vodka O (Vodka 100 ml + Orangensaft 300 ml)
+  - Asbach Cola (Asbach 100 ml + Cola 300 ml)
+- Slots 1..11 für Hardware 1 werden leer angelegt.
+- Datei: `Server/internal/query/createTables.go` (PopulateDatabase überarbeitet) – Subselects sichern referenzielle IDs.

@@ -94,66 +94,98 @@ func CreateTables() string {
 }
 
 func PopulateDatabase() string {
-	return `
-	INSERT INTO users (username, password, email) VALUES
-	    ('testuser', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser@example.com'),
+    return `
+    -- Users (sample admin/dev users)
+    INSERT INTO users (username, password, email) VALUES
+        ('testuser', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser@example.com'),
         ('jonas69', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser1@example.com'),
         ('mingoTheFicker', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser2@example.com'),
         ('bigDickPhil', '$2a$10$6vfPb12fs0SY2xiFLQvB7eMRit52Ys4g5vH3InrCb/JPC4H4w5b.G', 'testuser3@example.com')
-	ON CONFLICT (username) DO NOTHING; -- Avoid duplicates
-	
-    InSERT INTO hardware (hardware_name, mac_address) VALUES
-        ('Smartender Single-Device', 'AA:BB:CC:DD:EE:FF'),
-        ('Smartender von Fachschaft', '2c:cf:67:9d:dd:bb'),
-        ('Smartender von Philipp', '00:00:00:00:00:03');
-	
-	INSERT INTO drinks (hardware_id, drink_name, is_alcoholic) VALUES
-		(2, 'Vodka', TRUE),
-		(2, 'Rum', TRUE),
-		(2, 'Gin', TRUE),
-		(2, 'Tequila', TRUE),
-		(1, 'Whiskey', TRUE),
-		(1, 'Orange Juice', FALSE);
+    ON CONFLICT (username) DO NOTHING;
 
+    -- Single-device hardware (fixed MAC)
+    INSERT INTO hardware (hardware_name, mac_address) VALUES
+        ('Smartender Single-Device', 'AA:BB:CC:DD:EE:FF')
+    ON CONFLICT (mac_address) DO NOTHING;
+
+    -- Map users to hardware 1 as admin
     INSERT INTO user_hardware (user_id, hardware_id, role) VALUES
-        (1, 1, 'admin'),
-        (2, 1, 'admin'),
-        (1, 2, 'admin'),
-        (4, 3, 'admin');
+        (1, 1, 'admin')
+    ON CONFLICT (user_id, hardware_id) DO NOTHING;
 
-	INSERT INTO slots (hardware_id, slot_number, drink_id) VALUES
-		(1, 1, NULL),
-		(1, 2, NULL),
-		(1, 3, 5),
-		(1, 4, 6),
-		(1, 5, NULL),
-		(2, 1, 2),
-		(2, 2, 1),
-		(2, 3, 3),
-		(2, 4, 4),
-		(2, 5, NULL),
-		(2, 6, NULL),
-		(2, 7, NULL),
-		(2, 8, NULL),
-		(2, 9, NULL),
-		(2, 10, NULL),
-		(2, 11, NULL);
+    -- Drinks for hardware 1 (requested baseline)
+    INSERT INTO drinks (hardware_id, drink_name, is_alcoholic) VALUES
+        (1, 'Vodka', TRUE),
+        (1, 'Havana', TRUE),
+        (1, 'Tequila', TRUE),
+        (1, 'Asbach', TRUE),
+        (1, 'Gin', TRUE),
+        (1, 'Aperol', TRUE),
+        (1, 'Orangensaft', FALSE),
+        (1, 'Cola', FALSE),
+        (1, 'Sprite', FALSE),
+        (1, 'Pfanner Grüner', FALSE),
+        (1, 'Energy Drink', FALSE),
+        (1, 'Cranberry Saft', FALSE),
+        (1, 'Eistee Pfirsich', FALSE)
+    ON CONFLICT DO NOTHING;
 
-	INSERT INTO recipes (hardware_id, recipe_name, picture_id) VALUES
-		(2, 'Vodka Martini', 1),
-		(2, 'Mojito', 2),
-		(2, 'Gin and Tonic', 3),
-		(1, 'Whiskey O', 4);
+    -- Empty slots for hardware 1 (1..11)
+    INSERT INTO slots (hardware_id, slot_number, drink_id) VALUES
+        (1, 1, NULL), (1, 2, NULL), (1, 3, NULL), (1, 4, NULL), (1, 5, NULL),
+        (1, 6, NULL), (1, 7, NULL), (1, 8, NULL), (1, 9, NULL), (1,10, NULL), (1,11, NULL)
+    ON CONFLICT (slot_number, hardware_id) DO NOTHING;
 
-	INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml) VALUES
-		(1, 1, 60),
-		(1, 2, 30),
-		(2, 2, 60),
-		(2, 3, 30),
-		(3, 3, 60),
-		(3, 4, 30);
+    -- Standard longdrinks (hardware 1)
+    -- Cuba Libre (Havana + Cola) ~400ml
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Cuba Libre', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
 
-	INSERT INTO favorite_recipes (user_id, recipe_id) VALUES
-		(1, 1);
-	`
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Cuba Libre','Havana',100), ('Cuba Libre','Cola',300)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Vodka E (Vodka + Energy Drink)
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Vodka E', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Vodka E','Vodka',100), ('Vodka E','Energy Drink',300)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Vodka O (Vodka + Orangensaft)
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Vodka O', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Vodka O','Vodka',100), ('Vodka O','Orangensaft',300)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Asbach Cola (Asbach + Cola)
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Asbach Cola', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Asbach Cola','Asbach',100), ('Asbach Cola','Cola',300)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Remove old demo recipe if present
+    DELETE FROM recipes WHERE hardware_id = 1 AND recipe_name ILIKE 'Whiskey O';
+    `
 }

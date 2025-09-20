@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:provider/provider.dart';
 import '../../../components/cup_display.dart';
 import '../../../components/liter_display.dart';
@@ -344,7 +345,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context, listen: false).currentTheme;
     final filledAmount = _calculateFilledAmount();
-    final isOverCapacity = filledAmount > 400;
+    // Dynamische Visualisierung: mind. 400 ml, skaliert hoch, wenn mehr als 400 ml
+    final dynamicMaxCapacity = math.max(400.0, filledAmount.toDouble());
 
     return WillPopScope(
       onWillPop: () async {
@@ -391,8 +393,8 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       alignment: Alignment.centerRight,
                       child: LiterDisplay(
                         currentAmount: _calculateFilledAmount(),
-                        maxCapacity: 400,
-                        color: isOverCapacity ? theme.falseColor : theme.tertiaryColor,
+                        maxCapacity: dynamicMaxCapacity,
+                        color: theme.tertiaryColor,
                       ),
                     ),
                   ),
@@ -400,7 +402,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                     flex: 6,
                     child: CupDisplay(
                       ingredients: ingredients,
-                      maxCapacity: 400,
+                      maxCapacity: dynamicMaxCapacity,
                     ),
                   ),
                 ],
@@ -630,18 +632,7 @@ class _CreateDrinkScreenState extends State<CreateDrinkScreen> {
                       borderRadius: defaultBorderRadius,
                     ),
                   ),
-                  onPressed: () {
-                    if (isOverCapacity) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("The drink cannot be saved because it exceeds the cup's capacity.", style: TextStyle(color: theme.primaryColor),),
-                          backgroundColor: theme.falseColor,
-                        ),
-                      );
-                    } else {
-                      _saveRecipe();
-                    }
-                  },
+                  onPressed: _saveRecipe,
 
                   child: Text(
                     widget.recipeId == null ? "Save Drink" : "Update Drink",
