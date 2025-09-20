@@ -41,7 +41,7 @@ class MotorController:
             time.sleep(steps / frequency)
             self.pi.hardware_PWM(self.pull_pin, 0, 0)  # Stop PWM
 
-    def rotate_until_limit(self, target_slot, position_handler, direction, frequency=2300):
+    def rotate_until_limit(self, target_slot, position_handler, direction, frequency=2300, timeout_s=None):
         """
         Rotate the stepper motor until the specified limit switch is triggered.
         :param target_slot: The target slot number (limit switch index).
@@ -52,12 +52,21 @@ class MotorController:
         self.pi.write(self.dir_pin, direction)
         self.pi.hardware_PWM(self.pull_pin, frequency, 500000)  # 50% duty cycle
 
+        start = time.time()
+        triggered = False
         try:
             while position_handler.get_position() != target_slot:
+                if timeout_s is not None and (time.time() - start) > float(timeout_s):
+                    break
                 time.sleep(0.0001)  # Check the limit switch state periodically
+            else:
+                triggered = True
         finally:
-            self.pi.hardware_PWM(self.pull_pin, 0, 0)  # Stop PWM once the limit switch is pressed
-            self.logger.log("INFO", f"Limit switch {target_slot} triggered. Motor stopped.", "MotorController")
+            self.pi.hardware_PWM(self.pull_pin, 0, 0)  # Stop PWM
+            if triggered:
+                self.logger.log("INFO", f"Limit switch {target_slot} triggered. Motor stopped.", "MotorController")
+            else:
+                self.logger.log("WARNING", f"Timeout reaching limit switch {target_slot}. PWM stopped.", "MotorController")
 
 
     def cleanup(self):

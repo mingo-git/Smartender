@@ -253,6 +253,8 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                         actuator_controller._move_up(2.7)
                         time.sleep(6)
                         actuator_controller._move_down(3)
+                        # Short settle to avoid PSU sag before any next motion
+                        time.sleep(0.35)
                         if led_controller:
                             led_controller.set_progress((i + 1) / float(pump_amount))
 
@@ -274,6 +276,7 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
                     actuator_controller._move_up(5)
                     pump_controller.activate_pump(pump_index, command.quantity_ml/32.5)
                     actuator_controller._move_down(6)
+                    time.sleep(0.35)
                     if led_controller:
                         led_controller.set_progress(1.0)
                 else:
@@ -294,10 +297,13 @@ def process_message(message, command_mapper, motor_controller, pump_controller, 
         # Always attempt to return to home (slot 0) after processing
         cur_pos = position_handler.get_position()
         logger.log("INFO", f"Returning to home (slot 0) from pos={cur_pos}", "Main")
+        # Extra settle window to ensure actuator driver fully off before stepper homing
+        time.sleep(0.3)
         # Choose direction dynamically: if we're right of 0 (pos>0) go left (dir=1), else go right (dir=0)
         homing_dir = 1 if (isinstance(cur_pos, int) and cur_pos > 0) else 0
         try:
-            motor_controller.rotate_until_limit(0, position_handler, homing_dir)
+            # Add timeout as safety (e.g., 8s)
+            motor_controller.rotate_until_limit(0, position_handler, homing_dir, timeout_s=8.0)
         except Exception as e:
             logger.log("ERROR", f"Homing failed: {e}", "Main")
 
