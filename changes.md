@@ -262,10 +262,21 @@ Akzeptanz – erreicht:
 ## 2025-09-20 – Stammdaten Seed: Drinks, Ingredients, Rezepte (Hardware 1)
 - Entfernt: Demo-Rezept „Whiskey O“.
 - Neue Drinks (Hardware 1): Vodka, Havana, Tequila, Asbach, Gin, Aperol, Orangensaft, Cola, Sprite, Pfanner Grüner, Energy Drink, Cranberry Saft, Eistee Pfirsich.
-- Neue Rezepte (Hardware 1, jeweils ~400 ml):
-  - Cuba Libre (Havana 100 ml + Cola 300 ml)
-  - Vodka E (Vodka 100 ml + Energy Drink 300 ml)
-  - Vodka O (Vodka 100 ml + Orangensaft 300 ml)
-  - Asbach Cola (Asbach 100 ml + Cola 300 ml)
+- Neue Rezepte (Hardware 1, jeweils 70/330 ml):
+  - Cuba Libre (Havana 70 ml + Cola 330 ml)
+  - Vodka E (Vodka 70 ml + Energy Drink 330 ml)
+  - Vodka O (Vodka 70 ml + Orangensaft 330 ml)
+  - Asbach Cola (Asbach 70 ml + Cola 330 ml)
+  - Vodka Cranberry (Vodka 70 ml + Cranberry Saft 330 ml)
+  - Vodka Pfirsich (Vodka 70 ml + Eistee Pfirsich 330 ml)
+  - Vodka Sprite (Vodka 70 ml + Sprite 330 ml)
+  - Gin Sprite (Gin 70 ml + Sprite 330 ml)
+  - Havana Sprite (Havana 70 ml + Sprite 330 ml)
+  - Havana Energy (Havana 70 ml + Energy Drink 330 ml)
+  - Tequila Orange (Tequila 70 ml + Orangensaft 330 ml)
+  - Tequila Sprite (Tequila 70 ml + Sprite 330 ml)
+  - Asbach Energy (Asbach 70 ml + Energy Drink 330 ml)
+  - Aperol Sprite (Aperol 70 ml + Sprite 330 ml)
+  - Aperol Orange (Aperol 70 ml + Orangensaft 330 ml)
 - Slots 1..11 für Hardware 1 werden leer angelegt.
 - Datei: `Server/internal/query/createTables.go` (PopulateDatabase überarbeitet) – Subselects sichern referenzielle IDs.

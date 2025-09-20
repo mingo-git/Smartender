@@ -137,50 +137,172 @@ func PopulateDatabase() string {
     ON CONFLICT (slot_number, hardware_id) DO NOTHING;
 
     -- Standard longdrinks (hardware 1)
-    -- Cuba Libre (Havana + Cola) ~400ml
+    -- Cuba Libre (Havana + Cola) 70/330 ml
     INSERT INTO recipes (hardware_id, recipe_name, picture_id)
     VALUES (1, 'Cuba Libre', 0)
     ON CONFLICT (recipe_name) DO NOTHING;
 
     INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
     SELECT r.recipe_id, d.drink_id, q.qty FROM
-    (VALUES ('Cuba Libre','Havana',100), ('Cuba Libre','Cola',300)) AS q(rname,dname,qty)
+    (VALUES ('Cuba Libre','Havana',70), ('Cuba Libre','Cola',330)) AS q(rname,dname,qty)
     JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
     JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
     ON CONFLICT DO NOTHING;
 
-    -- Vodka E (Vodka + Energy Drink)
+    -- Vodka E (Vodka + Energy Drink) 70/330 ml
     INSERT INTO recipes (hardware_id, recipe_name, picture_id)
     VALUES (1, 'Vodka E', 0)
     ON CONFLICT (recipe_name) DO NOTHING;
 
     INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
     SELECT r.recipe_id, d.drink_id, q.qty FROM
-    (VALUES ('Vodka E','Vodka',100), ('Vodka E','Energy Drink',300)) AS q(rname,dname,qty)
+    (VALUES ('Vodka E','Vodka',70), ('Vodka E','Energy Drink',330)) AS q(rname,dname,qty)
     JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
     JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
     ON CONFLICT DO NOTHING;
 
-    -- Vodka O (Vodka + Orangensaft)
+    -- Vodka O (Vodka + Orangensaft) 70/330 ml
     INSERT INTO recipes (hardware_id, recipe_name, picture_id)
     VALUES (1, 'Vodka O', 0)
     ON CONFLICT (recipe_name) DO NOTHING;
 
     INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
     SELECT r.recipe_id, d.drink_id, q.qty FROM
-    (VALUES ('Vodka O','Vodka',100), ('Vodka O','Orangensaft',300)) AS q(rname,dname,qty)
+    (VALUES ('Vodka O','Vodka',70), ('Vodka O','Orangensaft',330)) AS q(rname,dname,qty)
     JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
     JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
     ON CONFLICT DO NOTHING;
 
-    -- Asbach Cola (Asbach + Cola)
+    -- Asbach Cola (Asbach + Cola) 70/330 ml
     INSERT INTO recipes (hardware_id, recipe_name, picture_id)
     VALUES (1, 'Asbach Cola', 0)
     ON CONFLICT (recipe_name) DO NOTHING;
 
     INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
     SELECT r.recipe_id, d.drink_id, q.qty FROM
-    (VALUES ('Asbach Cola','Asbach',100), ('Asbach Cola','Cola',300)) AS q(rname,dname,qty)
+    (VALUES ('Asbach Cola','Asbach',70), ('Asbach Cola','Cola',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Additional longdrinks (all 70/330 ml)
+    -- Vodka Cranberry
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Vodka Cranberry', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Vodka Cranberry','Vodka',70), ('Vodka Cranberry','Cranberry Saft',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Vodka Pfirsich (Vodka + Eistee Pfirsich)
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Vodka Pfirsich', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Vodka Pfirsich','Vodka',70), ('Vodka Pfirsich','Eistee Pfirsich',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Vodka Sprite
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Vodka Sprite', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Vodka Sprite','Vodka',70), ('Vodka Sprite','Sprite',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Gin Sprite
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Gin Sprite', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Gin Sprite','Gin',70), ('Gin Sprite','Sprite',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Havana Sprite
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Havana Sprite', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Havana Sprite','Havana',70), ('Havana Sprite','Sprite',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Havana Energy
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Havana Energy', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Havana Energy','Havana',70), ('Havana Energy','Energy Drink',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Tequila Orange
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Tequila Orange', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Tequila Orange','Tequila',70), ('Tequila Orange','Orangensaft',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Tequila Sprite
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Tequila Sprite', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Tequila Sprite','Tequila',70), ('Tequila Sprite','Sprite',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Asbach Energy
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Asbach Energy', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Asbach Energy','Asbach',70), ('Asbach Energy','Energy Drink',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Aperol Sprite (als alkoh. Longdrink)
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Aperol Sprite', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Aperol Sprite','Aperol',70), ('Aperol Sprite','Sprite',330)) AS q(rname,dname,qty)
+    JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
+    JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
+    ON CONFLICT DO NOTHING;
+
+    -- Aperol Orange
+    INSERT INTO recipes (hardware_id, recipe_name, picture_id)
+    VALUES (1, 'Aperol Orange', 0)
+    ON CONFLICT (recipe_name) DO NOTHING;
+    INSERT INTO recipe_ingredients (recipe_id, drink_id, quantity_ml)
+    SELECT r.recipe_id, d.drink_id, q.qty FROM
+    (VALUES ('Aperol Orange','Aperol',70), ('Aperol Orange','Orangensaft',330)) AS q(rname,dname,qty)
     JOIN recipes r ON r.recipe_name = q.rname AND r.hardware_id = 1
     JOIN drinks d ON d.drink_name = q.dname AND d.hardware_id = 1
     ON CONFLICT DO NOTHING;
